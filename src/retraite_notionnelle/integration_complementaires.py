@@ -71,6 +71,7 @@ from pathlib import Path
 from .contributions_equilibre import charger_contributions_equilibre
 from .donnees.chargement import charger_serie_annuelle, charger_yaml
 from .donnees.financement_regimes import StructureFinancement
+from .donnees.regimes import fiche_de_regime
 from .somme import somme_ordonnee
 
 #: La dernière année projetée : celle du classeur du COR.
@@ -169,7 +170,7 @@ class ContributionsSupprimees:
 
 def _taux_agirc_arrco(racine: Path, annee: int) -> dict[str, float]:
     """Le taux prélevé de chaque tranche, majoration d'appel comprise."""
-    fiche = charger_yaml(racine / "reference" / "regimes" / "agirc_arrco.yaml")
+    fiche = fiche_de_regime(racine, "agirc_arrco")
     taux = {}
     for periode in fiche["periodes"]:
         fin = periode.get("fin")

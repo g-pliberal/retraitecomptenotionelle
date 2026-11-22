@@ -26,18 +26,16 @@ inventaire:
   textes:
     - {reference: "loi du 9 juin 1853 sur les pensions civiles", id: null}
     - {reference: "loi du 14 avril 1924 portant réforme du régime des pensions civiles et militaires", id: null}
-periodes:
-  - debut: 1930
-    fin: 1948
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1930-01-01
+    au: 1949-01-01
     age_ouverture: 60
     age_taux_plein: 60
     duree_requise_trimestres: 120
     taux_plein: 0.60
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.06
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [bonifications, categorie_active, reversion]
@@ -46,3 +44,9 @@ periodes:
       budgétaires courants : fonctionnellement en répartition dès l'origine.
       Retenue pour pension de 5 % puis 6 %. Catalogué à partir de 1930 pour
       couvrir les carrières entrant dans le champ du modèle.
+cotisation:
+  - du: 1930-01-01
+    au: 1949-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.06
+    perimetre_taux: agent_seul

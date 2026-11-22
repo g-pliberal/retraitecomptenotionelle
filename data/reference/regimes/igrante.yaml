@@ -33,10 +33,11 @@ inventaire:
     tranche sous le plafond, celle de l'agent qui relève aussi de l'IPACTE —
     les autres non-titulaires cotisaient jusqu'à trois plafonds, part
     qu'aucun statut ne distingue.
-periodes:
-  - debut: 1960
-    fin: 1970
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1960-01-01
+    au: 1971-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
@@ -44,9 +45,6 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.021   # 3,5 % contractuels × appel 60 %
-    part_salariale: 0.40   # 1,40 % agent / 2,10 % employeur, décret 59-1569 art. 2
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -88,3 +86,9 @@ periodes:
       « le service employeur effectue un versement égal à une fois et
       demie le précédent », soit 40/60 — ce que le rapport 1,40 / 3,50 dit
       aussi.
+cotisation:
+  - du: 1960-01-01
+    au: 1971-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.021   # 3,5 % contractuels × appel 60 %
+    part_salariale: 0.40   # 1,40 % agent / 2,10 % employeur, décret 59-1569 art. 2

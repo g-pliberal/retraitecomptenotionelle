@@ -77,20 +77,16 @@ inventaire:
     la neutralisation des années d'assimilées (décret n° 2003-589,
     article 32) n'est pas portée, ni leur cumul emploi-retraite au plafond
     de la caisse (article 34) : action 177, étape 8.
-periodes:
-  - debut: 1987
-    fin: 2002
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1987-01-01
+    au: 2003-01-01
     age_ouverture: 55
     age_taux_plein: 65
     duree_requise_trimestres: 120
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1461
-    part_salariale: 0.4390
-    taux_cotisation_deplafonnee: 0.0044
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -120,19 +116,13 @@ periodes:
       de cinq ans » et « la durée d'assurance […] est de 120 trimestres »
       (art. 27, reproduit en tête de l'article 2). La formule de la
       pension n'est pas dans l'index : celle du régime général tient lieu.
-  - debut: 2003
-    fin: 2003
-    type_calcul: annuites
+  - du: 2003-01-01
+    au: 2004-01-01
     age_ouverture: 55
     age_taux_plein: 60
     duree_requise_trimestres: 64
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1475
-    part_salariale: 0.4441
-    taux_cotisation_deplafonnee: 0.0160
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -169,19 +159,13 @@ periodes:
       dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
       11, LEGIARTI000006781030). Pensions prenant effet en 2003 : 55
       ans, 64 trimestres, taux plein à 60 ans.
-  - debut: 2004
-    fin: 2004
-    type_calcul: annuites
+  - du: 2004-01-01
+    au: 2005-01-01
     age_ouverture: 55
     age_taux_plein: 60
     duree_requise_trimestres: 68
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1487
-    part_salariale: 0.4445
-    taux_cotisation_deplafonnee: 0.0170
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -202,19 +186,13 @@ periodes:
       dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
       11, LEGIARTI000006781030). Pensions prenant effet en 2004 : 55
       ans, 68 trimestres, taux plein à 60 ans.
-  - debut: 2005
-    fin: 2005
-    type_calcul: annuites
+  - du: 2005-01-01
+    au: 2006-01-01
     age_ouverture: 55
     age_taux_plein: 60
     duree_requise_trimestres: 72
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1487
-    part_salariale: 0.4445
-    taux_cotisation_deplafonnee: 0.0170
-    part_salariale_deplafonnee: 0.0588
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -235,19 +213,13 @@ periodes:
       dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
       11, LEGIARTI000006781030). Pensions prenant effet en 2005 : 55
       ans, 72 trimestres, taux plein à 60 ans.
-  - debut: 2006
-    fin: 2006
-    type_calcul: annuites
+  - du: 2006-01-01
+    au: 2007-01-01
     age_ouverture: 56
     age_taux_plein: 61
     duree_requise_trimestres: 76
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1487
-    part_salariale: 0.4445
-    taux_cotisation_deplafonnee: 0.0170
-    part_salariale_deplafonnee: 0.0588
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -268,19 +240,13 @@ periodes:
       dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
       11, LEGIARTI000006781030). Pensions prenant effet en 2006 : 56
       ans, 76 trimestres, taux plein à 61 ans.
-  - debut: 2007
-    fin: 2007
-    type_calcul: annuites
+  - du: 2007-01-01
+    au: 2008-01-01
     age_ouverture: 57
     age_taux_plein: 62
     duree_requise_trimestres: 80
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1487
-    part_salariale: 0.4445
-    taux_cotisation_deplafonnee: 0.0170
-    part_salariale_deplafonnee: 0.0588
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -301,19 +267,13 @@ periodes:
       dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
       11, LEGIARTI000006781030). Pensions prenant effet en 2007 : 57
       ans, 80 trimestres, taux plein à 62 ans.
-  - debut: 2008
-    fin: 2008
-    type_calcul: annuites
+  - du: 2008-01-01
+    au: 2009-01-01
     age_ouverture: 58
     age_taux_plein: 63
     duree_requise_trimestres: 84
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1487
-    part_salariale: 0.4445
-    taux_cotisation_deplafonnee: 0.0170
-    part_salariale_deplafonnee: 0.0588
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -334,19 +294,13 @@ periodes:
       dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
       11, LEGIARTI000006781030). Pensions prenant effet en 2008 : 58
       ans, 84 trimestres, taux plein à 63 ans.
-  - debut: 2009
-    fin: 2009
-    type_calcul: annuites
+  - du: 2009-01-01
+    au: 2010-01-01
     age_ouverture: 59
     age_taux_plein: 64
     duree_requise_trimestres: 88
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1495
-    part_salariale: 0.4448
-    taux_cotisation_deplafonnee: 0.0170
-    part_salariale_deplafonnee: 0.0588
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -367,19 +321,13 @@ periodes:
       dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
       11, LEGIARTI000006781030). Pensions prenant effet en 2009 : 59
       ans, 88 trimestres, taux plein à 64 ans.
-  - debut: 2010
-    fin: 2010
-    type_calcul: annuites
+  - du: 2010-01-01
+    au: 2011-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 92
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1495
-    part_salariale: 0.4448
-    taux_cotisation_deplafonnee: 0.0170
-    part_salariale_deplafonnee: 0.0588
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -400,19 +348,13 @@ periodes:
       dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
       11, LEGIARTI000006781030). Pensions prenant effet en 2010 : 60
       ans, 92 trimestres, taux plein à 65 ans.
-  - debut: 2011
-    fin: 2011
-    type_calcul: annuites
+  - du: 2011-01-01
+    au: 2012-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 96
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -433,20 +375,14 @@ periodes:
       dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
       11, LEGIARTI000006781030). Pensions prenant effet en 2011 : 60
       ans, 96 trimestres, taux plein à 65 ans.
-  - debut: 2012
-    fin: 2012
-    type_calcul: annuites
+  - du: 2012-01-01
+    au: 2013-01-01
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 100
     age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -479,20 +415,14 @@ periodes:
       génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
       LEGIARTI000026514449) : 100 trimestres pour les pensions prenant
       effet en 2012.
-  - debut: 2013
-    fin: 2013
-    type_calcul: annuites
+  - du: 2013-01-01
+    au: 2014-01-01
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 104
     age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -509,20 +439,14 @@ periodes:
       génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
       LEGIARTI000026514449) : 104 trimestres pour les pensions prenant
       effet en 2013.
-  - debut: 2014
-    fin: 2014
-    type_calcul: annuites
+  - du: 2014-01-01
+    au: 2015-01-01
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 108
     age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -539,20 +463,14 @@ periodes:
       génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
       LEGIARTI000026514449) : 108 trimestres pour les pensions prenant
       effet en 2014.
-  - debut: 2015
-    fin: 2015
-    type_calcul: annuites
+  - du: 2015-01-01
+    au: 2016-01-01
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 112
     age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -569,20 +487,14 @@ periodes:
       génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
       LEGIARTI000026514449) : 112 trimestres pour les pensions prenant
       effet en 2015.
-  - debut: 2016
-    fin: 2016
-    type_calcul: annuites
+  - du: 2016-01-01
+    au: 2017-01-01
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 116
     age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -599,20 +511,14 @@ periodes:
       génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
       LEGIARTI000026514449) : 116 trimestres pour les pensions prenant
       effet en 2016.
-  - debut: 2017
-    fin: 2017
-    type_calcul: annuites
+  - du: 2017-01-01
+    au: 2018-01-01
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 120
     age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -629,10 +535,8 @@ periodes:
       génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
       LEGIARTI000026514449) : 120 trimestres pour les pensions prenant
       effet en 2017.
-  - debut: 2018
-    fin: 2022
-    date_effet: [2018-01-01, 2023-09-01]
-    type_calcul: annuites
+  - du: 2018-01-01
+    au: 2023-09-01
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 172
@@ -640,11 +544,6 @@ periodes:
     duree_requise_table: [mayotte_2018]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -684,10 +583,8 @@ periodes:
       année-là, faux pour toutes les autres : 136 trimestres en 2020,
       ceux de 1959, à un Mahorais né en 1955 dont le droit en demande
       120.
-  - debut: 2023
-    fin: 2025
-    date_effet: [2023-09-01, 2026-01-01]
-    type_calcul: annuites
+  - du: 2023-09-01
+    au: 2026-01-01
     age_ouverture: 64
     age_taux_plein: 67
     duree_requise_trimestres: 172
@@ -695,11 +592,6 @@ periodes:
     duree_requise_table: [mayotte_2018]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -740,10 +632,8 @@ periodes:
       trimestres avant 1956, quatre de plus par génération jusqu'à 160
       pour 1965, puis 162 à 172 de 1966 à 1973. Coefficient de
       minoration de 2,5 % (art. 11, I).
-  - debut: 2026
-    fin: 2026
-    date_effet: [2026-01-01, 2026-09-01]
-    type_calcul: annuites
+  - du: 2026-01-01
+    au: 2026-09-01
     age_ouverture: 64
     age_taux_plein: 67
     duree_requise_trimestres: 172
@@ -751,11 +641,6 @@ periodes:
     duree_requise_table: [mayotte_2018]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -801,10 +686,7 @@ periodes:
       `legislation/duree_requise_regimes_speciaux.csv`) : 120 trimestres
       avant 1956, quatre de plus par génération jusqu'à 160 pour 1965,
       puis 162 à 172 de 1966 à 1973.
-  - debut: 2027
-    fin: null
-    date_effet: [2026-09-01, null]
-    type_calcul: annuites
+  - du: 2026-09-01
     age_ouverture: 64
     age_taux_plein: 67
     duree_requise_trimestres: 172
@@ -812,11 +694,6 @@ periodes:
     duree_requise_table: [mayotte_2018]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -862,3 +739,143 @@ periodes:
       `legislation/duree_requise_regimes_speciaux.csv`) : 120 trimestres
       avant 1956, quatre de plus par génération jusqu'à 160 pour 1965,
       puis 162 à 172 de 1966 à 1973.
+cotisation:
+  - du: 1987-01-01
+    au: 2003-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 0.4390
+    taux_cotisation_deplafonnee: 0.0044
+    part_salariale_deplafonnee: 0.0000
+  - du: 2003-01-01
+    au: 2004-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1475
+    part_salariale: 0.4441
+    taux_cotisation_deplafonnee: 0.0160
+    part_salariale_deplafonnee: 0.0000
+  - du: 2004-01-01
+    au: 2005-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1487
+    part_salariale: 0.4445
+    taux_cotisation_deplafonnee: 0.0170
+    part_salariale_deplafonnee: 0.0000
+  - du: 2005-01-01
+    au: 2006-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1487
+    part_salariale: 0.4445
+    taux_cotisation_deplafonnee: 0.0170
+    part_salariale_deplafonnee: 0.0588
+  - du: 2006-01-01
+    au: 2007-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1487
+    part_salariale: 0.4445
+    taux_cotisation_deplafonnee: 0.0170
+    part_salariale_deplafonnee: 0.0588
+  - du: 2007-01-01
+    au: 2008-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1487
+    part_salariale: 0.4445
+    taux_cotisation_deplafonnee: 0.0170
+    part_salariale_deplafonnee: 0.0588
+  - du: 2008-01-01
+    au: 2009-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1487
+    part_salariale: 0.4445
+    taux_cotisation_deplafonnee: 0.0170
+    part_salariale_deplafonnee: 0.0588
+  - du: 2009-01-01
+    au: 2010-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1495
+    part_salariale: 0.4448
+    taux_cotisation_deplafonnee: 0.0170
+    part_salariale_deplafonnee: 0.0588
+  - du: 2010-01-01
+    au: 2011-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1495
+    part_salariale: 0.4448
+    taux_cotisation_deplafonnee: 0.0170
+    part_salariale_deplafonnee: 0.0588
+  - du: 2011-01-01
+    au: 2012-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2012-01-01
+    au: 2013-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2013-01-01
+    au: 2014-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2014-01-01
+    au: 2015-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2015-01-01
+    au: 2016-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2016-01-01
+    au: 2017-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2017-01-01
+    au: 2018-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2018-01-01
+    au: 2023-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2023-01-01
+    au: 2026-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1545
+    part_salariale: 0.4466
+    taux_cotisation_deplafonnee: 0.0241
+    part_salariale_deplafonnee: 0.1660
+  - du: 2026-01-01
+    au: 2027-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1545
+    part_salariale: 0.4466
+    taux_cotisation_deplafonnee: 0.0241
+    part_salariale_deplafonnee: 0.1660
+  - du: 2027-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1545
+    part_salariale: 0.4466
+    taux_cotisation_deplafonnee: 0.0241
+    part_salariale_deplafonnee: 0.1660

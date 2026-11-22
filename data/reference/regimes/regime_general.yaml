@@ -41,20 +41,17 @@ inventaire:
     - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la sécurité sociale", id: null}
     - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances sociales", id: null}
     - {reference: "code de la sécurité sociale, L. 351-1 et suivants", id: null}
-periodes:
-
-  - debut: 1945
-    fin: 1950
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1945-01-01
+    au: 1951-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 120
     taux_plein: 0.40
     salaire_reference: 10_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0860   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
-    part_salariale: 0.3488   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -93,19 +90,14 @@ periodes:
       au-delà, sans autre borne que le maximum des pensions, jusqu'au 31 mars
       1983 (`majoration_d_ajournement`, fiche `decote_avant_1983` ; le
       maximum, fiche `pension_maximale_regime_general`).
-
-  - debut: 1951
-    fin: 1971
-    type_calcul: annuites
+  - du: 1951-01-01
+    au: 1972-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 120
     taux_plein: 0.40
     salaire_reference: 10_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0860   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
-    part_salariale: 0.3488   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -118,10 +110,8 @@ periodes:
       postérieur au soixantième anniversaire » (circulaire n° 93 SS du 17
       mai 1951), au-delà de soixante-cinq ans comme en deçà (fiche
       `decote_avant_1983`).
-
-  - debut: 1972
-    fin: 1972
-    type_calcul: annuites
+  - du: 1972-01-01
+    au: 1973-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -130,9 +120,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
-    part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -168,10 +155,8 @@ periodes:
       1er juillet de l'année précédente (décret n° 73-88, article 3,
       LEGIARTI000006761990) : ces périodes la comptent (`avpf`), comme
       celles d'après 1983 ; elles l'omettaient jusqu'au 14 octobre 2026.
-
-  - debut: 1973
-    fin: 1973
-    type_calcul: annuites
+  - du: 1973-01-01
+    au: 1974-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -180,9 +165,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
-    part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -194,10 +176,8 @@ periodes:
       Les règles de 1972 (loi Boulin), avec 136 trimestres retenus au
       plus pour une pension qui prend effet en 1973 (décret n° 45-0179,
       article 72-1 ; circulaire Cnav n° 2/72, point I).
-
-  - debut: 1974
-    fin: 1974
-    type_calcul: annuites
+  - du: 1974-01-01
+    au: 1975-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -206,9 +186,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
-    part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -220,10 +197,8 @@ periodes:
       Les règles de 1972 (loi Boulin), avec 144 trimestres retenus au
       plus pour une pension qui prend effet en 1974 (décret n° 45-0179,
       article 72-1 ; circulaire Cnav n° 2/72, point I).
-
-  - debut: 1975
-    fin: 1977
-    type_calcul: annuites
+  - du: 1975-01-01
+    au: 1978-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -231,9 +206,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
-    part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -248,10 +220,8 @@ periodes:
       point I ; l'article 72-1 du décret n° 45-0179 ne fixe de palier que
       jusqu'en 1974) : une carrière de trente-sept ans et demi reçoit la
       pension normale entière.
-
-  - debut: 1978
-    fin: 1978
-    type_calcul: annuites
+  - du: 1978-01-01
+    au: 1979-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -259,9 +229,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
-    part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -279,11 +246,8 @@ periodes:
       pour une pension qui prend effet en 1978 (décret n° 45-0179, article
       70-2, c, LEGIARTI000006760658). Le modèle compte ces deux régimes et les
       assurances sociales d'avant 1945, qu'il tient à part.
-
-  - debut: 1979
-    fin: 1982
-    date_effet: [1979-01-01, 1983-04-01]
-    type_calcul: annuites
+  - du: 1979-01-01
+    au: 1983-04-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -291,9 +255,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
-    part_salariale: 0.3343   # du taux plafonné
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -312,11 +273,8 @@ periodes:
       (`date_effet`) : l'ordonnance du 26 mars 1982 n'entre en vigueur que le
       1er avril 1983 (article 9, LEGIARTI000006275868), et jusque-là le taux
       croît encore après soixante-cinq ans (fiche `decote_avant_1983`).
-
-  - debut: 1983
-    fin: 1993
-    date_effet: [1983-04-01, 1994-01-01]
-    type_calcul: annuites
+  - du: 1983-04-01
+    au: 1994-01-01
     age_ouverture: 60
     age_taux_plein: 65
     # La durée de la date d'effet, lue dans la fiche : 150 trimestres, puis
@@ -328,11 +286,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: 10_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1461   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
-    taux_cotisation_deplafonnee: 0.0044   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
-    part_salariale_deplafonnee: 0.0000
-    part_salariale: 0.4390   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -345,10 +298,8 @@ periodes:
       modèle traite comme une anticipation de 5 ans (cf. cliquet dans
       legislation/ages_reference.csv). En vigueur le 1er avril 1983
       (article 9) : la période liquide depuis ce jour (`date_effet`).
-
-  - debut: 1994
-    fin: 2003
-    type_calcul: annuites
+  - du: 1994-01-01
+    au: 2004-01-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -361,11 +312,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1475   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
-    taux_cotisation_deplafonnee: 0.0160   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
-    part_salariale_deplafonnee: 0.0000
-    part_salariale: 0.4441   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -378,10 +324,8 @@ periodes:
       selon la génération ; indexation des salaires portés au compte et des
       pensions sur les prix. La durée indiquée est la cible ; la montée en
       charge par génération est portée par legislation/duree_requise.csv.
-
-  - debut: 2004
-    fin: 2008
-    type_calcul: annuites
+  - du: 2004-01-01
+    au: 2009-01-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -394,11 +338,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1487   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
-    taux_cotisation_deplafonnee: 0.0170   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
-    part_salariale_deplafonnee: 0.0471   # moyenne : la part salariale déplafonnée naît le 1er juillet 2004, et 2004 vaut donc zéro
-    part_salariale: 0.4445   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -410,10 +349,8 @@ periodes:
     notes: >-
       Loi Fillon du 21 août 2003 : création de la surcote, décote allégée,
       dispositif « carrières longues », durée indexée sur l'espérance de vie.
-
-  - debut: 2009
-    fin: 2010
-    type_calcul: annuites
+  - du: 2009-01-01
+    au: 2011-01-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -426,11 +363,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1495   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
-    taux_cotisation_deplafonnee: 0.0170   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
-    part_salariale_deplafonnee: 0.0588
-    part_salariale: 0.4448   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -443,10 +375,8 @@ periodes:
       Loi de financement de la sécurité sociale pour 2009 : la surcote passe
       de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
       même barème par ailleurs — seul le taux de surcote change.
-
-  - debut: 2011
-    fin: 2022
-    type_calcul: annuites
+  - du: 2011-01-01
+    au: 2023-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -459,11 +389,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
-    taux_cotisation_deplafonnee: 0.0210   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
-    part_salariale_deplafonnee: 0.1429
-    part_salariale: 0.4463   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -476,10 +401,7 @@ periodes:
       Loi du 9 novembre 2010 (âges 60->62 et 65->67, montée en charge
       2011-2017) puis loi du 20 janvier 2014 (durée 43 ans pour la
       génération 1973). Les âges affichés sont les cibles.
-
-  - debut: 2023
-    fin: null
-    type_calcul: annuites
+  - du: 2023-01-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -492,11 +414,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
-    taux_cotisation_deplafonnee: 0.0241   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
-    part_salariale_deplafonnee: 0.1660
-    part_salariale: 0.4466   # du taux plafonné
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -513,3 +430,85 @@ periodes:
       plafonnée 6,90 % salarié + 8,55 % employeur ; déplafonnée
       0,40 % + 2,02 %. Le taux porté ici agrège plafonnée et déplafonnée
       rapportées à l'assiette plafonnée pour un salaire au plafond.
+cotisation:
+  - du: 1945-01-01
+    au: 1951-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0860   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
+    part_salariale: 0.3488   # du taux plafonné
+  - du: 1951-01-01
+    au: 1972-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0860   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
+    part_salariale: 0.3488   # du taux plafonné
+  - du: 1972-01-01
+    au: 1973-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+  - du: 1973-01-01
+    au: 1974-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+  - du: 1974-01-01
+    au: 1975-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+  - du: 1975-01-01
+    au: 1978-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+  - du: 1978-01-01
+    au: 1979-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+  - du: 1979-01-01
+    au: 1983-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1119   # part PLAFONNÉE seule, moyenne OpenFisca de 1972 à 1982
+    part_salariale: 0.3343   # du taux plafonné
+  - du: 1983-01-01
+    au: 1994-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1461   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
+    taux_cotisation_deplafonnee: 0.0044   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
+    part_salariale_deplafonnee: 0.0000
+    part_salariale: 0.4390   # du taux plafonné
+  - du: 1994-01-01
+    au: 2004-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1475   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
+    taux_cotisation_deplafonnee: 0.0160   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
+    part_salariale_deplafonnee: 0.0000
+    part_salariale: 0.4441   # du taux plafonné
+  - du: 2004-01-01
+    au: 2009-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1487   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
+    taux_cotisation_deplafonnee: 0.0170   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
+    part_salariale_deplafonnee: 0.0471   # moyenne : la part salariale déplafonnée naît le 1er juillet 2004, et 2004 vaut donc zéro
+    part_salariale: 0.4445   # du taux plafonné
+  - du: 2009-01-01
+    au: 2011-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1495   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
+    taux_cotisation_deplafonnee: 0.0170   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
+    part_salariale_deplafonnee: 0.0588
+    part_salariale: 0.4448   # du taux plafonné
+  - du: 2011-01-01
+    au: 2023-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
+    taux_cotisation_deplafonnee: 0.0210   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
+    part_salariale_deplafonnee: 0.1429
+    part_salariale: 0.4463   # du taux plafonné
+  - du: 2023-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1545   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
+    taux_cotisation_deplafonnee: 0.0241   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
+    part_salariale_deplafonnee: 0.1660
+    part_salariale: 0.4466   # du taux plafonné

@@ -22,17 +22,17 @@ import functools
 from datetime import date
 
 import pytest
-import yaml
 
 from retraite_notionnelle.calendrier import DateMois, en_mois
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
+from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 from facade import Simulateur
 
 REGIMES = ("sncf", "ratp")
-PERIODES = {regime: yaml.safe_load((RACINE_DONNEES / "reference" / "regimes" / f"{regime}.yaml")
-                                   .read_text(encoding="utf-8"))["periodes"]
+PERIODES = {regime: lire_fiche_de_regime(
+                RACINE_DONNEES / "reference" / "regimes" / f"{regime}.yaml")["periodes"]
             for regime in REGIMES}
 #: L'agent que le modèle sert : l'agent de conduite de la SNCF (1° du I de
 #: l'article 1er du décret n° 2008-639), le roulant du tableau B de la RATP

@@ -675,3 +675,185 @@ la lecture des rédactions sans un mot, se mène « sur Fable 5.2 », il faut
 lire depuis cette date : sur Opus 5.5, et relue sur Fable 5.2 avant d'être
 publiée (`CLAUDE.md`, « Le scénario 1 est le droit applicable »). Le reste de
 la note ne change pas.
+
+## Amendement du 22 novembre 2026 : les deux axes du fichier de régime
+
+*Adopté le 22 novembre 2026, la classification des champs validée par le
+propriétaire (point d'arrêt 1). Elle est écrite dans le code,
+`src/retraite_notionnelle/donnees/axes.py` ; le relevé qui la fonde, champ par
+champ, avec les lectures du moteur, est
+`docs/decisions/0009/separation-des-axes/classification.md`.*
+
+Le 22 novembre, le propriétaire a choisi de séparer complètement les deux
+axes des fichiers de régime : « on prend complète alors ». Cet amendement
+écrit le contrat de cette séparation. Il touche le § « Le fichier de régime
+garde son droit propre et ses renvois » et la migration ; il ne change ni la
+ligne de partage avec la table datée, ni les versions de fiche, ni les
+cliquets. Ses comptes sont ceux de `main` au 22 novembre (389536e).
+
+**Le problème.** Une période d'un fichier de régime porte ensemble deux sortes
+de paramètres, que le moteur choisit sur deux axes. Les règles de la
+liquidation se choisissent à la date d'effet de la pension (§ 4.6 de
+l'architecture, `periodeDeLiquidation`) ; l'assiette, le taux et les points
+se choisissent à l'année où le droit s'acquiert (`periodesActives`). Une
+période coupée pour l'un l'est pour l'autre. Des 733 frontières entre deux
+périodes contiguës, 420 ne changent que la cotisation : chacune recopie
+toutes les règles de la liquidation, que rien n'a changées. 154 ne changent
+que la liquidation, 89 les deux, 51 un montant servi seul ou la seule
+structure, 19 un montant servi avec l'une ou l'autre ; les 62 autres suites
+reprennent une tranche. Les 875 périodes ne portent ainsi que 319 lignes de
+liquidation distinctes. Une règle de liquidation qui change en cours
+d'année a dû prendre `date_effet` (21 régimes), et un taux de cotisation qui
+change en cours d'année ne peut pas se dire du tout.
+
+**Quatre familles.** Chacun des 144 champs de période appartient à une
+famille, et une seule :
+
+- *la liquidation* (92 champs) : une règle choisie à la date d'effet de la
+  pension, ou à la date d'un fait que la règle nomme — l'ouverture du droit,
+  le 31 mars 1983, le début de l'invalidité. Les âges, les durées, la décote,
+  la surcote, le taux plein, le salaire de référence, les barèmes
+  d'abattement, la carrière longue, la table de la valeur du trimestre des
+  mines et le régime au titre duquel s'oppose le plafond de la majoration
+  pour enfants, qui tiennent l'un et l'autre à la date d'effet ;
+- *la cotisation* (39 champs) : un paramètre choisi à l'année où le droit
+  s'acquiert. L'assiette et ses bornes, les taux et leurs parts, les
+  forfaits et les classes, les points que l'année ouvre et ce qui les marque
+  (`points_abattus_a_l_age`, `points_invalidite`), la dispense et
+  l'exemption ;
+- *le montant servi* (6 champs) : un montant en euros d'une année que le
+  service revalorise ensuite — la valeur du point de la fiche, le forfait,
+  le plafond de la majoration pour enfants — et son millésime ;
+- *la structure* (7 champs) : ce qui décrit le régime ou découpe le fichier —
+  `type_calcul`, constant dans chacun des 80 régimes, `points_de`, qui ne
+  change qu'à l'Arrco des cultes, passée au barème de l'Agirc-Arrco en 2019,
+  les bornes (`debut`, `fin`, `date_effet`), les notes et les textes des
+  renvois.
+
+Deux faits l'éprouvent. Les dix régimes dont deux périodes couvrent la même
+année — les tranches — ne diffèrent, d'une tranche à l'autre, que par des
+champs de la cotisation : l'axe de la liquidation n'a aucun chevauchement.
+Et le moteur, instrumenté sur tous les témoins, lit les champs de la
+cotisation sur une période de l'année ; quand il les lit sur la période de
+la liquidation — l'assiette, au salaire de référence ; le barème des points
+de la MSA, pour son coefficient de durée — la date d'effet et son année
+donnent partout la même valeur.
+
+**La forme.** Le fichier garde son en-tête et range ses paramètres en quatre
+blocs, un par famille. Chaque bloc de lignes est complet ligne par ligne,
+comme les périodes aujourd'hui : une ligne ne s'hérite pas de la précédente.
+
+```yaml
+structure:
+  type_calcul: points
+  points_de:                     # absent : le régime lui-même
+    - {du: 2006-01-01, regime: arrco}
+    - {du: 2019-01-01, regime: agirc_arrco}
+liquidation:                     # au jour ; contiguës ; jamais deux à la fois
+  - du: 1983-04-01
+    au: 1994-01-01               # exclu ; absent : en vigueur
+    textes: {...}                # les textes des renvois de la ligne
+    notes: ...
+    age_ouverture: 60
+    ...
+cotisation:                      # deux lignes du même jour : deux tranches
+  - du: 1945-01-01
+    au: 1951-01-01
+    tranche: 2                   # la première tranche ne se numérote pas
+    textes: {...}                # les renvois de cotisation ont les leurs
+    notes: ...
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.08
+    ...
+servi:                           # au jour
+  - du: 1952-01-01
+    valeur_point_euros: ...
+    valeur_point_annee: 2026
+```
+
+Les trois axes datés s'écrivent de même, au jour, `[du, au)`. La cotisation
+s'écrit au jour dès la migration, mais le chargeur n'y admet que des
+1er janvier jusqu'au passage au jour : la forme ne changera plus, seule la
+contrainte se lèvera. Une tranche se nomme par son numéro, et non plus par
+l'ordre des périodes, qui n'est pas chronologique dans six régimes ; une
+lecture de la cotisation à la date d'effet prend la tranche 1, celle que la
+première période donne aujourd'hui. Les textes suivent la ligne qui ouvre le
+renvoi : six renvois sont de la cotisation (`INTERRUPTEURS`), dont le barème
+des points de la MSA. `taux_cotisation_annuels.csv`, qui date déjà les taux
+de 8 régimes année par année, reste ce qu'il est pendant le gel : le
+chargeur l'applique à la cotisation seule, et non plus à des périodes
+entières. L'y fondre est une correction ordinaire, après.
+
+**Ce que le moteur lit.** La liquidation d'une pension prend la ligne de
+liquidation en vigueur à sa date d'effet, la structure, et la ligne servie
+de la même date ; l'acquisition d'une année prend ses lignes de cotisation.
+Les lectures croisées que le relevé a trouvées se rangent toutes sous ces
+deux règles, à une autre date ou une autre année :
+
+- une règle de liquidation lue à une autre date que l'effet : l'ouverture du
+  droit (`ouvrir.js`, deux sites), le 31 mars 1983 (`tauxAcquisAu31Mars1983`,
+  qui lit 1982), le début de l'invalidité (`invalidite.js`), la durée de
+  chaque année (`dureeDeLAnnee`), l'année du départ (`departs.js`) ; la
+  proposition, qui fusionne le droit d'une année (`fusion.js`) ;
+- la structure lue à une année (`coordonner.js`, `revalorisation.js`) ;
+- un paramètre de cotisation lu à l'année d'une ligne pendant la liquidation
+  (`liquider.js`, l'assiette forfaitaire de chaque année ; `departs.js`, la
+  part cotisée), ou à la date d'effet (l'assiette du salaire de référence,
+  le barème des points de la MSA) ;
+- un montant servi lu à l'année d'acquisition : la valeur du point de la MSA,
+  qui fait le barème de ses points (R. 732-70). Le montant servi se lit
+  donc à toute date, et non seulement à la liquidation.
+
+Trois lectures ne s'y rangeaient pas ; la relecture les a tranchées. Le
+plafond de trimestres des mines s'applique sur la ligne de liquidation, et la
+boucle annuelle ne lit à l'année que de quoi savoir si l'année y est soumise
+(`acquerir.js`) : elle lira la même ligne, et ses deux champs, 120 trimestres
+et 55 ans sur les 22 périodes, restent de la liquidation sans qu'aucune
+valeur bouge. La caisse des membres du CESE pèse chaque annuité par la durée
+requise de la période qui l'a acquise, 142 trimestres jusqu'au 31 août 2004,
+149 ensuite (`annuitesAuTauxDeLeurAnnee`) : l'indicateur reste de la
+liquidation, et ce poids devient un champ de cotisation propre à la caisse,
+plutôt qu'une ligne de liquidation lue à l'année. `avantages_non_contributifs`
+reste entier à la liquidation : tout ce que le moteur en lit passe par elle,
+et les périodes assimilées, seules acquises l'année, n'ont aucun lecteur.
+
+**Le choix à l'année ne se traduit pas en date.** Aujourd'hui, une lecture à
+l'année prend la période dont les années couvrent cette année. Aucune date
+fixe de l'année ne la reproduit partout : pour les champs de la liquidation,
+le 1er janvier diffère d'elle sur 13 couples d'un régime et d'une année, le
+1er juin sur 8, le 1er décembre sur 16, dans 21 régimes en tout. L'étape 3 donne
+donc à chaque lecture à l'année la date que son texte nomme ; là où un témoin
+bouge, la session s'arrête, comme le veut la règle du gel, et le dit.
+
+**L'oracle.** Un script hors du dépôt rend, pour chaque régime, chaque
+champ, chaque année d'acquisition de 1900 à 2070 et chaque date d'effet du
+1er de chaque mois de cette plage, la valeur que le chargeur donne au moteur.
+La migration doit rendre le même, au caractère près, de l'étape 2 à
+l'étape 5. Il ne compare ni les bornes ni les notes, que la migration
+récrit. C'est un outil de vérification et non une source : il n'entre pas
+dans le dépôt, et s'est refait sur le `main` du jour où le gel a commencé
+(033e864, le 22 novembre).
+
+**L'étape 2, faite le 22 novembre.** Les 80 fichiers sont écrits en quatre
+blocs : 322 lignes de liquidation, 58 de servi, 875 de cotisation. Un script
+hors du dépôt les a migrés en recopiant le texte de chaque champ, ses
+commentaires compris. Pendant le gel, le chargeur refait les périodes que le
+moteur lit encore (`vue_ancienne`) : une par ligne de cotisation, dans l'ordre
+du fichier, avec la liquidation, le servi et la structure en vigueur au
+premier jour de sa date d'effet. C'est pourquoi la cotisation garde, pour
+l'heure, une ligne par période d'hier, même quand rien n'y change : elle se
+resserre quand la vue part. Une borne au jour d'une ligne de liquidation
+rend sa `date_effet` à la période dont l'année est la plus proche. Une ligne
+de cotisation sans `tranche` est de la tranche 1. La note d'une période est
+allée à la ligne de liquidation qui s'ouvre le même jour, sinon à sa ligne de
+cotisation : une règle de position, qui pose sur la liquidation des notes qui
+parlent de cotisation ; elles se rangent à la main quand la vue part. Refaites
+ainsi, les périodes des 80 régimes sont celles d'hier, à l'égalité près ;
+l'oracle est identique, et le paquet du site, au caractère près.
+
+**L'ordre.** Il ne change pas : la nouvelle forme devient la source et
+l'ancienne une vue fabriquée (étape 2), le moteur la lit (3), puis le
+Python, le paquet et les tests (4), la vue ancienne part (5), le passage au
+jour suit (6), puis les lots de l'étape 4 de l'action 191 (7). Rien de ce que
+la séparation remplace ne reste : `date_effet` et les périodes partent avec
+la vue ancienne, et `periodesActives` avec elles.

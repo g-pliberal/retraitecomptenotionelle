@@ -30,18 +30,16 @@ inventaire:
     - {reference: "loi du 21 mars 1928", id: null}
     - {reference: "décret n° 67-711 du 18 août 1967 fixant les conditions d'application du régime des pensions des ouvriers des établissements industriels de l'État", id: LEGIARTI000006767403}
     - {reference: "décret n° 2004-1056 du 5 octobre 2004", id: null}
-periodes:
-  - debut: 1930
-    fin: 1947
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1930-01-01
+    au: 1964-01-01
     age_ouverture: 60
     age_taux_plein: 60
     duree_requise_trimestres: 150
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.06
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs:
@@ -50,47 +48,14 @@ periodes:
       Loi du 21 mars 1928, qui crée le fonds spécial. Ouverture à 55 ans pour
       les travaux insalubres. Les paramètres d'avant le code des pensions de
       1948 ne sont pas certifiés : ce sont ceux du code, portés en arrière.
-  - debut: 1948
-    fin: 1963
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.06
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion]
-    notes: >-
-      RÉGIME ALIGNÉ SUR LE CODE DES PENSIONS, et la fiche ne l'était pas. Les
-      pensions des ouvriers des établissements industriels de l'État sont
-      calculées selon les mêmes règles que celles des fonctionnaires — deux
-      pour cent par annuité, trente-sept annuités et demie, traitement des six
-      derniers mois —, avec un fonds distinct géré par la Caisse des dépôts.
-      La fiche portait deux périodes, 1930-2003 et 2004 à aujourd'hui : la
-      seconde appliquait à un ouvrier parti en 2005 la retenue pour pension de
-      2023, 11,10 %, quand elle valait alors 7,85 %.
-      Les périodes qui suivent sont celles de la fonction publique d'État,
-      reprises une à une : 1948 (code des pensions), 1964, 2004 (loi Fillon),
-      2009, 2011, 2023. La majoration pour trois enfants y entre au passage :
-      elle est au code des pensions, elle s'applique aux ouvriers d'État, et la
-      fiche ne la portait pas.
-  - debut: 1964
-    fin: 1983
-    type_calcul: annuites
+  - du: 1964-01-01
+    au: 2004-01-01
     age_ouverture: 60
     age_taux_plein: 60
     duree_requise_trimestres: 150
     taux_plein: 0.75
     taux_maximum_bonifie: 0.80
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.06
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs:
@@ -109,168 +74,30 @@ periodes:
       reste du dépôt : trois de ces cinq marches tombent en cours d'année
       et ne commandent donc que l'année suivante. `verifier_donnees.py` le
       confronte aux fiches à chaque exécution.
-  - debut: 1984
-    fin: 1986
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.07
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Loi de finances pour 1984 (loi n° 83-1179 du 29 décembre 1983, article
-      33) : retenue portée de 6 % à 7 %. Taux lu chez OpenFisca-France ;
-      même barème par ailleurs. La période court jusqu'en 1986 comprise :
-      la hausse du 1er août 1986 ne commande que l'année suivante, le taux
-      retenu pour une année étant celui du 1er JANVIER.
-  - debut: 1987
-    fin: 1987
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.077
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      7,7 % à compter du 1er août 1986 (loi n° 86-966 du 18 août 1986,
-      article 9), lu chez OpenFisca-France, donc en vigueur au 1er janvier
-      1987 et non 1986. Cette fiche portait 7,7 % dès 1986, au motif que
-      « le millésime porte le taux en vigueur en fin d'année, comme les
-      autres séries de taux du dépôt » : c'était faux du dépôt, dont la
-      règle est le 1er janvier, et vrai seulement de la série annuelle que
-      le récupérateur d'OpenFisca tirait de ces mêmes barèmes — il comparait
-      les années et non les dates. Les deux sont corrigés ensemble ; même
-      barème par ailleurs.
-  - debut: 1988
-    fin: 1988
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.079
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      7,9 % à compter du 1er juillet 1987 (loi n° 87-516 du 10 juillet 1987,
-      article 4), lu chez OpenFisca-France, donc en vigueur au 1er janvier
-      1988 et non 1987. L'article 23 de la loi n° 89-18
-      du 13 janvier 1989, lu sur Légifrance (JORFTEXT000000321867) : « le
-      taux de la retenue prévu à l'article L. 61 […] est majoré d'un
-      point », applicable « aux traitements et soldes perçus au titre de la
-      période postérieure au 31 décembre 1988 » — 8,9 % dès le 1er janvier
-      1989, comme OpenFisca le date. La fiche s'arrêtait à la version de
-      L. 61 que LEGI date du 30 décembre 1989, et servait 7,9 % un an de
-      trop ; le contrôle de vraisemblance ne signale plus d'écart.
-  - debut: 1989
-    fin: 1991
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.089
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Code des pensions civiles et militaires de retraite du 26 décembre 1964.
-      Retenue pour pension portée à 7 %, puis 7,85 %.
-      SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
-      jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
-      LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
-      février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
-      2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
-      au décret. La baisse du 1er février 1991 ne commande donc que 1992 :
-      1991 porte encore 8,9 %, comme le régime général porte encore ses
-      15,8 % cette année-là. Compter 7 % de 1992 à 2003, c'est oublier un
-      huitième de la cotisation pendant douze ans : le scénario 1 n'en
-      dépend pas, le compte notionnel en dépend entièrement.
-  - debut: 1992
-    fin: 2003
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0785
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Code des pensions civiles et militaires de retraite du 26 décembre 1964.
-      Retenue pour pension portée à 7 %, puis 7,85 %.
-      SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
-      jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
-      LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
-      février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
-      2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
-      au décret. La baisse du 1er février 1991 ne commande donc que 1992 :
-      1991 porte encore 8,9 %, comme le régime général porte encore ses
-      15,8 % cette année-là. Compter 7 % de 1992 à 2003, c'est oublier un
-      huitième de la cotisation pendant douze ans : le scénario 1 n'en
-      dépend pas, le compte notionnel en dépend entièrement.
-  - debut: 2004
-    fin: 2008
-    type_calcul: annuites
+  - du: 2004-01-01
+    au: 2009-01-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     age_taux_plein_par_generation: age_annulation_decote
-    textes_des_renvois:
-      age_taux_plein_par_generation: {id: LEGIARTI000006781529, depuis: "2004-01-01"}
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.75
     taux_maximum_bonifie: 0.80
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0785
-    perimetre_taux: agent_seul
     bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     surcote_bareme: surcote_fonction_publique
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    textes:
+      age_taux_plein_par_generation: {id: LEGIARTI000006781529, depuis: "2004-01-01"}
     notes: >-
       Loi Fillon de 2003 : durée alignée sur le privé, décote et surcote.
       Le décret n° 2004-1056 du 5 octobre 2004 la transpose au fonds spécial.
-  - debut: 2009
-    fin: 2010
-    type_calcul: annuites
+  - du: 2009-01-01
+    au: 2011-01-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -280,9 +107,6 @@ periodes:
     taux_plein: 0.75
     taux_maximum_bonifie: 0.80
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0785
-    perimetre_taux: agent_seul
     bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -291,9 +115,8 @@ periodes:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
       La surcote passe de 0,75 % à 1,25 % par trimestre au 1er janvier 2009.
-  - debut: 2011
-    fin: 2011
-    type_calcul: annuites
+  - du: 2011-01-01
+    au: 2023-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -303,9 +126,6 @@ periodes:
     taux_plein: 0.75
     taux_maximum_bonifie: 0.80
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0812
-    perimetre_taux: agent_seul
     bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -320,227 +140,7 @@ periodes:
       l'article L. 61 est confrontée aux fiches : 8,12 % en 2011, là où la
       fiche portait 10,29 % — le taux de 2017 — sur toute la période
       2011-2022.
-  - debut: 2012
-    fin: 2012
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0839
-    perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_bareme: surcote_fonction_publique
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Retenue pour pension : 8,39 % au 1er janvier 2012, 8,49 % à compter du
-      1er novembre (série OpenFisca-France de l'article L. 61) ; même barème
-      par ailleurs.
-  - debut: 2013
-    fin: 2013
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0876
-    perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_bareme: surcote_fonction_publique
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Retenue pour pension : 8,76 % au 1er janvier 2013 (série
-      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
-  - debut: 2014
-    fin: 2014
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0914
-    perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_bareme: surcote_fonction_publique
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Retenue pour pension : 9,14 % au 1er janvier 2014 (série
-      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
-  - debut: 2015
-    fin: 2015
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0954
-    perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_bareme: surcote_fonction_publique
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Retenue pour pension : 9,54 % au 1er janvier 2015 (série
-      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
-  - debut: 2016
-    fin: 2016
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0994
-    perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_bareme: surcote_fonction_publique
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Retenue pour pension : 9,94 % au 1er janvier 2016 (série
-      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
-  - debut: 2017
-    fin: 2017
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1029
-    perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_bareme: surcote_fonction_publique
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Retenue pour pension : 10,29 % au 1er janvier 2017 (série
-      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
-  - debut: 2018
-    fin: 2018
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1056
-    perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_bareme: surcote_fonction_publique
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Retenue pour pension : 10,56 % au 1er janvier 2018 (série
-      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
-  - debut: 2019
-    fin: 2019
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1083
-    perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_bareme: surcote_fonction_publique
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      Retenue pour pension : 10,83 % au 1er janvier 2019 (série
-      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
-  - debut: 2020
-    fin: 2022
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 0.75
-    taux_maximum_bonifie: 0.80
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.111
-    perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_bareme: surcote_fonction_publique
-    avantages_non_contributifs:
-      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
-    notes: >-
-      11,10 % depuis le 1er janvier 2020, terme de l'alignement voulu par la
-      loi du 9 novembre 2010 (série OpenFisca-France de l'article L. 61) ;
-      même barème par ailleurs.
-  - debut: 2023
-    fin: null
-    type_calcul: annuites
+  - du: 2023-01-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -550,9 +150,6 @@ periodes:
     taux_plein: 0.75
     taux_maximum_bonifie: 0.80
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.111
-    perimetre_taux: agent_seul
     bareme_decote: decote_fonction_publique
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -562,3 +159,204 @@ periodes:
     notes: >-
       Loi du 14 avril 2023. `taux_cotisation_retraite` ne porte ici que la
       RETENUE SALARIALE, 11,10 % : c'est ce que dit `perimetre_taux`.
+cotisation:
+  - du: 1930-01-01
+    au: 1948-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.06
+    perimetre_taux: agent_seul
+  - du: 1948-01-01
+    au: 1964-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.06
+    perimetre_taux: agent_seul
+    notes: >-
+      RÉGIME ALIGNÉ SUR LE CODE DES PENSIONS, et la fiche ne l'était pas. Les
+      pensions des ouvriers des établissements industriels de l'État sont
+      calculées selon les mêmes règles que celles des fonctionnaires — deux
+      pour cent par annuité, trente-sept annuités et demie, traitement des six
+      derniers mois —, avec un fonds distinct géré par la Caisse des dépôts.
+      La fiche portait deux périodes, 1930-2003 et 2004 à aujourd'hui : la
+      seconde appliquait à un ouvrier parti en 2005 la retenue pour pension de
+      2023, 11,10 %, quand elle valait alors 7,85 %.
+      Les périodes qui suivent sont celles de la fonction publique d'État,
+      reprises une à une : 1948 (code des pensions), 1964, 2004 (loi Fillon),
+      2009, 2011, 2023. La majoration pour trois enfants y entre au passage :
+      elle est au code des pensions, elle s'applique aux ouvriers d'État, et la
+      fiche ne la portait pas.
+  - du: 1964-01-01
+    au: 1984-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.06
+    perimetre_taux: agent_seul
+  - du: 1984-01-01
+    au: 1987-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.07
+    perimetre_taux: agent_seul
+    notes: >-
+      Loi de finances pour 1984 (loi n° 83-1179 du 29 décembre 1983, article
+      33) : retenue portée de 6 % à 7 %. Taux lu chez OpenFisca-France ;
+      même barème par ailleurs. La période court jusqu'en 1986 comprise :
+      la hausse du 1er août 1986 ne commande que l'année suivante, le taux
+      retenu pour une année étant celui du 1er JANVIER.
+  - du: 1987-01-01
+    au: 1988-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.077
+    perimetre_taux: agent_seul
+    notes: >-
+      7,7 % à compter du 1er août 1986 (loi n° 86-966 du 18 août 1986,
+      article 9), lu chez OpenFisca-France, donc en vigueur au 1er janvier
+      1987 et non 1986. Cette fiche portait 7,7 % dès 1986, au motif que
+      « le millésime porte le taux en vigueur en fin d'année, comme les
+      autres séries de taux du dépôt » : c'était faux du dépôt, dont la
+      règle est le 1er janvier, et vrai seulement de la série annuelle que
+      le récupérateur d'OpenFisca tirait de ces mêmes barèmes — il comparait
+      les années et non les dates. Les deux sont corrigés ensemble ; même
+      barème par ailleurs.
+  - du: 1988-01-01
+    au: 1989-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.079
+    perimetre_taux: agent_seul
+    notes: >-
+      7,9 % à compter du 1er juillet 1987 (loi n° 87-516 du 10 juillet 1987,
+      article 4), lu chez OpenFisca-France, donc en vigueur au 1er janvier
+      1988 et non 1987. L'article 23 de la loi n° 89-18
+      du 13 janvier 1989, lu sur Légifrance (JORFTEXT000000321867) : « le
+      taux de la retenue prévu à l'article L. 61 […] est majoré d'un
+      point », applicable « aux traitements et soldes perçus au titre de la
+      période postérieure au 31 décembre 1988 » — 8,9 % dès le 1er janvier
+      1989, comme OpenFisca le date. La fiche s'arrêtait à la version de
+      L. 61 que LEGI date du 30 décembre 1989, et servait 7,9 % un an de
+      trop ; le contrôle de vraisemblance ne signale plus d'écart.
+  - du: 1989-01-01
+    au: 1992-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.089
+    perimetre_taux: agent_seul
+    notes: >-
+      Code des pensions civiles et militaires de retraite du 26 décembre 1964.
+      Retenue pour pension portée à 7 %, puis 7,85 %.
+      SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+      jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+      LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+      février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+      2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+      au décret. La baisse du 1er février 1991 ne commande donc que 1992 :
+      1991 porte encore 8,9 %, comme le régime général porte encore ses
+      15,8 % cette année-là. Compter 7 % de 1992 à 2003, c'est oublier un
+      huitième de la cotisation pendant douze ans : le scénario 1 n'en
+      dépend pas, le compte notionnel en dépend entièrement.
+  - du: 1992-01-01
+    au: 2004-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0785
+    perimetre_taux: agent_seul
+    notes: >-
+      Code des pensions civiles et militaires de retraite du 26 décembre 1964.
+      Retenue pour pension portée à 7 %, puis 7,85 %.
+      SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+      jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+      LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+      février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+      2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+      au décret. La baisse du 1er février 1991 ne commande donc que 1992 :
+      1991 porte encore 8,9 %, comme le régime général porte encore ses
+      15,8 % cette année-là. Compter 7 % de 1992 à 2003, c'est oublier un
+      huitième de la cotisation pendant douze ans : le scénario 1 n'en
+      dépend pas, le compte notionnel en dépend entièrement.
+  - du: 2004-01-01
+    au: 2009-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0785
+    perimetre_taux: agent_seul
+  - du: 2009-01-01
+    au: 2011-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0785
+    perimetre_taux: agent_seul
+  - du: 2011-01-01
+    au: 2012-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0812
+    perimetre_taux: agent_seul
+  - du: 2012-01-01
+    au: 2013-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0839
+    perimetre_taux: agent_seul
+    notes: >-
+      Retenue pour pension : 8,39 % au 1er janvier 2012, 8,49 % à compter du
+      1er novembre (série OpenFisca-France de l'article L. 61) ; même barème
+      par ailleurs.
+  - du: 2013-01-01
+    au: 2014-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0876
+    perimetre_taux: agent_seul
+    notes: >-
+      Retenue pour pension : 8,76 % au 1er janvier 2013 (série
+      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
+  - du: 2014-01-01
+    au: 2015-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0914
+    perimetre_taux: agent_seul
+    notes: >-
+      Retenue pour pension : 9,14 % au 1er janvier 2014 (série
+      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
+  - du: 2015-01-01
+    au: 2016-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0954
+    perimetre_taux: agent_seul
+    notes: >-
+      Retenue pour pension : 9,54 % au 1er janvier 2015 (série
+      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
+  - du: 2016-01-01
+    au: 2017-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0994
+    perimetre_taux: agent_seul
+    notes: >-
+      Retenue pour pension : 9,94 % au 1er janvier 2016 (série
+      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
+  - du: 2017-01-01
+    au: 2018-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1029
+    perimetre_taux: agent_seul
+    notes: >-
+      Retenue pour pension : 10,29 % au 1er janvier 2017 (série
+      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
+  - du: 2018-01-01
+    au: 2019-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1056
+    perimetre_taux: agent_seul
+    notes: >-
+      Retenue pour pension : 10,56 % au 1er janvier 2018 (série
+      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
+  - du: 2019-01-01
+    au: 2020-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1083
+    perimetre_taux: agent_seul
+    notes: >-
+      Retenue pour pension : 10,83 % au 1er janvier 2019 (série
+      OpenFisca-France de l'article L. 61) ; même barème par ailleurs.
+  - du: 2020-01-01
+    au: 2023-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.111
+    perimetre_taux: agent_seul
+    notes: >-
+      11,10 % depuis le 1er janvier 2020, terme de l'alignement voulu par la
+      loi du 9 novembre 2010 (série OpenFisca-France de l'article L. 61) ;
+      même barème par ailleurs.
+  - du: 2023-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.111
+    perimetre_taux: agent_seul

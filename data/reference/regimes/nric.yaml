@@ -25,10 +25,11 @@ inventaire:
             gerant_debit_tabac, micro_entrepreneur]
   textes:
     - {reference: "décret n° 2004-848 du 23 août 2004 (régime complémentaire obligatoire des industriels et commerçants)", id: null}
-periodes:
-  - debut: 2004
-    fin: 2004
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 2004-01-01
+    au: 2005-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 160
@@ -40,13 +41,6 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_3_pass
-    assiette_annee_de_revenu: {commercant: 2, gerant_debit_tabac: 2}
-    # Le commerçant qui commence, 18 puis 27 bases mensuelles, définitives jusqu'en 2008 : fiche `assiette_rco_independants`.
-    assiette_de_debut_en_bases_mensuelles: {commercant: [18, 27], gerant_debit_tabac: [18, 27]}
-    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
-    points_invalidite: {par: mois, proportionnels: false, forfait: 2}
-    taux_cotisation_retraite: 0.0400
     notes: >-
       D. 635-10, état du 24 août 2004 : 3,5 % au premier semestre et 4,5 % au second, soit 4 % sur l'année — la convention du dépôt étant un taux annuel, c'est la moyenne des deux semestres qui est portée.
       LE RÉGIME ACCUMULE DE VRAIS POINTS, lui aussi, depuis que les barèmes
@@ -56,9 +50,8 @@ periodes:
       À LA FUSION DE 2013 ses points sont repris UN POUR UN : le point du
       RCI est celui du commerçant — c'est lui qui sert de dénominateur au
       coefficient appliqué aux artisans.
-  - debut: 2005
-    fin: 2008
-    type_calcul: points
+  - du: 2005-01-01
+    au: 2013-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 160
@@ -71,6 +64,20 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
+    notes: >-
+      D. 635-10, état du 26 mars 2005 : 6,5 % dans la limite de trois fois le plafond, inchangé jusqu'à la fusion dans le RCI.
+cotisation:
+  - du: 2004-01-01
+    au: 2005-01-01
+    assiette: plafonnee_3_pass
+    assiette_annee_de_revenu: {commercant: 2, gerant_debit_tabac: 2}
+    # Le commerçant qui commence, 18 puis 27 bases mensuelles, définitives jusqu'en 2008 : fiche `assiette_rco_independants`.
+    assiette_de_debut_en_bases_mensuelles: {commercant: [18, 27], gerant_debit_tabac: [18, 27]}
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: mois, proportionnels: false, forfait: 2}
+    taux_cotisation_retraite: 0.0400
+  - du: 2005-01-01
+    au: 2009-01-01
     assiette: plafonnee_3_pass
     # Le conjoint à l'option, sur l'avant-dernière année, de 2007 à 2012 : fiche `assiette_rco_independants`.
     assiette_annee_de_revenu: {commercant: 2, conjoint_collaborateur_commercant: 2, gerant_debit_tabac: 2}
@@ -79,23 +86,8 @@ periodes:
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: mois, proportionnels: false, forfait: 2}
     taux_cotisation_retraite: 0.0650
-    notes: >-
-      D. 635-10, état du 26 mars 2005 : 6,5 % dans la limite de trois fois le plafond, inchangé jusqu'à la fusion dans le RCI.
-  - debut: 2009
-    fin: 2012
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2009-01-01
+    au: 2013-01-01
     assiette: plafonnee_3_pass
     assiette_annee_de_revenu: {conjoint_collaborateur_commercant: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.

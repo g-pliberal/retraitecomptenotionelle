@@ -44,10 +44,10 @@ from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
-import yaml
 
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
+from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 MAJORATION = "majoration_enfants_agirc_arrco"
 ANTICIPATION = "coefficients_anticipation_agirc_arrco"
@@ -163,8 +163,7 @@ def _annees_de_service(version: dict) -> range:
 
 @functools.cache
 def _periodes_du_regime(code: str) -> tuple[dict, ...]:
-    return tuple(yaml.safe_load((REFERENCE / "regimes" / f"{code}.yaml")
-                                .read_text(encoding="utf-8"))["periodes"])
+    return tuple(lire_fiche_de_regime(REFERENCE / "regimes" / f"{code}.yaml")["periodes"])
 
 
 def _periodes(code: str, annee: int) -> list[dict]:

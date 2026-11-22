@@ -31,18 +31,16 @@ inventaire:
     deux plafonds nationaux, la borne la plus proche du catalogue ; le
     barème de 2026 est projeté sur toute la période, depuis la délibération
     de 1995 qui institue la tranche.
-periodes:
-  - debut: 1995
-    fin: 2019
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1995-01-01
+    au: 2020-01-01
     age_ouverture: 60
     age_taux_plein: 60
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: tranche_1_2_pass
-    taux_cotisation_retraite: 0.1743
-    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -64,17 +62,13 @@ periodes:
       `estimee`. AVANT 2020, l'âge de la tranche B n'est pas lu : la
       fiche lui prête celui de la tranche A, 60 ans, au lieu des 62 ans
       qu'elle portait.
-  - debut: 2020
-    fin: 2020
-    type_calcul: points
+  - du: 2020-01-01
+    au: 2021-01-01
     age_ouverture: 60.5
     age_taux_plein: 60.5
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: tranche_1_2_pass
-    taux_cotisation_retraite: 0.1743
-    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -99,17 +93,13 @@ periodes:
       réforme adoptée par la LP n° 2019-6 » (même rapport, § 3.5.2) — 60
       ans et 6 mois en 2020, 61 ans en 2021, 61 ans et 6 mois en 2022,
       62 ans depuis 2023. La fiche portait 62 ans depuis 1995.
-  - debut: 2021
-    fin: 2021
-    type_calcul: points
+  - du: 2021-01-01
+    au: 2022-01-01
     age_ouverture: 61
     age_taux_plein: 61
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: tranche_1_2_pass
-    taux_cotisation_retraite: 0.1743
-    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -134,17 +124,13 @@ periodes:
       réforme adoptée par la LP n° 2019-6 » (même rapport, § 3.5.2) — 60
       ans et 6 mois en 2020, 61 ans en 2021, 61 ans et 6 mois en 2022,
       62 ans depuis 2023. La fiche portait 62 ans depuis 1995.
-  - debut: 2022
-    fin: 2022
-    type_calcul: points
+  - du: 2022-01-01
+    au: 2023-01-01
     age_ouverture: 61.5
     age_taux_plein: 61.5
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: tranche_1_2_pass
-    taux_cotisation_retraite: 0.1743
-    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -169,17 +155,12 @@ periodes:
       réforme adoptée par la LP n° 2019-6 » (même rapport, § 3.5.2) — 60
       ans et 6 mois en 2020, 61 ans en 2021, 61 ans et 6 mois en 2022,
       62 ans depuis 2023. La fiche portait 62 ans depuis 1995.
-  - debut: 2023
-    fin: null
-    type_calcul: points
+  - du: 2023-01-01
     age_ouverture: 62
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: tranche_1_2_pass
-    taux_cotisation_retraite: 0.1743
-    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -204,3 +185,28 @@ periodes:
       réforme adoptée par la LP n° 2019-6 » (même rapport, § 3.5.2) — 60
       ans et 6 mois en 2020, 61 ans en 2021, 61 ans et 6 mois en 2022,
       62 ans depuis 2023. La fiche portait 62 ans depuis 1995.
+cotisation:
+  - du: 1995-01-01
+    au: 2020-01-01
+    assiette: tranche_1_2_pass
+    taux_cotisation_retraite: 0.1743
+    part_salariale: 0.3333
+  - du: 2020-01-01
+    au: 2021-01-01
+    assiette: tranche_1_2_pass
+    taux_cotisation_retraite: 0.1743
+    part_salariale: 0.3333
+  - du: 2021-01-01
+    au: 2022-01-01
+    assiette: tranche_1_2_pass
+    taux_cotisation_retraite: 0.1743
+    part_salariale: 0.3333
+  - du: 2022-01-01
+    au: 2023-01-01
+    assiette: tranche_1_2_pass
+    taux_cotisation_retraite: 0.1743
+    part_salariale: 0.3333
+  - du: 2023-01-01
+    assiette: tranche_1_2_pass
+    taux_cotisation_retraite: 0.1743
+    part_salariale: 0.3333

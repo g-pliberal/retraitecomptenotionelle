@@ -38,7 +38,7 @@ from pathlib import Path
 import yaml
 
 from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.donnees.regimes import FICHIERS_HORS_REGIMES
+from retraite_notionnelle.donnees.regimes import FICHIERS_HORS_REGIMES, lire_fiche_de_regime
 
 RACINE = Path(__file__).resolve().parents[1]
 #: Ce qui définit un nom dans le moteur — une fonction, une classe, une
@@ -147,7 +147,7 @@ def _ecarts_des_regimes(fiche: dict, regimes: list[str], nommes: set[str]) -> li
         if not chemin.is_file():
             sortie.append(f"{nom}, parametres : regimes/{regime}.yaml n'existe pas")
             continue
-        donnee = yaml.safe_load(chemin.read_text(encoding="utf-8"))
+        donnee = lire_fiche_de_regime(chemin)
         champs |= {cle for periode in donnee.get("periodes") or [] for cle in periode}
     sortie += [f"{nom}, parametres : aucune période de {', '.join(regimes)} ne porte {cle}"
                for cle in sorted(nommes - champs)]

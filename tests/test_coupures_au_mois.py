@@ -34,6 +34,7 @@ import yaml
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
+from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 from facade import Carriere, Simulateur, commun
 
@@ -223,8 +224,7 @@ def test_le_chargeur_refuse_une_date_d_effet_mal_ecrite(tmp_path, bornes, messag
     dossier.mkdir(parents=True)
     shutil.copytree(source / "regles", tmp_path / "reference" / "regles")
     shutil.copy(source / "regimes" / "_schema.yaml", dossier / "_schema.yaml")
-    regime = yaml.safe_load((source / "regimes" / "regime_general.yaml").read_text(
-        encoding="utf-8"))
+    regime = lire_fiche_de_regime(source / "regimes" / "regime_general.yaml")
     for periode in regime["periodes"]:
         if periode["debut"] == 1983:
             periode["date_effet"] = bornes

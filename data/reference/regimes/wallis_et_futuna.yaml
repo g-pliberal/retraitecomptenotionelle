@@ -43,18 +43,15 @@ inventaire:
     années, et sa création en 1977 (IEOM, rapport 2004). Non lus : le
     plafond, la date d'effet de la réforme de 2015, la réforme en
     préparation (65 ans).
-periodes:
-  - debut: 1975
-    fin: 2008
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1975-01-01
     age_ouverture: 60
     age_taux_plein: 60
     duree_requise_trimestres: 120
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0900
-    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -82,20 +79,17 @@ periodes:
       quinze, 65 % au plus, à 55 ans avec quinze annuités (p. 64 et 65)
       —, n'est pas porté : celui de 2009 est projeté en arrière, niveau
       `estimee`, et la création reste à 1975.
-  - debut: 2009
-    fin: 2009
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+cotisation:
+  - du: 1975-01-01
+    au: 2009-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0900
+    part_salariale: 0.3333
+  - du: 2009-01-01
+    au: 2010-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1110
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -116,20 +110,11 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2010
-    fin: 2010
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2010-01-01
+    au: 2011-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1200
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -150,20 +135,11 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2011
-    fin: 2011
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2011-01-01
+    au: 2012-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1290
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -184,20 +160,11 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2012
-    fin: 2012
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2012-01-01
+    au: 2013-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1380
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -218,20 +185,11 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2013
-    fin: 2013
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2013-01-01
+    au: 2014-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1470
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -252,20 +210,11 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2014
-    fin: 2014
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2014-01-01
+    au: 2015-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1560
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -286,20 +235,11 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2015
-    fin: 2015
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2015-01-01
+    au: 2016-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1650
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -320,20 +260,11 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2016
-    fin: 2016
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2016-01-01
+    au: 2017-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1740
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -354,20 +285,11 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2017
-    fin: 2017
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2017-01-01
+    au: 2018-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1830
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -388,20 +310,11 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2018
-    fin: 2018
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2018-01-01
+    au: 2019-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1920
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -422,20 +335,11 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2019
-    fin: 2019
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2019-01-01
+    au: 2020-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.2010
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
@@ -456,20 +360,10 @@ periodes:
       points de prestations familiales (« les taux de cotisations
       augmentent annuellement », page des taux de la CPSWF ; Cour des
       comptes, S2022-2223, 2022, p. 33).
-  - debut: 2020
-    fin: null
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.585
-    salaire_reference: 10_meilleures_annees
+  - du: 2020-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.2100
     part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : site de la Caisse des prestations sociales des îles Wallis
       et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation

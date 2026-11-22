@@ -24,10 +24,11 @@ inventaire:
   statuts: [artisan, conjoint_collaborateur_artisan]
   textes:
     - {reference: "décret n° 78-351 du 14 mars 1978 (régime complémentaire obligatoire d'assurance vieillesse des artisans)", id: null}
-periodes:
-  - debut: 1979
-    fin: 1984
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1979-01-01
+    au: 2008-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 160
@@ -39,12 +40,6 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_3_pass
-    assiette_annee_de_revenu: {artisan: 2}
-    assiette_de_debut: {artisan: [3, 2]}
-    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
-    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
-    taux_cotisation_retraite: 0.0440
     notes: >-
       4,40 %, taux de l'article 5 du décret n° 78-351 du 14 mars 1978 qui institue le régime, lu dans l'index LEGI le 3 novembre 2026 (LEGIARTI000006766105, rédaction du 19 mars 1978 au 1er janvier 1985) : « Le taux de la cotisation annuelle d'assurance vieillesse complémentaire est fixé à 4,40 p. 100 du revenu visé aux articles 3 et 4 ». Les autres textes qui touchent au régime sur la période ne changent pas ce taux : le décret n° 81-407 du 23 avril 1981, qui répartit les biens de l'organisation autonome et fixe le versement du complémentaire au régime de base, le décret n° 84-1064 du 30 novembre 1984, qui ajoute la cotisation additionnelle de 0,10 % à compter du 1er janvier 1985, et la codification de décembre 1985. Le décret fondateur date les cotisations du 1er janvier 1979 (art. 12), d'où le début de cette période. L'assiette, l'avant-dernière année et les forfaits de début : fiche `assiette_rco_independants`.
       LE RÉGIME ACCUMULE DE VRAIS POINTS DEPUIS QUE SON BARÈME EST VERSÉ.
@@ -62,9 +57,8 @@ periodes:
       valeur plus basse que les autres — 4,5 % d'écart —, mais son règlement
       ne retient qu'un coefficient pour tous les millésimes, et le dépôt
       applique la règle telle qu'elle est écrite.
-  - debut: 1985
-    fin: 1996
-    type_calcul: points
+  - du: 2008-01-01
+    au: 2013-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 160
@@ -72,10 +66,24 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein_par_generation: age_annulation_decote
     decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
+    notes: >-
+      D. 635-7, état du 1er janvier 2008 : le taux se découpe en deux tranches, 7,2 % sous un plafond que l'article fixe à 33 276 € pour 2008 — c'est exactement le plafond de la Sécurité sociale de cette année-là, d'où la borne d'un plafond —, et 7,6 % au-delà. Mais le décret n° 2007-1900 du 26 décembre 2007, qui écrit cet état, fixe dans le même article 1er, « par dérogation aux dispositions du I », le taux de la première tranche « à 7 % au titre de l'année 2008 et à 7,1 % au titre de l'année 2009 » (III), et celui de la seconde « à 7 % au titre de l'année 2008 et à 7,5 % au titre de l'année 2009 » (IV) ; lu au JORF du 30 décembre 2007 (JORFARTI000017765872). Première tranche en 2008 : 7 %, ce que porte la table des taux de la caisse (`ti_cotisation_taux_cotisation_bar.aspx`).
+cotisation:
+  - du: 1979-01-01
+    au: 1985-01-01
+    assiette: plafonnee_3_pass
+    assiette_annee_de_revenu: {artisan: 2}
+    assiette_de_debut: {artisan: [3, 2]}
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
+    taux_cotisation_retraite: 0.0440
+  - du: 1985-01-01
+    au: 1997-01-01
     assiette: plafonnee_3_pass
     assiette_annee_de_revenu: {artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
@@ -86,20 +94,8 @@ periodes:
     taux_calcul_points: 0.0440
     notes: >-
       D. 635-6, état du 21 décembre 1985 : 4,40 %, plus une cotisation additionnelle de 0,10 % due à compter du 1er janvier 1985. Cette additionnelle est datée par son propre texte, le décret n° 84-1064 du 30 novembre 1984 — « INSTITUTION D'UNE COTISATION ADDITIONNELLE FIXEE A 0,10% DU REVENU », applicable au 1er janvier 1985 —, que l'article 5 du décret n° 78-351 écrit dans sa rédaction du 1er janvier 1985 (LEGIARTI000006766106). Elle n'achète pas de points : l'article 6 les tire de « la cotisation prévue à l'article 5-I, 1er alinéa » (LEGIARTI000006766108), D. 635-7 de « la cotisation prévue au premier alinéa de l'article D. 635-6 » (LEGIARTI000006738024), et la caisse le dit : « Cette cotisation n'etait pas génératrice de droit » (exposé « Points cotisés artisans avant 2013 ») ; d'où le taux de calcul des points, 4,40 %. Assiette : trois fois le plafond (D. 635-4).
-  - debut: 1997
-    fin: 1997
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 1997-01-01
+    au: 1998-01-01
     assiette: plafonnee_4_pass
     assiette_annee_de_revenu: {artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
@@ -108,20 +104,8 @@ periodes:
     taux_cotisation_retraite: 0.0490
     notes: >-
       D. 635-6, état du 26 février 1997, qui échelonne quatre hausses. Assiette : quatre fois le plafond, et non plus trois — D. 635-4 dans sa rédaction du 26 février 1997 (LEGIARTI000006738337), qu'écrit l'article 1er du décret n° 97-166 du 24 février 1997 : « les mots "trois fois" sont remplacés par les mots "quatre fois" », pour la cotisation annuelle, au plafond « en vigueur dans l'année où la cotisation est due » ; lu au JORF du 26 février 1997 (JORFARTI000001797721). La table de l'assiette maximale de la caisse (`ti_cotisation_assiette_maximale_cotisation.pdf`) porte 658 560 F pour 1997, quatre plafonds de 164 640 F.
-  - debut: 1998
-    fin: 1998
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 1998-01-01
+    au: 1999-01-01
     assiette: plafonnee_4_pass
     assiette_annee_de_revenu: {artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
@@ -130,20 +114,8 @@ periodes:
     taux_cotisation_retraite: 0.0530
     notes: >-
       D. 635-6, même état ; assiette de quatre plafonds de la sécurité sociale (D. 635-4, rédaction du 26 février 1997).
-  - debut: 1999
-    fin: 1999
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 1999-01-01
+    au: 2000-01-01
     assiette: plafonnee_4_pass
     assiette_annee_de_revenu: {artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
@@ -152,20 +124,8 @@ periodes:
     taux_cotisation_retraite: 0.0570
     notes: >-
       D. 635-6, même état ; assiette de quatre plafonds de la sécurité sociale (D. 635-4, rédaction du 26 février 1997).
-  - debut: 2000
-    fin: 2002
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2000-01-01
+    au: 2003-01-01
     assiette: plafonnee_4_pass
     assiette_annee_de_revenu: {artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
@@ -174,20 +134,8 @@ periodes:
     taux_cotisation_retraite: 0.0600
     notes: >-
       D. 635-6, même état ; assiette de quatre plafonds de la sécurité sociale (D. 635-4, rédaction du 26 février 1997).
-  - debut: 2003
-    fin: 2003
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2003-01-01
+    au: 2004-01-01
     assiette: plafonnee_4_pass
     assiette_annee_de_revenu: {artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
@@ -196,20 +144,8 @@ periodes:
     taux_cotisation_retraite: 0.0620
     notes: >-
       D. 635-6, état du 29 octobre 2003, qui échelonne 2003, 2004 et 2005 ; assiette de quatre plafonds de la sécurité sociale (D. 635-4, rédaction du 1er mai 2002, qui garde les quatre fois).
-  - debut: 2004
-    fin: 2004
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2004-01-01
+    au: 2005-01-01
     assiette: plafonnee_4_pass
     assiette_annee_de_revenu: {artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
@@ -218,20 +154,8 @@ periodes:
     taux_cotisation_retraite: 0.0670
     notes: >-
       D. 635-6, même état ; assiette de quatre plafonds (D. 635-4).
-  - debut: 2005
-    fin: 2007
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2005-01-01
+    au: 2008-01-01
     assiette: plafonnee_4_pass
     # Le conjoint à l'option, sur l'avant-dernière année, de 2007 à 2012 : fiche `assiette_rco_independants`.
     assiette_annee_de_revenu: {artisan: 2, conjoint_collaborateur_artisan: 2}
@@ -241,65 +165,25 @@ periodes:
     taux_cotisation_retraite: 0.0700
     notes: >-
       D. 635-7, état du 24 août 2004 : 7 %, « dans une limite égale à quatre fois le plafond » — l'assiette que D. 635-4 portait depuis 1997, et que l'article reprend.
-  - debut: 2008
-    fin: 2008
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2008-01-01
+    au: 2009-01-01
     assiette: plafonnee
     assiette_annee_de_revenu: {artisan: 2, conjoint_collaborateur_artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0700
-    notes: >-
-      D. 635-7, état du 1er janvier 2008 : le taux se découpe en deux tranches, 7,2 % sous un plafond que l'article fixe à 33 276 € pour 2008 — c'est exactement le plafond de la Sécurité sociale de cette année-là, d'où la borne d'un plafond —, et 7,6 % au-delà. Mais le décret n° 2007-1900 du 26 décembre 2007, qui écrit cet état, fixe dans le même article 1er, « par dérogation aux dispositions du I », le taux de la première tranche « à 7 % au titre de l'année 2008 et à 7,1 % au titre de l'année 2009 » (III), et celui de la seconde « à 7 % au titre de l'année 2008 et à 7,5 % au titre de l'année 2009 » (IV) ; lu au JORF du 30 décembre 2007 (JORFARTI000017765872). Première tranche en 2008 : 7 %, ce que porte la table des taux de la caisse (`ti_cotisation_taux_cotisation_bar.aspx`).
-  - debut: 2008
-    fin: 2008
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2008-01-01
+    au: 2009-01-01
+    tranche: 2
     assiette: tranche_1_4_pass
     assiette_annee_de_revenu: {artisan: 2, conjoint_collaborateur_artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
     taux_cotisation_retraite: 0.0700
     notes: >-
       Même dérogation (article 1er, IV, du décret n° 2007-1900) : seconde tranche, 7 % au titre de 2008, au-delà du plafond et jusqu'à quatre fois celui-ci.
-  - debut: 2009
-    fin: 2009
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2009-01-01
+    au: 2010-01-01
     assiette: plafonnee
     assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
@@ -307,41 +191,16 @@ periodes:
     taux_cotisation_retraite: 0.0710
     notes: >-
       Même dérogation (article 1er, III, du décret n° 2007-1900) : première tranche, 7,1 % au titre de 2009. Le plafond de cette tranche, D. 635-7 l'indexe après 2008 « sur la dernière valeur du revenu de référence », dans la limite des prix hors tabac de l'année précédente : la fiche le prend pour celui de la sécurité sociale, qu'aucune table de la caisse lue ne donne avant 2013.
-  - debut: 2009
-    fin: 2009
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2009-01-01
+    au: 2010-01-01
+    tranche: 2
     assiette: tranche_1_4_pass
     assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     taux_cotisation_retraite: 0.0750
     notes: >-
       Même dérogation (article 1er, IV) : seconde tranche, 7,5 % au titre de 2009.
-  - debut: 2010
-    fin: 2011
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2010-01-01
+    au: 2012-01-01
     assiette: plafonnee
     assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
@@ -349,41 +208,16 @@ periodes:
     taux_cotisation_retraite: 0.0720
     notes: >-
       D. 635-7, état du 1er janvier 2008, la dérogation éteinte : première tranche, 7,2 %. Le plafond de cette tranche, D. 635-7 l'indexe après 2008 « sur la dernière valeur du revenu de référence », dans la limite des prix hors tabac de l'année précédente : la fiche le prend pour celui de la sécurité sociale, qu'aucune table de la caisse lue ne donne avant 2013.
-  - debut: 2010
-    fin: 2011
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2010-01-01
+    au: 2012-01-01
+    tranche: 2
     assiette: tranche_1_4_pass
     assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     taux_cotisation_retraite: 0.0760
     notes: >-
       D. 635-7, même état : seconde tranche, 7,6 % au-delà du plafond et jusqu'à quatre fois celui-ci.
-  - debut: 2012
-    fin: 2012
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2012-01-01
+    au: 2013-01-01
     assiette: plafonnee
     assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
@@ -391,21 +225,9 @@ periodes:
     taux_cotisation_retraite: 0.0720
     notes: >-
       D. 635-7, rédaction du 1er janvier 2012 (LEGIARTI000025091410) : la première tranche, 7,2 %, sans les deux forfaits de début d'activité, que le décret n° 2011-2038 du 29 décembre 2011 supprime (article 3, II, 1°, JORFARTI000025055800) au 1er janvier 2012 (article 4). Le plafond de la tranche, celui de la sécurité sociale, comme de 2009 à 2011.
-  - debut: 2012
-    fin: 2012
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 1.0
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2012-01-01
+    au: 2013-01-01
+    tranche: 2
     assiette: tranche_1_4_pass
     assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     taux_cotisation_retraite: 0.0760

@@ -41,10 +41,11 @@ inventaire:
     capitalisation par classes n'est pas chiffré. La valeur de service des
     nés jusqu'en 1955 n'est pas affectée du coefficient de 0,96 ou de
     0,96/0,98 (fiche `cavp_minoration_deux_pentes`, point non tranché).
-periodes:
-  - debut: 1949
-    fin: 1977
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1949-01-01
+    au: 2009-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -53,13 +54,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: sans_objet
-    taux_cotisation_retraite: 0.0
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    cotisation_forfaitaire_euros: 6880.00
-    cotisation_forfaitaire_annee: 2024
     notes: >-
       DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
       (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
@@ -83,64 +80,8 @@ periodes:
       MILLÉSIME EST PUBLIÉ ICI AUSSI : le forfait de 2024, reconduit en
       euros constants vers l'amont — soixante-quinze ans depuis un seul
       chiffre, et la fiche ne vaut pas mieux que cela.
-  - debut: 1978
-    fin: 1986
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: sans_objet
-    taux_cotisation_retraite: 0.0
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    cotisation_forfaitaire_euros: 6880.00
-    cotisation_forfaitaire_annee: 2024
-    notes: >-
-      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
-      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
-      cotisation de référence est fixée chaque année par le conseil
-      d'administration puis, depuis 2009, par décret : le forfait de la
-      fiche, indexé sur les prix, en tient lieu. 1978-1986
-      (LEGIARTI000006770075) : OPTION entre les classes 1, 3, 5, 7 et 9,
-      de quatre à douze fois la cotisation de référence, classe 1 d'office
-      ; classes 2 et 4 maintenues à titre transitoire pour les options
-      d'avant 1974.
-  - debut: 1987
-    fin: 2008
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: sans_objet
-    taux_cotisation_retraite: 0.0
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    cotisation_forfaitaire_euros: 6880.00
-    cotisation_forfaitaire_annee: 2024
-    notes: >-
-      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
-      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
-      cotisation de référence est fixée chaque année par le conseil
-      d'administration puis, depuis 2009, par décret : le forfait de la
-      fiche, indexé sur les prix, en tient lieu. 1987-2008
-      (LEGIARTI000006770076, puis LEGIARTI000006770077 en 1989 et
-      LEGIARTI000006770078 en 2002, euro) : sept classes 1, 3, 5, 7, 9, 11
-      et 13, de cinq à dix-sept fois la cotisation de référence.
-  - debut: 2009
-    fin: 2011
-    type_calcul: points
+  - du: 2009-01-01
+    au: 2012-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -150,15 +91,11 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: sans_objet
-    taux_cotisation_retraite: 0.0
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavp_minoration_deux_pentes
     surcote_par_trimestre: null
     effet_au_trimestre_civil: [2009-06-07, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
-    cotisation_forfaitaire_euros: 6880.00
-    cotisation_forfaitaire_annee: 2024
     notes: >-
       DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
       (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
@@ -186,9 +123,8 @@ periodes:
       régime de base, que la durée annule. Article 17 : « une bonification
       d'un dixième pour tout allocataire ayant eu au moins trois enfants »
       : `majoration_enfants`. Lu le 23 septembre 2026 (action 89).
-  - debut: 2012
-    fin: 2014
-    type_calcul: points
+  - du: 2012-01-01
+    au: 2024-01-10
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -198,8 +134,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: sans_objet
-    taux_cotisation_retraite: 0.0
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavp_minoration_deux_pentes
     decote_palier_age: 65
@@ -209,8 +143,6 @@ periodes:
     surcote_trimestres_maximum: 12
     effet_au_trimestre_civil: [2009-06-07, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
-    cotisation_forfaitaire_euros: 6880.00
-    cotisation_forfaitaire_annee: 2024
     notes: >-
       DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
       (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
@@ -253,9 +185,7 @@ periodes:
       règlement de 2026 écrit en affectant la valeur de service des autres
       générations de 0,96 et de 0,96/0,98 : non porté, le rendement de la
       fiche étant calé sur les générations d'aujourd'hui.
-  - debut: 2015
-    fin: 2019
-    type_calcul: points
+  - du: 2024-01-10
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -265,17 +195,84 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: sans_objet
-    taux_cotisation_retraite: 0.0
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavp_minoration_deux_pentes
     decote_palier_age: 65
     decote_par_trimestre_apres_palier: 0.005
+    carriere_longue_minoree_jusqu_au_palier: true
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
     effet_au_trimestre_civil: [2009-06-07, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      2024-2025 : les paramètres de 2020. La période ne s'en sépare que par
+      la carrière longue, pour les pensions qui prennent effet depuis le
+      10 janvier 2024 (`date_effet`) : l'arrêté du 19 décembre 2023, publié
+      le 9 janvier 2024 sans date d'effet propre (JORFARTI000048880592,
+      annexe, II, 6°), récrit l'article 15 des statuts — « Par dérogation,
+      en cas de liquidation anticipée dans les conditions prévues au II de
+      l'article L. 643-3, sa pension de retraite complémentaire est
+      affectée d'un coefficient de minoration égal à - 1,25 % par trimestre
+      manquant jusqu'à l'âge de 65 ans. » La carrière longue ne reçoit que
+      la première pente, de son âge à 65 ans, sans la seconde ni la limite
+      de vingt trimestres (`carriere_longue_minoree_jusqu_au_palier`) :
+      15 % à 62 ans, 35 % à 58 ans. Jusqu'au 14 novembre 2026, la fiche lui
+      opposait les deux pentes. Voir la période de 2020.
+cotisation:
+  - du: 1949-01-01
+    au: 1978-01-01
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+  - du: 1978-01-01
+    au: 1987-01-01
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+      cotisation de référence est fixée chaque année par le conseil
+      d'administration puis, depuis 2009, par décret : le forfait de la
+      fiche, indexé sur les prix, en tient lieu. 1978-1986
+      (LEGIARTI000006770075) : OPTION entre les classes 1, 3, 5, 7 et 9,
+      de quatre à douze fois la cotisation de référence, classe 1 d'office
+      ; classes 2 et 4 maintenues à titre transitoire pour les options
+      d'avant 1974.
+  - du: 1987-01-01
+    au: 2009-01-01
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+      (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+      cotisation de référence est fixée chaque année par le conseil
+      d'administration puis, depuis 2009, par décret : le forfait de la
+      fiche, indexé sur les prix, en tient lieu. 1987-2008
+      (LEGIARTI000006770076, puis LEGIARTI000006770077 en 1989 et
+      LEGIARTI000006770078 en 2002, euro) : sept classes 1, 3, 5, 7, 9, 11
+      et 13, de cinq à dix-sept fois la cotisation de référence.
+  - du: 2009-01-01
+    au: 2012-01-01
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+  - du: 2012-01-01
+    au: 2015-01-01
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+  - du: 2015-01-01
+    au: 2020-01-01
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
     cotisation_forfaitaire_euros: 6880.00
     cotisation_forfaitaire_annee: 2024
     notes: >-
@@ -304,30 +301,10 @@ periodes:
       ans, reçoivent ici trois ans, et celles d'avant juillet 1951, qui
       n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
       Servie à partir de 2012.
-  - debut: 2020
-    fin: 2023
-    date_effet: [2020-01-01, 2024-01-10]
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cavp
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2020-01-01
+    au: 2024-01-01
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavp_minoration_deux_pentes
-    decote_palier_age: 65
-    decote_par_trimestre_apres_palier: 0.005
-    surcote_par_trimestre: 0.005
-    surcote_points: surcote_par_age_seul
-    surcote_trimestres_maximum: 12
-    effet_au_trimestre_civil: [2009-06-07, null]
-    avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
     cotisation_forfaitaire_annee: 2024
     notes: >-
@@ -366,71 +343,15 @@ periodes:
       ans, reçoivent ici trois ans, et celles d'avant juillet 1951, qui
       n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
       Servie à partir de 2012.
-  - debut: 2024
-    fin: 2025
-    date_effet: [2024-01-10, 2026-01-01]
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cavp
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2024-01-01
+    au: 2026-01-01
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavp_minoration_deux_pentes
-    decote_palier_age: 65
-    decote_par_trimestre_apres_palier: 0.005
-    carriere_longue_minoree_jusqu_au_palier: true
-    surcote_par_trimestre: 0.005
-    surcote_points: surcote_par_age_seul
-    surcote_trimestres_maximum: 12
-    effet_au_trimestre_civil: [2009-06-07, null]
-    avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
     cotisation_forfaitaire_annee: 2024
-    notes: >-
-      2024-2025 : les paramètres de 2020. La période ne s'en sépare que par
-      la carrière longue, pour les pensions qui prennent effet depuis le
-      10 janvier 2024 (`date_effet`) : l'arrêté du 19 décembre 2023, publié
-      le 9 janvier 2024 sans date d'effet propre (JORFARTI000048880592,
-      annexe, II, 6°), récrit l'article 15 des statuts — « Par dérogation,
-      en cas de liquidation anticipée dans les conditions prévues au II de
-      l'article L. 643-3, sa pension de retraite complémentaire est
-      affectée d'un coefficient de minoration égal à - 1,25 % par trimestre
-      manquant jusqu'à l'âge de 65 ans. » La carrière longue ne reçoit que
-      la première pente, de son âge à 65 ans, sans la seconde ni la limite
-      de vingt trimestres (`carriere_longue_minoree_jusqu_au_palier`) :
-      15 % à 62 ans, 35 % à 58 ans. Jusqu'au 14 novembre 2026, la fiche lui
-      opposait les deux pentes. Voir la période de 2020.
-  - debut: 2026
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cavp
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2026-01-01
     assiette: sans_objet
     taux_cotisation_retraite: 0.0
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavp_minoration_deux_pentes
-    decote_palier_age: 65
-    decote_par_trimestre_apres_palier: 0.005
-    carriere_longue_minoree_jusqu_au_palier: true
-    surcote_par_trimestre: 0.005
-    surcote_points: surcote_par_age_seul
-    surcote_trimestres_maximum: 12
-    effet_au_trimestre_civil: [2009-06-07, null]
-    avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 7657.00
     cotisation_forfaitaire_annee: 2026
     notes: >-

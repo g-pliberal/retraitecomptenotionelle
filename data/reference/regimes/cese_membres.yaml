@@ -39,10 +39,11 @@ inventaire:
     contribution du Conseil ne l'est pas ; l'assiette de référence de 2,06
     fois la rémunération et le plafond des trois quarts sont écrits comme
     un taux plein de 154,5 % de l'indemnité.
-periodes:
-  - debut: 1957
-    fin: 2004
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1957-01-01
+    au: 2005-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
@@ -51,9 +52,6 @@ periodes:
     duree_requise_trimestres: 142
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1303
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -82,9 +80,8 @@ periodes:
       31/8/2004 » (art. 17), soit 4,35 % de la rémunération par annuité,
       35,5 annuités pour le maximum ; retenue 3,42 × 7,85 % / 2,06 = 26,85
       %.
-  - debut: 2005
-    fin: 2010
-    type_calcul: annuites
+  - du: 2005-01-01
+    au: 2011-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
@@ -93,9 +90,6 @@ periodes:
     duree_requise_trimestres: 149
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1303
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -123,9 +117,8 @@ periodes:
       général et de l'Ircantec. « 2,02 % pour tout mandat effectué du
       1/9/2004 au 30/9/2010 » : 4,16 % par annuité, 37,1 annuités ;
       retenue 3,42 × 7,85 % / 2,06.
-  - debut: 2011
-    fin: 2011
-    type_calcul: annuites
+  - du: 2011-01-01
+    au: 2012-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
@@ -134,9 +127,6 @@ periodes:
     duree_requise_trimestres: 154
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1368
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -164,9 +154,8 @@ periodes:
       général et de l'Ircantec. « 1,95 % pour tout mandat effectué entre
       le 28/10/2010 et le 27/10/2011 » ; retenue 3,42 × 8,24 % / 2,06
       (taux L61 de 2011).
-  - debut: 2012
-    fin: 2012
-    type_calcul: annuites
+  - du: 2012-01-01
+    au: 2013-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
@@ -175,9 +164,6 @@ periodes:
     duree_requise_trimestres: 158
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1415
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -204,9 +190,8 @@ periodes:
       membres désignés dès le 1er septembre 2023 relèvent du régime
       général et de l'Ircantec. « 1,90 % pour tout mandat effectué entre
       le 28/10/2011 et le 27/10/2012 » ; retenue 3,42 × 8,52 % / 2,06.
-  - debut: 2013
-    fin: 2013
-    type_calcul: annuites
+  - du: 2013-01-01
+    au: 2014-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
@@ -215,9 +200,6 @@ periodes:
     duree_requise_trimestres: 162
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1461
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -244,9 +226,7 @@ periodes:
       membres désignés dès le 1er septembre 2023 relèvent du régime
       général et de l'Ircantec. « 1,85 % pour tout mandat effectué entre
       le 28/10/2012 et le 27/10/2013 » ; retenue 3,42 × 8,80 % / 2,06.
-  - debut: 2014
-    fin: 2014
-    type_calcul: annuites
+  - du: 2014-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
@@ -255,9 +235,6 @@ periodes:
     duree_requise_trimestres: 165
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1507
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -286,23 +263,42 @@ periodes:
       compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
       41,2 annuités pour le maximum ; retenue 3,42 × 9.08 % (taux L61 de
       2014).
-  - debut: 2015
-    fin: 2015
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 62
-    age_taux_plein_par_generation: age_annulation_decote
-    annuites_au_taux_de_leur_annee: cese_pension_des_membres
-    duree_requise_trimestres: 165
-    taux_plein: 0.7500
-    salaire_reference: carriere_entiere
+cotisation:
+  - du: 1957-01-01
+    au: 2005-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1303
+    part_salariale: 1.00
+  - du: 2005-01-01
+    au: 2011-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1303
+    part_salariale: 1.00
+  - du: 2011-01-01
+    au: 2012-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1368
+    part_salariale: 1.00
+  - du: 2012-01-01
+    au: 2013-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1415
+    part_salariale: 1.00
+  - du: 2013-01-01
+    au: 2014-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 1.00
+  - du: 2014-01-01
+    au: 2015-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1507
+    part_salariale: 1.00
+  - du: 2015-01-01
+    au: 2016-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1554
     part_salariale: 1.00
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       SOURCE : règlement de la Caisse de retraites des membres du Conseil
       économique, social et environnemental au 1er janvier 2025
@@ -328,23 +324,11 @@ periodes:
       compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
       41,2 annuités pour le maximum ; retenue 3,42 × 9.36 % (taux L61 de
       2015).
-  - debut: 2016
-    fin: 2016
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 62
-    age_taux_plein_par_generation: age_annulation_decote
-    annuites_au_taux_de_leur_annee: cese_pension_des_membres
-    duree_requise_trimestres: 165
-    taux_plein: 0.7500
-    salaire_reference: carriere_entiere
+  - du: 2016-01-01
+    au: 2017-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1594
     part_salariale: 1.00
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       SOURCE : règlement de la Caisse de retraites des membres du Conseil
       économique, social et environnemental au 1er janvier 2025
@@ -370,23 +354,11 @@ periodes:
       compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
       41,2 annuités pour le maximum ; retenue 3,42 × 9.60 % (taux L61 de
       2016).
-  - debut: 2017
-    fin: 2017
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 62
-    age_taux_plein_par_generation: age_annulation_decote
-    annuites_au_taux_de_leur_annee: cese_pension_des_membres
-    duree_requise_trimestres: 165
-    taux_plein: 0.7500
-    salaire_reference: carriere_entiere
+  - du: 2017-01-01
+    au: 2018-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1650
     part_salariale: 1.00
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       SOURCE : règlement de la Caisse de retraites des membres du Conseil
       économique, social et environnemental au 1er janvier 2025
@@ -412,23 +384,11 @@ periodes:
       compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
       41,2 annuités pour le maximum ; retenue 3,42 × 9.94 % (taux L61 de
       2017).
-  - debut: 2018
-    fin: 2018
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 62
-    age_taux_plein_par_generation: age_annulation_decote
-    annuites_au_taux_de_leur_annee: cese_pension_des_membres
-    duree_requise_trimestres: 165
-    taux_plein: 0.7500
-    salaire_reference: carriere_entiere
+  - du: 2018-01-01
+    au: 2019-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1708
     part_salariale: 1.00
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       SOURCE : règlement de la Caisse de retraites des membres du Conseil
       économique, social et environnemental au 1er janvier 2025
@@ -454,23 +414,11 @@ periodes:
       compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
       41,2 annuités pour le maximum ; retenue 3,42 × 10.29 % (taux L61 de
       2018).
-  - debut: 2019
-    fin: 2019
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 62
-    age_taux_plein_par_generation: age_annulation_decote
-    annuites_au_taux_de_leur_annee: cese_pension_des_membres
-    duree_requise_trimestres: 165
-    taux_plein: 0.7500
-    salaire_reference: carriere_entiere
+  - du: 2019-01-01
+    au: 2020-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1753
     part_salariale: 1.00
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       SOURCE : règlement de la Caisse de retraites des membres du Conseil
       économique, social et environnemental au 1er janvier 2025
@@ -496,23 +444,11 @@ periodes:
       compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
       41,2 annuités pour le maximum ; retenue 3,42 × 10.56 % (taux L61 de
       2019).
-  - debut: 2020
-    fin: 2020
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 62
-    age_taux_plein_par_generation: age_annulation_decote
-    annuites_au_taux_de_leur_annee: cese_pension_des_membres
-    duree_requise_trimestres: 165
-    taux_plein: 0.7500
-    salaire_reference: carriere_entiere
+  - du: 2020-01-01
+    au: 2021-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1798
     part_salariale: 1.00
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       SOURCE : règlement de la Caisse de retraites des membres du Conseil
       économique, social et environnemental au 1er janvier 2025
@@ -538,23 +474,11 @@ periodes:
       compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
       41,2 annuités pour le maximum ; retenue 3,42 × 10.83 % (taux L61 de
       2020).
-  - debut: 2021
-    fin: 2022
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 62
-    age_taux_plein_par_generation: age_annulation_decote
-    annuites_au_taux_de_leur_annee: cese_pension_des_membres
-    duree_requise_trimestres: 165
-    taux_plein: 0.7500
-    salaire_reference: carriere_entiere
+  - du: 2021-01-01
+    au: 2023-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1843
     part_salariale: 1.00
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       SOURCE : règlement de la Caisse de retraites des membres du Conseil
       économique, social et environnemental au 1er janvier 2025
@@ -580,23 +504,10 @@ periodes:
       compter du 28/10/2013 » : 3,75 % de la rémunération par annuité,
       41,2 annuités pour le maximum ; retenue 3,42 × 11.10 % (taux L61 de
       2021)..
-  - debut: 2023
-    fin: null
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 62
-    age_taux_plein_par_generation: age_annulation_decote
-    annuites_au_taux_de_leur_annee: cese_pension_des_membres
-    duree_requise_trimestres: 165
-    taux_plein: 0.7500
-    salaire_reference: carriere_entiere
+  - du: 2023-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1843
     part_salariale: 1.00
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       SOURCE : règlement de la Caisse de retraites des membres du Conseil
       économique, social et environnemental au 1er janvier 2025

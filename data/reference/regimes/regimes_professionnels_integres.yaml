@@ -51,18 +51,16 @@ inventaire:
     d'Air France (règlement de 1956, régime différentiel de 1993), le
     complément différentiel de 1994 et son rabot, et l'Agirc du cadre
     bancaire ne le sont pas.
-periodes:
-  - debut: 1947
-    fin: 1993
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1947-01-01
+    au: 1994-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 168
     taux_plein: 0.35
     salaire_reference: dernier_salaire
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1600
-    part_salariale: 0.30
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -89,3 +87,9 @@ periodes:
       1993. Les autres régimes intégrés (CPPOSS, CGRCE, CCI, IRREP,
       CAMARCA) ont chacun leur barème, non publié : le barème bancaire
       leur tient lieu, niveau `estimee`.
+cotisation:
+  - du: 1947-01-01
+    au: 1994-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1600
+    part_salariale: 0.30

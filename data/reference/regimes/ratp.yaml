@@ -34,31 +34,26 @@ inventaire:
 # les trois premiers enfants et 5 % par enfant au-delà. Le règlement
 # d'avant juillet 2008 n'est pas dans l'index LEGI : le même barème
 # lui est prêté. Barème `taux_majoration_enfants` de chaque période.
-periodes:
-  - debut: 1930
-    fin: 2008
-    date_effet: [1930-01-01, 2008-07-01]
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1930-01-01
+    au: 2008-07-01
     age_ouverture: 50
     age_taux_plein: 50
     duree_requise_trimestres: 150
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0785
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [enfants_ratp, categorie_active, majoration_enfants, reversion]
     notes: 50 ans pour les tables de roulement, 55 ans pour les autres agents.
-  - debut: 2009
-    fin: 2016
+  - du: 2008-07-01
+    au: 2017-01-01
     # Le règlement de 2008 vaut pour les pensions prenant effet à compter du
     # 1er juillet 2008 (SNCF, décret n° 2008-639, article 13 et 35, rédactions
     # du 1er juillet 2008 ; RATP, IEG, Opéra, Comédie-Française de même).
-    date_effet: [2008-07-01, 2017-01-01]
-    type_calcul: annuites
     age_ouverture: 52
     age_taux_plein: 57
     duree_requise_trimestres: 160
@@ -68,9 +63,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1229
-    perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
@@ -109,10 +101,8 @@ periodes:
       tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
       opposait à tous la table commune par génération : 167 trimestres à
       un agent né en 1960 parti en 2010, dont le droit en demande 154.
-
-  - debut: 2017
-    fin: 2024
-    type_calcul: annuites
+  - du: 2017-01-01
+    au: 2025-01-01
     age_ouverture: 52
     age_taux_plein: 57
     duree_requise_trimestres: 172
@@ -122,9 +112,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1229
-    perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
@@ -166,10 +153,7 @@ periodes:
       `legislation/duree_requise_regimes_speciaux.csv`). La fiche la lisait
       à sa propre génération : 171 trimestres, et non 168, au roulant né en
       janvier 1970, dont le droit s'ouvre en mai 2021.
-
-  - debut: 2025
-    fin: null
-    type_calcul: annuites
+  - du: 2025-01-01
     age_ouverture: 54
     age_taux_plein: 57
     duree_requise_trimestres: 172
@@ -179,9 +163,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1229
-    perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
@@ -245,3 +226,23 @@ periodes:
       les conditions avant 2025, se lit de même. La fiche opposait au
       roulant la table de sa génération : 172 trimestres, et non 170, à qui
       ouvre son droit de 2025 à 2027.
+cotisation:
+  - du: 1930-01-01
+    au: 2009-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0785
+    perimetre_taux: agent_seul
+  - du: 2009-01-01
+    au: 2017-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1229
+    perimetre_taux: agent_seul
+  - du: 2017-01-01
+    au: 2025-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1229
+    perimetre_taux: agent_seul
+  - du: 2025-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1229
+    perimetre_taux: agent_seul

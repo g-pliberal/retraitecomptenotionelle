@@ -28,16 +28,15 @@ import sqlite3
 from datetime import date
 
 import pytest
-import yaml
 
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
+from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 LOT = ("marins_ouverture_cinquante_ans", "marins_bonification_enfants",
        "marins_salaire_de_reference")
 REFERENCE = RACINE_DONNEES / "reference"
-PERIODES = yaml.safe_load((REFERENCE / "regimes" / "marins.yaml")
-                          .read_text(encoding="utf-8"))["periodes"]
+PERIODES = lire_fiche_de_regime(REFERENCE / "regimes" / "marins.yaml")["periodes"]
 #: La première année de la fiche de régime, et la dernière que les
 #: confrontations parcourent.
 DEBUT, HORIZON = 1930, 2050

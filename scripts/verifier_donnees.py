@@ -67,21 +67,21 @@ FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml",
 
 
 def _fiche_regime(code: str) -> dict:
-    """La fiche d'un régime telle qu'elle est écrite : un fichier par régime."""
-    import yaml
+    """La fiche d'un régime telle qu'elle est écrite, en périodes (la vue
+    que le chargeur refait de ses quatre blocs) : un fichier par régime."""
+    from retraite_notionnelle.donnees.regimes import fiche_de_regime
 
-    return yaml.safe_load(
-        (REFERENCE / "regimes" / f"{code}.yaml").read_text(encoding="utf-8"))
+    return fiche_de_regime(REFERENCE.parent, code)
 
 
 def _fiches_regimes() -> list[dict]:
     """Les fiches écrites des régimes que le modèle calcule, dans l'ordre du
     catalogue (leur rang) ; les régimes qu'il ne calcule pas n'ont que leur
     ligne d'inventaire, sans période."""
-    import yaml
+    from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
     fiches = [
-        yaml.safe_load(chemin.read_text(encoding="utf-8"))
+        lire_fiche_de_regime(chemin)
         for chemin in sorted((REFERENCE / "regimes").glob("*.yaml"))
         if not chemin.name.startswith("_") and chemin.name not in FICHIERS_HORS_REGIMES
     ]

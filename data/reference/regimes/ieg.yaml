@@ -34,18 +34,16 @@ inventaire:
 # déjà la version de 1946 (LEGIARTI000006632496) : « 10 % pour trois
 # enfants ; 5 % en sus par enfant au-delà du troisième ». Barème
 # `taux_majoration_enfants` de chaque période.
-periodes:
-  - debut: 1946
-    fin: 1983
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1946-01-01
+    au: 2008-07-01
     age_ouverture: 55
     age_taux_plein: 55
     duree_requise_trimestres: 150
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.06
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -62,115 +60,11 @@ periodes:
       retenues participations, prestations, pensions » d'un agent qui
       quitte les industries à « 6 % des salaires ou traitements totalisés
       ».
-  - debut: 1984
-    fin: 1985
-    type_calcul: annuites
-    age_ouverture: 55
-    age_taux_plein: 55
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.07
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
-    notes: >-
-      SEPT POUR CENT AU 1ER JANVIER 1984 : le décret n° 84-63 du 27
-      janvier 1984 modifie le paragraphe 2 de l'article 24 du statut, et
-      la notice du Journal officiel en porte le chiffre — « MODIFICATION
-      DE L'ART. 24 PARAG. 2 DU DECRET 461541 DU 22-06-1946 : 7 %.
-      APPLICATION AUX COTISATIONS ASSISES SUR LES REMUNERATIONS VERSEES A
-      COMPTER DU 01-01-1984 » (JORFTEXT000000885345) ; LEGI n'en consolide
-      que la clause d'application (LEGIARTI000006766294). Niveau `moyenne`
-      : une notice, pas un article. Les décrets frères n° 69-265, 70-1015,
-      88-881, 89-33, 90-516 et 90-772 (JORFTEXT000000336368, …850007,
-      …867909, …885248, …159223, …717919) modifient le paragraphe 8 de
-      l'article 23 — la cotisation aux caisses mutuelles complémentaires
-      et d'action sociale, 3,20 à 3,40 % — et non la retraite : rien à
-      couper.
-  - debut: 1986
-    fin: 1986
-    type_calcul: annuites
-    age_ouverture: 55
-    age_taux_plein: 55
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.077
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
-    notes: >-
-      Décret n° 86-874 du 29 juillet 1986 (LEGIARTI000006769455) : « le taux défini au paragraphe 2 de l'article 24 du décret du 22 juin 1946 est porté à 7,7 p. 100 » pour les rémunérations versées à compter du 1er août 1986.
-      Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
-  - debut: 1987
-    fin: 1988
-    type_calcul: annuites
-    age_ouverture: 55
-    age_taux_plein: 55
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.079
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
-    notes: >-
-      Décret n° 87-468 du 30 juin 1987 (LEGIARTI000006770396), relèvement temporaire à 7,9 % du 1er juillet 1987 au 30 juin 1988, puis décret n° 88-792 du 22 juin 1988 (LEGIARTI000006773015) : 7,9 % à compter du 1er juillet 1988.
-      Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
-  - debut: 1989
-    fin: 1990
-    type_calcul: annuites
-    age_ouverture: 55
-    age_taux_plein: 55
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.089
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
-    notes: >-
-      Décret n° 88-1221 du 30 décembre 1988 (LEGIARTI000006773684) : 8,9 % pour les rémunérations versées à compter du 1er janvier 1989.
-      Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
-  - debut: 1991
-    fin: 2008
-    date_effet: [1991-01-01, 2008-07-01]
-    type_calcul: annuites
-    age_ouverture: 55
-    age_taux_plein: 55
-    duree_requise_trimestres: 150
-    taux_plein: 0.75
-    salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0785
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]
-    notes: >-
-      Décret n° 91-159 du 12 février 1991, article 6 (LEGIARTI000006775720) : « le taux de la participation du personnel prévue au paragraphe 2 de l'article 24 du statut national […] est fixé à 7,85 p. 100 ». C'est le taux que la fiche portait sur toute la période 1946-2008.
-      Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
-  - debut: 2009
-    fin: 2016
+  - du: 2008-07-01
+    au: 2017-01-01
     # Le règlement de 2008 vaut pour les pensions prenant effet à compter du
     # 1er juillet 2008 (SNCF, décret n° 2008-639, article 13 et 35, rédactions
     # du 1er juillet 2008 ; RATP, IEG, Opéra, Comédie-Française de même).
-    date_effet: [2008-07-01, 2017-01-01]
-    type_calcul: annuites
     age_ouverture: 57
     age_taux_plein: 62
     duree_requise_trimestres: 160
@@ -180,9 +74,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1229
-    perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
@@ -220,10 +111,8 @@ periodes:
       tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
       opposait à tous la table commune par génération : 167 trimestres à
       un agent né en 1960 parti en 2010, dont le droit en demande 154.
-
-  - debut: 2017
-    fin: 2024
-    type_calcul: annuites
+  - du: 2017-01-01
+    au: 2025-01-01
     age_ouverture: 57
     age_taux_plein: 62
     duree_requise_trimestres: 172
@@ -233,9 +122,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1229
-    perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
@@ -276,10 +162,7 @@ periodes:
       table de 2014 se lit donc pour lui à cette génération
       (`age_de_lecture`) : 167 trimestres, et non 169, à l'agent actif né en
       décembre 1964 dont le droit s'ouvre en décembre 2020.
-
-  - debut: 2025
-    fin: null
-    type_calcul: annuites
+  - du: 2025-01-01
     age_ouverture: 59
     age_taux_plein: 62
     duree_requise_trimestres: 172
@@ -290,9 +173,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1229
-    perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
@@ -380,3 +260,74 @@ periodes:
       table de 2014 se lit donc pour lui à cette génération
       (`age_de_lecture`) : 167 trimestres, et non 169, à l'agent actif né en
       décembre 1964 dont le droit s'ouvre en décembre 2020.
+cotisation:
+  - du: 1946-01-01
+    au: 1984-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.06
+    perimetre_taux: agent_seul
+  - du: 1984-01-01
+    au: 1986-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.07
+    perimetre_taux: agent_seul
+    notes: >-
+      SEPT POUR CENT AU 1ER JANVIER 1984 : le décret n° 84-63 du 27
+      janvier 1984 modifie le paragraphe 2 de l'article 24 du statut, et
+      la notice du Journal officiel en porte le chiffre — « MODIFICATION
+      DE L'ART. 24 PARAG. 2 DU DECRET 461541 DU 22-06-1946 : 7 %.
+      APPLICATION AUX COTISATIONS ASSISES SUR LES REMUNERATIONS VERSEES A
+      COMPTER DU 01-01-1984 » (JORFTEXT000000885345) ; LEGI n'en consolide
+      que la clause d'application (LEGIARTI000006766294). Niveau `moyenne`
+      : une notice, pas un article. Les décrets frères n° 69-265, 70-1015,
+      88-881, 89-33, 90-516 et 90-772 (JORFTEXT000000336368, …850007,
+      …867909, …885248, …159223, …717919) modifient le paragraphe 8 de
+      l'article 23 — la cotisation aux caisses mutuelles complémentaires
+      et d'action sociale, 3,20 à 3,40 % — et non la retraite : rien à
+      couper.
+  - du: 1986-01-01
+    au: 1987-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.077
+    perimetre_taux: agent_seul
+    notes: >-
+      Décret n° 86-874 du 29 juillet 1986 (LEGIARTI000006769455) : « le taux défini au paragraphe 2 de l'article 24 du décret du 22 juin 1946 est porté à 7,7 p. 100 » pour les rémunérations versées à compter du 1er août 1986.
+      Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
+  - du: 1987-01-01
+    au: 1989-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.079
+    perimetre_taux: agent_seul
+    notes: >-
+      Décret n° 87-468 du 30 juin 1987 (LEGIARTI000006770396), relèvement temporaire à 7,9 % du 1er juillet 1987 au 30 juin 1988, puis décret n° 88-792 du 22 juin 1988 (LEGIARTI000006773015) : 7,9 % à compter du 1er juillet 1988.
+      Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
+  - du: 1989-01-01
+    au: 1991-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.089
+    perimetre_taux: agent_seul
+    notes: >-
+      Décret n° 88-1221 du 30 décembre 1988 (LEGIARTI000006773684) : 8,9 % pour les rémunérations versées à compter du 1er janvier 1989.
+      Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
+  - du: 1991-01-01
+    au: 2009-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0785
+    perimetre_taux: agent_seul
+    notes: >-
+      Décret n° 91-159 du 12 février 1991, article 6 (LEGIARTI000006775720) : « le taux de la participation du personnel prévue au paragraphe 2 de l'article 24 du statut national […] est fixé à 7,85 p. 100 ». C'est le taux que la fiche portait sur toute la période 1946-2008.
+      Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
+  - du: 2009-01-01
+    au: 2017-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1229
+    perimetre_taux: agent_seul
+  - du: 2017-01-01
+    au: 2025-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1229
+    perimetre_taux: agent_seul
+  - du: 2025-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1229
+    perimetre_taux: agent_seul

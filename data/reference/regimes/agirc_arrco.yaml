@@ -31,10 +31,11 @@ inventaire:
     - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}
     - {reference: "arrêté du 24 avril 2018 portant extension et élargissement de l'accord", id: JORFTEXT000036847920}
     - {reference: "avenant n° 17 du 22 novembre 2023, arrêté d'extension du 15 avril 2024", id: JORFTEXT000049424935}
-periodes:
-  - debut: 2019
-    fin: 2023
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 2019-01-01
+    au: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -43,13 +44,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0787
-    taux_calcul_points: 0.062   # accord du 17 novembre 2017 : 6,20 %, appelé à 127 %
-    part_salariale: 0.4002541296060991   # 3,15 % sur 7,87 % : barème du régime, ANI du 17 novembre 2017
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion, coefficient_solidarite]
@@ -78,10 +73,7 @@ periodes:
       coefficients majorants pour qui diffère de deux ans ou plus. Ce sont
       des dispositifs d'incitation d'âge : le coefficient de conversion
       actuariel les remplace dans les scénarios notionnels.
-
-  - debut: 2024
-    fin: null
-    type_calcul: points
+  - du: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -90,13 +82,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0787
-    taux_calcul_points: 0.062   # accord du 17 novembre 2017 : 6,20 %, appelé à 127 %
-    part_salariale: 0.4002541296060991   # 3,15 % sur 7,87 % : barème du régime, ANI du 17 novembre 2017
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -109,56 +95,41 @@ periodes:
       2024, pour celles déjà minorées. Le barème ne change pas ; seule la
       liste des avantages perd le coefficient de solidarité. La fiche
       coupe au 1er janvier 2024, sa granularité étant l'année.
-
-  - debut: 2019
-    fin: 2023
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
-    salaire_reference: carriere_entiere
+cotisation:
+  - du: 2019-01-01
+    au: 2024-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0787
+    taux_calcul_points: 0.062   # accord du 17 novembre 2017 : 6,20 %, appelé à 127 %
+    part_salariale: 0.4002541296060991   # 3,15 % sur 7,87 % : barème du régime, ANI du 17 novembre 2017
+  - du: 2024-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0787
+    taux_calcul_points: 0.062   # accord du 17 novembre 2017 : 6,20 %, appelé à 127 %
+    part_salariale: 0.4002541296060991   # 3,15 % sur 7,87 % : barème du régime, ANI du 17 novembre 2017
+  - du: 2019-01-01
+    au: 2024-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.2159
     taux_calcul_points: 0.17    # 17 %, appelé à 127 %
     part_salariale: 0.4001852709587772   # 8,64 % sur 21,59 % : barème du régime, ANI du 17 novembre 2017
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion, coefficient_solidarite]
     notes: >-
       Tranche 2, de 1 à 8 plafonds de la Sécurité sociale : 17 % de taux
       de calcul appelés à 127 %, 21,59 % prélevés. Elle remplace la
       tranche B et la tranche C de l'Agirc comme la tranche 2 de l'Arrco
       (loi n° 2018-32, JORFARTI000036526047 : « fusion de la tranche T2 et
       de la tranche TB »).
-
-  - debut: 2024
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
-    salaire_reference: carriere_entiere
+  - du: 2024-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.2159
     taux_calcul_points: 0.17    # 17 %, appelé à 127 %
     part_salariale: 0.4001852709587772   # 8,64 % sur 21,59 % : barème du régime, ANI du 17 novembre 2017
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Tranche 2 depuis l'avenant n° 17 : barème inchangé, coefficient de
       solidarité supprimé.
+servi:
+  - du: 2019-01-01
+    plafond_majoration_enfants: 2367.48
+    plafond_majoration_annee: 2025

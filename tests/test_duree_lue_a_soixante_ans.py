@@ -36,6 +36,7 @@ import pytest
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import RACINE_DONNEES
+from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 from facade import Simulateur, ouvrir
 
@@ -242,8 +243,8 @@ def test_qui_part_avant_soixante_ans_doit_la_duree_de_qui_les_atteint(
     if ouverture.rang < DateMois(2025, 1).rang:
         table = TABLE_2014 if regime == "crpcen" else TABLE_2014_BANQUE_DE_FRANCE
         assert _escalier(table, lue) == droit
-    periodes = yaml.safe_load((RACINE_DONNEES / "reference" / "regimes" / f"{regime}.yaml")
-                              .read_text(encoding="utf-8"))["periodes"]
+    periodes = lire_fiche_de_regime(
+        RACINE_DONNEES / "reference" / "regimes" / f"{regime}.yaml")["periodes"]
     periode = next(p for p in periodes if p["debut"] <= ouverture.annee
                    and (p["fin"] is None or ouverture.annee <= p["fin"]))
     tables = simulateur.scenario_actuel.durees_requises_regimes

@@ -41,19 +41,16 @@ inventaire:
 # effet depuis. Le guide de la MSA le dit aussi : « au moins 3 enfants, le
 # montant de votre retraite est majoré de 10 % ». Aucune période ne la
 # déclarait ; la période de 1953 est coupée en 1974.
-periodes:
-  - debut: 1952
-    fin: 1952
-    type_calcul: mixte
+structure:
+  type_calcul: mixte
+liquidation:
+  - du: 1952-01-01
+    au: 1974-01-01
     age_ouverture: 65
     age_taux_plein: 65
     duree_requise_trimestres: 150
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0425
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, reversion]
@@ -76,37 +73,13 @@ periodes:
       (fiches cotisation_agricole_de_1952 et retraite_proportionnelle_msa).
       Pour le reste, la période suivante, dont celle-ci ne diffère que par
       ce taux.
-  - debut: 1953
-    fin: 1973
-    type_calcul: mixte
+  - du: 1974-01-01
+    au: 1986-01-01
     age_ouverture: 65
     age_taux_plein: 65
     duree_requise_trimestres: 150
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.085
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, reversion]
-    notes: >-
-      Voir la période 1974-1985, dont celle-ci ne diffère que par la
-      bonification d'un dixième des parents de trois enfants, servie à
-      compter du 1er juillet 1974 (décret n° 55-753, article 37).
-  - debut: 1974
-    fin: 1980
-    type_calcul: mixte
-    age_ouverture: 65
-    age_taux_plein: 65
-    duree_requise_trimestres: 150
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.085
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, minimum_vieillesse, reversion]
@@ -143,62 +116,14 @@ periodes:
       l'ancien code rural (LEGIARTI000006581025, version en vigueur du
       5 juillet 1980 au 8 janvier 1986) donne « droit à la retraite à
       l'âge de soixante-cinq ans ou de soixante ans en cas d'inaptitude ».
-  - debut: 1981
-    fin: 1985
-    type_calcul: mixte
-    age_ouverture: 65
-    age_taux_plein: 65
-    duree_requise_trimestres: 150
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.085
-    bareme_points: points_agricoles_au_revenu_cadastral
-    textes_des_renvois:
-      bareme_points: {id: LEGIARTI000006769209, depuis: "1981-01-01"}
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, minimum_vieillesse, reversion]
-    notes: >-
-      LES POINTS AU REVENU CADASTRAL, de 1981 à 1989 : « le nombre de points
-      acquis chaque année [...] est déterminé suivant le barème annexé au
-      présent décret » (décret n° 80-808 du 14 octobre 1980, article 8,
-      LEGIARTI000006769209, en vigueur le 1er janvier 1981), de 15 à 60
-      points selon le « revenu cadastral servant de base aux cotisations »
-      (annexe, LEGIARTI000006769235), repris par R. 732-69 du code rural
-      « pour les années 1981 et suivantes ». Le modèle n'a pas le revenu
-      cadastral et le déduit du revenu, à 5,54 F de revenu pour 1 F
-      cadastral : une convention (fiche
-      points_agricoles_au_revenu_cadastral). Jusqu'au 20 novembre 2026, ces
-      années étaient au rendement de leurs cotisations, comme le restent
-      celles d'avant 1981.
-      LA VALEUR DE SERVICE est celle des périodes suivantes, 4,589 € de 2025
-      ramenés aux prix de l'année : la valeur du point de 1981 à 1989, en
-      francs, n'est pas lue. Elle sert les points de 1981 et suivantes aux
-      pensions prises dans la période.
-      Le reste reprend la période de 1974 : retraite forfaitaire, assiette
-      bornée au plafond et taux de 8,5 % par convention pour le compte,
-      soixante-cinq ans jusqu'en 1985.
-  - debut: 1986
-    fin: 1986
-    type_calcul: mixte
+  - du: 1986-01-01
+    au: 1987-01-01
     age_ouverture: 64
     age_taux_plein: 65
     duree_requise_trimestres: 150
     duree_proratisation_trimestres: 134
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.085
-    bareme_points: points_agricoles_au_revenu_cadastral
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.025
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
@@ -267,22 +192,14 @@ periodes:
       départ à soixante-deux ans en 1988 lui est ouvert. Les inaptes et
       les anciens combattants ne gardent soixante ans que si le modèle les
       reconnaît tels par ailleurs.
-  - debut: 1987
-    fin: 1987
-    type_calcul: mixte
+  - du: 1987-01-01
+    au: 1988-01-01
     age_ouverture: 63
     age_taux_plein: 65
     duree_requise_trimestres: 150
     duree_proratisation_trimestres: 138
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.085
-    bareme_points: points_agricoles_au_revenu_cadastral
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.025
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
@@ -291,22 +208,14 @@ periodes:
       L'année 1987 de la transition de la loi n° 86-19 : voir l'année 1986,
       dont cette période reprend tout, sauf l'âge minimum et la durée de la
       retraite forfaitaire.
-  - debut: 1988
-    fin: 1988
-    type_calcul: mixte
+  - du: 1988-01-01
+    au: 1989-01-01
     age_ouverture: 62
     age_taux_plein: 65
     duree_requise_trimestres: 150
     duree_proratisation_trimestres: 142
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.085
-    bareme_points: points_agricoles_au_revenu_cadastral
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.025
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
@@ -315,22 +224,14 @@ periodes:
       L'année 1988 de la transition de la loi n° 86-19 : voir l'année 1986,
       dont cette période reprend tout, sauf l'âge minimum et la durée de la
       retraite forfaitaire.
-  - debut: 1989
-    fin: 1989
-    type_calcul: mixte
+  - du: 1989-01-01
+    au: 1990-01-01
     age_ouverture: 61
     age_taux_plein: 65
     duree_requise_trimestres: 150
     duree_proratisation_trimestres: 146
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.085
-    bareme_points: points_agricoles_au_revenu_cadastral
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.025
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
@@ -339,23 +240,13 @@ periodes:
       L'année 1989 de la transition de la loi n° 86-19 : voir l'année 1986,
       dont cette période reprend tout, sauf l'âge minimum et la durée de la
       retraite forfaitaire.
-  - debut: 1990
-    fin: 2002
-    type_calcul: mixte
+  - du: 1990-01-01
+    au: 2004-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.085
-    bareme_points: retraite_proportionnelle_msa
-    assiette_repere_smic: 400
-    assiette_plancher: assiette_minimale_agricole
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.025
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
@@ -390,81 +281,8 @@ periodes:
       points de ces années viennent du barème de R. 732-71, que le taux ne
       touche pas ; au compte des scénarios 2 à 6, la question est posée au
       propriétaire (fiche cotisation_vieillesse_agricole_avant_2003).
-  - debut: 2003
-    fin: 2003
-    type_calcul: mixte
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 150
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1737
-    bareme_points: retraite_proportionnelle_msa
-    assiette_repere_smic: 400
-    assiette_plancher: assiette_minimale_agricole
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
-    decote_par_trimestre: 0.025
-    decote_par_generation: bareme_minoration_regimes_en_points
-    surcote_par_trimestre: null
-    avantages_non_contributifs:
-      [majoration_enfants, minimum_vieillesse, pension_majoree_reference, reversion]
-    notes: >-
-      Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
-      des non-salariés agricoles, en points. Cette fiche ne porte plus que
-      l'étage de BASE : la RCO a désormais la sienne (`msa_rco`), et le taux
-      de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
-      s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
-      neutralisé dans les scénarios notionnels.
-      LE TAUX DE 17,37 % N'A AUCUNE SOURCE, au sens où l'entend la fiche
-      cotisation_vieillesse_agricole_avant_2003 (approximation depuis_2003) :
-      aucun texte, aucune page précise, sans texte qui le fixe ni note qui
-      le justifie ; le régime ne porte que la source générale
-      msa_parametres, la page d'accueil de la MSA (data/sources.yaml), et
-      ces notes le nomment sans le justifier. Aucune somme des taux lus ne
-      le donne : sous le plafond, D. 731-121,
-      D. 731-122 et D. 731-124 (le décret annuel en 2003 et 2004) prélèvent
-      de 12,93 % en 2003 à 17,11 % de 2017 à 2025, de 15,71 % à 16,21 %
-      avec la cotisation complémentaire jusqu'en 2013 ; au compte des
-      scénarios 2 à 6, la question est posée au propriétaire (fiche
-      cotisation_vieillesse_agricole_avant_2003, approximation depuis_2003).
-      LE BARÈME DE POINTS EST DANS LE CODE, et le modèle le sert
-      désormais : R. 732-71 attribue quinze points jusqu'à 400 SMIC
-      horaires, puis une pente jusqu'à trente à 800 SMIC, puis trente
-      jusqu'à deux fois le minimum contributif, puis une pente jusqu'au
-      maximum M que R. 732-70 définit par (PM − AVTS) / (37,5 × valeur du
-      point). Les « 23 à 113 points » que la caisse annonce sans publier la
-      formule en sortent : 22,5 au minimum d'assiette du chef d'exploitation
-      depuis qu'il est de 600 SMIC horaires, 113,4 au plafond en 2025, que
-      R. 732-71 arrondit à l'entier le plus proche, 23 et 113 ; en
-      2003, ce minimum est encore de 400 SMIC (décret n° 2001-584, article
-      11, II), qui ouvrent quinze points.
-      La valeur du point est celle du code rural (R. 732-66, 4,589 € au
-      1er janvier 2025), recoupée par le communiqué de la MSA et par le COR
-      pour 2023 (4,264 €) ; les années antérieures sont ramenées sur les
-      prix, comme la loi le prescrit (L. 161-23-1).
-      La retraite forfaitaire, elle, vaut 3 628,98 € au 1er janvier 2023
-      (communiqué de la MSA du 14 février 2023) pour une carrière complète.
-      LA RÉFORME DE 2026 NE TOUCHE PAS CETTE PÉRIODE, qui liquide des
-      pensions d'avant 2026 : celles qui prennent effet depuis le 1er janvier
-      2026 relèvent des périodes de 2026 et de 2028 (fiche
-      pension_non_salaries_agricoles_2026), où les points qu'elle attribue ne
-      comptent plus que selon L. 732-24 dans sa rédaction de 2026.
-      LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
-      naît de la loi du 21 août 2003, pour les liquidations de 2004, à
-      0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
-      scindée pour cela seul : rien d'autre n'y change.
-      LES ÂGES DE 2023 ÉTAIENT OPPOSÉS DÈS 2003 : la période portait
-      64 ans, 67 ans et 172 trimestres. En 2003 le droit est celui de la
-      loi du 6 janvier 1986 — soixante ans, taux plein à soixante-cinq ans
-      ou avec cent cinquante trimestres — et la loi Fillon ne s'applique
-      qu'aux pensions de 2004 (L. 732-25, LEGIARTI000006585546).
-  - debut: 2004
-    fin: 2008
-    type_calcul: mixte
+  - du: 2004-01-01
+    au: 2009-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 160
@@ -472,15 +290,6 @@ periodes:
     duree_requise_table: [msa_non_salaries_2005]
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1737
-    bareme_points: retraite_proportionnelle_msa
-    assiette_repere_smic: 600
-    assiette_plancher: assiette_minimale_agricole
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.0125
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: 0.0075
@@ -560,9 +369,8 @@ periodes:
       qu'il écrit pour les trimestres d'avant 2009 est ramené à 0,75 %
       par trimestre, comme la fiche du régime général le fait pour la
       même période.
-  - debut: 2009
-    fin: 2010
-    type_calcul: mixte
+  - du: 2009-01-01
+    au: 2011-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 160
@@ -570,15 +378,6 @@ periodes:
     duree_requise_table: [msa_non_salaries_2005]
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1737
-    bareme_points: retraite_proportionnelle_msa
-    assiette_repere_smic: 600
-    assiette_plancher: assiette_minimale_agricole
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.0125
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: 0.0125
@@ -641,9 +440,8 @@ periodes:
       qu'il écrit pour les trimestres d'avant 2009 est ramené à 0,75 %
       par trimestre, comme la fiche du régime général le fait pour la
       même période.
-  - debut: 2011
-    fin: 2025
-    type_calcul: mixte
+  - du: 2011-01-01
+    au: 2026-01-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -653,15 +451,6 @@ periodes:
     duree_requise_table: [msa_non_salaries_2005]
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1737
-    bareme_points: retraite_proportionnelle_msa
-    assiette_repere_smic: 600
-    assiette_plancher: assiette_minimale_agricole
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3628.98
-    pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.0125
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: 0.0125
@@ -730,9 +519,8 @@ periodes:
       qu'il écrit pour les trimestres d'avant 2009 est ramené à 0,75 %
       par trimestre, comme la fiche du régime général le fait pour la
       même période.
-  - debut: 2026
-    fin: 2027
-    type_calcul: mixte
+  - du: 2026-01-01
+    au: 2028-01-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -743,15 +531,6 @@ periodes:
     taux_plein: 1.0
     salaire_reference: 25_meilleures_annees
     salaire_reference_par_generation: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1737
-    bareme_points: retraite_proportionnelle_msa
-    assiette_repere_smic: 600
-    assiette_plancher: assiette_minimale_agricole
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3905.37
-    pension_forfaitaire_annee: 2025
     decote_par_trimestre: 0.0125
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: 0.0125
@@ -821,9 +600,7 @@ periodes:
       régime unifié, et le taux du compte des exploitants attend la réponse
       du propriétaire (fiche cotisation_vieillesse_agricole_avant_2003 ;
       note de l'action 131 du 6 novembre 2026).
-  - debut: 2028
-    fin: null
-    type_calcul: mixte
+  - du: 2028-01-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -834,14 +611,6 @@ periodes:
     taux_plein: 1.0
     salaire_reference: 25_meilleures_annees
     salaire_reference_par_generation: salaire_annuel_moyen
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1737
-    assiette_repere_smic: 600
-    assiette_plancher: assiette_minimale_agricole
-    valeur_point_euros: 4.589
-    valeur_point_annee: 2025
-    pension_forfaitaire_annuelle: 3905.37
-    pension_forfaitaire_annee: 2025
     decote_par_trimestre: 0.0125
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: 0.0125
@@ -896,3 +665,180 @@ periodes:
       exploitants attend la réponse du propriétaire (fiche
       cotisation_vieillesse_agricole_avant_2003 ; note de l'action 131 du 6
       novembre 2026).
+cotisation:
+  - du: 1952-01-01
+    au: 1953-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0425
+  - du: 1953-01-01
+    au: 1974-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    notes: >-
+      Voir la période 1974-1985, dont celle-ci ne diffère que par la
+      bonification d'un dixième des parents de trois enfants, servie à
+      compter du 1er juillet 1974 (décret n° 55-753, article 37).
+  - du: 1974-01-01
+    au: 1981-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+  - du: 1981-01-01
+    au: 1986-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    bareme_points: points_agricoles_au_revenu_cadastral
+    textes:
+      bareme_points: {id: LEGIARTI000006769209, depuis: "1981-01-01"}
+  - du: 1986-01-01
+    au: 1987-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    bareme_points: points_agricoles_au_revenu_cadastral
+  - du: 1987-01-01
+    au: 1988-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    bareme_points: points_agricoles_au_revenu_cadastral
+  - du: 1988-01-01
+    au: 1989-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    bareme_points: points_agricoles_au_revenu_cadastral
+  - du: 1989-01-01
+    au: 1990-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    bareme_points: points_agricoles_au_revenu_cadastral
+  - du: 1990-01-01
+    au: 2003-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    bareme_points: retraite_proportionnelle_msa
+    assiette_repere_smic: 400
+    assiette_plancher: assiette_minimale_agricole
+  - du: 2003-01-01
+    au: 2004-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1737
+    bareme_points: retraite_proportionnelle_msa
+    assiette_repere_smic: 400
+    assiette_plancher: assiette_minimale_agricole
+    notes: >-
+      Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
+      des non-salariés agricoles, en points. Cette fiche ne porte plus que
+      l'étage de BASE : la RCO a désormais la sienne (`msa_rco`), et le taux
+      de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
+      s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
+      neutralisé dans les scénarios notionnels.
+      LE TAUX DE 17,37 % N'A AUCUNE SOURCE, au sens où l'entend la fiche
+      cotisation_vieillesse_agricole_avant_2003 (approximation depuis_2003) :
+      aucun texte, aucune page précise, sans texte qui le fixe ni note qui
+      le justifie ; le régime ne porte que la source générale
+      msa_parametres, la page d'accueil de la MSA (data/sources.yaml), et
+      ces notes le nomment sans le justifier. Aucune somme des taux lus ne
+      le donne : sous le plafond, D. 731-121,
+      D. 731-122 et D. 731-124 (le décret annuel en 2003 et 2004) prélèvent
+      de 12,93 % en 2003 à 17,11 % de 2017 à 2025, de 15,71 % à 16,21 %
+      avec la cotisation complémentaire jusqu'en 2013 ; au compte des
+      scénarios 2 à 6, la question est posée au propriétaire (fiche
+      cotisation_vieillesse_agricole_avant_2003, approximation depuis_2003).
+      LE BARÈME DE POINTS EST DANS LE CODE, et le modèle le sert
+      désormais : R. 732-71 attribue quinze points jusqu'à 400 SMIC
+      horaires, puis une pente jusqu'à trente à 800 SMIC, puis trente
+      jusqu'à deux fois le minimum contributif, puis une pente jusqu'au
+      maximum M que R. 732-70 définit par (PM − AVTS) / (37,5 × valeur du
+      point). Les « 23 à 113 points » que la caisse annonce sans publier la
+      formule en sortent : 22,5 au minimum d'assiette du chef d'exploitation
+      depuis qu'il est de 600 SMIC horaires, 113,4 au plafond en 2025, que
+      R. 732-71 arrondit à l'entier le plus proche, 23 et 113 ; en
+      2003, ce minimum est encore de 400 SMIC (décret n° 2001-584, article
+      11, II), qui ouvrent quinze points.
+      La valeur du point est celle du code rural (R. 732-66, 4,589 € au
+      1er janvier 2025), recoupée par le communiqué de la MSA et par le COR
+      pour 2023 (4,264 €) ; les années antérieures sont ramenées sur les
+      prix, comme la loi le prescrit (L. 161-23-1).
+      La retraite forfaitaire, elle, vaut 3 628,98 € au 1er janvier 2023
+      (communiqué de la MSA du 14 février 2023) pour une carrière complète.
+      LA RÉFORME DE 2026 NE TOUCHE PAS CETTE PÉRIODE, qui liquide des
+      pensions d'avant 2026 : celles qui prennent effet depuis le 1er janvier
+      2026 relèvent des périodes de 2026 et de 2028 (fiche
+      pension_non_salaries_agricoles_2026), où les points qu'elle attribue ne
+      comptent plus que selon L. 732-24 dans sa rédaction de 2026.
+      LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
+      naît de la loi du 21 août 2003, pour les liquidations de 2004, à
+      0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
+      scindée pour cela seul : rien d'autre n'y change.
+      LES ÂGES DE 2023 ÉTAIENT OPPOSÉS DÈS 2003 : la période portait
+      64 ans, 67 ans et 172 trimestres. En 2003 le droit est celui de la
+      loi du 6 janvier 1986 — soixante ans, taux plein à soixante-cinq ans
+      ou avec cent cinquante trimestres — et la loi Fillon ne s'applique
+      qu'aux pensions de 2004 (L. 732-25, LEGIARTI000006585546).
+  - du: 2004-01-01
+    au: 2009-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1737
+    bareme_points: retraite_proportionnelle_msa
+    assiette_repere_smic: 600
+    assiette_plancher: assiette_minimale_agricole
+  - du: 2009-01-01
+    au: 2011-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1737
+    bareme_points: retraite_proportionnelle_msa
+    assiette_repere_smic: 600
+    assiette_plancher: assiette_minimale_agricole
+  - du: 2011-01-01
+    au: 2026-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1737
+    bareme_points: retraite_proportionnelle_msa
+    assiette_repere_smic: 600
+    assiette_plancher: assiette_minimale_agricole
+  - du: 2026-01-01
+    au: 2028-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1737
+    bareme_points: retraite_proportionnelle_msa
+    assiette_repere_smic: 600
+    assiette_plancher: assiette_minimale_agricole
+  - du: 2028-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1737
+    assiette_repere_smic: 600
+    assiette_plancher: assiette_minimale_agricole
+servi:
+  - du: 1952-01-01
+    au: 1981-01-01
+    pension_forfaitaire_annuelle: 3628.98
+    pension_forfaitaire_annee: 2023
+  - du: 1981-01-01
+    au: 2026-01-01
+    valeur_point_euros: 4.589
+    valeur_point_annee: 2025
+    pension_forfaitaire_annuelle: 3628.98
+    pension_forfaitaire_annee: 2023
+    notes: >-
+      LES POINTS AU REVENU CADASTRAL, de 1981 à 1989 : « le nombre de points
+      acquis chaque année [...] est déterminé suivant le barème annexé au
+      présent décret » (décret n° 80-808 du 14 octobre 1980, article 8,
+      LEGIARTI000006769209, en vigueur le 1er janvier 1981), de 15 à 60
+      points selon le « revenu cadastral servant de base aux cotisations »
+      (annexe, LEGIARTI000006769235), repris par R. 732-69 du code rural
+      « pour les années 1981 et suivantes ». Le modèle n'a pas le revenu
+      cadastral et le déduit du revenu, à 5,54 F de revenu pour 1 F
+      cadastral : une convention (fiche
+      points_agricoles_au_revenu_cadastral). Jusqu'au 20 novembre 2026, ces
+      années étaient au rendement de leurs cotisations, comme le restent
+      celles d'avant 1981.
+      LA VALEUR DE SERVICE est celle des périodes suivantes, 4,589 € de 2025
+      ramenés aux prix de l'année : la valeur du point de 1981 à 1989, en
+      francs, n'est pas lue. Elle sert les points de 1981 et suivantes aux
+      pensions prises dans la période.
+      Le reste reprend la période de 1974 : retraite forfaitaire, assiette
+      bornée au plafond et taux de 8,5 % par convention pour le compte,
+      soixante-cinq ans jusqu'en 1985.
+  - du: 2026-01-01
+    valeur_point_euros: 4.589
+    valeur_point_annee: 2025
+    pension_forfaitaire_annuelle: 3905.37
+    pension_forfaitaire_annee: 2025

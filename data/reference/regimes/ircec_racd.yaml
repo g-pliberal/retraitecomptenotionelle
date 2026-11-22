@@ -34,10 +34,11 @@ inventaire:
     La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les
     générations nées avant 1955 jusqu'en 2024, elle est approchée (voir
     `docs/limites.md`).
-periodes:
-  - debut: 1964
-    fin: 2013
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1964-01-01
+    au: 2014-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -46,8 +47,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    taux_cotisation_retraite: 0.0800
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -68,9 +67,8 @@ periodes:
       `rendements_points.csv` porte leur rapport, 8,8 centimes de rente
       par euro, appliqué à toute la carrière faute de série ancienne ;
       niveau `estimee`. Âges de la fiche `ircec_raap`.
-  - debut: 2014
-    fin: 2023
-    type_calcul: points
+  - du: 2014-01-01
+    au: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -79,8 +77,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    taux_cotisation_retraite: 0.0800
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     abattement_points: minoration_ircec
@@ -102,9 +98,7 @@ periodes:
       `docs/limites.md`).
       Taux, assiette et points : ceux de la première période. AUCUNE
       MAJORATION POUR ENFANTS avant 2024 : voir la période suivante.
-  - debut: 2024
-    fin: null
-    type_calcul: points
+  - du: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -113,8 +107,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    taux_cotisation_retraite: 0.0800
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     abattement_points: minoration_ircec
@@ -128,3 +120,15 @@ periodes:
       et sa foire aux questions l'écrivent désormais, au RACD comme au
       RAAP. Minoration, taux, assiette et points : ceux de la période
       précédente.
+cotisation:
+  - du: 1964-01-01
+    au: 2014-01-01
+    assiette: plafonnee_13_pass
+    taux_cotisation_retraite: 0.0800
+  - du: 2014-01-01
+    au: 2024-01-01
+    assiette: plafonnee_13_pass
+    taux_cotisation_retraite: 0.0800
+  - du: 2024-01-01
+    assiette: plafonnee_13_pass
+    taux_cotisation_retraite: 0.0800

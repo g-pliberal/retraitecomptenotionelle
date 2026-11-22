@@ -61,10 +61,11 @@ inventaire:
 # majorées d'un dixième » pour qui a eu au moins trois enfants, sans
 # supplément au-delà. La fiche ne la déclarait pas, et le mineur père
 # ou mère de trois enfants n'en recevait rien.
-periodes:
-  - debut: 1930
-    fin: 1973
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1930-01-01
+    au: 1992-01-01
     age_ouverture: 55
     age_ouverture_services: 50
     services_ouverture_annees: 30
@@ -73,16 +74,10 @@ periodes:
     trimestres_maximum: 120
     trimestres_maximum_leve_avant_age: 55
     taux_plein: 1.0
-    points_par_trimestre_valide: 1
     salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-    valeur_point_euros: 11.32
-    valeur_point_annee: 1974
     notes: >-
       LA PENSION DU MINEUR N'A JAMAIS DÉPENDU DE SON SALAIRE. C'est un
       FORFAIT PAR TRIMESTRE DE SERVICE, et il est le même pour l'abatteur
@@ -99,9 +94,7 @@ periodes:
       suivi les prix depuis 1930. Il ne les a pas suivis — il a longtemps
       suivi les salaires —, et une liquidation des années 1950 est donc
       incertaine dans les deux sens.
-  - debut: 1974
-    fin: 1974
-    type_calcul: points
+  - du: 1992-01-01
     age_ouverture: 55
     age_ouverture_services: 50
     services_ouverture_annees: 30
@@ -110,16 +103,35 @@ periodes:
     trimestres_maximum: 120
     trimestres_maximum_leve_avant_age: 55
     taux_plein: 1.0
-    points_par_trimestre_valide: 1
     salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-    valeur_point_euros: 11.32
-    valeur_point_annee: 1974
+    bareme_trimestre: mines
+    notes: >-
+      « Le montant de pension pour un trimestre de services s'élève, pour
+      les pensions liquidées à compter du 1er juillet 1992, à 382,08 F »
+      (article 131, rédaction du 1er janvier 1993), soit 58,25 € au taux
+      officiel. Trente ans de mine valaient donc 45 850 F par an, moins de
+      7 000 €. DEPUIS CETTE DATE, LA VALEUR SUIT LES PENSIONS, et non les
+      prix : `legislation/bareme_trimestre_mines.csv` la porte date par date,
+      chaîne des coefficients de revalorisation de la Cnav qui retombe au
+      centime sur 67,73 € en 2001, 69,22 € en 2002, 82,83 € en 2013 et
+      97,15 € en 2026 ; `bareme_trimestre` l'y fait lire. La valeur écrite
+      ci-dessus ne sert plus qu'avant juillet 1992.
+cotisation:
+  - du: 1930-01-01
+    au: 1974-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1974-01-01
+    au: 1975-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
     notes: >-
       SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
       sa rédaction du 1er avril 1974 : « le montant de la pension dont
@@ -156,25 +168,132 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1975
-    fin: 1975
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
+  - du: 1975-01-01
+    au: 1976-01-01
     points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
     assiette: plafonnee
     taux_cotisation_retraite: 0.0805
     perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1976-01-01
+    au: 1977-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1977-01-01
+    au: 1978-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1978-01-01
+    au: 1979-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1979-01-01
+    au: 1980-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1980-01-01
+    au: 1981-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1981-01-01
+    au: 1982-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1982-01-01
+    au: 1983-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1983-01-01
+    au: 1984-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1984-01-01
+    au: 1985-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1985-01-01
+    au: 1986-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1986-01-01
+    au: 1987-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1987-01-01
+    au: 1988-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1988-01-01
+    au: 1989-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1989-01-01
+    au: 1990-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1990-01-01
+    au: 1991-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1991-01-01
+    au: 1992-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 1992-01-01
+    au: 2001-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 2001-01-01
+    au: 2013-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+  - du: 2013-01-01
+    points_par_trimestre_valide: 1
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0805
+    perimetre_taux: agent_seul
+servi:
+  - du: 1930-01-01
+    au: 1975-01-01
+    valeur_point_euros: 11.32
+    valeur_point_annee: 1974
+  - du: 1975-01-01
+    au: 1976-01-01
     valeur_point_euros: 12.4
     valeur_point_annee: 1975
     notes: >-
@@ -213,25 +332,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1976
-    fin: 1976
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1976-01-01
+    au: 1977-01-01
     valeur_point_euros: 13.58
     valeur_point_annee: 1976
     notes: >-
@@ -270,25 +372,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1977
-    fin: 1977
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1977-01-01
+    au: 1978-01-01
     valeur_point_euros: 14.87
     valeur_point_annee: 1977
     notes: >-
@@ -327,25 +412,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1978
-    fin: 1978
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1978-01-01
+    au: 1979-01-01
     valeur_point_euros: 16.29
     valeur_point_annee: 1978
     notes: >-
@@ -384,25 +452,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1979
-    fin: 1979
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1979-01-01
+    au: 1980-01-01
     valeur_point_euros: 17.84
     valeur_point_annee: 1979
     notes: >-
@@ -441,25 +492,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1980
-    fin: 1980
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1980-01-01
+    au: 1981-01-01
     valeur_point_euros: 19.54
     valeur_point_annee: 1980
     notes: >-
@@ -498,25 +532,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1981
-    fin: 1981
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1981-01-01
+    au: 1982-01-01
     valeur_point_euros: 21.41
     valeur_point_annee: 1981
     notes: >-
@@ -555,25 +572,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1982
-    fin: 1982
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1982-01-01
+    au: 1983-01-01
     valeur_point_euros: 23.44
     valeur_point_annee: 1982
     notes: >-
@@ -612,25 +612,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1983
-    fin: 1983
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1983-01-01
+    au: 1984-01-01
     valeur_point_euros: 25.68
     valeur_point_annee: 1983
     notes: >-
@@ -669,25 +652,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1984
-    fin: 1984
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1984-01-01
+    au: 1985-01-01
     valeur_point_euros: 28.13
     valeur_point_annee: 1984
     notes: >-
@@ -726,25 +692,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1985
-    fin: 1985
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1985-01-01
+    au: 1986-01-01
     valeur_point_euros: 30.8
     valeur_point_annee: 1985
     notes: >-
@@ -783,25 +732,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1986
-    fin: 1986
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1986-01-01
+    au: 1987-01-01
     valeur_point_euros: 33.74
     valeur_point_annee: 1986
     notes: >-
@@ -840,25 +772,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1987
-    fin: 1987
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1987-01-01
+    au: 1988-01-01
     valeur_point_euros: 36.95
     valeur_point_annee: 1987
     notes: >-
@@ -897,25 +812,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1988
-    fin: 1988
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1988-01-01
+    au: 1989-01-01
     valeur_point_euros: 40.48
     valeur_point_annee: 1988
     notes: >-
@@ -954,25 +852,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1989
-    fin: 1989
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1989-01-01
+    au: 1990-01-01
     valeur_point_euros: 44.33
     valeur_point_annee: 1989
     notes: >-
@@ -1011,25 +892,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1990
-    fin: 1990
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1990-01-01
+    au: 1991-01-01
     valeur_point_euros: 48.56
     valeur_point_annee: 1990
     notes: >-
@@ -1068,25 +932,8 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1991
-    fin: 1991
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1991-01-01
+    au: 1992-01-01
     valeur_point_euros: 53.18
     valeur_point_annee: 1991
     notes: >-
@@ -1125,61 +972,14 @@ periodes:
       les salaires, ni les pensions du régime général — il a décroché puis
       rattrapé. Entre deux points connus, la ligne droite est ce qu'on
       peut dire de moins faux.
-  - debut: 1992
-    fin: 2000
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 1992-01-01
+    au: 2001-01-01
     valeur_point_euros: 58.25
     valeur_point_annee: 1992
-    bareme_trimestre: mines
-    notes: >-
-      « Le montant de pension pour un trimestre de services s'élève, pour
-      les pensions liquidées à compter du 1er juillet 1992, à 382,08 F »
-      (article 131, rédaction du 1er janvier 1993), soit 58,25 € au taux
-      officiel. Trente ans de mine valaient donc 45 850 F par an, moins de
-      7 000 €. DEPUIS CETTE DATE, LA VALEUR SUIT LES PENSIONS, et non les
-      prix : `legislation/bareme_trimestre_mines.csv` la porte date par date,
-      chaîne des coefficients de revalorisation de la Cnav qui retombe au
-      centime sur 67,73 € en 2001, 69,22 € en 2002, 82,83 € en 2013 et
-      97,15 € en 2026 ; `bareme_trimestre` l'y fait lire. La valeur écrite
-      ci-dessus ne sert plus qu'avant juillet 1992.
-  - debut: 2001
-    fin: 2012
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 2001-01-01
+    au: 2013-01-01
     valeur_point_euros: 69.22
     valeur_point_annee: 2002
-    bareme_trimestre: mines
     notes: >-
       « La valeur du trimestre de services servant au calcul de ces pensions
       et allocation s'élève à 67,73 euros au 1er janvier 2001 et à 69,22
@@ -1191,28 +991,9 @@ periodes:
       l'article 131-2 majore les trimestres des pensions prenant effet en
       2001. Une pension de trente ans liquidée en 2012 valait 120 × 1,305 ×
       81,77 € = 12 805 € par an, et la fiche en servait 9 891.
-  - debut: 2013
-    fin: null
-    type_calcul: points
-    age_ouverture: 55
-    age_ouverture_services: 50
-    services_ouverture_annees: 30
-    age_taux_plein: 55
-    duree_requise_trimestres: 120
-    trimestres_maximum: 120
-    trimestres_maximum_leve_avant_age: 55
-    taux_plein: 1.0
-    points_par_trimestre_valide: 1
-    salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.0805
-    perimetre_taux: agent_seul
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+  - du: 2013-01-01
     valeur_point_euros: 82.83
     valeur_point_annee: 2013
-    bareme_trimestre: mines
     notes: >-
       « La valeur du trimestre de services […] s'élève à 82,83 euros au
       1er avril 2013 » (article 131, rédaction du 6 septembre 2015), et

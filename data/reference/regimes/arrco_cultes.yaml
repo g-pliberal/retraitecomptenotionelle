@@ -41,10 +41,14 @@ inventaire:
     `cultes_retraite_complementaire_taux_specifiques`) ; avant 2019, le
     taux est celui de la tranche 1 de l'Arrco, les circulaires lues ne
     commençant qu'en janvier 2020.
-periodes:
-  - debut: 2006
-    fin: 2010
-    type_calcul: points
+structure:
+  type_calcul: points
+  points_de:
+    - {du: 2006-01-01, regime: arrco}
+    - {du: 2019-01-01, regime: agirc_arrco}
+liquidation:
+  - du: 2006-01-01
+    au: 2011-01-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -52,17 +56,8 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 1000.0
-    plafond_majoration_annee: 2011
     plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
-    assiette: tranche_1
-    assiette_repere_smic: 1820
-    assiette_forfaitaire: cultes_retraite_complementaire
-    smic_du_mois: true
-    taux_cotisation_retraite: 0.075
-    part_salariale: 0.40   # la collectivité paie les trois cinquièmes
-    points_de: arrco
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -74,10 +69,8 @@ periodes:
       (Actes 6) donne 7,50 % du forfait, 3,00 % à l'assuré et 4,50 % à la
       collectivité, et l'AGFF en plus. Voir la dernière période pour la
       règle.
-
-  - debut: 2011
-    fin: 2013
-    type_calcul: points
+  - du: 2011-01-01
+    au: 2019-01-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -86,17 +79,8 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 1000.0
-    plafond_majoration_annee: 2011
     plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
-    assiette: tranche_1
-    assiette_repere_smic: 1820
-    assiette_forfaitaire: cultes_retraite_complementaire
-    smic_du_mois: true
-    taux_cotisation_retraite: 0.075
-    part_salariale: 0.40   # la collectivité paie les trois cinquièmes
-    points_de: arrco
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -104,68 +88,8 @@ periodes:
       Taux de la tranche 1 de l'Arrco, repris de sa fiche ; l'âge du taux
       plein suit celui du régime de base, lu à la génération, depuis la loi
       du 9 novembre 2010.
-
-  - debut: 2014
-    fin: 2014
-    type_calcul: points
-    age_ouverture: 60
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 1000.0
-    plafond_majoration_annee: 2011
-    plafond_majoration_regime: arrco
-    salaire_reference: carriere_entiere
-    assiette: tranche_1
-    assiette_repere_smic: 1820
-    assiette_forfaitaire: cultes_retraite_complementaire
-    smic_du_mois: true
-    taux_cotisation_retraite: 0.07625
-    part_salariale: 0.40   # la collectivité paie les trois cinquièmes
-    points_de: arrco
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    notes: >-
-      Taux de la tranche 1 de l'Arrco, 6,10 % appelés à 125 %, repris de sa
-      fiche.
-
-  - debut: 2015
-    fin: 2018
-    type_calcul: points
-    age_ouverture: 60
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 1000.0
-    plafond_majoration_annee: 2011
-    plafond_majoration_regime: arrco
-    salaire_reference: carriere_entiere
-    assiette: tranche_1
-    assiette_repere_smic: 1820
-    assiette_forfaitaire: cultes_retraite_complementaire
-    smic_du_mois: true
-    taux_cotisation_retraite: 0.0775
-    part_salariale: 0.40   # la collectivité paie les trois cinquièmes
-    points_de: arrco
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    notes: >-
-      Taux de la tranche 1 de l'Arrco, 6,20 % appelés à 125 %, repris de sa
-      fiche.
-
-  - debut: 2019
-    fin: 2023
-    type_calcul: points
+  - du: 2019-01-01
+    au: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -174,16 +98,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
-    assiette: tranche_1
-    assiette_repere_smic: 1820
-    assiette_forfaitaire: cultes_retraite_complementaire
-    smic_du_mois: true
-    taux_cotisation_retraite: 0.0787
-    part_salariale: 0.4002541296060991   # 3,15 % sur 7,87 % : la circulaire met 4,01 % à l'assuré, 3,15 + 0,86 de CEG
-    points_de: agirc_arrco
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion, coefficient_solidarite]
@@ -191,10 +106,7 @@ periodes:
       Régime unifié Agirc-Arrco : 6,20 % appelés à 127 % sur la tranche 1,
       coefficients de solidarité jusqu'en 2023, comme la fiche `agirc_arrco`
       dont les points sont empruntés (`points_de`).
-
-  - debut: 2024
-    fin: null
-    type_calcul: points
+  - du: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -203,16 +115,7 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
-    assiette: tranche_1
-    assiette_repere_smic: 1820
-    assiette_forfaitaire: cultes_retraite_complementaire
-    smic_du_mois: true
-    taux_cotisation_retraite: 0.0787
-    part_salariale: 0.4002541296060991   # 3,15 % sur 7,87 % : la circulaire met 4,01 % à l'assuré, 3,15 + 0,86 de CEG
-    points_de: agirc_arrco
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -242,3 +145,65 @@ periodes:
       Les points sont ceux de l'Arrco puis de l'Agirc-Arrco (`points_de`),
       achetés et servis à leur barème : seule l'assiette diffère, comme pour
       la tranche 2 de l'Arrco.
+cotisation:
+  - du: 2006-01-01
+    au: 2011-01-01
+    assiette: tranche_1
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
+    taux_cotisation_retraite: 0.075
+    part_salariale: 0.40   # la collectivité paie les trois cinquièmes
+  - du: 2011-01-01
+    au: 2014-01-01
+    assiette: tranche_1
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
+    taux_cotisation_retraite: 0.075
+    part_salariale: 0.40   # la collectivité paie les trois cinquièmes
+  - du: 2014-01-01
+    au: 2015-01-01
+    assiette: tranche_1
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
+    taux_cotisation_retraite: 0.07625
+    part_salariale: 0.40   # la collectivité paie les trois cinquièmes
+    notes: >-
+      Taux de la tranche 1 de l'Arrco, 6,10 % appelés à 125 %, repris de sa
+      fiche.
+  - du: 2015-01-01
+    au: 2019-01-01
+    assiette: tranche_1
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
+    taux_cotisation_retraite: 0.0775
+    part_salariale: 0.40   # la collectivité paie les trois cinquièmes
+    notes: >-
+      Taux de la tranche 1 de l'Arrco, 6,20 % appelés à 125 %, repris de sa
+      fiche.
+  - du: 2019-01-01
+    au: 2024-01-01
+    assiette: tranche_1
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
+    taux_cotisation_retraite: 0.0787
+    part_salariale: 0.4002541296060991   # 3,15 % sur 7,87 % : la circulaire met 4,01 % à l'assuré, 3,15 + 0,86 de CEG
+  - du: 2024-01-01
+    assiette: tranche_1
+    assiette_repere_smic: 1820
+    assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
+    taux_cotisation_retraite: 0.0787
+    part_salariale: 0.4002541296060991   # 3,15 % sur 7,87 % : la circulaire met 4,01 % à l'assuré, 3,15 + 0,86 de CEG
+servi:
+  - du: 2006-01-01
+    au: 2019-01-01
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+  - du: 2019-01-01
+    plafond_majoration_enfants: 2367.48
+    plafond_majoration_annee: 2025

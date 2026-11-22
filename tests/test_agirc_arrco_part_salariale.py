@@ -15,11 +15,10 @@ au 1er juillet 2026, posés à la main : 2 500 × 3,15 % = 78,75 € ;
 from __future__ import annotations
 
 import pytest
-import yaml
 
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.donnees.macro import DonneesMacro
-from retraite_notionnelle.donnees.regimes import CatalogueRegimes
+from retraite_notionnelle.donnees.regimes import CatalogueRegimes, lire_fiche_de_regime
 from retraite_notionnelle.remuneration import (
     ConstructeurFiche,
     bloc_droit_en_vigueur,
@@ -72,8 +71,8 @@ def test_la_ligne_agirc_arrco_du_salarie_est_celle_du_bareme_publie(
 ])
 def test_le_taux_salarial_de_chaque_tranche_est_celui_que_le_regime_publie(
         annee, regime, assiette, salarie):
-    fiche = yaml.safe_load((PARAMETRES.racine_donnees / "reference" / "regimes"
-                             / f"{regime}.yaml").read_text(encoding="utf-8"))
+    fiche = lire_fiche_de_regime(PARAMETRES.racine_donnees / "reference" / "regimes"
+                                 / f"{regime}.yaml")
     periodes = [p for p in fiche["periodes"]
                 if p["assiette"] == assiette and p["debut"] == annee]
     assert len(periodes) == 1

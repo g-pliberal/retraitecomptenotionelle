@@ -22,18 +22,16 @@ inventaire:
   statuts: []
   textes:
     - {reference: "loi du 14 mars 1941 relative à l'allocation aux vieux travailleurs salariés", id: null}
-periodes:
-  - debut: 1941
-    fin: 1945
-    type_calcul: forfaitaire
+structure:
+  type_calcul: forfaitaire
+liquidation:
+  - du: 1941-01-01
+    au: 1946-01-01
     age_ouverture: 65
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: null
     salaire_reference: sans_objet
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.08
-    part_salariale: 0.50   # financée par la cotisation des assurances sociales, partagée par moitié
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse]
@@ -44,3 +42,9 @@ periodes:
       (paramètre `annee_debut_repartition`, modifiable à 1945).
       Prestation forfaitaire sous condition de ressources : intégralement
       non contributive, donc neutralisée dans les scénarios notionnels.
+cotisation:
+  - du: 1941-01-01
+    au: 1946-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.08
+    part_salariale: 0.50   # financée par la cotisation des assurances sociales, partagée par moitié

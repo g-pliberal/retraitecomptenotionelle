@@ -49,10 +49,10 @@ inventaire:
     rachat des années de 1946 à 1977, la borne de 420 points jusqu'en
     2021, l'arrondi au centième supérieur. Le partage avec l'assurance
     maladie, lu pour 2025, est présumé à toutes les années.
-periodes:
-  - debut: 1978
-    fin: 2006
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1978-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -60,15 +60,6 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.000000
-    part_assurance_maladie_forfait: 0.666667
-    part_assurance_maladie_taux: 0.5
-    cotisation_forfaitaire_euros: 1050.00
-    cotisation_forfaitaire_annee: 2007
-    points_par_trimestre_valide: 2.5
-    valeur_point_euros: 28.5747
-    valeur_point_annee: 2025
     decote_par_trimestre: 0.0125
     decote_trimestres_maximum: 12
     surcote_par_trimestre: null
@@ -88,16 +79,9 @@ periodes:
       modèle ne sert pas : il les vaut au point d'après 2006. Le rachat
       des années de 1946 à 1977, huit points l'année, n'est pas porté.
       Niveau `estimee`.
-  - debut: 2007
-    fin: 2007
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+cotisation:
+  - du: 1978-01-01
+    au: 2007-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
@@ -105,12 +89,15 @@ periodes:
     cotisation_forfaitaire_euros: 1050.00
     cotisation_forfaitaire_annee: 2007
     points_par_trimestre_valide: 2.5
-    valeur_point_euros: 28.5747
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
+  - du: 2007-01-01
+    au: 2008-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.5
+    cotisation_forfaitaire_euros: 1050.00
+    cotisation_forfaitaire_annee: 2007
+    points_par_trimestre_valide: 2.5
     notes: >-
       FORFAIT : « 3 150 euros pour l'exercice 2007 », qui ouvre « 10 »
       points (décret n° 2007-458, art. 1er, LEGIARTI000006261863). C'est la
@@ -119,16 +106,8 @@ periodes:
       3 297,52 € à celle des organismes d'assurance maladie) ; la fiche
       porte le tiers, 1 050 €, et présume ce partage à toutes les
       années.
-  - debut: 2008
-    fin: 2008
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2008-01-01
+    au: 2009-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.003750
     part_assurance_maladie_forfait: 0.666667
@@ -137,12 +116,6 @@ periodes:
     cotisation_forfaitaire_annee: 2008
     points_par_trimestre_valide: 2.5
     points_ajustement_au_plafond: 1.0
-    valeur_point_euros: 28.5747
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       FORFAIT : « 3 600 euros pour l'exercice 2008 » (art. 1er), le tiers à
       l'adhérent. AJUSTEMENT : « 0,75 % du revenu professionnel […] dans
@@ -152,16 +125,8 @@ periodes:
       supérieur » en deçà (art. 2, LEGIARTI000006261864) ; la moitié à
       l'adhérent, l'autre aux caisses (guide CNAVPL 2025, partage présumé
       constant). Le moteur ne fait pas l'arrondi.
-  - debut: 2009
-    fin: 2011
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2009-01-01
+    au: 2012-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.003750
     part_assurance_maladie_forfait: 0.666667
@@ -170,12 +135,6 @@ periodes:
     cotisation_forfaitaire_annee: 2009
     points_par_trimestre_valide: 2.5
     points_ajustement_au_plafond: 1.0
-    valeur_point_euros: 28.5747
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       FORFAIT : « 3 900 euros pour l'exercice 2009 », puis « revalorisé
       conformément à l'évolution annuelle moyenne des prix à la
@@ -183,16 +142,8 @@ periodes:
       tiers, 1 300 €, projeté sur les prix. AJUSTEMENT : 0,75 %, un point
       au plafond (art. 2, rédactions de 2007 et de 2012,
       LEGIARTI000026885150).
-  - debut: 2012
-    fin: 2017
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2012-01-01
+    au: 2018-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.003750
     part_assurance_maladie_forfait: 0.666667
@@ -201,12 +152,6 @@ periodes:
     cotisation_forfaitaire_annee: 2009
     points_par_trimestre_valide: 2.5
     points_ajustement_au_plafond: 1.0
-    valeur_point_euros: 28.5747
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       FORFAIT : « 3 900 euros pour l'exercice 2009 », puis « revalorisé
       conformément à l'évolution annuelle moyenne des prix à la
@@ -218,16 +163,8 @@ periodes:
       remplace « défini au second alinéa de l'article L. 642-2 » par
       « défini à l'article L. 642-2 » : sans effet sur le taux ni sur les
       points ; la période est coupée à sa date pour le dire.
-  - debut: 2018
-    fin: 2018
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2018-01-01
+    au: 2019-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.005500
     part_assurance_maladie_forfait: 0.666667
@@ -236,12 +173,6 @@ periodes:
     cotisation_forfaitaire_annee: 2009
     points_par_trimestre_valide: 2.5
     points_ajustement_au_plafond: 1.47
-    valeur_point_euros: 28.5747
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       AJUSTEMENT : « 1,10 % au titre de l'exercice 2018 », qui ouvre au
       plafond « 1,47 point de retraite au titre de l'exercice 2018 » (art.
@@ -249,16 +180,8 @@ periodes:
       assis sur le revenu de L. 131-6. LA PRESTATION « ne dépasse pas 420
       points » jusqu'en 2021 (décret n° 78-283, article 3) : le moteur
       ne la borne pas.
-  - debut: 2019
-    fin: 2024
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2019-01-01
+    au: 2025-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.007250
     part_assurance_maladie_forfait: 0.666667
@@ -267,26 +190,11 @@ periodes:
     cotisation_forfaitaire_annee: 2009
     points_par_trimestre_valide: 2.5
     points_ajustement_au_plafond: 1.93
-    valeur_point_euros: 28.5747
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       AJUSTEMENT : « 1,45 % à compter de l'exercice 2019 », « 1,93 point
       de retraite à compter de l'exercice 2019 » au plafond (art. 2,
       LEGIARTI000034762381), dont 0,725 % à l'adhérent.
-  - debut: 2025
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2025-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.007250
     part_assurance_maladie_forfait: 0.666667
@@ -295,12 +203,6 @@ periodes:
     cotisation_forfaitaire_annee: 2025
     points_par_trimestre_valide: 2.5
     points_ajustement_au_plafond: 1.93
-    valeur_point_euros: 28.5747
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       FORFAIT : « 1 648,76 € en 2025, à la charge de l'adhérent, 3 297,52
       € à la charge des organismes d'assurance maladie » ; « La
@@ -315,3 +217,7 @@ periodes:
       au profit des allocataires ayant eu au moins 3 enfants » (guide de
       l'assurance vieillesse des professions libérales, CNAVPL, 2025, p.
       87-88).
+servi:
+  - du: 1978-01-01
+    valeur_point_euros: 28.5747
+    valeur_point_annee: 2025

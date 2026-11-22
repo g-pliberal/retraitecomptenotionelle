@@ -33,18 +33,15 @@ inventaire:
     2026, 2,42 € de service en 2025) est celui de la Caisse des dépôts,
     hors index, appliqué en rendement à toute la carrière ; le taux
     d'avant 1990 est projeté.
-periodes:
-  - debut: 1963
-    fin: 1989
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1963-01-01
     age_ouverture: 65
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0200
-    assiette_facteur_revenu: 1.0
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -68,20 +65,16 @@ periodes:
       TAUX : « fixé par le ministre des finances » (art. 6,
       LEGIARTI000006787848), sans chiffre dans l'index avant 1990 ; le
       taux de 2 % de 1990 est projeté en arrière.
-  - debut: 1990
-    fin: null
-    type_calcul: points
-    age_ouverture: 65
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+cotisation:
+  - du: 1963-01-01
+    au: 1990-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.0200
     assiette_facteur_revenu: 1.0
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 1990-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0200
+    assiette_facteur_revenu: 1.0
     notes: >-
       LA FICHE PORTE LA COTISATION DU GÉRANT SEULE — le statut est sans
       employeur — et décrit la participation du fonds des redevances des

@@ -23,10 +23,11 @@ inventaire:
   textes:
     - {reference: "ordonnance n° 2005-1528 du 8 décembre 2005 relative à la création du régime social des indépendants", id: null}
     - {reference: "loi n° 2017-1836 du 30 décembre 2017 de financement de la sécurité sociale pour 2018, article 15", id: null}
-periodes:
-  - debut: 2006
-    fin: 2008
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 2006-01-01
+    au: 2009-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -39,8 +40,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
     regles_du_salaire_annuel_moyen: revenu_annuel_moyen_independants
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1665
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -60,9 +59,8 @@ periodes:
       pour 2006-2008 (`ret_ac/artisans/sous_pss`, identique pour les
       commerçants). La fiche portait 17,75 % — le total plafonnée plus
       déplafonnée de 2017 — sur toute la vie du régime.
-  - debut: 2009
-    fin: 2013
-    type_calcul: annuites
+  - du: 2009-01-01
+    au: 2019-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -75,8 +73,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: 25_meilleures_annees
     regles_du_salaire_annuel_moyen: revenu_annuel_moyen_independants
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1673
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -96,35 +92,21 @@ periodes:
       16,65 % jusqu'en 2011, 16,85 % à compter de novembre 2012. La fiche
       portait 17,75 %, le total plafonnée plus déplafonnée de 2017, sur toute
       la période 2009-2018.
-  - debut: 2014
-    fin: 2018
-    type_calcul: annuites
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 0.50
-    age_taux_plein_par_generation: age_annulation_decote
-    decote_par_generation: decote_regime_general
-    salaire_reference_par_generation: revenu_annuel_moyen_independants
-    duree_proratisation_par_generation: taux_plein_et_proratisation
-    salaire_reference: 25_meilleures_annees
-    regles_du_salaire_annuel_moyen: revenu_annuel_moyen_independants
+cotisation:
+  - du: 2006-01-01
+    au: 2009-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1665
+  - du: 2009-01-01
+    au: 2014-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1673
+  - du: 2014-01-01
+    au: 2019-01-01
     assiette: plafonnee
     taux_cotisation_retraite: 0.1709
     taux_cotisation_deplafonnee: 0.0045
     part_salariale_deplafonnee: 1.0
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
-    duree_majoree_tous_regimes: majoration_duree_apres_65_ans
-    duree_majoree_bornee_avec: [cancava_avant_1973, organic_avant_1973]
-    pension_bornee_au_minimum_avec: [cancava_avant_1973, organic_avant_1973]
-    surcote_bareme: surcote_regime_general
-    avantages_non_contributifs:
-      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
-       reversion, periodes_assimilees]
     notes: >-
       UNE COTISATION DÉPLAFONNÉE EST CRÉÉE AU 1er JANVIER 2014, et la période
       se coupe là. 17,09 % est la moyenne 2014-2018 de la cotisation

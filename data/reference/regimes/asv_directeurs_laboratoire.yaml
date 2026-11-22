@@ -94,24 +94,16 @@ inventaire:
     dixième supérieur des points d'ajustement, et l'assiette de
     l'avant-dernière année. Le partage avec l'assurance maladie, lu pour
     2025, est présumé à toutes les années.
-periodes:
-  - debut: 1981
-    fin: 2007
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1981-01-01
+    au: 2009-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.000000
-    part_assurance_maladie_forfait: 0.666667
-    part_assurance_maladie_taux: 0.5
-    cotisation_forfaitaire_euros: 360.00
-    cotisation_forfaitaire_annee: 2008
-    points_par_trimestre_valide: 65.5
-    valeur_point_euros: 0.3927
-    valeur_point_annee: 2025
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -130,14 +122,33 @@ periodes:
       de service, de 0,35 à 1,40 € selon l'année d'acquisition en 2008
       (article 3, II), que le modèle ne sert pas : il les vaut au point
       d'après 2006, 0,30 € en 2008. Niveau `estimee`.
-  - debut: 2008
-    fin: 2008
-    type_calcul: points
+  - du: 2009-01-01
     age_ouverture: 60
-    age_taux_plein: 65
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      FORFAIT TOTAL : « 1 296 euros pour les exercices 2009 et 2010 », puis
+      revalorisé sur les prix (décret n° 2007-597, article 1er,
+      LEGIARTI000006263088), dont le tiers au biologiste.
+cotisation:
+  - du: 1981-01-01
+    au: 2008-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.5
+    cotisation_forfaitaire_euros: 360.00
+    cotisation_forfaitaire_annee: 2008
+    points_par_trimestre_valide: 65.5
+  - du: 2008-01-01
+    au: 2009-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.001500
     part_assurance_maladie_forfait: 0.666667
@@ -146,11 +157,6 @@ periodes:
     cotisation_forfaitaire_annee: 2008
     points_par_trimestre_valide: 65.5
     points_ajustement_au_plafond: 50
-    valeur_point_euros: 0.3927
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       FORFAIT TOTAL : « 1 080 euros pour l'exercice 2008 » (décret n°
       2007-597, article 1er, LEGIARTI000006263088), dont le tiers au
@@ -158,16 +164,8 @@ periodes:
       limite de cinq fois le plafond », dont le versement au plafond « ouvre
       droit à l'attribution de 50 points de retraite », au prorata en deçà
       (article 2, LEGIARTI000006263089), la moitié au biologiste.
-  - debut: 2009
-    fin: 2012
-    type_calcul: points
-    age_ouverture: 60
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2009-01-01
+    au: 2013-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.001500
     part_assurance_maladie_forfait: 0.666667
@@ -176,25 +174,8 @@ periodes:
     cotisation_forfaitaire_annee: 2009
     points_par_trimestre_valide: 65.5
     points_ajustement_au_plafond: 50
-    valeur_point_euros: 0.3927
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      FORFAIT TOTAL : « 1 296 euros pour les exercices 2009 et 2010 », puis
-      revalorisé sur les prix (décret n° 2007-597, article 1er,
-      LEGIARTI000006263088), dont le tiers au biologiste.
-  - debut: 2013
-    fin: 2014
-    type_calcul: points
-    age_ouverture: 60
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2013-01-01
+    au: 2015-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.001500
     part_assurance_maladie_forfait: 0.666667
@@ -203,27 +184,14 @@ periodes:
     cotisation_forfaitaire_annee: 2013
     points_par_trimestre_valide: 65.5
     points_ajustement_au_plafond: 50
-    valeur_point_euros: 0.3927
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       FORFAIT TOTAL : « Pour l'exercice 2013 à 1 382 euros ; 2° Pour
       l'exercice 2014 à 1 469 euros » (décret n° 2007-597, article 1er,
       rédaction du décret n° 2012-466, LEGIARTI000025678933), dont le tiers
       au biologiste ; la fiche porte celui de 2013, projeté sur les prix.
       Points : « fixé à 262 ».
-  - debut: 2015
-    fin: 2021
-    type_calcul: points
-    age_ouverture: 60
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2015-01-01
+    au: 2022-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.001500
     part_assurance_maladie_forfait: 0.666667
@@ -232,27 +200,14 @@ periodes:
     cotisation_forfaitaire_annee: 2015
     points_par_trimestre_valide: 65.5
     points_ajustement_au_plafond: 50
-    valeur_point_euros: 0.3927
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       FORFAIT TOTAL : 1 555 € en 2015, et de 2016 à 2021 1 555, 1 642 ou
       1 728 € selon le nombre de directeurs conventionnés à la fin de 2014
       et de 2015 (article 1er, LEGIARTI000043806828) ; la fiche présume le
       premier, que le texte garde en euros et qu'elle projette sur les
       prix.
-  - debut: 2022
-    fin: 2024
-    type_calcul: points
-    age_ouverture: 60
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2022-01-01
+    au: 2025-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.006000
     part_assurance_maladie_forfait: 0.666667
@@ -261,11 +216,6 @@ periodes:
     cotisation_forfaitaire_annee: 2022
     points_par_trimestre_valide: 65.5
     points_ajustement_au_plafond: 50
-    valeur_point_euros: 0.3927
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       FORFAIT TOTAL : « Pour l'exercice 2022, à 1 788 euros », puis
       revalorisé « sur la base du coefficient mentionné à l'article L.
@@ -273,16 +223,7 @@ periodes:
       LEGIARTI000046813870) : la fiche le projette sur les prix.
       AJUSTEMENT : « A compter de l'exercice 2022, le taux de cette
       cotisation est fixé à 1,2 % » (article 2, LEGIARTI000046813858).
-  - debut: 2025
-    fin: null
-    type_calcul: points
-    age_ouverture: 60
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2025-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.006000
     part_assurance_maladie_forfait: 0.666667
@@ -291,11 +232,6 @@ periodes:
     cotisation_forfaitaire_annee: 2025
     points_par_trimestre_valide: 65.5
     points_ajustement_au_plafond: 50
-    valeur_point_euros: 0.3927
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       « la cotisation versée par le biologiste est égale à 713 € en 2025 et
       une cotisation de 1 425 € est versée par les organismes d'assurance
@@ -305,3 +241,7 @@ periodes:
       pour un revenu de 235 500 € » ; la valeur de service « est de 0,3927
       € pour les points acquis depuis 2006 » (guide de l'assurance
       vieillesse des professions libérales, CNAVPL, 2025, p. 93-94).
+servi:
+  - du: 1981-01-01
+    valeur_point_euros: 0.3927
+    valeur_point_annee: 2025

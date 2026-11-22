@@ -39,10 +39,11 @@ inventaire:
     hors index, et de montants par décret annuel : le taux proportionnel
     de 2016 est projeté en arrière sur ces trente-sept ans au niveau
     estimé, et le rendement de 2016 avec lui.
-periodes:
-  - debut: 1979
-    fin: 2015
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1979-01-01
+    au: 2016-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -51,8 +52,6 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_8_pass
-    taux_cotisation_retraite: 0.125
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavom_ages_minoration
     abattement_points: cavom_ages_minoration
@@ -83,9 +82,8 @@ periodes:
       cinq —, qui ont toutes liquidé avant elle. Les versions antérieures
       des statuts ne sont pas dans l'index ; la minoration de 5 % par année
       d'anticipation y est supposée la même.
-  - debut: 2016
-    fin: 2016
-    type_calcul: points
+  - du: 2016-01-01
+    au: 2025-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -94,9 +92,6 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_4_pass
-    assiette_minimale_pass: 0.25
-    taux_cotisation_retraite: 0.125
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavom_ages_minoration
     abattement_points: cavom_ages_minoration
@@ -151,9 +146,7 @@ periodes:
       cette fiche est celui d'un libéral. LA COTISATION FACULTATIVE de 20 %,
       qui porte la réversion à 100 %, ne l'est pas non plus : le modèle ne
       prête à personne une option.
-  - debut: 2017
-    fin: 2017
-    type_calcul: points
+  - du: 2025-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -162,112 +155,6 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_5_pass
-    assiette_minimale_pass: 0.25
-    taux_cotisation_retraite: 0.125
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavom_ages_minoration
-    abattement_points: cavom_ages_minoration
-    surcote_par_trimestre: null
-    age_sans_coefficient_de_l_inapte: 62
-    effet_au_trimestre_civil: [2016-01-01, null]
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      2017 : même régime, plafond de cinq plafonds de la Sécurité sociale
-      (décret n° 2015-1875, article 3, II) et assiette minimale de
-      25 % du plafond. Voir la période de 2016.
-  - debut: 2018
-    fin: 2018
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cavom
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee_6_pass
-    assiette_minimale_pass: 0.25
-    taux_cotisation_retraite: 0.125
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavom_ages_minoration
-    abattement_points: cavom_ages_minoration
-    surcote_par_trimestre: null
-    age_sans_coefficient_de_l_inapte: 62
-    effet_au_trimestre_civil: [2016-01-01, null]
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      2018 : même régime, plafond de six plafonds de la Sécurité sociale
-      (décret n° 2015-1875, article 3, II) et assiette minimale de
-      25 % du plafond. Voir la période de 2016.
-  - debut: 2019
-    fin: 2019
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cavom
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee_7_pass
-    assiette_minimale_pass: 0.19
-    taux_cotisation_retraite: 0.125
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavom_ages_minoration
-    abattement_points: cavom_ages_minoration
-    surcote_par_trimestre: null
-    age_sans_coefficient_de_l_inapte: 62
-    effet_au_trimestre_civil: [2016-01-01, null]
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      2019 : même régime, plafond de sept plafonds de la Sécurité sociale
-      (décret n° 2015-1875, article 3, II) et assiette minimale de 19 %
-      du plafond depuis le 1er janvier 2019 (décret n° 2019-373). Voir la
-      période de 2016.
-  - debut: 2020
-    fin: 2024
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cavom
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee_8_pass
-    assiette_minimale_pass: 0.19
-    taux_cotisation_retraite: 0.125
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavom_ages_minoration
-    abattement_points: cavom_ages_minoration
-    surcote_par_trimestre: null
-    age_sans_coefficient_de_l_inapte: 62
-    effet_au_trimestre_civil: [2016-01-01, null]
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Depuis 2020 : huit plafonds de la Sécurité sociale — 384 480 € en
-      2026 — et une assiette minimale de 19 % du plafond, 9 131 € en 2026,
-      que l'article 2 du décret n° 79-265 applique aussi aux deux premières
-      années d'activité depuis le décret n° 2026-418 (LEGIARTI000054168585).
-      Voir la période de 2016.
-  - debut: 2025
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cavom
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee_8_pass
-    assiette_minimale_pass: 0.19
-    taux_cotisation_retraite: 0.125
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavom_ages_minoration
     abattement_points: cavom_ages_minoration
@@ -284,3 +171,56 @@ periodes:
       `age_ouverture_de_l_inapte`), quand sa génération, de 1965 à 1968,
       ouvre plus tard, et ne sert sans coefficient que « les affiliés ayant
       atteint l'âge de 67 ans » (2°). Voir les périodes de 2016 et de 2020.
+cotisation:
+  - du: 1979-01-01
+    au: 2016-01-01
+    assiette: plafonnee_8_pass
+    taux_cotisation_retraite: 0.125
+  - du: 2016-01-01
+    au: 2017-01-01
+    assiette: plafonnee_4_pass
+    assiette_minimale_pass: 0.25
+    taux_cotisation_retraite: 0.125
+  - du: 2017-01-01
+    au: 2018-01-01
+    assiette: plafonnee_5_pass
+    assiette_minimale_pass: 0.25
+    taux_cotisation_retraite: 0.125
+    notes: >-
+      2017 : même régime, plafond de cinq plafonds de la Sécurité sociale
+      (décret n° 2015-1875, article 3, II) et assiette minimale de
+      25 % du plafond. Voir la période de 2016.
+  - du: 2018-01-01
+    au: 2019-01-01
+    assiette: plafonnee_6_pass
+    assiette_minimale_pass: 0.25
+    taux_cotisation_retraite: 0.125
+    notes: >-
+      2018 : même régime, plafond de six plafonds de la Sécurité sociale
+      (décret n° 2015-1875, article 3, II) et assiette minimale de
+      25 % du plafond. Voir la période de 2016.
+  - du: 2019-01-01
+    au: 2020-01-01
+    assiette: plafonnee_7_pass
+    assiette_minimale_pass: 0.19
+    taux_cotisation_retraite: 0.125
+    notes: >-
+      2019 : même régime, plafond de sept plafonds de la Sécurité sociale
+      (décret n° 2015-1875, article 3, II) et assiette minimale de 19 %
+      du plafond depuis le 1er janvier 2019 (décret n° 2019-373). Voir la
+      période de 2016.
+  - du: 2020-01-01
+    au: 2025-01-01
+    assiette: plafonnee_8_pass
+    assiette_minimale_pass: 0.19
+    taux_cotisation_retraite: 0.125
+    notes: >-
+      Depuis 2020 : huit plafonds de la Sécurité sociale — 384 480 € en
+      2026 — et une assiette minimale de 19 % du plafond, 9 131 € en 2026,
+      que l'article 2 du décret n° 79-265 applique aussi aux deux premières
+      années d'activité depuis le décret n° 2026-418 (LEGIARTI000054168585).
+      Voir la période de 2016.
+  - du: 2025-01-01
+    assiette: plafonnee_8_pass
+    assiette_minimale_pass: 0.19
+    taux_cotisation_retraite: 0.125

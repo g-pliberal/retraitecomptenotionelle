@@ -52,18 +52,16 @@ inventaire:
     CAFAT indemnise, ne vaut aucun point complémentaire ; il cotise à la
     CAFAT et y vaut des points (loi du pays n° 2001-016, Lp. 100-7), que le
     modèle ne porte pas.
-periodes:
-  - debut: 1958
-    fin: 2022
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1958-01-01
+    au: 2023-01-01
     age_ouverture: 60
     age_taux_plein: 60
     duree_requise_trimestres: 140
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1400
-    part_salariale: 0.30
     decote_par_trimestre: 0.015
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -88,17 +86,13 @@ periodes:
       aux cotisations revalorisées sur les prix. AVANT 2023 : 60 ans et 35
       années d'activité, « 1,5 % de réduction par trimestre d'anticipation
       manquant », dans la limite de dix trimestres.
-  - debut: 2023
-    fin: 2023
-    type_calcul: points
+  - du: 2023-01-01
+    au: 2024-01-01
     age_ouverture: 60.5
     age_taux_plein: 60.5
     duree_requise_trimestres: 142
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1400
-    part_salariale: 0.30
     decote_par_trimestre: 0.015
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -135,17 +129,13 @@ periodes:
       par trimestre d'anticipation » ; article 4 : dix trimestres au
       plus. 2023 : 60 ans et 6 mois, 35 ans et 6 mois (142 trimestres) ;
       la fiche en portait 36, que le texte ne donne qu'en 2024.
-  - debut: 2024
-    fin: 2024
-    type_calcul: points
+  - du: 2024-01-01
+    au: 2025-01-01
     age_ouverture: 61
     age_taux_plein: 61
     duree_requise_trimestres: 144
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1400
-    part_salariale: 0.30
     decote_par_trimestre: 0.015
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -181,17 +171,13 @@ periodes:
       que la fiche porte ; article 2 : « abattement définitif de 1,50 %
       par trimestre d'anticipation » ; article 4 : dix trimestres au
       plus. 2024 : 61 ans, 36 ans (144 trimestres).
-  - debut: 2025
-    fin: 2025
-    type_calcul: points
+  - du: 2025-01-01
+    au: 2026-01-01
     age_ouverture: 61.5
     age_taux_plein: 61.5
     duree_requise_trimestres: 146
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1400
-    part_salariale: 0.30
     decote_par_trimestre: 0.015
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -227,17 +213,12 @@ periodes:
       que la fiche porte ; article 2 : « abattement définitif de 1,50 %
       par trimestre d'anticipation » ; article 4 : dix trimestres au
       plus. 2025 : 61 ans et 6 mois, 36 ans et 6 mois (146 trimestres).
-  - debut: 2026
-    fin: null
-    type_calcul: points
+  - du: 2026-01-01
     age_ouverture: 62
     age_taux_plein: 62
     duree_requise_trimestres: 148
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1400
-    part_salariale: 0.30
     decote_par_trimestre: 0.015
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -276,3 +257,28 @@ periodes:
       garde le taux plein sans abattement à qui avait au 1er janvier
       2023 trente-cinq ans d'assurance et cinquante-sept ans et demi, ce
       que la fiche ne porte pas.
+cotisation:
+  - du: 1958-01-01
+    au: 2023-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1400
+    part_salariale: 0.30
+  - du: 2023-01-01
+    au: 2024-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1400
+    part_salariale: 0.30
+  - du: 2024-01-01
+    au: 2025-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1400
+    part_salariale: 0.30
+  - du: 2025-01-01
+    au: 2026-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1400
+    part_salariale: 0.30
+  - du: 2026-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1400
+    part_salariale: 0.30

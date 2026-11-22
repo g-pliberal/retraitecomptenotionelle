@@ -39,10 +39,11 @@ inventaire:
     La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les
     générations nées avant 1955 jusqu'en 2024, elle est approchée (voir
     `docs/limites.md`).
-periodes:
-  - debut: 1962
-    fin: 1980
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1962-01-01
+    au: 2014-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -51,10 +52,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_3_pass
-    taux_cotisation_retraite: 0.08
-    valeur_point_euros: 9.75
-    valeur_point_annee: 2026
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -75,9 +72,7 @@ periodes:
       Elle sert les points des classes de 1981 à 2015 ; les cotisations
       proportionnelles passent, elles, par le rendement de
       `rendements_points.csv`.
-  - debut: 1981
-    fin: 2013
-    type_calcul: points
+  - du: 2014-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -86,17 +81,44 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    abattement_points: minoration_ircec
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      MINORATION DE L'IRCEC, et non celle du régime de base : « 2,5 %
+      par année pour chacune des deux premières années manquantes ; 5 %
+      par année manquante supplémentaire », ou la décote du régime de
+      base si elle est plus favorable (règlement, art. 27 b, dans la
+      rédaction de l'arrêté du 21 novembre 2013, en vigueur au 1er
+      janvier 2014) ; taux plein dès l'âge légal si la pension du régime
+      de base l'est.
+      Une année entamée compte entière : l'annexe de l'arrêté du 21
+      novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
+      trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
+      leurs propres coefficients, que la période ne porte pas (voir
+      `docs/limites.md`).
+      MAJORATION POUR ENFANTS, du même arrêté : la pension « est majorée
+      de 10 % au profit de l'adhérent ayant eu au moins trois enfants », ou
+      les ayant élevés neuf ans avant leurs seize ans (article 28). La
+      fiche ne la déclarait pas ; elle la porte sur toutes les périodes
+      depuis 2014. Le règlement d'avant n'est pas au Journal officiel, et
+      la première période n'en porte aucune.
+      Cotisation, points et valeur de service : ceux de la période
+      précédente, la classe spéciale et ses six points.
+cotisation:
+  - du: 1962-01-01
+    au: 1981-01-01
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.08
+  - du: 1981-01-01
+    au: 2014-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
     cotisation_par_classes: raap_classe_speciale
     points_maximum: 6
     assiette_forfaitaire: raap_classe_speciale
     assiette_repere_smic: 1
-    valeur_point_euros: 9.75
-    valeur_point_annee: 2026
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       LA CLASSE SPÉCIALE, SIX POINTS PAR AN. De 1981 à 2015, « le régime
       comporte cinq classes de cotisation ainsi définies : Classe
@@ -132,69 +154,18 @@ periodes:
       relevant de l'article L. 382-12 », tous les artistes-auteurs, que
       depuis le 29 mai 2004 (LEGIARTI000006781618).
       LIQUIDATION : celle de la période précédente.
-  - debut: 2014
-    fin: 2015
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2014-01-01
+    au: 2016-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
     cotisation_par_classes: raap_classe_speciale
     points_maximum: 6
     assiette_forfaitaire: raap_classe_speciale
     assiette_repere_smic: 1
-    valeur_point_euros: 9.75
-    valeur_point_annee: 2026
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    abattement_points: minoration_ircec
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    notes: >-
-      MINORATION DE L'IRCEC, et non celle du régime de base : « 2,5 %
-      par année pour chacune des deux premières années manquantes ; 5 %
-      par année manquante supplémentaire », ou la décote du régime de
-      base si elle est plus favorable (règlement, art. 27 b, dans la
-      rédaction de l'arrêté du 21 novembre 2013, en vigueur au 1er
-      janvier 2014) ; taux plein dès l'âge légal si la pension du régime
-      de base l'est.
-      Une année entamée compte entière : l'annexe de l'arrêté du 21
-      novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
-      trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
-      leurs propres coefficients, que la période ne porte pas (voir
-      `docs/limites.md`).
-      MAJORATION POUR ENFANTS, du même arrêté : la pension « est majorée
-      de 10 % au profit de l'adhérent ayant eu au moins trois enfants », ou
-      les ayant élevés neuf ans avant leurs seize ans (article 28). La
-      fiche ne la déclarait pas ; elle la porte sur toutes les périodes
-      depuis 2014. Le règlement d'avant n'est pas au Journal officiel, et
-      la première période n'en porte aucune.
-      Cotisation, points et valeur de service : ceux de la période
-      précédente, la classe spéciale et ses six points.
-  - debut: 2016
-    fin: 2016
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2016-01-01
+    au: 2017-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.05
-    valeur_point_euros: 9.75
-    valeur_point_annee: 2026
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    abattement_points: minoration_ircec
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       MONTÉE EN CHARGE DU DÉCRET DU 30 DÉCEMBRE 2015, que la fiche ignorait
       en appliquant 8 % dès l'origine de la réforme. Le communiqué de
@@ -205,68 +176,22 @@ periodes:
       Les périodes suivent l'ANNÉE DU REVENU, comme tout le catalogue : le
       taux porté ici est celui qui frappe les revenus de l'exercice, non
       celui appelé cette année-là.
-  - debut: 2017
-    fin: 2017
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2017-01-01
+    au: 2018-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.06
-    valeur_point_euros: 9.75
-    valeur_point_annee: 2026
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    abattement_points: minoration_ircec
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Deuxième palier de la montée en charge : 6 % des revenus de 2017,
       appelés en 2018.
-  - debut: 2018
-    fin: 2018
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2018-01-01
+    au: 2019-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.07
-    valeur_point_euros: 9.75
-    valeur_point_annee: 2026
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    abattement_points: minoration_ircec
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Troisième palier : 7 % des revenus de 2018, appelés en 2019.
-  - debut: 2019
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2019-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.08
-    valeur_point_euros: 9.75
-    valeur_point_annee: 2026
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    abattement_points: minoration_ircec
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       TAUX PLEIN DE LA RÉFORME, atteint sur les revenus de 2019 au terme
       d'une montée en charge de quatre ans — voir les trois périodes qui
@@ -287,3 +212,7 @@ periodes:
       mécanisme de SEUIL D'EXONÉRATION (le drapeau `assiette_plancher`
       relève une assiette trop basse, il ne l'annule pas). Surestime donc
       les droits des toutes petites carrières artistiques.
+servi:
+  - du: 1962-01-01
+    valeur_point_euros: 9.75
+    valeur_point_annee: 2026

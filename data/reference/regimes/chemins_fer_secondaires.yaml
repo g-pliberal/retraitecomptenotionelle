@@ -68,19 +68,23 @@ inventaire:
     compensation de l'Arrco, à laquelle le décret n° 70-945 lui permettait
     de s'affilier. Le routage lui substitue le droit commun du non-cadre :
     rien en 1955 et 1956, l'UNIRS de 1957 à 1960, l'Arrco ensuite.
-periodes:
-  - debut: 1930
-    fin: 1954
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1930-01-01
+    au: 1955-01-01
     age_ouverture: 55
     age_taux_plein: 55
     duree_requise_trimestres: 150
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.07
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [bonifications, reversion]
     notes: Paramètres à certifier ; régime résiduel.
+cotisation:
+  - du: 1930-01-01
+    au: 1955-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.07
+    perimetre_taux: agent_seul

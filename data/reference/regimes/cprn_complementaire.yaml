@@ -37,10 +37,11 @@ inventaire:
     n° 49-578 datent la section C à 4,5 % des produits de l'office, mais
     rien n'est consolidé avant 1983 ; les statuts d'avant 2014 ne sont
     pas dans l'index.
-periodes:
-  - debut: 1949
-    fin: 1961
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1949-01-01
+    au: 2014-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -48,9 +49,6 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    assiette_facteur_revenu: 2.553
-    taux_cotisation_retraite: 0.10
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -108,225 +106,8 @@ periodes:
       variable », et 5 % pour la section U, dite « allocation uniforme »,
       toutes deux assises sur les produits (décret n° 49-578 du 22 avril
       1949). Les deux fusionnent en 2004 dans la section C.
-  - debut: 1962
-    fin: 1982
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    assiette_facteur_revenu: 2.553
-    taux_cotisation_retraite: 0.045
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      1962-1982 : aucune version consolidée du décret n° 49-578 avant 1983
-      ; le taux de 4,5 % des produits de l'office est reconduit en
-      arrière, niveau estimé. 4,50 % PENDANT CINQUANTE-CINQ ANS, et la
-      continuité est frappante : 2,50 % (section A) plus 2 % (section U)
-      de 1962 à 2003, puis 4,50 % pour la section C qui les remplace en
-      2004. La fusion n'a pas changé le taux — elle a changé la façon de
-      servir. LA SECTION B N'EST PAS PORTÉE, ET LA RAISON N'EST PAS CELLE
-      QU'ON CROIRAIT. Ce n'est pas une grille introuvable : de 1962 à
-      2013, IL N'Y EN A PAS EU. Le rapport de l'IGAS (n° 2012-110P) décrit
-      le régime tel qu'il fonctionnait encore en 2012 : sept classes
-      numérotées 0, 1, 2, 3, 4, 6 et 8, « l'inscription dans une des
-      classes de cette section est obligatoire pour les notaires en
-      exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME ÉTANT LAISSÉ À
-      L'APPRÉCIATION DU NOTAIRE », et « en l'absence d'indication, le
-      cotisant est affilié en classe 1 ». Créée en 1962 pour « répondre
-      aux vœux du notariat qui souhaitait une cotisation INDÉPENDANTE DES
-      PRODUITS réalisés par l'office », elle était un supplément
-      facultatif — et le dépôt ne prête jamais à personne un choix qu'il
-      ne peut pas connaître. Même règle que pour les classes du RAAP
-      d'avant 2017 et l'option de classe supérieure de la CAVEC. CE QUE LE
-      CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
-      cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la
-      moitié de la profession au plancher ou presque —, pour une moyenne
-      de 23,8 points par an, soit la classe 2,4. DEPUIS 2014 LA CLASSE SE
-      DÉTERMINE PAR LES PRODUITS, et le décret n° 2013-1157 du 13 décembre
-      2013 qui l'institue DÉLÈGUE SES BORNES dans la même phrase : « les
-      bornes de chaque classe de cotisation de la section B sont
-      déterminées PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite
-      des notaires pour une période de trois ans par référence à la
-      moyenne des produits de base du notariat au titre des trois années
-      précédentes ». Elles ne sont donc pas introuvables par accident :
-      aucun texte réglementaire ne les porte, par construction —
-      exactement comme le prix du point de la CAVAMAC, à ceci près que la
-      CAVAMAC publie la délibération de son conseil et que la CPRN ne
-      publie pas la sienne. Une passe entière du Journal officiel n'en a
-      rien tiré. ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er
-      janvier 2029, le notaire sera systématiquement inscrit pour
-      l'exercice n dans la classe de cotisation correspondant aux produits
-      de son étude ». Jusque-là, les règles de maintien de classe — un
-      notaire assermenté avant 2014 ne monte que d'une classe par an et ne
-      descend jamais d'office — et la dérogation de six ans des nouveaux
-      notaires laissent subsister l'ancien mécanisme. CE QUI MANQUE EST
-      CHIFFRABLE : environ 11 100 € pour le notaire moyen en 2025, contre
-      15 900 € de section C — soit quatre dixièmes du complémentaire. Un
-      notaire simulé ici est sous-estimé d'autant, et le jour où la caisse
-      publiera ses bornes, la fiche sera complète en une demi-heure : la
-      cotisation vaut « le nombre de points de la classe multiplié par 115
-      % du coût d'acquisition du point B » pour tout notaire assermenté
-      depuis 2014, les classes ouvrent 10 à 80 points, et le rendement de
-      la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
-      en 2012, 5,54 % en 2026.
-  - debut: 1983
-    fin: 2004
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    assiette_facteur_revenu: 2.553
-    taux_cotisation_retraite: 0.045
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      DÉCRET N° 49-578 DU 22 AVRIL 1949, ARTICLE 2, VERSION DU 26 JUIN
-      1983 (LEGIARTI000006763853, puis LEGIARTI000006763854 en 2001) : «
-      les taux des éléments afférents à l'allocation uniforme et à une
-      fraction de l'allocation variable sont respectivement égaux à 2 % et
-      à 2,5 % de la moyenne des produits de l'étude » — 4,5 % en tout, ce
-      que la fiche porte — et, en outre, une option entre sept classes de
-      cotisation (classe de base à classe 8, de cinq à quatre-vingts
-      points, en multiples du salaire mensuel minimal d'un clerc de
-      troisième catégorie), la section B, non modélisée. 4,50 % PENDANT
-      CINQUANTE-CINQ ANS, et la continuité est frappante : 2,50 % (section
-      A) plus 2 % (section U) de 1962 à 2003, puis 4,50 % pour la section
-      C qui les remplace en 2004. La fusion n'a pas changé le taux — elle
-      a changé la façon de servir. LA SECTION B N'EST PAS PORTÉE, ET LA
-      RAISON N'EST PAS CELLE QU'ON CROIRAIT. Ce n'est pas une grille
-      introuvable : de 1962 à 2013, IL N'Y EN A PAS EU. Le rapport de
-      l'IGAS (n° 2012-110P) décrit le régime tel qu'il fonctionnait encore
-      en 2012 : sept classes numérotées 0, 1, 2, 3, 4, 6 et 8, «
-      l'inscription dans une des classes de cette section est obligatoire
-      pour les notaires en exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME
-      ÉTANT LAISSÉ À L'APPRÉCIATION DU NOTAIRE », et « en l'absence
-      d'indication, le cotisant est affilié en classe 1 ». Créée en 1962
-      pour « répondre aux vœux du notariat qui souhaitait une cotisation
-      INDÉPENDANTE DES PRODUITS réalisés par l'office », elle était un
-      supplément facultatif — et le dépôt ne prête jamais à personne un
-      choix qu'il ne peut pas connaître. Même règle que pour les classes
-      du RAAP d'avant 2017 et l'option de classe supérieure de la CAVEC.
-      CE QUE LE CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
-      cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la
-      moitié de la profession au plancher ou presque —, pour une moyenne
-      de 23,8 points par an, soit la classe 2,4. DEPUIS 2014 LA CLASSE SE
-      DÉTERMINE PAR LES PRODUITS, et le décret n° 2013-1157 du 13 décembre
-      2013 qui l'institue DÉLÈGUE SES BORNES dans la même phrase : « les
-      bornes de chaque classe de cotisation de la section B sont
-      déterminées PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite
-      des notaires pour une période de trois ans par référence à la
-      moyenne des produits de base du notariat au titre des trois années
-      précédentes ». Elles ne sont donc pas introuvables par accident :
-      aucun texte réglementaire ne les porte, par construction —
-      exactement comme le prix du point de la CAVAMAC, à ceci près que la
-      CAVAMAC publie la délibération de son conseil et que la CPRN ne
-      publie pas la sienne. Une passe entière du Journal officiel n'en a
-      rien tiré. ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er
-      janvier 2029, le notaire sera systématiquement inscrit pour
-      l'exercice n dans la classe de cotisation correspondant aux produits
-      de son étude ». Jusque-là, les règles de maintien de classe — un
-      notaire assermenté avant 2014 ne monte que d'une classe par an et ne
-      descend jamais d'office — et la dérogation de six ans des nouveaux
-      notaires laissent subsister l'ancien mécanisme. CE QUI MANQUE EST
-      CHIFFRABLE : environ 11 100 € pour le notaire moyen en 2025, contre
-      15 900 € de section C — soit quatre dixièmes du complémentaire. Un
-      notaire simulé ici est sous-estimé d'autant, et le jour où la caisse
-      publiera ses bornes, la fiche sera complète en une demi-heure : la
-      cotisation vaut « le nombre de points de la classe multiplié par 115
-      % du coût d'acquisition du point B » pour tout notaire assermenté
-      depuis 2014, les classes ouvrent 10 à 80 points, et le rendement de
-      la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
-      en 2012, 5,54 % en 2026.
-  - debut: 2005
-    fin: 2013
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    assiette_facteur_revenu: 2.553
-    taux_cotisation_retraite: 0.045
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      VERSION DU 1ER JANVIER 2005 (LEGIARTI000006763855) : deux sections,
-      C et B — « au titre de la section C, chaque notaire en exercice est
-      tenu d'acquitter une cotisation égale à 4,5 % de la moyenne des
-      produits de base de l'office » ; section B par classes 0 à 8 (cinq à
-      quatre-vingts points), montants par décret annuel. 4,50 % PENDANT
-      CINQUANTE-CINQ ANS, et la continuité est frappante : 2,50 % (section
-      A) plus 2 % (section U) de 1962 à 2003, puis 4,50 % pour la section
-      C qui les remplace en 2004. La fusion n'a pas changé le taux — elle
-      a changé la façon de servir. LA SECTION B N'EST PAS PORTÉE, ET LA
-      RAISON N'EST PAS CELLE QU'ON CROIRAIT. Ce n'est pas une grille
-      introuvable : de 1962 à 2013, IL N'Y EN A PAS EU. Le rapport de
-      l'IGAS (n° 2012-110P) décrit le régime tel qu'il fonctionnait encore
-      en 2012 : sept classes numérotées 0, 1, 2, 3, 4, 6 et 8, «
-      l'inscription dans une des classes de cette section est obligatoire
-      pour les notaires en exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME
-      ÉTANT LAISSÉ À L'APPRÉCIATION DU NOTAIRE », et « en l'absence
-      d'indication, le cotisant est affilié en classe 1 ». Créée en 1962
-      pour « répondre aux vœux du notariat qui souhaitait une cotisation
-      INDÉPENDANTE DES PRODUITS réalisés par l'office », elle était un
-      supplément facultatif — et le dépôt ne prête jamais à personne un
-      choix qu'il ne peut pas connaître. Même règle que pour les classes
-      du RAAP d'avant 2017 et l'option de classe supérieure de la CAVEC.
-      CE QUE LE CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
-      cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la
-      moitié de la profession au plancher ou presque —, pour une moyenne
-      de 23,8 points par an, soit la classe 2,4. DEPUIS 2014 LA CLASSE SE
-      DÉTERMINE PAR LES PRODUITS, et le décret n° 2013-1157 du 13 décembre
-      2013 qui l'institue DÉLÈGUE SES BORNES dans la même phrase : « les
-      bornes de chaque classe de cotisation de la section B sont
-      déterminées PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite
-      des notaires pour une période de trois ans par référence à la
-      moyenne des produits de base du notariat au titre des trois années
-      précédentes ». Elles ne sont donc pas introuvables par accident :
-      aucun texte réglementaire ne les porte, par construction —
-      exactement comme le prix du point de la CAVAMAC, à ceci près que la
-      CAVAMAC publie la délibération de son conseil et que la CPRN ne
-      publie pas la sienne. Une passe entière du Journal officiel n'en a
-      rien tiré. ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er
-      janvier 2029, le notaire sera systématiquement inscrit pour
-      l'exercice n dans la classe de cotisation correspondant aux produits
-      de son étude ». Jusque-là, les règles de maintien de classe — un
-      notaire assermenté avant 2014 ne monte que d'une classe par an et ne
-      descend jamais d'office — et la dérogation de six ans des nouveaux
-      notaires laissent subsister l'ancien mécanisme. CE QUI MANQUE EST
-      CHIFFRABLE : environ 11 100 € pour le notaire moyen en 2025, contre
-      15 900 € de section C — soit quatre dixièmes du complémentaire. Un
-      notaire simulé ici est sous-estimé d'autant, et le jour où la caisse
-      publiera ses bornes, la fiche sera complète en une demi-heure : la
-      cotisation vaut « le nombre de points de la classe multiplié par 115
-      % du coût d'acquisition du point B » pour tout notaire assermenté
-      depuis 2014, les classes ouvrent 10 à 80 points, et le rendement de
-      la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
-      en 2012, 5,54 % en 2026.
-      AUCUNE SURCOTE LUE AVANT 2014 : la fiche portait 1 % sans texte,
-      que le moteur ne lisait pas ; le premier coefficient de majoration
-      des statuts dans l'index est celui de l'arrêté du 16 décembre
-      2013.
-  - debut: 2014
-    fin: 2016
-    type_calcul: points
+  - du: 2014-01-01
+    au: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -335,9 +116,6 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    assiette_facteur_revenu: 2.553
-    taux_cotisation_retraite: 0.045
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
@@ -424,170 +202,7 @@ periodes:
       liquidation de l'âge du taux plein » ; la durée d'assurance ne
       l'annule pas (`decote_annulee_par_la_duree: false`). La fiche lisait
       les tables du régime général et laissait la durée effacer la décote.
-  - debut: 2017
-    fin: 2017
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cprn_2014
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    assiette_facteur_revenu: 2.553
-    taux_cotisation_retraite: 0.0414
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cprn_ages_decote_enfants
-    surcote_par_trimestre: 0.005
-    surcote_points: surcote_par_age_seul
-    surcote_trimestres_cotises: surcote_par_age_seul
-    surcote_age_maximum: 70
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      La baisse commence : 4,14 % en 2017, puis 4,10 %, 4 % et de nouveau
-      4,10 %. Le décret annuel des sections libérales fixe ce taux, et le
-      barème de l'IPP le confirme année par année — les deux sources
-      concordent sur toute la plage où elles se recouvrent.
-      LA SURCOTE DATE DE 2014, ET ELLE VAUT 0,5 % : l'arrêté du 16
-      décembre 2013 (JORFARTI000028387445) rédige l'article 16 — « si la
-      demande de retraite intervient après l'âge du taux plein, un
-      coefficient de majoration est appliqué à la pension des notaires
-      ayant continué à exercer et à cotiser […]. Le coefficient de
-      majoration est fixé à 0,5 % par trimestre au-delà de l'âge du taux
-      plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
-      (JORFARTI000034975971, article 23) le répète. La fiche portait 1
-      %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
-      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
-      l'âge du taux plein, ceux des notaires « ayant continué à exercer
-      et à cotiser » (`surcote_trimestres_cotises`).
-  - debut: 2018
-    fin: 2018
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cprn_2014
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    assiette_facteur_revenu: 2.553
-    taux_cotisation_retraite: 0.041
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cprn_ages_decote_enfants
-    surcote_par_trimestre: 0.005
-    surcote_points: surcote_par_age_seul
-    surcote_trimestres_cotises: surcote_par_age_seul
-    surcote_age_maximum: 70
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      4,10 % en 2018.
-      LA SURCOTE DATE DE 2014, ET ELLE VAUT 0,5 % : l'arrêté du 16
-      décembre 2013 (JORFARTI000028387445) rédige l'article 16 — « si la
-      demande de retraite intervient après l'âge du taux plein, un
-      coefficient de majoration est appliqué à la pension des notaires
-      ayant continué à exercer et à cotiser […]. Le coefficient de
-      majoration est fixé à 0,5 % par trimestre au-delà de l'âge du taux
-      plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
-      (JORFARTI000034975971, article 23) le répète. La fiche portait 1
-      %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
-      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
-      l'âge du taux plein, ceux des notaires « ayant continué à exercer
-      et à cotiser » (`surcote_trimestres_cotises`).
-  - debut: 2019
-    fin: 2021
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cprn_2014
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    assiette_facteur_revenu: 2.553
-    taux_cotisation_retraite: 0.040
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cprn_ages_decote_enfants
-    surcote_par_trimestre: 0.005
-    surcote_points: surcote_par_age_seul
-    surcote_trimestres_cotises: surcote_par_age_seul
-    surcote_age_maximum: 70
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      4,00 % de 2019 à 2021 — « taux de cotisation de la section C : 4,00 %
-      ; valeur d'acquisition du point section C : 17,69 euros », écrit le
-      décret, qui donne les deux ensemble.
-      LA SURCOTE DATE DE 2014, ET ELLE VAUT 0,5 % : l'arrêté du 16
-      décembre 2013 (JORFARTI000028387445) rédige l'article 16 — « si la
-      demande de retraite intervient après l'âge du taux plein, un
-      coefficient de majoration est appliqué à la pension des notaires
-      ayant continué à exercer et à cotiser […]. Le coefficient de
-      majoration est fixé à 0,5 % par trimestre au-delà de l'âge du taux
-      plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
-      (JORFARTI000034975971, article 23) le répète. La fiche portait 1
-      %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
-      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
-      l'âge du taux plein, ceux des notaires « ayant continué à exercer
-      et à cotiser » (`surcote_trimestres_cotises`).
-  - debut: 2022
-    fin: 2023
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: cprn_2014
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    assiette_facteur_revenu: 2.553
-    taux_cotisation_retraite: 0.041
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cprn_ages_decote_enfants
-    surcote_par_trimestre: 0.005
-    surcote_points: surcote_par_age_seul
-    surcote_trimestres_cotises: surcote_par_age_seul
-    surcote_age_maximum: 70
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      4,10 % DEPUIS 2022, sur la moyenne des produits de base des trois
-      années précédant l'année antérieure — en 2026, les exercices 2022,
-      2023 et 2024.
-      L'ÂGE SEUL COMMANDE, comme dans les trois autres complémentaires de
-      sections écrits cette année : « sur la base de l'âge légal de départ à
-      la retraite est appliqué un coefficient correspondant à l'âge de
-      l'affilié », décote de 1,25 % par trimestre d'anticipation plafonnée à
-      25 %, surcote de 1 % par trimestre au-delà, jusqu'au soixante-dixième
-      anniversaire. Aucune durée d'assurance n'y entre.
-      UN PLAFOND EXISTE ET N'EST PAS PORTÉ : l'assiette est « limitée à
-      trois fois la moyenne générale des produits des études de France »
-      (IGAS), soit environ 1 165 000 € de produits — un revenu de 570 000 €
-      au facteur de cette fiche. Aucune carrière simulée ici ne l'atteint.
-      UN MINIMUM NON PLUS : un notaire ayant exercé plus de dix ans reçoit
-      un nombre de points plancher, que la caisse a fixé à 575 points par
-      année d'exercice en 2012 et à 64 % de la moyenne distribuée depuis.
-      Il relève la pension des petits offices, et la fiche l'ignore.
-      LA SURCOTE DATE DE 2014, ET ELLE VAUT 0,5 % : l'arrêté du 16
-      décembre 2013 (JORFARTI000028387445) rédige l'article 16 — « si la
-      demande de retraite intervient après l'âge du taux plein, un
-      coefficient de majoration est appliqué à la pension des notaires
-      ayant continué à exercer et à cotiser […]. Le coefficient de
-      majoration est fixé à 0,5 % par trimestre au-delà de l'âge du taux
-      plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
-      (JORFARTI000034975971, article 23) le répète. La fiche portait 1
-      %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
-      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
-      l'âge du taux plein, ceux des notaires « ayant continué à exercer
-      et à cotiser » (`surcote_trimestres_cotises`).
-  - debut: 2024
-    fin: null
-    type_calcul: points
+  - du: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -595,9 +210,6 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    assiette_facteur_revenu: 2.553
-    taux_cotisation_retraite: 0.041
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.01
@@ -655,3 +267,298 @@ periodes:
       n° 49-578 depuis le décret n° 2026-418). Avec la loi des revenus que
       la section C calibre, les huit classes se laissent donc estimer ;
       c'est une action à part, que la feuille de route nomme.
+cotisation:
+  - du: 1949-01-01
+    au: 1962-01-01
+    assiette: deplafonnee
+    assiette_facteur_revenu: 2.553
+    taux_cotisation_retraite: 0.10
+  - du: 1962-01-01
+    au: 1983-01-01
+    assiette: deplafonnee
+    assiette_facteur_revenu: 2.553
+    taux_cotisation_retraite: 0.045
+    notes: >-
+      1962-1982 : aucune version consolidée du décret n° 49-578 avant 1983
+      ; le taux de 4,5 % des produits de l'office est reconduit en
+      arrière, niveau estimé. 4,50 % PENDANT CINQUANTE-CINQ ANS, et la
+      continuité est frappante : 2,50 % (section A) plus 2 % (section U)
+      de 1962 à 2003, puis 4,50 % pour la section C qui les remplace en
+      2004. La fusion n'a pas changé le taux — elle a changé la façon de
+      servir. LA SECTION B N'EST PAS PORTÉE, ET LA RAISON N'EST PAS CELLE
+      QU'ON CROIRAIT. Ce n'est pas une grille introuvable : de 1962 à
+      2013, IL N'Y EN A PAS EU. Le rapport de l'IGAS (n° 2012-110P) décrit
+      le régime tel qu'il fonctionnait encore en 2012 : sept classes
+      numérotées 0, 1, 2, 3, 4, 6 et 8, « l'inscription dans une des
+      classes de cette section est obligatoire pour les notaires en
+      exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME ÉTANT LAISSÉ À
+      L'APPRÉCIATION DU NOTAIRE », et « en l'absence d'indication, le
+      cotisant est affilié en classe 1 ». Créée en 1962 pour « répondre
+      aux vœux du notariat qui souhaitait une cotisation INDÉPENDANTE DES
+      PRODUITS réalisés par l'office », elle était un supplément
+      facultatif — et le dépôt ne prête jamais à personne un choix qu'il
+      ne peut pas connaître. Même règle que pour les classes du RAAP
+      d'avant 2017 et l'option de classe supérieure de la CAVEC. CE QUE LE
+      CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
+      cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la
+      moitié de la profession au plancher ou presque —, pour une moyenne
+      de 23,8 points par an, soit la classe 2,4. DEPUIS 2014 LA CLASSE SE
+      DÉTERMINE PAR LES PRODUITS, et le décret n° 2013-1157 du 13 décembre
+      2013 qui l'institue DÉLÈGUE SES BORNES dans la même phrase : « les
+      bornes de chaque classe de cotisation de la section B sont
+      déterminées PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite
+      des notaires pour une période de trois ans par référence à la
+      moyenne des produits de base du notariat au titre des trois années
+      précédentes ». Elles ne sont donc pas introuvables par accident :
+      aucun texte réglementaire ne les porte, par construction —
+      exactement comme le prix du point de la CAVAMAC, à ceci près que la
+      CAVAMAC publie la délibération de son conseil et que la CPRN ne
+      publie pas la sienne. Une passe entière du Journal officiel n'en a
+      rien tiré. ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er
+      janvier 2029, le notaire sera systématiquement inscrit pour
+      l'exercice n dans la classe de cotisation correspondant aux produits
+      de son étude ». Jusque-là, les règles de maintien de classe — un
+      notaire assermenté avant 2014 ne monte que d'une classe par an et ne
+      descend jamais d'office — et la dérogation de six ans des nouveaux
+      notaires laissent subsister l'ancien mécanisme. CE QUI MANQUE EST
+      CHIFFRABLE : environ 11 100 € pour le notaire moyen en 2025, contre
+      15 900 € de section C — soit quatre dixièmes du complémentaire. Un
+      notaire simulé ici est sous-estimé d'autant, et le jour où la caisse
+      publiera ses bornes, la fiche sera complète en une demi-heure : la
+      cotisation vaut « le nombre de points de la classe multiplié par 115
+      % du coût d'acquisition du point B » pour tout notaire assermenté
+      depuis 2014, les classes ouvrent 10 à 80 points, et le rendement de
+      la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
+      en 2012, 5,54 % en 2026.
+  - du: 1983-01-01
+    au: 2005-01-01
+    assiette: deplafonnee
+    assiette_facteur_revenu: 2.553
+    taux_cotisation_retraite: 0.045
+    notes: >-
+      DÉCRET N° 49-578 DU 22 AVRIL 1949, ARTICLE 2, VERSION DU 26 JUIN
+      1983 (LEGIARTI000006763853, puis LEGIARTI000006763854 en 2001) : «
+      les taux des éléments afférents à l'allocation uniforme et à une
+      fraction de l'allocation variable sont respectivement égaux à 2 % et
+      à 2,5 % de la moyenne des produits de l'étude » — 4,5 % en tout, ce
+      que la fiche porte — et, en outre, une option entre sept classes de
+      cotisation (classe de base à classe 8, de cinq à quatre-vingts
+      points, en multiples du salaire mensuel minimal d'un clerc de
+      troisième catégorie), la section B, non modélisée. 4,50 % PENDANT
+      CINQUANTE-CINQ ANS, et la continuité est frappante : 2,50 % (section
+      A) plus 2 % (section U) de 1962 à 2003, puis 4,50 % pour la section
+      C qui les remplace en 2004. La fusion n'a pas changé le taux — elle
+      a changé la façon de servir. LA SECTION B N'EST PAS PORTÉE, ET LA
+      RAISON N'EST PAS CELLE QU'ON CROIRAIT. Ce n'est pas une grille
+      introuvable : de 1962 à 2013, IL N'Y EN A PAS EU. Le rapport de
+      l'IGAS (n° 2012-110P) décrit le régime tel qu'il fonctionnait encore
+      en 2012 : sept classes numérotées 0, 1, 2, 3, 4, 6 et 8, «
+      l'inscription dans une des classes de cette section est obligatoire
+      pour les notaires en exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME
+      ÉTANT LAISSÉ À L'APPRÉCIATION DU NOTAIRE », et « en l'absence
+      d'indication, le cotisant est affilié en classe 1 ». Créée en 1962
+      pour « répondre aux vœux du notariat qui souhaitait une cotisation
+      INDÉPENDANTE DES PRODUITS réalisés par l'office », elle était un
+      supplément facultatif — et le dépôt ne prête jamais à personne un
+      choix qu'il ne peut pas connaître. Même règle que pour les classes
+      du RAAP d'avant 2017 et l'option de classe supérieure de la CAVEC.
+      CE QUE LE CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
+      cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la
+      moitié de la profession au plancher ou presque —, pour une moyenne
+      de 23,8 points par an, soit la classe 2,4. DEPUIS 2014 LA CLASSE SE
+      DÉTERMINE PAR LES PRODUITS, et le décret n° 2013-1157 du 13 décembre
+      2013 qui l'institue DÉLÈGUE SES BORNES dans la même phrase : « les
+      bornes de chaque classe de cotisation de la section B sont
+      déterminées PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite
+      des notaires pour une période de trois ans par référence à la
+      moyenne des produits de base du notariat au titre des trois années
+      précédentes ». Elles ne sont donc pas introuvables par accident :
+      aucun texte réglementaire ne les porte, par construction —
+      exactement comme le prix du point de la CAVAMAC, à ceci près que la
+      CAVAMAC publie la délibération de son conseil et que la CPRN ne
+      publie pas la sienne. Une passe entière du Journal officiel n'en a
+      rien tiré. ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er
+      janvier 2029, le notaire sera systématiquement inscrit pour
+      l'exercice n dans la classe de cotisation correspondant aux produits
+      de son étude ». Jusque-là, les règles de maintien de classe — un
+      notaire assermenté avant 2014 ne monte que d'une classe par an et ne
+      descend jamais d'office — et la dérogation de six ans des nouveaux
+      notaires laissent subsister l'ancien mécanisme. CE QUI MANQUE EST
+      CHIFFRABLE : environ 11 100 € pour le notaire moyen en 2025, contre
+      15 900 € de section C — soit quatre dixièmes du complémentaire. Un
+      notaire simulé ici est sous-estimé d'autant, et le jour où la caisse
+      publiera ses bornes, la fiche sera complète en une demi-heure : la
+      cotisation vaut « le nombre de points de la classe multiplié par 115
+      % du coût d'acquisition du point B » pour tout notaire assermenté
+      depuis 2014, les classes ouvrent 10 à 80 points, et le rendement de
+      la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
+      en 2012, 5,54 % en 2026.
+  - du: 2005-01-01
+    au: 2014-01-01
+    assiette: deplafonnee
+    assiette_facteur_revenu: 2.553
+    taux_cotisation_retraite: 0.045
+    notes: >-
+      VERSION DU 1ER JANVIER 2005 (LEGIARTI000006763855) : deux sections,
+      C et B — « au titre de la section C, chaque notaire en exercice est
+      tenu d'acquitter une cotisation égale à 4,5 % de la moyenne des
+      produits de base de l'office » ; section B par classes 0 à 8 (cinq à
+      quatre-vingts points), montants par décret annuel. 4,50 % PENDANT
+      CINQUANTE-CINQ ANS, et la continuité est frappante : 2,50 % (section
+      A) plus 2 % (section U) de 1962 à 2003, puis 4,50 % pour la section
+      C qui les remplace en 2004. La fusion n'a pas changé le taux — elle
+      a changé la façon de servir. LA SECTION B N'EST PAS PORTÉE, ET LA
+      RAISON N'EST PAS CELLE QU'ON CROIRAIT. Ce n'est pas une grille
+      introuvable : de 1962 à 2013, IL N'Y EN A PAS EU. Le rapport de
+      l'IGAS (n° 2012-110P) décrit le régime tel qu'il fonctionnait encore
+      en 2012 : sept classes numérotées 0, 1, 2, 3, 4, 6 et 8, «
+      l'inscription dans une des classes de cette section est obligatoire
+      pour les notaires en exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME
+      ÉTANT LAISSÉ À L'APPRÉCIATION DU NOTAIRE », et « en l'absence
+      d'indication, le cotisant est affilié en classe 1 ». Créée en 1962
+      pour « répondre aux vœux du notariat qui souhaitait une cotisation
+      INDÉPENDANTE DES PRODUITS réalisés par l'office », elle était un
+      supplément facultatif — et le dépôt ne prête jamais à personne un
+      choix qu'il ne peut pas connaître. Même règle que pour les classes
+      du RAAP d'avant 2017 et l'option de classe supérieure de la CAVEC.
+      CE QUE LE CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
+      cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la
+      moitié de la profession au plancher ou presque —, pour une moyenne
+      de 23,8 points par an, soit la classe 2,4. DEPUIS 2014 LA CLASSE SE
+      DÉTERMINE PAR LES PRODUITS, et le décret n° 2013-1157 du 13 décembre
+      2013 qui l'institue DÉLÈGUE SES BORNES dans la même phrase : « les
+      bornes de chaque classe de cotisation de la section B sont
+      déterminées PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite
+      des notaires pour une période de trois ans par référence à la
+      moyenne des produits de base du notariat au titre des trois années
+      précédentes ». Elles ne sont donc pas introuvables par accident :
+      aucun texte réglementaire ne les porte, par construction —
+      exactement comme le prix du point de la CAVAMAC, à ceci près que la
+      CAVAMAC publie la délibération de son conseil et que la CPRN ne
+      publie pas la sienne. Une passe entière du Journal officiel n'en a
+      rien tiré. ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er
+      janvier 2029, le notaire sera systématiquement inscrit pour
+      l'exercice n dans la classe de cotisation correspondant aux produits
+      de son étude ». Jusque-là, les règles de maintien de classe — un
+      notaire assermenté avant 2014 ne monte que d'une classe par an et ne
+      descend jamais d'office — et la dérogation de six ans des nouveaux
+      notaires laissent subsister l'ancien mécanisme. CE QUI MANQUE EST
+      CHIFFRABLE : environ 11 100 € pour le notaire moyen en 2025, contre
+      15 900 € de section C — soit quatre dixièmes du complémentaire. Un
+      notaire simulé ici est sous-estimé d'autant, et le jour où la caisse
+      publiera ses bornes, la fiche sera complète en une demi-heure : la
+      cotisation vaut « le nombre de points de la classe multiplié par 115
+      % du coût d'acquisition du point B » pour tout notaire assermenté
+      depuis 2014, les classes ouvrent 10 à 80 points, et le rendement de
+      la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
+      en 2012, 5,54 % en 2026.
+      AUCUNE SURCOTE LUE AVANT 2014 : la fiche portait 1 % sans texte,
+      que le moteur ne lisait pas ; le premier coefficient de majoration
+      des statuts dans l'index est celui de l'arrêté du 16 décembre
+      2013.
+  - du: 2014-01-01
+    au: 2017-01-01
+    assiette: deplafonnee
+    assiette_facteur_revenu: 2.553
+    taux_cotisation_retraite: 0.045
+  - du: 2017-01-01
+    au: 2018-01-01
+    assiette: deplafonnee
+    assiette_facteur_revenu: 2.553
+    taux_cotisation_retraite: 0.0414
+    notes: >-
+      La baisse commence : 4,14 % en 2017, puis 4,10 %, 4 % et de nouveau
+      4,10 %. Le décret annuel des sections libérales fixe ce taux, et le
+      barème de l'IPP le confirme année par année — les deux sources
+      concordent sur toute la plage où elles se recouvrent.
+      LA SURCOTE DATE DE 2014, ET ELLE VAUT 0,5 % : l'arrêté du 16
+      décembre 2013 (JORFARTI000028387445) rédige l'article 16 — « si la
+      demande de retraite intervient après l'âge du taux plein, un
+      coefficient de majoration est appliqué à la pension des notaires
+      ayant continué à exercer et à cotiser […]. Le coefficient de
+      majoration est fixé à 0,5 % par trimestre au-delà de l'âge du taux
+      plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
+      (JORFARTI000034975971, article 23) le répète. La fiche portait 1
+      %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
+      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
+      l'âge du taux plein, ceux des notaires « ayant continué à exercer
+      et à cotiser » (`surcote_trimestres_cotises`).
+  - du: 2018-01-01
+    au: 2019-01-01
+    assiette: deplafonnee
+    assiette_facteur_revenu: 2.553
+    taux_cotisation_retraite: 0.041
+    notes: >-
+      4,10 % en 2018.
+      LA SURCOTE DATE DE 2014, ET ELLE VAUT 0,5 % : l'arrêté du 16
+      décembre 2013 (JORFARTI000028387445) rédige l'article 16 — « si la
+      demande de retraite intervient après l'âge du taux plein, un
+      coefficient de majoration est appliqué à la pension des notaires
+      ayant continué à exercer et à cotiser […]. Le coefficient de
+      majoration est fixé à 0,5 % par trimestre au-delà de l'âge du taux
+      plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
+      (JORFARTI000034975971, article 23) le répète. La fiche portait 1
+      %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
+      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
+      l'âge du taux plein, ceux des notaires « ayant continué à exercer
+      et à cotiser » (`surcote_trimestres_cotises`).
+  - du: 2019-01-01
+    au: 2022-01-01
+    assiette: deplafonnee
+    assiette_facteur_revenu: 2.553
+    taux_cotisation_retraite: 0.040
+    notes: >-
+      4,00 % de 2019 à 2021 — « taux de cotisation de la section C : 4,00 %
+      ; valeur d'acquisition du point section C : 17,69 euros », écrit le
+      décret, qui donne les deux ensemble.
+      LA SURCOTE DATE DE 2014, ET ELLE VAUT 0,5 % : l'arrêté du 16
+      décembre 2013 (JORFARTI000028387445) rédige l'article 16 — « si la
+      demande de retraite intervient après l'âge du taux plein, un
+      coefficient de majoration est appliqué à la pension des notaires
+      ayant continué à exercer et à cotiser […]. Le coefficient de
+      majoration est fixé à 0,5 % par trimestre au-delà de l'âge du taux
+      plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
+      (JORFARTI000034975971, article 23) le répète. La fiche portait 1
+      %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
+      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
+      l'âge du taux plein, ceux des notaires « ayant continué à exercer
+      et à cotiser » (`surcote_trimestres_cotises`).
+  - du: 2022-01-01
+    au: 2024-01-01
+    assiette: deplafonnee
+    assiette_facteur_revenu: 2.553
+    taux_cotisation_retraite: 0.041
+    notes: >-
+      4,10 % DEPUIS 2022, sur la moyenne des produits de base des trois
+      années précédant l'année antérieure — en 2026, les exercices 2022,
+      2023 et 2024.
+      L'ÂGE SEUL COMMANDE, comme dans les trois autres complémentaires de
+      sections écrits cette année : « sur la base de l'âge légal de départ à
+      la retraite est appliqué un coefficient correspondant à l'âge de
+      l'affilié », décote de 1,25 % par trimestre d'anticipation plafonnée à
+      25 %, surcote de 1 % par trimestre au-delà, jusqu'au soixante-dixième
+      anniversaire. Aucune durée d'assurance n'y entre.
+      UN PLAFOND EXISTE ET N'EST PAS PORTÉ : l'assiette est « limitée à
+      trois fois la moyenne générale des produits des études de France »
+      (IGAS), soit environ 1 165 000 € de produits — un revenu de 570 000 €
+      au facteur de cette fiche. Aucune carrière simulée ici ne l'atteint.
+      UN MINIMUM NON PLUS : un notaire ayant exercé plus de dix ans reçoit
+      un nombre de points plancher, que la caisse a fixé à 575 points par
+      année d'exercice en 2012 et à 64 % de la moyenne distribuée depuis.
+      Il relève la pension des petits offices, et la fiche l'ignore.
+      LA SURCOTE DATE DE 2014, ET ELLE VAUT 0,5 % : l'arrêté du 16
+      décembre 2013 (JORFARTI000028387445) rédige l'article 16 — « si la
+      demande de retraite intervient après l'âge du taux plein, un
+      coefficient de majoration est appliqué à la pension des notaires
+      ayant continué à exercer et à cotiser […]. Le coefficient de
+      majoration est fixé à 0,5 % par trimestre au-delà de l'âge du taux
+      plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
+      (JORFARTI000034975971, article 23) le répète. La fiche portait 1
+      %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
+      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
+      l'âge du taux plein, ceux des notaires « ayant continué à exercer
+      et à cotiser » (`surcote_trimestres_cotises`).
+  - du: 2024-01-01
+    assiette: deplafonnee
+    assiette_facteur_revenu: 2.553
+    taux_cotisation_retraite: 0.041

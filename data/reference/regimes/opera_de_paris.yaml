@@ -31,18 +31,16 @@ inventaire:
 # — décret n° 68-382, article 18 (LEGIARTI000019138600) : 10 % pour
 # les trois premiers enfants et 5 % par enfant au-delà. La fiche ne la
 # déclarait pas. Barème `taux_majoration_enfants` de chaque période.
-periodes:
-  - debut: 1930
-    fin: 2001
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1930-01-01
+    au: 2002-01-01
     age_ouverture: 45
     age_taux_plein: 45
     duree_requise_trimestres: 150
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1085
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -68,18 +66,13 @@ periodes:
       une danseuse partie en 1970 se voit donc opposer cinq ans de plus que
       son droit. Aucune décote : la durée manquante ne joue que par la
       proratisation.
-  - debut: 2002
-    fin: 2008
-    date_effet: [2002-01-01, 2008-07-01]
-    type_calcul: annuites
+  - du: 2002-01-01
+    au: 2008-07-01
     age_ouverture: 40
     age_taux_plein: 40
     duree_requise_trimestres: 150
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1085
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -99,13 +92,11 @@ periodes:
       plus — : la pension qui prend effet après le 14 mars 2002 se voit
       opposer quarante ans, celle d'avant quarante-cinq, quelle que soit la
       génération (`tests/test_regle_de_chacun.py`, `A_L_ANNEE_D_EFFET`).
-  - debut: 2009
-    fin: 2013
+  - du: 2008-07-01
+    au: 2014-01-01
     # Le règlement de 2008 vaut pour les pensions prenant effet à compter du
     # 1er juillet 2008 (SNCF, décret n° 2008-639, article 13 et 35, rédactions
     # du 1er juillet 2008 ; RATP, IEG, Opéra, Comédie-Française de même).
-    date_effet: [2008-07-01, 2014-01-01]
-    type_calcul: annuites
     age_ouverture: 40
     age_taux_plein: 42
     duree_requise_trimestres: 160
@@ -113,9 +104,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1085
-    perimetre_taux: agent_seul
     bareme_decote: decote_opera_de_paris
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -160,9 +148,8 @@ periodes:
       danseur né en mars 1970, qui réunit les conditions à quarante ans, en
       mars 2010, et en doit 154 ; 150 à qui les réunissait avant juillet
       2008.
-  - debut: 2014
-    fin: 2016
-    type_calcul: annuites
+  - du: 2014-01-01
+    au: 2017-01-01
     age_ouverture: 40
     age_taux_plein: 42
     duree_requise_trimestres: 172
@@ -171,9 +158,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1085
-    perimetre_taux: agent_seul
     bareme_decote: decote_opera_de_paris
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -218,10 +202,7 @@ periodes:
       CAS EXTRÊME de l'écart à l'âge de référence : vingt-quatre ans
       d'anticipation par rapport à l'âge de référence 2026, et le seul
       régime français où l'on liquide à quarante ans.
-
-  - debut: 2017
-    fin: null
-    type_calcul: annuites
+  - du: 2017-01-01
     age_ouverture: 40
     age_taux_plein: 42
     duree_requise_trimestres: 172
@@ -230,9 +211,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1085
-    perimetre_taux: agent_seul
     bareme_decote: decote_opera_de_paris
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -241,3 +219,28 @@ periodes:
     notes: >-
       La période de 2014, sans la limite de vingt trimestres de la surcote,
       que l'article 14, III, ne porte plus à compter du 1er janvier 2017.
+cotisation:
+  - du: 1930-01-01
+    au: 2002-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul
+  - du: 2002-01-01
+    au: 2009-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul
+  - du: 2009-01-01
+    au: 2014-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul
+  - du: 2014-01-01
+    au: 2017-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul
+  - du: 2017-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul

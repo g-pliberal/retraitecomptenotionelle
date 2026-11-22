@@ -48,10 +48,10 @@ inventaire:
     la fige en euros pour les points liquidés depuis 2012. Le rachat des
     années de 1946 à 1983, six points l'année. Le partage avec l'assurance
     maladie, lu pour 2025, est présumé à toutes les années.
-periodes:
-  - debut: 1984
-    fin: 2007
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1984-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -59,14 +59,6 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.000000
-    part_assurance_maladie_forfait: 0.666667
-    cotisation_forfaitaire_euros: 229.00
-    cotisation_forfaitaire_annee: 2008
-    points_par_trimestre_valide: 4.5
-    valeur_point_euros: 6.10
-    valeur_point_annee: 2025
     decote_par_trimestre: 0.0125
     decote_trimestres_maximum: 12
     surcote_par_trimestre: null
@@ -82,56 +74,37 @@ periodes:
       fois en 1985), que le dépôt ne chiffre pas : la fiche présume les
       229 € de 2008, projetés en arrière sur les prix. Les caisses en
       paient le double (D. 645-3 de 1985 à 2004). Niveau `estimee`.
-  - debut: 2008
-    fin: 2011
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+cotisation:
+  - du: 1984-01-01
+    au: 2008-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
     cotisation_forfaitaire_euros: 229.00
     cotisation_forfaitaire_annee: 2008
     points_par_trimestre_valide: 4.5
-    valeur_point_euros: 6.10
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
+  - du: 2008-01-01
+    au: 2012-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    cotisation_forfaitaire_euros: 229.00
+    cotisation_forfaitaire_annee: 2008
+    points_par_trimestre_valide: 4.5
     notes: >-
       FORFAIT : « pour les sages-femmes, à 229 euros » (D. 645-2, 3°,
       rédaction du décret n° 2008-232, LEGIARTI000018250536), la part de la
       sage-femme ; « une prestation égale à 18 points de retraite par année
       de cotisations […], la valeur du point de retraite étant fixée à 6,10
       euros » (décret n° 84-254, article 3, LEGIARTI000018250544).
-  - debut: 2012
-    fin: 2014
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2012-01-01
+    au: 2015-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
     cotisation_forfaitaire_euros: 229.00
     cotisation_forfaitaire_annee: 2012
     points_par_trimestre_valide: 4.5
-    valeur_point_euros: 6.10
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       FORFAIT TOTAL : « 687 euros pour l'exercice 2012 ; 705 euros pour
       l'exercice 2013 ; 735 euros pour l'exercice 2014 » (décret n°
@@ -140,56 +113,27 @@ periodes:
       projeté sur les prix. VALEUR DE SERVICE : « Pour les points liquidés
       à compter du 1er janvier 2012, à 6,10 euros » (article 2,
       LEGIARTI000025075122).
-  - debut: 2015
-    fin: 2024
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2015-01-01
+    au: 2025-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
     cotisation_forfaitaire_euros: 260.00
     cotisation_forfaitaire_annee: 2015
     points_par_trimestre_valide: 4.5
-    valeur_point_euros: 6.10
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       FORFAIT TOTAL : « 780 euros pour les exercices 2015 à 2025 » (décret
       n° 2011-2002, article 1er, rédaction du décret n° 2025-1076,
       LEGIARTI000052567982), dont le tiers à la sage-femme, 260 € ; la
       fiche le projette sur les prix depuis 2015, quand le texte le garde
       en euros.
-  - debut: 2025
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2025-01-01
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
     cotisation_forfaitaire_euros: 260.00
     cotisation_forfaitaire_annee: 2025
     points_par_trimestre_valide: 4.5
-    valeur_point_euros: 6.10
-    valeur_point_annee: 2025
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       « Son montant est de 780 € pour 2025 dont : 260 € à la charge de la
       sage-femme ; 520 € à la charge de la caisse d'assurance maladie (soit
@@ -200,3 +144,7 @@ periodes:
       la limite de douze trimestres » avant 67 ans ; majoration de 10 %
       pour trois enfants (guide de l'assurance vieillesse des professions
       libérales, CNAVPL, 2025, p. 90-91).
+servi:
+  - du: 1984-01-01
+    valeur_point_euros: 6.10
+    valeur_point_annee: 2025

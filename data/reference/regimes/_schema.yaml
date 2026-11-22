@@ -11,6 +11,14 @@
 # Le chargeur src/retraite_notionnelle/donnees/regimes.py valide contre ce
 # schéma.
 #
+# Depuis le 22 novembre 2026 (note de décision 0009, amendement du jour), un
+# régime calculé n'écrit plus de `periodes` : il range leurs champs en quatre
+# blocs, `structure`, `liquidation` (au jour de la date d'effet),
+# `cotisation` (à l'année) et `servi`, selon la famille de chaque champ
+# (src/retraite_notionnelle/donnees/axes.py). Pendant le gel, le chargeur en
+# refait les périodes que décrit la suite de ce schéma, que le moteur lit
+# encore ; ce schéma se récrit quand la vue part.
+#
 # Version 2, depuis la phase 6 de docs/architecture.md : les régimes étaient
 # rangés par familles en cinq fichiers, dont chacun portait une liste
 # `regimes` — `base_prive.yaml`, `complementaires_prive.yaml`,

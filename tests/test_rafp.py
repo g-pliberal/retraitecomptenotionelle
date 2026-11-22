@@ -21,6 +21,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
+from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 import facade
 from facade import Simulateur, liquider
@@ -151,8 +152,7 @@ def test_chaque_periode_du_regime_porte_les_taux_que_le_decret_ecrit():
     from retraite_notionnelle.noyau import carte
 
     fiche = carte.fiches()["rafp_assiette_plafond"]
-    regime = yaml.safe_load((RACINE / "data" / "reference" / "regimes" / "rafp.yaml")
-                            .read_text(encoding="utf-8"))
+    regime = lire_fiche_de_regime(RACINE / "data" / "reference" / "regimes" / "rafp.yaml")
     lus = []
     for version in fiche.get("versions") or []:
         parametres = (version.get("contenu") or {}).get("parametres") or {}

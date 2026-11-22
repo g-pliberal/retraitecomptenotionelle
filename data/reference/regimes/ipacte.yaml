@@ -31,10 +31,11 @@ inventaire:
     consolidée unique, et le taux d'appel est celui de l'Ircantec de 1971
     prolongé en arrière ; l'âge de liquidation n'est écrit nulle part dans
     l'index (article 5 absent de LEGI) et prend le barème du successeur.
-periodes:
-  - debut: 1951
-    fin: 1970
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1951-01-01
+    au: 1971-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
@@ -42,9 +43,6 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_b
-    taux_cotisation_retraite: 0.075   # 12,5 % contractuels × appel 60 %
-    part_salariale: 0.34   # 4,25 % agent / 8,25 % employeur, décret 51-1445 art. 7
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -101,3 +99,9 @@ periodes:
       l'index du JORF n'a que des titres (accord Agirc-IPACTE de 1952,
       JORFTEXT000000797895). La conversion en points Ircantec est de un
       pour un (regimes/conversions_points.csv).
+cotisation:
+  - du: 1951-01-01
+    au: 1971-01-01
+    assiette: tranche_b
+    taux_cotisation_retraite: 0.075   # 12,5 % contractuels × appel 60 %
+    part_salariale: 0.34   # 4,25 % agent / 8,25 % employeur, décret 51-1445 art. 7

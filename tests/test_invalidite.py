@@ -680,17 +680,19 @@ def _revalorisee(simulateur, annee_d_effet: int, annee: int) -> float:
 
 
 def _sur_la_duree_maximum(request) -> Simulateur:
-    """Le simulateur d'une copie des données où la période de 1951 à 1971 du
-    régime général retient au plus quatre-vingt-seize trimestres : une
+    """Le simulateur d'une copie des données où la ligne de liquidation de 1951
+    à 1971 du régime général retient au plus quatre-vingt-seize trimestres : une
     carrière qui les a y est liquidée sur la durée maximum de sa date, que
     les majorations forfaitaires de 1972 à 1982 lisent. Aucune carrière du
     modèle, comptée au régime général depuis 1945, n'atteint avant 1975 les
     cent vingt trimestres des données du dépôt."""
-    periode = "  - debut: 1951\n    fin: 1971\n"
+    ligne = "  - du: 1951-01-01\n    au: 1972-01-01\n"
 
     def plafonner(texte: str) -> str:
-        assert texte.count(periode) == 1
-        return texte.replace(periode, periode + "    trimestres_retenus_maximum: 96\n")
+        liquidation, cotisation = texte.split("\ncotisation:\n")
+        assert liquidation.count(ligne) == 1
+        return (liquidation.replace(ligne, ligne + "    trimestres_retenus_maximum: 96\n")
+                + "\ncotisation:\n" + cotisation)
 
     copie = facade.donnees_retouchees(
         request, ("96 trimestres retenus de 1951 à 1971",),

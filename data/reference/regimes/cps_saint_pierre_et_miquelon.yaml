@@ -45,20 +45,16 @@ inventaire:
     1962 (loi n° 87-563, art. 5, 3°, d), quand la fiche en retient dix,
     puis vingt-cinq ; la surcote de 1,25 % par trimestre accompli depuis le
     1er juillet 2016 (décret n° 2017-1000) n'est pas portée.
-periodes:
-  - debut: 1987
-    fin: 1987
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1987-01-01
+    au: 1988-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 108
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1461
-    part_salariale: 0.4390
-    taux_cotisation_deplafonnee: 0.0044
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -78,19 +74,13 @@ periodes:
       même article, pension « égale à autant de 150es » ; âges de 60 et 65
       ans par renvoi aux articles R. 351-1 et suivants (art. 7,
       LEGIARTI000006774242).
-  - debut: 1988
-    fin: 1988
-    type_calcul: annuites
+  - du: 1988-01-01
+    au: 1989-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 110
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1461
-    part_salariale: 0.4390
-    taux_cotisation_deplafonnee: 0.0044
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -104,19 +94,13 @@ periodes:
       transitoire de 110 trimestres (décret n° 89-110, art. 9,
       LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
       civile).
-  - debut: 1989
-    fin: 1989
-    type_calcul: annuites
+  - du: 1989-01-01
+    au: 1990-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 114
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1461
-    part_salariale: 0.4390
-    taux_cotisation_deplafonnee: 0.0044
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -130,19 +114,13 @@ periodes:
       transitoire de 114 trimestres (décret n° 89-110, art. 9,
       LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
       civile).
-  - debut: 1990
-    fin: 1990
-    type_calcul: annuites
+  - du: 1990-01-01
+    au: 1991-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 118
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1461
-    part_salariale: 0.4390
-    taux_cotisation_deplafonnee: 0.0044
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -156,19 +134,13 @@ periodes:
       transitoire de 118 trimestres (décret n° 89-110, art. 9,
       LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
       civile).
-  - debut: 1991
-    fin: 1991
-    type_calcul: annuites
+  - du: 1991-01-01
+    au: 1992-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 122
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1461
-    part_salariale: 0.4390
-    taux_cotisation_deplafonnee: 0.0044
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -182,19 +154,13 @@ periodes:
       transitoire de 122 trimestres (décret n° 89-110, art. 9,
       LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
       civile).
-  - debut: 1992
-    fin: 1992
-    type_calcul: annuites
+  - du: 1992-01-01
+    au: 1993-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 126
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1461
-    part_salariale: 0.4390
-    taux_cotisation_deplafonnee: 0.0044
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -208,19 +174,13 @@ periodes:
       transitoire de 126 trimestres (décret n° 89-110, art. 9,
       LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
       civile).
-  - debut: 1993
-    fin: 1993
-    type_calcul: annuites
+  - du: 1993-01-01
+    au: 1994-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 130
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1461
-    part_salariale: 0.4390
-    taux_cotisation_deplafonnee: 0.0044
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -234,19 +194,13 @@ periodes:
       transitoire de 130 trimestres (décret n° 89-110, art. 9,
       LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
       civile).
-  - debut: 1994
-    fin: 1994
-    type_calcul: annuites
+  - du: 1994-01-01
+    au: 1995-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 134
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1475
-    part_salariale: 0.4441
-    taux_cotisation_deplafonnee: 0.0160
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -260,19 +214,13 @@ periodes:
       transitoire de 134 trimestres (décret n° 89-110, art. 9,
       LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
       civile).
-  - debut: 1995
-    fin: 1995
-    type_calcul: annuites
+  - du: 1995-01-01
+    au: 1996-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 138
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1475
-    part_salariale: 0.4441
-    taux_cotisation_deplafonnee: 0.0160
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -286,19 +234,13 @@ periodes:
       transitoire de 138 trimestres (décret n° 89-110, art. 9,
       LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
       civile).
-  - debut: 1996
-    fin: 1996
-    type_calcul: annuites
+  - du: 1996-01-01
+    au: 1997-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 142
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1475
-    part_salariale: 0.4441
-    taux_cotisation_deplafonnee: 0.0160
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -312,19 +254,13 @@ periodes:
       transitoire de 142 trimestres (décret n° 89-110, art. 9,
       LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
       civile).
-  - debut: 1997
-    fin: 1997
-    type_calcul: annuites
+  - du: 1997-01-01
+    au: 1998-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 146
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1475
-    part_salariale: 0.4441
-    taux_cotisation_deplafonnee: 0.0160
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
@@ -338,19 +274,13 @@ periodes:
       transitoire de 146 trimestres (décret n° 89-110, art. 9,
       LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
       civile).
-  - debut: 1998
-    fin: 2010
-    type_calcul: annuites
+  - du: 1998-01-01
+    au: 2011-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1475
-    part_salariale: 0.4441
-    taux_cotisation_deplafonnee: 0.0160
-    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
@@ -376,20 +306,13 @@ periodes:
       2017-1000 ; le rapport au Président de la République sur
       l'ordonnance n° 2015-896 dit pourtant que le calcul portait jusque-là
       « sur la totalité de la carrière », ce que la fiche ne porte pas.
-  - debut: 2011
-    fin: 2015
-    date_effet: [2011-01-01, 2016-07-01]
-    type_calcul: annuites
+  - du: 2011-01-01
+    au: 2016-07-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0125
     decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
@@ -407,10 +330,8 @@ periodes:
       décalée ici ; aucun texte de l'archipel ne la décale (le décret n°
       2017-1000 n'adapte de R. 351-27 que la durée limite, art. 3, XIV,
       1°).
-  - debut: 2016
-    fin: 2016
-    date_effet: [2016-07-01, 2017-01-01]
-    type_calcul: annuites
+  - du: 2016-07-01
+    au: 2017-01-01
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 172
@@ -418,11 +339,6 @@ periodes:
     duree_requise_table: [spm_2015]
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0125
     decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
@@ -450,10 +366,8 @@ periodes:
       pour toute génération. Coefficient de minoration à la génération
       (R. 351-27, rendu applicable par le décret n° 2017-1000, art. 3,
       XIV).
-  - debut: 2017
-    fin: 2022
-    date_effet: [2017-01-01, 2023-09-01]
-    type_calcul: annuites
+  - du: 2017-01-01
+    au: 2023-09-01
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 172
@@ -461,11 +375,6 @@ periodes:
     duree_requise_table: [spm_2015]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0125
     decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
@@ -478,10 +387,8 @@ periodes:
       la loi n° 87-563 ne donne pourtant vingt-cinq années qu'aux nés à
       compter de 1962, et quarante à vingt-huit aux générations d'avant,
       que la fiche ne porte pas.
-  - debut: 2023
-    fin: 2025
-    date_effet: [2023-09-01, 2026-03-01]
-    type_calcul: annuites
+  - du: 2023-09-01
+    au: 2026-03-01
     age_ouverture: 64
     age_taux_plein: 67
     duree_requise_trimestres: 172
@@ -489,11 +396,6 @@ periodes:
     duree_requise_table: [spm_2015]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
     decote_par_trimestre: 0.0125
     decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
@@ -512,10 +414,7 @@ periodes:
       parle plus depuis le 1er septembre 2023 que de « l'âge prévu au
       premier alinéa de l'article L. 161-17-2 augmenté de trois années »
       : question ouverte, dite dans `ages_regimes.csv`.
-  - debut: 2026
-    fin: null
-    date_effet: [2026-03-01, null]
-    type_calcul: annuites
+  - du: 2026-03-01
     age_ouverture: 64
     age_taux_plein: 67
     duree_requise_trimestres: 172
@@ -523,11 +422,6 @@ periodes:
     duree_requise_table: [spm_2026]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
     decote_par_trimestre: 0.0125
     decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
@@ -546,3 +440,122 @@ periodes:
       pour 1967, 170 de 1968 à 1970, 171 de 1971 à 1973, 172 à compter
       de 1974. La période liquide à compter du 1er mars 2026, la
       précédente jusqu'au 28 février (`date_effet`).
+cotisation:
+  - du: 1987-01-01
+    au: 1988-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 0.4390
+    taux_cotisation_deplafonnee: 0.0044
+    part_salariale_deplafonnee: 0.0000
+  - du: 1988-01-01
+    au: 1989-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 0.4390
+    taux_cotisation_deplafonnee: 0.0044
+    part_salariale_deplafonnee: 0.0000
+  - du: 1989-01-01
+    au: 1990-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 0.4390
+    taux_cotisation_deplafonnee: 0.0044
+    part_salariale_deplafonnee: 0.0000
+  - du: 1990-01-01
+    au: 1991-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 0.4390
+    taux_cotisation_deplafonnee: 0.0044
+    part_salariale_deplafonnee: 0.0000
+  - du: 1991-01-01
+    au: 1992-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 0.4390
+    taux_cotisation_deplafonnee: 0.0044
+    part_salariale_deplafonnee: 0.0000
+  - du: 1992-01-01
+    au: 1993-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 0.4390
+    taux_cotisation_deplafonnee: 0.0044
+    part_salariale_deplafonnee: 0.0000
+  - du: 1993-01-01
+    au: 1994-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1461
+    part_salariale: 0.4390
+    taux_cotisation_deplafonnee: 0.0044
+    part_salariale_deplafonnee: 0.0000
+  - du: 1994-01-01
+    au: 1995-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1475
+    part_salariale: 0.4441
+    taux_cotisation_deplafonnee: 0.0160
+    part_salariale_deplafonnee: 0.0000
+  - du: 1995-01-01
+    au: 1996-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1475
+    part_salariale: 0.4441
+    taux_cotisation_deplafonnee: 0.0160
+    part_salariale_deplafonnee: 0.0000
+  - du: 1996-01-01
+    au: 1997-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1475
+    part_salariale: 0.4441
+    taux_cotisation_deplafonnee: 0.0160
+    part_salariale_deplafonnee: 0.0000
+  - du: 1997-01-01
+    au: 1998-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1475
+    part_salariale: 0.4441
+    taux_cotisation_deplafonnee: 0.0160
+    part_salariale_deplafonnee: 0.0000
+  - du: 1998-01-01
+    au: 2011-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1475
+    part_salariale: 0.4441
+    taux_cotisation_deplafonnee: 0.0160
+    part_salariale_deplafonnee: 0.0000
+  - du: 2011-01-01
+    au: 2016-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2016-01-01
+    au: 2017-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2017-01-01
+    au: 2023-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
+  - du: 2023-01-01
+    au: 2026-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1545
+    part_salariale: 0.4466
+    taux_cotisation_deplafonnee: 0.0241
+    part_salariale_deplafonnee: 0.1660
+  - du: 2026-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1545
+    part_salariale: 0.4466
+    taux_cotisation_deplafonnee: 0.0241
+    part_salariale_deplafonnee: 0.1660

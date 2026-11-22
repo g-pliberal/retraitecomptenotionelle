@@ -28,7 +28,7 @@ import csv
 from pathlib import Path
 
 import pytest
-import yaml
+from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -86,9 +86,7 @@ def _au_premier_janvier(champ: int) -> dict[int, float]:
 
 @pytest.fixture(scope="module")
 def retenues_fiche() -> dict[int, float]:
-    fiche = yaml.safe_load(
-        (RACINE / "data" / "reference" / "regimes" / "cnracl.yaml")
-        .read_text(encoding="utf-8"))
+    fiche = lire_fiche_de_regime(RACINE / "data" / "reference" / "regimes" / "cnracl.yaml")
     serie = {}
     for periode in fiche["periodes"]:
         fin = periode["fin"] or DERNIERE

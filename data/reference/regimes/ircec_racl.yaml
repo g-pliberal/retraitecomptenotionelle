@@ -37,10 +37,11 @@ inventaire:
     La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les
     générations nées avant 1955 jusqu'en 2024, elle est approchée (voir
     `docs/limites.md`).
-periodes:
-  - debut: 1962
-    fin: 2013
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1962-01-01
+    au: 2014-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -49,8 +50,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_8_pass
-    taux_cotisation_retraite: 0.0650
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -71,10 +70,8 @@ periodes:
       centimes de rente par euro dans `rendements_points.csv`, appliqués à
       toute la carrière ; niveau `estimee`. Âges de la fiche
       `ircec_raap`.
-  - debut: 2014
-    fin: 2024
-    date_effet: [2014-01-01, 2025-05-16]
-    type_calcul: points
+  - du: 2014-01-01
+    au: 2025-05-16
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -83,8 +80,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_8_pass
-    taux_cotisation_retraite: 0.0650
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     abattement_points: minoration_racl_2014_2024
@@ -108,10 +103,7 @@ periodes:
       et 1954, le tableau de l'annexe, avant 65 ans et 8 mois puis 66 ans
       et 4 mois.
       Taux, assiette et points : ceux de la première période.
-  - debut: 2025
-    fin: null
-    date_effet: [2025-05-16, null]
-    type_calcul: points
+  - du: 2025-05-16
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -120,8 +112,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_8_pass
-    taux_cotisation_retraite: 0.0650
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     abattement_points: minoration_ircec
@@ -142,3 +132,15 @@ periodes:
       leurs propres coefficients, que la période ne porte pas (voir
       `docs/limites.md`).
       Taux, assiette et points : ceux de la première période.
+cotisation:
+  - du: 1962-01-01
+    au: 2014-01-01
+    assiette: plafonnee_8_pass
+    taux_cotisation_retraite: 0.0650
+  - du: 2014-01-01
+    au: 2025-01-01
+    assiette: plafonnee_8_pass
+    taux_cotisation_retraite: 0.0650
+  - du: 2025-01-01
+    assiette: plafonnee_8_pass
+    taux_cotisation_retraite: 0.0650

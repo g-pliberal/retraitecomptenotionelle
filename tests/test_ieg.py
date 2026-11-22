@@ -19,16 +19,15 @@ from __future__ import annotations
 from datetime import date
 
 import pytest
-import yaml
 
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
+from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 from facade import Simulateur
 
-PERIODES = yaml.safe_load((RACINE_DONNEES / "reference" / "regimes" / "ieg.yaml")
-                          .read_text(encoding="utf-8"))["periodes"]
+PERIODES = lire_fiche_de_regime(RACINE_DONNEES / "reference" / "regimes" / "ieg.yaml")["periodes"]
 #: Le régime naît du statut national, en vigueur au 1er juin 1946.
 NAISSANCE = DateMois(1946, 6)
 #: La dernière année que les confrontations parcourent.

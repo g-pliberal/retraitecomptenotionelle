@@ -36,10 +36,11 @@ inventaire:
     au seul Bulletin officiel, est supposée celle des statuts de 2011 ; le
     capital unique versé sous 1 500 points n'est pas porté, ni les 15 % de
     la longue carrière pour qui part après son âge légal, avant 64 ans.
-periodes:
-  - debut: 1968
-    fin: 1970
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1968-01-01
+    au: 2011-07-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -47,10 +48,6 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    assiette_facteur_revenu: 2.387
-    taux_cotisation_retraite: 0.036
-    part_salariale: 0.673629
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavamac_minoration_age_seul
     abattement_points: cavamac_minoration_age_seul
@@ -102,9 +99,8 @@ periodes:
       L. 351-8, qui commence à la génération 1930 ; `age_taux_plein`, 65
       ans, vaut pour les générations d'avant, que les statuts de 2011
       plaçaient au même âge — l'âge légal de 60 ans augmenté de cinq.
-  - debut: 1971
-    fin: 1992
-    type_calcul: points
+  - du: 2011-07-01
+    au: 2023-09-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -112,138 +108,6 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    assiette_facteur_revenu: 2.387
-    taux_cotisation_retraite: 0.063
-    part_salariale: 0.673629
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavamac_minoration_age_seul
-    abattement_points: cavamac_minoration_age_seul
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      6,30 %, ET CE TAUX N'A JAMAIS CHANGÉ DEPUIS. C'est le taux
-      STATUTAIRE, celui qui ouvre des droits ; tout ce qui bouge après 1992
-      est le TAUX D'APPEL, qui prélève davantage sans rien ouvrir de plus.
-      Jusqu'en 1992 les deux coïncident : appel à 100 %, cotisation égale au
-      droit.
-  - debut: 1993
-    fin: 1997
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    assiette_facteur_revenu: 2.387
-    taux_cotisation_retraite: 0.0693
-    part_salariale: 0.673629
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavamac_minoration_age_seul
-    abattement_points: cavamac_minoration_age_seul
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      LE PREMIER TAUX D'APPEL, et le décret n° 92-1372 du 29 décembre 1992
-      dit exactement ce qu'il fait : « la cotisation définie à l'article 1er
-      est appelée à hauteur de 110 %. La majoration de cotisation afférente
-      à la fraction du taux d'appel excédant 100 % N'OUVRE PAS DE DROIT
-      SUPPLÉMENTAIRE. » 6,30 % × 110 % = 6,93 % prélevés pour 6,30 % de
-      droits — et c'est le montant PRÉLEVÉ qu'un compte notionnel porte.
-      Le rendement de ce qui est versé baisse d'autant : voir
-      `rendements_points.csv`.
-  - debut: 1998
-    fin: 2000
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    assiette_facteur_revenu: 2.387
-    taux_cotisation_retraite: 0.080325
-    part_salariale: 0.673629
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavamac_minoration_age_seul
-    abattement_points: cavamac_minoration_age_seul
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      APPEL PORTÉ À 127,5 % par le décret n° 97-1056 du 13 novembre 1997, et
-      sa notice dit pourquoi en toutes lettres : « d'après les projections
-      réalisées par la CAVAMAC, à rendement inchangé, les réserves du régime
-      seraient totalement épuisées en 2004 […] un projet de réforme visant à
-      en DIMINUER LE RENDEMENT par un relèvement du taux d'appel de la
-      cotisation de 127,5 % ». 6,30 % × 1,275 = 8,0325 %.
-  - debut: 2001
-    fin: 2003
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    assiette_facteur_revenu: 2.387
-    taux_cotisation_retraite: 0.081585
-    part_salariale: 0.673629
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavamac_minoration_age_seul
-    abattement_points: cavamac_minoration_age_seul
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Appel à 129,5 % (décret n° 2001-864 du 17 septembre 2001), soit
-      8,1585 %.
-  - debut: 2004
-    fin: 2011
-    date_effet: [2004-01-01, 2011-07-01]
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    assiette_facteur_revenu: 2.387
-    taux_cotisation_retraite: 0.09
-    part_salariale: 0.673629
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavamac_minoration_age_seul
-    abattement_points: cavamac_minoration_age_seul
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      LE SOMMET : appel à 142,86 % (décret n° 2003-1255 du 26 décembre
-      2003), soit 9 % prélevés pour 6,30 % de droits. Quinze ans durant, un
-      agent général verse sept euros pour cinq euros de droits — et le
-      rendement de ce qu'il verse tombe à 3,53 %, le plus bas du catalogue
-      libéral.
-  - debut: 2012
-    fin: 2018
-    date_effet: [2011-07-01, 2019-01-01]
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    assiette_facteur_revenu: 2.387
-    taux_cotisation_retraite: 0.09
-    part_salariale: 0.673629
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavamac_minoration_age_seul
     abattement_points: cavamac_minoration_age_seul
@@ -300,53 +164,14 @@ periodes:
       31 août 2023 (article 15, c), le grand invalide, l'invalide
       professionnel à 66 %, le travailleur handicapé depuis le
       1er septembre 2023.
-  - debut: 2019
-    fin: 2022
-    date_effet: [2019-01-01, 2023-09-01]
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    assiette_facteur_revenu: 2.387
-    taux_cotisation_retraite: 0.0816
-    part_salariale: 0.673629
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavamac_minoration_age_seul
-    abattement_points: cavamac_minoration_age_seul
-    surcote_par_trimestre: 0.0125
-    surcote_points: cavamac_minoration_age_seul
-    surcote_pas_trimestres: 4
-    surcote_trimestres_maximum: 20
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    notes: >-
-      Appel ramené à 129,5 %, soit 8,16 %. C'est le dernier taux que le
-      barème de l'IPP porte, et il le porte encore pour 2026 : la caisse,
-      elle, a publié autre chose — voir la période de 2026.
-      Règles d'âge des statuts de 2011, pour les pensions qui prennent
-      effet jusqu'au 31 août 2023 (`date_effet`) : voir la période
-      2012-2018. L'arrêté du 4 août 2023 récrit l'article 15 au
-      1er septembre 2023 : voir la période suivante.
-  - debut: 2023
-    fin: 2023
-    date_effet: [2023-09-01, 2024-01-01]
-    type_calcul: points
+  - du: 2023-09-01
+    au: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    assiette_facteur_revenu: 2.387
-    taux_cotisation_retraite: 0.0816
-    part_salariale: 0.673629
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavamac_minoration_age_seul
     abattement_points: cavamac_minoration_age_seul
@@ -381,19 +206,13 @@ periodes:
       jusqu'au 14 novembre 2026 l'âge par génération et la seule catégorie
       de 2011 jusqu'au 31 décembre 2023 (action 130, ligne 28 de la file).
       RESTENT MINORÉS : voir la période 2012-2018.
-  - debut: 2024
-    fin: 2025
-    type_calcul: points
+  - du: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_13_pass
-    assiette_facteur_revenu: 2.387
-    taux_cotisation_retraite: 0.0816
-    part_salariale: 0.673629
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavamac_minoration_age_seul
     surcote_par_trimestre: 0.0125
@@ -435,31 +254,111 @@ periodes:
       et part après son âge légal, avant 64 ans. La majoration pour trois
       enfants et ce qui n'est pas porté sont ceux des statuts de 2011, voir
       la période 2012-2018.
-  - debut: 2026
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+cotisation:
+  - du: 1968-01-01
+    au: 1971-01-01
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.036
+    part_salariale: 0.673629
+  - du: 1971-01-01
+    au: 1993-01-01
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.063
+    part_salariale: 0.673629
+    notes: >-
+      6,30 %, ET CE TAUX N'A JAMAIS CHANGÉ DEPUIS. C'est le taux
+      STATUTAIRE, celui qui ouvre des droits ; tout ce qui bouge après 1992
+      est le TAUX D'APPEL, qui prélève davantage sans rien ouvrir de plus.
+      Jusqu'en 1992 les deux coïncident : appel à 100 %, cotisation égale au
+      droit.
+  - du: 1993-01-01
+    au: 1998-01-01
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.0693
+    part_salariale: 0.673629
+    notes: >-
+      LE PREMIER TAUX D'APPEL, et le décret n° 92-1372 du 29 décembre 1992
+      dit exactement ce qu'il fait : « la cotisation définie à l'article 1er
+      est appelée à hauteur de 110 %. La majoration de cotisation afférente
+      à la fraction du taux d'appel excédant 100 % N'OUVRE PAS DE DROIT
+      SUPPLÉMENTAIRE. » 6,30 % × 110 % = 6,93 % prélevés pour 6,30 % de
+      droits — et c'est le montant PRÉLEVÉ qu'un compte notionnel porte.
+      Le rendement de ce qui est versé baisse d'autant : voir
+      `rendements_points.csv`.
+  - du: 1998-01-01
+    au: 2001-01-01
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.080325
+    part_salariale: 0.673629
+    notes: >-
+      APPEL PORTÉ À 127,5 % par le décret n° 97-1056 du 13 novembre 1997, et
+      sa notice dit pourquoi en toutes lettres : « d'après les projections
+      réalisées par la CAVAMAC, à rendement inchangé, les réserves du régime
+      seraient totalement épuisées en 2004 […] un projet de réforme visant à
+      en DIMINUER LE RENDEMENT par un relèvement du taux d'appel de la
+      cotisation de 127,5 % ». 6,30 % × 1,275 = 8,0325 %.
+  - du: 2001-01-01
+    au: 2004-01-01
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.081585
+    part_salariale: 0.673629
+    notes: >-
+      Appel à 129,5 % (décret n° 2001-864 du 17 septembre 2001), soit
+      8,1585 %.
+  - du: 2004-01-01
+    au: 2012-01-01
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.09
+    part_salariale: 0.673629
+    notes: >-
+      LE SOMMET : appel à 142,86 % (décret n° 2003-1255 du 26 décembre
+      2003), soit 9 % prélevés pour 6,30 % de droits. Quinze ans durant, un
+      agent général verse sept euros pour cinq euros de droits — et le
+      rendement de ce qu'il verse tombe à 3,53 %, le plus bas du catalogue
+      libéral.
+  - du: 2012-01-01
+    au: 2019-01-01
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.09
+    part_salariale: 0.673629
+  - du: 2019-01-01
+    au: 2023-01-01
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.0816
+    part_salariale: 0.673629
+    notes: >-
+      Appel ramené à 129,5 %, soit 8,16 %. C'est le dernier taux que le
+      barème de l'IPP porte, et il le porte encore pour 2026 : la caisse,
+      elle, a publié autre chose — voir la période de 2026.
+      Règles d'âge des statuts de 2011, pour les pensions qui prennent
+      effet jusqu'au 31 août 2023 (`date_effet`) : voir la période
+      2012-2018. L'arrêté du 4 août 2023 récrit l'article 15 au
+      1er septembre 2023 : voir la période suivante.
+  - du: 2023-01-01
+    au: 2024-01-01
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.0816
+    part_salariale: 0.673629
+  - du: 2024-01-01
+    au: 2026-01-01
+    assiette: plafonnee_13_pass
+    assiette_facteur_revenu: 2.387
+    taux_cotisation_retraite: 0.0816
+    part_salariale: 0.673629
+  - du: 2026-01-01
     assiette: plafonnee_13_pass
     assiette_facteur_revenu: 2.387
     taux_cotisation_retraite: 0.0766
     part_salariale: 0.673629
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavamac_minoration_age_seul
-    surcote_par_trimestre: 0.0125
-    surcote_points: cavamac_minoration_age_seul
-    surcote_pas_trimestres: 4
-    surcote_trimestres_maximum: 20
-    surcote_trimestres_cotises: cavamac_minoration_age_seul
-    carriere_longue_minoree_de: 0.15
-    carriere_longue_minoree_depuis_l_age: 62
-    age_sans_coefficient_de_l_inapte: 62
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA BAISSE DU TAUX D'APPEL, que la caisse annonce dans son tableau de
       paramètres 2026 : « le taux de cotisation statutaire est de 6,30 %

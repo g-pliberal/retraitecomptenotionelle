@@ -29,6 +29,7 @@ from retraite_notionnelle.donnees.regimes import (
     CatalogueRegimes,
     ContributionsEmployeurPubliques,
     PartRetraiteSeuleEtat,
+    lire_fiche_de_regime,
 )
 
 
@@ -1176,7 +1177,7 @@ def test_chaque_regime_dit_son_etage(catalogue):
     assert {code: catalogue[code].etage for code in attendus} == attendus
 
     chemin = RACINE_DONNEES / "reference" / "regimes" / "regime_general.yaml"
-    fiche = yaml.safe_load(chemin.read_text(encoding="utf-8"))
+    fiche = lire_fiche_de_regime(chemin)
     for fausse in ({**fiche, "etage": "premier"},
                    {cle: valeur for cle, valeur in fiche.items() if cle != "etage"}):
         with pytest.raises(ValueError, match="étage inconnu"):
@@ -4330,7 +4331,7 @@ def test_le_chargeur_refuse_un_interrupteur_qui_ne_renvoie_pas(tmp_path):
     dossier.mkdir(parents=True)
     shutil.copytree(source / "regles", tmp_path / "reference" / "regles")
     shutil.copy(source / "regimes" / "_schema.yaml", dossier / "_schema.yaml")
-    regime = yaml.safe_load((source / "regimes" / "avts.yaml").read_text(encoding="utf-8"))
+    regime = lire_fiche_de_regime(source / "regimes" / "avts.yaml")
     for renvoi, message in ((True, "et non à la valeur"),
                             ("nexiste_pas", "qui n'existe pas"),
                             ("salaire_annuel_moyen", "ne déclare pas")):

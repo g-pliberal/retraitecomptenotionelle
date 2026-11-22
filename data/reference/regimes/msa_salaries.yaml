@@ -23,19 +23,17 @@ inventaire:
   textes:
     - {reference: "loi du 30 avril 1930, titre II (assurances sociales agricoles)", id: null}
     - {reference: "code rural et de la pêche maritime, L. 722-20 et suivants", id: null}
-periodes:
-  - debut: 1945
-    fin: 1971
-    type_calcul: 'annuites'
+structure:
+  type_calcul: 'annuites'
+liquidation:
+  - du: 1945-01-01
+    au: 1972-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 120
     taux_plein: 0.4
     salaire_reference: '10_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.086
-    part_salariale: 0.3488
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -63,9 +61,8 @@ periodes:
       Avant 1945, le salarié agricole relevait des ASSURANCES SOCIALES,
       comme son homologue de l'industrie : c'est l'affiliation qui l'y
       route désormais, et non plus cette fiche.
-  - debut: 1972
-    fin: 1972
-    type_calcul: 'annuites'
+  - du: 1972-01-01
+    au: 1973-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -74,9 +71,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1119
-    part_salariale: 0.3343
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -93,9 +87,8 @@ periodes:
       LEGIARTI000006774035 ; la loi n° 71-1132 « est applicable aux
       pensions des travailleurs salariés agricoles », article 10). D'où les
       périodes de 1972, 1973 et 1974, qui ne diffèrent que par ce plafond.
-  - debut: 1973
-    fin: 1973
-    type_calcul: 'annuites'
+  - du: 1973-01-01
+    au: 1974-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -104,9 +97,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1119
-    part_salariale: 0.3343
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -115,9 +105,8 @@ periodes:
     notes: >-
       Les règles de 1972, avec 136 trimestres retenus au plus pour une
       pension qui prend effet en 1973 (décret n° 50-1225, article 59-1).
-  - debut: 1974
-    fin: 1974
-    type_calcul: 'annuites'
+  - du: 1974-01-01
+    au: 1975-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -126,9 +115,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1119
-    part_salariale: 0.3343
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -137,9 +123,8 @@ periodes:
     notes: >-
       Les règles de 1972, avec 144 trimestres retenus au plus pour une
       pension qui prend effet en 1974 (décret n° 50-1225, article 59-1).
-  - debut: 1975
-    fin: 1977
-    type_calcul: 'annuites'
+  - du: 1975-01-01
+    au: 1978-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -147,9 +132,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1119
-    part_salariale: 0.3343
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -159,9 +141,8 @@ periodes:
       Les règles de 1972, les 150 trimestres du dénominateur étant tous
       retenus depuis 1975 : le décret n° 50-1225, article 59-1, ne fixe de
       palier que pour les pensions qui prennent effet de 1972 à 1974.
-  - debut: 1978
-    fin: 1978
-    type_calcul: 'annuites'
+  - du: 1978-01-01
+    au: 1979-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -169,9 +150,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1119
-    part_salariale: 0.3343
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -186,10 +164,8 @@ periodes:
       une pension qui prend effet en 1978 (décret n° 51-727, article 1er bis,
       LEGIARTI000006773767). Le modèle compte, comme au régime général, les
       deux régimes et les assurances sociales d'avant 1945.
-  - debut: 1979
-    fin: 1982
-    date_effet: [1979-01-01, 1983-04-01]
-    type_calcul: 'annuites'
+  - du: 1979-01-01
+    au: 1983-04-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
@@ -197,9 +173,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1119
-    part_salariale: 0.3343
     decote_par_trimestre: 0.025
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
@@ -215,10 +188,8 @@ periodes:
       période liquide encore les pensions qui prennent effet jusqu'au 31
       mars 1983 (`date_effet`) : la règle nouvelle n'entre en vigueur que le
       1er avril 1983 (décret n° 82-1054, article 2, LEGIARTI000006272103).
-  - debut: 1983
-    fin: 1993
-    date_effet: [1983-04-01, 1994-01-01]
-    type_calcul: 'annuites'
+  - du: 1983-04-01
+    au: 1994-01-01
     age_ouverture: 60
     age_taux_plein: 65
     age_taux_plein_par_generation: age_annulation_decote
@@ -227,11 +198,6 @@ periodes:
     decote_par_generation: decote_regime_general
     salaire_reference: '10_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1461
-    taux_cotisation_deplafonnee: 0.0044
-    part_salariale: 0.439
-    part_salariale_deplafonnee: 0.0
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -240,9 +206,8 @@ periodes:
       Mêmes règles que le régime général sur 1983-1993 : la MSA les applique à l'identique.
       En vigueur le 1er avril 1983 (décret n° 82-1054, article 2) : la période liquide depuis
       ce jour (`date_effet`).
-  - debut: 1994
-    fin: 2003
-    type_calcul: 'annuites'
+  - du: 1994-01-01
+    au: 2004-01-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -255,20 +220,14 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: '25_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1475
-    taux_cotisation_deplafonnee: 0.016
-    part_salariale: 0.4441
-    part_salariale_deplafonnee: 0.0
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
     notes: >-
       Mêmes règles que le régime général sur 1994-2003 : la MSA les applique à l'identique.
-  - debut: 2004
-    fin: 2008
-    type_calcul: 'annuites'
+  - du: 2004-01-01
+    au: 2009-01-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -281,11 +240,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: '25_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1487
-    taux_cotisation_deplafonnee: 0.017
-    part_salariale: 0.4445
-    part_salariale_deplafonnee: 0.0588
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -294,9 +248,8 @@ periodes:
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue]
     notes: >-
       Mêmes règles que le régime général sur 2004-2008 : la MSA les applique à l'identique.
-  - debut: 2009
-    fin: 2010
-    type_calcul: 'annuites'
+  - du: 2009-01-01
+    au: 2011-01-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -309,11 +262,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: '25_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1495
-    taux_cotisation_deplafonnee: 0.017
-    part_salariale: 0.4448
-    part_salariale_deplafonnee: 0.0588
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -322,9 +270,8 @@ periodes:
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue]
     notes: >-
       Mêmes règles que le régime général sur 2009-2010 : la MSA les applique à l'identique.
-  - debut: 2011
-    fin: 2022
-    type_calcul: 'annuites'
+  - du: 2011-01-01
+    au: 2023-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -337,11 +284,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: '25_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1533
-    taux_cotisation_deplafonnee: 0.021
-    part_salariale: 0.4463
-    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -350,9 +292,7 @@ periodes:
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue, penibilite]
     notes: >-
       Mêmes règles que le régime général sur 2011-2022 : la MSA les applique à l'identique.
-  - debut: 2023
-    fin: null
-    type_calcul: 'annuites'
+  - du: 2023-01-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -365,11 +305,6 @@ periodes:
     duree_proratisation_par_generation: taux_plein_et_proratisation
     salaire_reference: '25_meilleures_annees'
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
-    assiette: 'plafonnee'
-    taux_cotisation_retraite: 0.1545
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale: 0.4466
-    part_salariale_deplafonnee: 0.166
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
@@ -378,3 +313,80 @@ periodes:
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue, penibilite, surcote_parentale]
     notes: >-
       Mêmes règles que le régime général sur 2023-aujourd’hui : la MSA les applique à l'identique.
+cotisation:
+  - du: 1945-01-01
+    au: 1972-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.086
+    part_salariale: 0.3488
+  - du: 1972-01-01
+    au: 1973-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+  - du: 1973-01-01
+    au: 1974-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+  - du: 1974-01-01
+    au: 1975-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+  - du: 1975-01-01
+    au: 1978-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+  - du: 1978-01-01
+    au: 1979-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+  - du: 1979-01-01
+    au: 1983-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1119
+    part_salariale: 0.3343
+  - du: 1983-01-01
+    au: 1994-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1461
+    taux_cotisation_deplafonnee: 0.0044
+    part_salariale: 0.439
+    part_salariale_deplafonnee: 0.0
+  - du: 1994-01-01
+    au: 2004-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1475
+    taux_cotisation_deplafonnee: 0.016
+    part_salariale: 0.4441
+    part_salariale_deplafonnee: 0.0
+  - du: 2004-01-01
+    au: 2009-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1487
+    taux_cotisation_deplafonnee: 0.017
+    part_salariale: 0.4445
+    part_salariale_deplafonnee: 0.0588
+  - du: 2009-01-01
+    au: 2011-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1495
+    taux_cotisation_deplafonnee: 0.017
+    part_salariale: 0.4448
+    part_salariale_deplafonnee: 0.0588
+  - du: 2011-01-01
+    au: 2023-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1533
+    taux_cotisation_deplafonnee: 0.021
+    part_salariale: 0.4463
+    part_salariale_deplafonnee: 0.1429
+  - du: 2023-01-01
+    assiette: 'plafonnee'
+    taux_cotisation_retraite: 0.1545
+    taux_cotisation_deplafonnee: 0.0241
+    part_salariale: 0.4466
+    part_salariale_deplafonnee: 0.166

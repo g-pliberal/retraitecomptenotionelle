@@ -30,10 +30,11 @@ inventaire:
     RACD ou au RACL, dont les points sont ceux du RAAP. Il en partage les
     manques — seuil d'affiliation de 900 SMIC horaires et minimum de trente
     points non appliqués.
-periodes:
-  - debut: 2016
-    fin: 2016
-    type_calcul: points
+structure:
+  type_calcul: points
+  points_de: ircec_raap
+liquidation:
+  - du: 2016-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -42,9 +43,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_3_pass
-    taux_cotisation_retraite: 0.025
-    points_de: ircec_raap
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     abattement_points: minoration_ircec
@@ -72,64 +70,26 @@ periodes:
       n° 2015-1877 (article 3 II), qui déroge au taux du I ; la moitié des
       6 %, 7 % et 8 % ensuite. Ce cumul des deux textes est une lecture,
       non une citation : aucun des deux ne l'écrit en chiffres.
-  - debut: 2017
-    fin: 2017
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+cotisation:
+  - du: 2016-01-01
+    au: 2017-01-01
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.025
+  - du: 2017-01-01
+    au: 2018-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.03
-    points_de: ircec_raap
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    abattement_points: minoration_ircec
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Moitié des 6 % de 2017.
-  - debut: 2018
-    fin: 2018
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2018-01-01
+    au: 2019-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.035
-    points_de: ircec_raap
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    abattement_points: minoration_ircec
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Moitié des 7 % de 2018.
-  - debut: 2019
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+  - du: 2019-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.04
-    points_de: ircec_raap
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    abattement_points: minoration_ircec
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Moitié des 8 % du RAAP : 4 %, le « taux aménagé » que le guide, le
       mémo et la page de calcul de l'IRCEC publient pour 2026. Assiette,

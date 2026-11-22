@@ -10,6 +10,7 @@ from functools import cached_property
 from pathlib import Path
 
 from ..somme import somme_ordonnee
+from .axes import vue_ancienne
 from .chargement import Fiabilite, au_mois, charger_yaml, une_fois_par_instantane
 
 #: Familles de régimes reconnues.
@@ -2105,7 +2106,7 @@ def fichiers_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
     for chemin in sorted(dossier.glob("*.yaml")):
         if chemin.name.startswith("_") or chemin.name in FICHIERS_HORS_REGIMES:
             continue
-        fiche = charger_yaml(chemin)
+        fiche = lire_fiche_de_regime(chemin)
         if fiche.get("code") != chemin.stem:
             raise ValueError(
                 f"{chemin.name} : un fichier de régime porte le code qui le nomme, "
@@ -2156,12 +2157,26 @@ def fiches_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
     return tuple(sorted(fiches, key=lambda couple: couple[1]["rang"]))
 
 
+def lire_fiche_de_regime(chemin: Path) -> dict:
+    """Un fichier de régime, ses périodes refaites depuis ses quatre blocs.
+
+    Le fichier s'écrit en quatre blocs, un par axe (note de décision 0009,
+    amendement du 22 novembre 2026) ; pendant le gel, ses lecteurs prennent
+    encore des périodes, que :func:`axes.vue_ancienne` fabrique. Un fichier
+    sans bloc de liquidation — un régime que le modèle ne calcule pas — se
+    lit tel quel."""
+    fiche = charger_yaml(chemin)
+    if "liquidation" in fiche:
+        return vue_ancienne(fiche)
+    return fiche
+
+
 def fiche_de_regime(racine: Path, code: str) -> dict:
-    """La fiche écrite d'un régime, par son code."""
+    """La fiche écrite d'un régime, par son code, en périodes."""
     chemin = racine / "reference" / "regimes" / f"{code}.yaml"
     if code.startswith("_") or chemin.name in FICHIERS_HORS_REGIMES or not chemin.exists():
         raise KeyError(f"aucun fichier de régime pour {code!r}")
-    return charger_yaml(chemin)
+    return lire_fiche_de_regime(chemin)
 
 
 class CatalogueRegimes:

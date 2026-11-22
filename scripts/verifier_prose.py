@@ -441,8 +441,20 @@ def _analyse(chemin: str):
     if cle not in _ANALYSES:
         texte = fichier.read_text(encoding="utf-8")
         _ANALYSES[cle] = json.loads(texte) if chemin.endswith(".json") \
-            else yaml.load(texte, Loader=_LECTEUR)
+            else _avec_la_vue(yaml.load(texte, Loader=_LECTEUR))
     return _ANALYSES[cle]
+
+
+def _avec_la_vue(donnees):
+    """Un fichier de régime écrit en quatre blocs porte en plus, pendant le
+    gel, les périodes que le chargeur en refait : une ancre peut lire
+    ``periodes.*.champ`` comme ``liquidation.*.champ`` (note de décision
+    0009, amendement du 22 novembre 2026)."""
+    if isinstance(donnees, dict) and "liquidation" in donnees and "cotisation" in donnees:
+        from retraite_notionnelle.donnees.axes import vue_ancienne
+
+        return {**donnees, "periodes": vue_ancienne(donnees)["periodes"]}
+    return donnees
 
 
 def sonde_entrees(argument: str) -> float:

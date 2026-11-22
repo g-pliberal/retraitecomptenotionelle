@@ -26,10 +26,10 @@ inventaire:
             liberal_non_reglemente]
   textes:
     - {reference: "arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire obligatoire d'assurance vieillesse des indépendants", id: LEGIARTI000025397326}
-periodes:
-  - debut: 2013
-    fin: 2024
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 2013-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -43,6 +43,18 @@ periodes:
     abattement_points: abattement_rci
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
+    notes: >-
+      D. 635-7, état du 1er janvier 2013 : première tranche, 7 % jusqu'à un plafond PROPRE AU RÉGIME, et non au plafond de la Sécurité sociale de l'année — celui du 1er janvier 2013, 37 032 €, puis « indexé sur la dernière valeur du revenu de référence, dans la limite du coefficient annuel de revalorisation des pensions » (LEGIARTI000025263581, 000034624601), puis revalorisé « du plus petit » des deux coefficients (LEGIARTI000041966498, depuis le 25 mai 2020). 42 946 € en 2024, quand le plafond de la Sécurité sociale valait 46 368 €. Les montants de `borne_haute_par_annee` sont ceux que la caisse a publiés, non recalculés ; jusqu'au 13 octobre 2026, la fiche coupait au plafond de la Sécurité sociale. La fiche ne portait d'abord que ce taux-là et s'arrêtait au plafond : la seconde tranche, annoncée en note, n'était portée par aucune période et ne prélevait donc rien.
+      LES ÂGES ET LA DURÉE SE LISENT À LA GÉNÉRATION : le règlement du régime
+      (arrêté du 9 février 2012, LEGIARTI000025397326) liquide les points
+      à l'âge légal de l'article L. 161-17-2, sans abattement pour qui
+      justifie du taux plein du régime de base, et l'âge d'annulation est
+      celui de l'article L. 351-8. La fiche opposait 62 et 67 ans et
+      172 trimestres à toutes les générations, y compris à celles que la
+      loi de 2023 porte à 64 ans.
+cotisation:
+  - du: 2013-01-01
+    au: 2025-01-01
     assiette: plafonnee
     # Les points de la pension d'invalidité, portés par la seule première
     # tranche : fiche `points_invalidite_independants`.
@@ -63,31 +75,9 @@ periodes:
       2023: 40784
       2024: 42946
     taux_cotisation_retraite: 0.0700
-    notes: >-
-      D. 635-7, état du 1er janvier 2013 : première tranche, 7 % jusqu'à un plafond PROPRE AU RÉGIME, et non au plafond de la Sécurité sociale de l'année — celui du 1er janvier 2013, 37 032 €, puis « indexé sur la dernière valeur du revenu de référence, dans la limite du coefficient annuel de revalorisation des pensions » (LEGIARTI000025263581, 000034624601), puis revalorisé « du plus petit » des deux coefficients (LEGIARTI000041966498, depuis le 25 mai 2020). 42 946 € en 2024, quand le plafond de la Sécurité sociale valait 46 368 €. Les montants de `borne_haute_par_annee` sont ceux que la caisse a publiés, non recalculés ; jusqu'au 13 octobre 2026, la fiche coupait au plafond de la Sécurité sociale. La fiche ne portait d'abord que ce taux-là et s'arrêtait au plafond : la seconde tranche, annoncée en note, n'était portée par aucune période et ne prélevait donc rien.
-      LES ÂGES ET LA DURÉE SE LISENT À LA GÉNÉRATION : le règlement du régime
-      (arrêté du 9 février 2012, LEGIARTI000025397326) liquide les points
-      à l'âge légal de l'article L. 161-17-2, sans abattement pour qui
-      justifie du taux plein du régime de base, et l'âge d'annulation est
-      celui de l'article L. 351-8. La fiche opposait 62 et 67 ans et
-      172 trimestres à toutes les générations, y compris à celles que la
-      loi de 2023 porte à 64 ans.
-  - debut: 2013
-    fin: 2024
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2013-01-01
+    au: 2025-01-01
+    tranche: 2
     assiette: tranche_1_4_pass
     # La seconde tranche part du plafond propre de la première.
     borne_basse_par_annee:
@@ -106,22 +96,7 @@ periodes:
     taux_cotisation_retraite: 0.0800
     notes: >-
       D. 635-7, même état : seconde tranche, 8 % « pour la part du revenu d'activité excédant le seuil fixé au 1° », le plafond propre au régime, « dans la limite de quatre fois la valeur du plafond de la sécurité sociale » — celui de l'année, cette fois.
-  - debut: 2025
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2025-01-01
     assiette: plafonnee
     # Les points de la pension d'invalidité, portés par la seule première
     # tranche : fiche `points_invalidite_independants`.
@@ -129,22 +104,8 @@ periodes:
     taux_cotisation_retraite: 0.0810
     notes: >-
       D. 635-7, état du 7 juillet 2024, qui porte la première tranche à 8,1 % et l'arrête au « plafond annuel prévu au premier alinéa de l'article L. 241-3 » : le plafond propre au régime disparaît du texte. Les circulaires Cnav 2024-36 et 2025-31 publient pourtant encore un « plafond de cotisation RCI » pour 2025 et 2026, 43 891 et 44 286 €, en citant la rédaction abrogée de l'article ; la fiche suit le texte (fiche `rci_seuil_premiere_tranche`). La DATE DE L'ÉTAT N'EST PAS CELLE DE L'EFFET : l'article précise que, conformément à l'article 6 du décret n° 2024-688 du 5 juillet 2024, ces dispositions s'appliquent aux cotisations « dues au titre des périodes courant à compter du 1er janvier 2025 ». C'est la seule clause de ce genre parmi les états lus.
-  - debut: 2025
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    decote_par_generation: decote_regime_general
-    abattement_points: abattement_rci
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
+  - du: 2025-01-01
+    tranche: 2
     assiette: tranche_1_4_pass
     taux_cotisation_retraite: 0.0910
     notes: >-

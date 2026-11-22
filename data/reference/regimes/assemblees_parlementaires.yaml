@@ -55,18 +55,16 @@ inventaire:
     sénateurs ont « un régime de retraite complémentaire par points »,
     dont « la cotisation est égale à celle du régime de base » : le
     règlement du Sénat n'étant pas publié, rien ne le vérifie.
-periodes:
-  - debut: 1930
-    fin: 2008
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1930-01-01
+    au: 2009-01-01
     age_ouverture: 60
     age_taux_plein: 60
     duree_requise_trimestres: 160
     taux_plein: 0.8440
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0785
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -95,9 +93,8 @@ periodes:
       la fonction publique de la même époque, tient lieu, niveau
       `estimee` ; la double cotisation possible jusqu'en 2017 n'est pas
       portée.
-  - debut: 2009
-    fin: 2014
-    type_calcul: annuites
+  - du: 2009-01-01
+    au: 2015-01-01
     age_ouverture: 60
     age_taux_plein: 60
     age_table: assemblee_nationale
@@ -105,9 +102,6 @@ periodes:
     duree_requise_calendrier: assemblee_nationale
     taux_plein: 0.8440
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0785
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -154,9 +148,8 @@ periodes:
       2,0585 % — 41 annuités », « 2013 - 2014 : 2,0461 % — 41,25
       annuités » (tableau de l'art. 21). Retenue de 7,85 % comme avant
       2009, niveau `estimee`.
-  - debut: 2015
-    fin: 2015
-    type_calcul: annuites
+  - du: 2015-01-01
+    au: 2016-01-01
     age_ouverture: 61.58
     age_taux_plein: 61.58
     age_table: assemblee_nationale
@@ -164,9 +157,6 @@ periodes:
     duree_requise_calendrier: assemblee_nationale
     taux_plein: 0.8440
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0934
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -211,9 +201,8 @@ periodes:
       2,0461 %. « 2015 - 2017 : 2,0337 % — 41,5 annuités » ; retenue « à
       compter du 1er juin 2015 : 9,34 % » (arrêté des Questeurs n°
       15-043 du 14 avril 2015).
-  - debut: 2016
-    fin: 2016
-    type_calcul: annuites
+  - du: 2016-01-01
+    au: 2018-01-01
     age_ouverture: 62
     age_taux_plein: 62
     age_table: assemblee_nationale
@@ -221,9 +210,6 @@ periodes:
     duree_requise_calendrier: assemblee_nationale
     taux_plein: 0.8440
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0969
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -267,66 +253,8 @@ periodes:
       trimestres au lieu de 165, une annuité de 2,0216 % au lieu de
       2,0461 %. Retenue « à compter du 1er janvier 2016 : 9,69 % »
       (arrêté n° 15-043) ; 62 ans dès la génération 1955.
-  - debut: 2017
-    fin: 2017
-    type_calcul: annuites
-    age_ouverture: 62
-    age_taux_plein: 62
-    age_table: assemblee_nationale
-    duree_requise_trimestres: 166
-    duree_requise_calendrier: assemblee_nationale
-    taux_plein: 0.8440
-    salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1004
-    part_salariale: 1.00
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    notes: >-
-      SOURCE : règlement de la Caisse de pensions des députés et des
-      anciens députés, publié par l'Assemblée nationale
-      (www2.assemblee-nationale.fr/static/CRD-janvier-2018.pdf, lu par
-      scripts/fetch/sites_institutionnels.py ; le document servi à cette
-      adresse, relu le 13 octobre 2026, porte la loi du 14 avril 2023 et
-      la suspension de 2026), hors JORF. BASE : « une retenue
-      obligatoire sur l'indemnité parlementaire augmentée de l'indemnité
-      de résidence et de l'indemnité de fonction » (art. 5). PENSION : «
-      pour chaque annuité, à un pourcentage des sommes soumises à
-      retenue » (art. 21). La fiche écrit le taux plein comme valeur de
-      l'annuité × nombre maximal d'annuités, et la durée requise comme
-      ce nombre en trimestres. LA PART DE L'ASSEMBLÉE n'est pas écrite
-      dans le règlement : la fiche ne porte que la retenue du député
-      (part salariale 1), ce qui sous-estime l'effort contributif total
-      ; le Sénat, dont le site ne publie que « 62 à 64 ans » et « 43
-      annuités » (12 juillet 2023), est traité comme l'Assemblée. L'ÂGE
-      SE LIT À LA GÉNÉRATION, ET LA DURÉE À L'ÂGE D'OUVERTURE, et non à
-      l'année de la liquidation. L'âge : « tout ancien député né à
-      compter du 1er janvier 1969 et âgé de soixante-quatre ans révolus
-      » (art. 8, 1) ; avant, un arrêté des Questeurs, non publié, le
-      fixe « de manière croissante à raison de trois mois par génération
-      sauf pour les anciens députés nés entre le 1er janvier 1964 et le
-      31 mars 1965 » pour les nés de septembre 1961 à 1968 (art. 8, 2),
-      et, sur le modèle de la fonction publique, de soixante ans avant
-      juillet 1951 à soixante-deux ans pour 1955 : `age_table:
-      assemblee_nationale`. La valeur de l'annuité et le nombre maximal
-      d'annuités : ceux « en vigueur au soixante-quatrième anniversaire
-      » (art. 21 ter, 1), et, pour les nés de 1949 à 1968, « les
-      modalités de liquidation de la pension en vigueur à l'âge
-      d'ouverture de leur droit à pension » (art. 21 ter, 2), celles de
-      2008 pour qui avait soixante ans plus tôt :
-      `duree_requise_calendrier: assemblee_nationale`, lu au mois où
-      l'âge d'ouverture est atteint. La fiche lisait l'un et l'autre à
-      l'année de la liquidation, une période par an : à un député né en
-      janvier 1953, dont le droit s'ouvre à soixante et un ans et deux
-      mois en mars 2014 et qui part en 2018, elle opposait 167
-      trimestres au lieu de 165, une annuité de 2,0216 % au lieu de
-      2,0461 %. Retenue « à compter du 1er janvier 2017 : 10,04 % » ; la
-      réforme du 8 novembre 2017 supprime le régime complémentaire
-      facultatif au 1er janvier 2018.
-  - debut: 2018
-    fin: 2018
-    type_calcul: annuites
+  - du: 2018-01-01
+    au: 2020-01-01
     age_ouverture: 62
     age_taux_plein: 62
     age_table: assemblee_nationale
@@ -334,9 +262,6 @@ periodes:
     duree_requise_calendrier: assemblee_nationale
     taux_plein: 0.8440
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1031
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -380,64 +305,7 @@ periodes:
       trimestres au lieu de 165, une annuité de 2,0216 % au lieu de
       2,0461 %. « 2018 - 2020 : 2,0216 % — 41,75 annuités » ; retenue «
       à compter du 1er janvier 2018 : 10,31 % ».
-  - debut: 2019
-    fin: 2019
-    type_calcul: annuites
-    age_ouverture: 62
-    age_taux_plein: 62
-    age_table: assemblee_nationale
-    duree_requise_trimestres: 167
-    duree_requise_calendrier: assemblee_nationale
-    taux_plein: 0.8440
-    salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1058
-    part_salariale: 1.00
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    notes: >-
-      SOURCE : règlement de la Caisse de pensions des députés et des
-      anciens députés, publié par l'Assemblée nationale
-      (www2.assemblee-nationale.fr/static/CRD-janvier-2018.pdf, lu par
-      scripts/fetch/sites_institutionnels.py ; le document servi à cette
-      adresse, relu le 13 octobre 2026, porte la loi du 14 avril 2023 et
-      la suspension de 2026), hors JORF. BASE : « une retenue
-      obligatoire sur l'indemnité parlementaire augmentée de l'indemnité
-      de résidence et de l'indemnité de fonction » (art. 5). PENSION : «
-      pour chaque annuité, à un pourcentage des sommes soumises à
-      retenue » (art. 21). La fiche écrit le taux plein comme valeur de
-      l'annuité × nombre maximal d'annuités, et la durée requise comme
-      ce nombre en trimestres. LA PART DE L'ASSEMBLÉE n'est pas écrite
-      dans le règlement : la fiche ne porte que la retenue du député
-      (part salariale 1), ce qui sous-estime l'effort contributif total
-      ; le Sénat, dont le site ne publie que « 62 à 64 ans » et « 43
-      annuités » (12 juillet 2023), est traité comme l'Assemblée. L'ÂGE
-      SE LIT À LA GÉNÉRATION, ET LA DURÉE À L'ÂGE D'OUVERTURE, et non à
-      l'année de la liquidation. L'âge : « tout ancien député né à
-      compter du 1er janvier 1969 et âgé de soixante-quatre ans révolus
-      » (art. 8, 1) ; avant, un arrêté des Questeurs, non publié, le
-      fixe « de manière croissante à raison de trois mois par génération
-      sauf pour les anciens députés nés entre le 1er janvier 1964 et le
-      31 mars 1965 » pour les nés de septembre 1961 à 1968 (art. 8, 2),
-      et, sur le modèle de la fonction publique, de soixante ans avant
-      juillet 1951 à soixante-deux ans pour 1955 : `age_table:
-      assemblee_nationale`. La valeur de l'annuité et le nombre maximal
-      d'annuités : ceux « en vigueur au soixante-quatrième anniversaire
-      » (art. 21 ter, 1), et, pour les nés de 1949 à 1968, « les
-      modalités de liquidation de la pension en vigueur à l'âge
-      d'ouverture de leur droit à pension » (art. 21 ter, 2), celles de
-      2008 pour qui avait soixante ans plus tôt :
-      `duree_requise_calendrier: assemblee_nationale`, lu au mois où
-      l'âge d'ouverture est atteint. La fiche lisait l'un et l'autre à
-      l'année de la liquidation, une période par an : à un député né en
-      janvier 1953, dont le droit s'ouvre à soixante et un ans et deux
-      mois en mars 2014 et qui part en 2018, elle opposait 167
-      trimestres au lieu de 165, une annuité de 2,0216 % au lieu de
-      2,0461 %. Retenue « à compter du 1er janvier 2019 : 10,58 % ».
-  - debut: 2020
-    fin: null
-    type_calcul: annuites
+  - du: 2020-01-01
     age_ouverture: 64
     age_taux_plein: 64
     age_table: assemblee_nationale
@@ -445,9 +313,6 @@ periodes:
     duree_requise_calendrier: assemblee_nationale
     taux_plein: 0.8440
     salaire_reference: carriere_entiere
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1085
-    part_salariale: 1.00
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -504,3 +369,123 @@ periodes:
       l'indemnité au maximum. Les périodes annuelles d'avant donnaient
       soixante-deux ans et trois mois à la génération 1962, et
       soixante-trois ans à toute celle de 1965.
+cotisation:
+  - du: 1930-01-01
+    au: 2009-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0785
+    part_salariale: 1.00
+  - du: 2009-01-01
+    au: 2015-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0785
+    part_salariale: 1.00
+  - du: 2015-01-01
+    au: 2016-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0934
+    part_salariale: 1.00
+  - du: 2016-01-01
+    au: 2017-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0969
+    part_salariale: 1.00
+  - du: 2017-01-01
+    au: 2018-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1004
+    part_salariale: 1.00
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, publié par l'Assemblée nationale
+      (www2.assemblee-nationale.fr/static/CRD-janvier-2018.pdf, lu par
+      scripts/fetch/sites_institutionnels.py ; le document servi à cette
+      adresse, relu le 13 octobre 2026, porte la loi du 14 avril 2023 et
+      la suspension de 2026), hors JORF. BASE : « une retenue
+      obligatoire sur l'indemnité parlementaire augmentée de l'indemnité
+      de résidence et de l'indemnité de fonction » (art. 5). PENSION : «
+      pour chaque annuité, à un pourcentage des sommes soumises à
+      retenue » (art. 21). La fiche écrit le taux plein comme valeur de
+      l'annuité × nombre maximal d'annuités, et la durée requise comme
+      ce nombre en trimestres. LA PART DE L'ASSEMBLÉE n'est pas écrite
+      dans le règlement : la fiche ne porte que la retenue du député
+      (part salariale 1), ce qui sous-estime l'effort contributif total
+      ; le Sénat, dont le site ne publie que « 62 à 64 ans » et « 43
+      annuités » (12 juillet 2023), est traité comme l'Assemblée. L'ÂGE
+      SE LIT À LA GÉNÉRATION, ET LA DURÉE À L'ÂGE D'OUVERTURE, et non à
+      l'année de la liquidation. L'âge : « tout ancien député né à
+      compter du 1er janvier 1969 et âgé de soixante-quatre ans révolus
+      » (art. 8, 1) ; avant, un arrêté des Questeurs, non publié, le
+      fixe « de manière croissante à raison de trois mois par génération
+      sauf pour les anciens députés nés entre le 1er janvier 1964 et le
+      31 mars 1965 » pour les nés de septembre 1961 à 1968 (art. 8, 2),
+      et, sur le modèle de la fonction publique, de soixante ans avant
+      juillet 1951 à soixante-deux ans pour 1955 : `age_table:
+      assemblee_nationale`. La valeur de l'annuité et le nombre maximal
+      d'annuités : ceux « en vigueur au soixante-quatrième anniversaire
+      » (art. 21 ter, 1), et, pour les nés de 1949 à 1968, « les
+      modalités de liquidation de la pension en vigueur à l'âge
+      d'ouverture de leur droit à pension » (art. 21 ter, 2), celles de
+      2008 pour qui avait soixante ans plus tôt :
+      `duree_requise_calendrier: assemblee_nationale`, lu au mois où
+      l'âge d'ouverture est atteint. La fiche lisait l'un et l'autre à
+      l'année de la liquidation, une période par an : à un député né en
+      janvier 1953, dont le droit s'ouvre à soixante et un ans et deux
+      mois en mars 2014 et qui part en 2018, elle opposait 167
+      trimestres au lieu de 165, une annuité de 2,0216 % au lieu de
+      2,0461 %. Retenue « à compter du 1er janvier 2017 : 10,04 % » ; la
+      réforme du 8 novembre 2017 supprime le régime complémentaire
+      facultatif au 1er janvier 2018.
+  - du: 2018-01-01
+    au: 2019-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1031
+    part_salariale: 1.00
+  - du: 2019-01-01
+    au: 2020-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1058
+    part_salariale: 1.00
+    notes: >-
+      SOURCE : règlement de la Caisse de pensions des députés et des
+      anciens députés, publié par l'Assemblée nationale
+      (www2.assemblee-nationale.fr/static/CRD-janvier-2018.pdf, lu par
+      scripts/fetch/sites_institutionnels.py ; le document servi à cette
+      adresse, relu le 13 octobre 2026, porte la loi du 14 avril 2023 et
+      la suspension de 2026), hors JORF. BASE : « une retenue
+      obligatoire sur l'indemnité parlementaire augmentée de l'indemnité
+      de résidence et de l'indemnité de fonction » (art. 5). PENSION : «
+      pour chaque annuité, à un pourcentage des sommes soumises à
+      retenue » (art. 21). La fiche écrit le taux plein comme valeur de
+      l'annuité × nombre maximal d'annuités, et la durée requise comme
+      ce nombre en trimestres. LA PART DE L'ASSEMBLÉE n'est pas écrite
+      dans le règlement : la fiche ne porte que la retenue du député
+      (part salariale 1), ce qui sous-estime l'effort contributif total
+      ; le Sénat, dont le site ne publie que « 62 à 64 ans » et « 43
+      annuités » (12 juillet 2023), est traité comme l'Assemblée. L'ÂGE
+      SE LIT À LA GÉNÉRATION, ET LA DURÉE À L'ÂGE D'OUVERTURE, et non à
+      l'année de la liquidation. L'âge : « tout ancien député né à
+      compter du 1er janvier 1969 et âgé de soixante-quatre ans révolus
+      » (art. 8, 1) ; avant, un arrêté des Questeurs, non publié, le
+      fixe « de manière croissante à raison de trois mois par génération
+      sauf pour les anciens députés nés entre le 1er janvier 1964 et le
+      31 mars 1965 » pour les nés de septembre 1961 à 1968 (art. 8, 2),
+      et, sur le modèle de la fonction publique, de soixante ans avant
+      juillet 1951 à soixante-deux ans pour 1955 : `age_table:
+      assemblee_nationale`. La valeur de l'annuité et le nombre maximal
+      d'annuités : ceux « en vigueur au soixante-quatrième anniversaire
+      » (art. 21 ter, 1), et, pour les nés de 1949 à 1968, « les
+      modalités de liquidation de la pension en vigueur à l'âge
+      d'ouverture de leur droit à pension » (art. 21 ter, 2), celles de
+      2008 pour qui avait soixante ans plus tôt :
+      `duree_requise_calendrier: assemblee_nationale`, lu au mois où
+      l'âge d'ouverture est atteint. La fiche lisait l'un et l'autre à
+      l'année de la liquidation, une période par an : à un député né en
+      janvier 1953, dont le droit s'ouvre à soixante et un ans et deux
+      mois en mars 2014 et qui part en 2018, elle opposait 167
+      trimestres au lieu de 165, une annuité de 2,0216 % au lieu de
+      2,0461 %. Retenue « à compter du 1er janvier 2019 : 10,58 % ».
+  - du: 2020-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1085
+    part_salariale: 1.00

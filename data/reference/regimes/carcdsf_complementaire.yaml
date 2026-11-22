@@ -41,10 +41,11 @@ inventaire:
     du régime de base. Le tableau de minoration des nés de juillet 1951 à 1954 (arrêté du
     9 juillet 2012) n'est publié qu'en image, et 1,25 % par trimestre en
     tient lieu.
-periodes:
-  - debut: 1949
-    fin: 1996
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1949-01-01
+    au: 2007-10-11
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -56,10 +57,6 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.0
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
     notes: >-
       RÉGIME PUREMENT FORFAITAIRE. La cotisation proportionnelle n'est
       instituée qu'en 1997 — « en plus de la cotisation forfaitaire qui
@@ -72,94 +69,8 @@ periodes:
       Le forfait de 2020 est donc reconduit vers l'amont EN EUROS CONSTANTS —
       le moteur le ramène à chaque exercice par l'indice des prix —, ce qui
       est la convention du dépôt pour un montant sans série publiée.
-  - debut: 1997
-    fin: 2000
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.08
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-    notes: >-
-      LA COTISATION PROPORTIONNELLE EST INSTITUÉE EN 1997, sur la tranche
-      0,85 – 5 plafonds. Son taux vient du barème IPP « Cotisation de
-      sécurité sociale pour la retraite complémentaire des professions
-      libérales », colonne des chirurgiens-dentistes, qui le tient des
-      décrets annuels : 8 % en 1997 (décret 97-830 du 4 septembre 1997),
-      puis un relèvement presque chaque année jusqu'à 10,65 % en 2018.
-      Là où le barème IPP et les mémentos de la caisse se recouvrent —
-      2020, 2021 et 2022 —, ils donnent le même taux ; à partir de 2023
-      le barème IPP n'est plus tenu à jour et c'est la caisse qui fait
-      foi. Le forfait, lui, reste extrapolé depuis 2020.
-  - debut: 2001
-    fin: 2001
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.083
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-  - debut: 2002
-    fin: 2003
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.09
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-  - debut: 2004
-    fin: 2007
-    date_effet: [2004-01-01, 2007-10-11]
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.095
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-  - debut: 2008
-    fin: 2008
-    date_effet: [2007-10-11, 2009-01-01]
-    type_calcul: points
+  - du: 2007-10-11
+    au: 2011-07-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -175,10 +86,6 @@ periodes:
     age_sans_coefficient_de_l_inapte: 60
     categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.095
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
     notes: >-
       LES STATUTS DE 2007, PREMIERS LUS. L'arrêté du 1er octobre 2007
       (JORFTEXT000000252172) approuve les statuts du régime complémentaire
@@ -212,55 +119,8 @@ periodes:
       L. 643-4, ceux de 2024 (`categories_sans_coefficient`). Le grand
       invalide de guerre et le parent d'un enfant handicapé n'ont pas de
       saisie.
-  - debut: 2009
-    fin: 2009
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 65
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    abattement_points: carcdsf_minoration_age_seul
-    surcote_par_trimestre: null
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: 60
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.099
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-  - debut: 2010
-    fin: 2010
-    date_effet: [2010-01-01, 2011-07-01]
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 65
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    abattement_points: carcdsf_minoration_age_seul
-    surcote_par_trimestre: null
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: 60
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.0995
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-  - debut: 2011
-    fin: 2011
-    date_effet: [2011-07-01, 2012-01-01]
-    type_calcul: points
+  - du: 2011-07-01
+    au: 2024-01-10
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -281,10 +141,6 @@ periodes:
     age_sans_coefficient_de_l_inapte: age_legal_par_generation
     categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.1
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
     notes: >-
       LES STATUTS DU 13 AVRIL 2011 (JORFTEXT000023909782), en vigueur « à
       compter du 1er juillet 2011 » (article 3 de l'arrêté), sans
@@ -318,345 +174,7 @@ periodes:
       ses six points restent dus. L'année 2011, appelée sous les statuts de
       2007, qui ne dispensaient que sur demande, n'est pas dispensée
       (`decret_2026_418_liberaux`).
-  - debut: 2012
-    fin: 2012
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.1005
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-  - debut: 2013
-    fin: 2013
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.102
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-  - debut: 2014
-    fin: 2014
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.103
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-  - debut: 2015
-    fin: 2015
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.104
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-  - debut: 2016
-    fin: 2016
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.105
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-  - debut: 2017
-    fin: 2017
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.106
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-  - debut: 2018
-    fin: 2019
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.1065
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-    notes: >-
-      Dernier palier avant les mémentos : le taux est celui du barème IPP,
-      que les mémentos de 2020 à 2022 confirmeront à l'identique.
-  - debut: 2020
-    fin: 2020
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.1065
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2020
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-    notes: >-
-      PREMIER EXERCICE LU DANS UN MÉMENTO. « Cotisation forfaitaire :
-      2 690,40 €. Cotisation proportionnelle : 10,65 % des revenus
-      professionnels non-salariés 2019 compris entre 0,85 % et 5 fois la
-      valeur du PASS 2020, soit entre 34 966 € et 205 680 €. »
-      Le même mémento donne les six points du forfait et la valeur de
-      service en regard — 26,53 € —, d'où un prix du point de 448,40 € et
-      un rendement de 5,92 %. Sa note 5 tranche enfin la question que
-      cette fiche posait en hypothèse : « 18 181 € / 448,40 € = 40,54
-      points », c'est-à-dire que la part PROPORTIONNELLE achète au prix du
-      forfait. Ce n'est plus une supposition, c'est l'arithmétique de la
-      caisse.
-  - debut: 2021
-    fin: 2021
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.1065
-    cotisation_forfaitaire_euros: 2690.4
-    cotisation_forfaitaire_annee: 2021
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-  - debut: 2022
-    fin: 2022
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.1065
-    cotisation_forfaitaire_euros: 2769.0
-    cotisation_forfaitaire_annee: 2022
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-    notes: >-
-      Forfait 2 769 € pour six points, soit 461,50 € le point, servi
-      27,55 € : rendement 5,97 %, le haut de la bande.
-  - debut: 2023
-    fin: 2023
-    date_effet: [2023-01-01, 2024-01-10]
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carcdsf_2011
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.015
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    surcote_par_trimestre: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: age_legal_par_generation
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.108
-    cotisation_forfaitaire_euros: 2959.8
-    cotisation_forfaitaire_annee: 2023
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
-    notes: >-
-      Le taux passe à 10,80 % et l'assiette suit le plafond : 37 393 € –
-      219 960 €. Forfait 2 959,80 € pour six points, soit 493,30 € le
-      point, servi 29,34 €.
-      C'est ici que le barème IPP décroche : il porte encore 10,65 % pour
-      2023, 2024, 2025 et 2026, quand les mémentos de la caisse écrivent
-      10,80 % puis 11,35 %. La colonne des chirurgiens-dentistes n'y est
-      plus tenue à jour ; en cas de désaccord, le mémento gagne.
-  - debut: 2024
-    fin: 2024
-    date_effet: [2024-01-10, 2025-01-01]
-    type_calcul: points
+  - du: 2024-01-10
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -678,11 +196,6 @@ periodes:
     age_sans_coefficient_de_l_inapte: 62
     categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: tranche_085_5_pass
-    taux_cotisation_retraite: 0.108
-    cotisation_forfaitaire_euros: 3108.0
-    cotisation_forfaitaire_annee: 2024
-    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
     notes: >-
       Forfait 3 108 € pour six points — 518 € le point, servi 30,81 € —,
       assiette 39 413 € – 231 840 €.
@@ -703,30 +216,184 @@ periodes:
       sans le plafond de 15 %, et donne l'exemple : « si vous avez eu 2
       enfants, vous pouvez bénéficier du taux plein pour ce régime dès 65
       ans ».
-  - debut: 2025
-    fin: 2025
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: 0.0125
-    surcote_par_trimestre_depuis: 2024
-    surcote_par_trimestre_d_avant: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: 62
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
-    avantages_non_contributifs: [reversion, majoration_enfants]
+cotisation:
+  - du: 1949-01-01
+    au: 1997-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - du: 1997-01-01
+    au: 2001-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.08
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    notes: >-
+      LA COTISATION PROPORTIONNELLE EST INSTITUÉE EN 1997, sur la tranche
+      0,85 – 5 plafonds. Son taux vient du barème IPP « Cotisation de
+      sécurité sociale pour la retraite complémentaire des professions
+      libérales », colonne des chirurgiens-dentistes, qui le tient des
+      décrets annuels : 8 % en 1997 (décret 97-830 du 4 septembre 1997),
+      puis un relèvement presque chaque année jusqu'à 10,65 % en 2018.
+      Là où le barème IPP et les mémentos de la caisse se recouvrent —
+      2020, 2021 et 2022 —, ils donnent le même taux ; à partir de 2023
+      le barème IPP n'est plus tenu à jour et c'est la caisse qui fait
+      foi. Le forfait, lui, reste extrapolé depuis 2020.
+  - du: 2001-01-01
+    au: 2002-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.083
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - du: 2002-01-01
+    au: 2004-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.09
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - du: 2004-01-01
+    au: 2008-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.095
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - du: 2008-01-01
+    au: 2009-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.095
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - du: 2009-01-01
+    au: 2010-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.099
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - du: 2010-01-01
+    au: 2011-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.0995
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - du: 2011-01-01
+    au: 2012-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+  - du: 2012-01-01
+    au: 2013-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1005
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+  - du: 2013-01-01
+    au: 2014-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.102
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+  - du: 2014-01-01
+    au: 2015-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.103
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+  - du: 2015-01-01
+    au: 2016-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.104
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+  - du: 2016-01-01
+    au: 2017-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.105
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+  - du: 2017-01-01
+    au: 2018-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.106
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+  - du: 2018-01-01
+    au: 2020-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1065
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+    notes: >-
+      Dernier palier avant les mémentos : le taux est celui du barème IPP,
+      que les mémentos de 2020 à 2022 confirmeront à l'identique.
+  - du: 2020-01-01
+    au: 2021-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1065
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+    notes: >-
+      PREMIER EXERCICE LU DANS UN MÉMENTO. « Cotisation forfaitaire :
+      2 690,40 €. Cotisation proportionnelle : 10,65 % des revenus
+      professionnels non-salariés 2019 compris entre 0,85 % et 5 fois la
+      valeur du PASS 2020, soit entre 34 966 € et 205 680 €. »
+      Le même mémento donne les six points du forfait et la valeur de
+      service en regard — 26,53 € —, d'où un prix du point de 448,40 € et
+      un rendement de 5,92 %. Sa note 5 tranche enfin la question que
+      cette fiche posait en hypothèse : « 18 181 € / 448,40 € = 40,54
+      points », c'est-à-dire que la part PROPORTIONNELLE achète au prix du
+      forfait. Ce n'est plus une supposition, c'est l'arithmétique de la
+      caisse.
+  - du: 2021-01-01
+    au: 2022-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1065
+    cotisation_forfaitaire_euros: 2690.4
+    cotisation_forfaitaire_annee: 2021
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+  - du: 2022-01-01
+    au: 2023-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.1065
+    cotisation_forfaitaire_euros: 2769.0
+    cotisation_forfaitaire_annee: 2022
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+    notes: >-
+      Forfait 2 769 € pour six points, soit 461,50 € le point, servi
+      27,55 € : rendement 5,97 %, le haut de la bande.
+  - du: 2023-01-01
+    au: 2024-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.108
+    cotisation_forfaitaire_euros: 2959.8
+    cotisation_forfaitaire_annee: 2023
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+    notes: >-
+      Le taux passe à 10,80 % et l'assiette suit le plafond : 37 393 € –
+      219 960 €. Forfait 2 959,80 € pour six points, soit 493,30 € le
+      point, servi 29,34 €.
+      C'est ici que le barème IPP décroche : il porte encore 10,65 % pour
+      2023, 2024, 2025 et 2026, quand les mémentos de la caisse écrivent
+      10,80 % puis 11,35 %. La colonne des chirurgiens-dentistes n'y est
+      plus tenue à jour ; en cas de désaccord, le mémento gagne.
+  - du: 2024-01-01
+    au: 2025-01-01
+    assiette: tranche_085_5_pass
+    taux_cotisation_retraite: 0.108
+    cotisation_forfaitaire_euros: 3108.0
+    cotisation_forfaitaire_annee: 2024
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
+  - du: 2025-01-01
+    au: 2026-01-01
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.108
     cotisation_forfaitaire_euros: 3178.8
@@ -740,30 +407,7 @@ periodes:
       écrit deux fois. L'exemple de la caisse vérifie le tout : pour
       100 000 € de revenus, « cotisation proportionnelle de 6 476 € →
       12,22 points », et 6 476 / 529,80 = 12,22.
-  - debut: 2026
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: carcdsf_minoration_age_seul
-    decote_trimestres_maximum: 12
-    surcote_par_trimestre: 0.0125
-    surcote_par_trimestre_depuis: 2024
-    surcote_par_trimestre_d_avant: 0.01
-    surcote_points: carcdsf_minoration_age_seul
-    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
-    surcote_trimestres_maximum: 20
-    taux_plein_anticipe_par_enfant_annees: 1
-    taux_plein_anticipe_maximum_annees: 5
-    age_sans_coefficient_de_l_inapte: 62
-    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
-    avantages_non_contributifs: [reversion, majoration_enfants]
+  - du: 2026-01-01
     assiette: tranche_065_5_pass
     taux_cotisation_retraite: 0.1135
     cotisation_forfaitaire_euros: 3210.6

@@ -32,19 +32,17 @@ inventaire:
     - {reference: "décret n° 70-1277 du 23 décembre 1970", id: null}
     - {reference: "arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime", id: LEGITEXT000024251295}
     - {reference: "arrêté du 18 juillet 1983 et arrêté du 7 mars 1986 relatifs à l'assiette de cotisations à l'Ircantec de certains membres du corps médical des établissements hospitaliers publics (deux tiers des émoluments hospitaliers, hors gardes et astreintes)", id: LEGITEXT000006073794}
-periodes:
-  - debut: 1971
-    fin: 1982
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1971-01-01
+    au: 1983-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0210
-    part_salariale: 0.40
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -132,9 +130,8 @@ periodes:
       une seule rédaction depuis 1971), sans plafond, ce que la page de
       l'Ircantec redit. La fiche la servait au taux commun, 10 % dès trois
       enfants, jusqu'au 4 octobre 2026 (fiche `ircantec_majoration_enfants`).
-  - debut: 1983
-    fin: 1987
-    type_calcul: points
+  - du: 1983-01-01
+    au: 2010-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
@@ -142,18 +139,14 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0280
-    part_salariale: 0.40
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A de 1983 à 1987 : 2.80 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 1988
-    fin: 1988
-    type_calcul: points
+  - du: 2010-01-01
+    au: 2011-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
@@ -161,107 +154,6 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0350
-    part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
-    notes: >-
-      Tranche A de 1988 à 1988 : 3.50 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 1989
-    fin: 1990
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0490
-    part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
-    notes: >-
-      Tranche A de 1989 à 1990 : 4.90 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 1991
-    fin: 1991
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0528
-    part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
-    notes: >-
-      Tranche A de 1991 à 1991 : 5.28 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 1992
-    fin: 2008
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0563
-    part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
-    notes: >-
-      Tranche A de 1992 à 2008 : 5.63 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 2009
-    fin: 2009
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0563
-    part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
-    notes: >-
-      Tranche A en 2009 : 5.63 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-      Les âges de 60 et 65 ans sont ceux de l'arrêté du 30 décembre 1970 jusqu'au
-      30 juin 2011 (LEGIARTI000019511923) ; la loi Woerth ne s'applique à l'Ircantec
-      qu'à compter du 1er juillet 2011, voir la première période.
-  - debut: 2010
-    fin: 2010
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0563
-    part_salariale: 0.40
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     surcote_points: surcote_ircantec
@@ -278,9 +170,7 @@ periodes:
       qu'« à compter du 1er janvier 2010 » : une liquidation de 2009 n'en
       reçoit rien, une liquidation de 2010 la reçoit entière. D'où
       `surcote_points: ircantec` ici et non à la période précédente.
-  - debut: 2011
-    fin: 2011
-    type_calcul: points
+  - du: 2011-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -290,9 +180,6 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     abattement_points: coefficient_anticipation_ircantec
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.0569
-    part_salariale: 0.40
     decote_par_trimestre: 0.01
     surcote_par_trimestre: null
     surcote_points: surcote_ircantec
@@ -300,231 +187,144 @@ periodes:
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A de 2011 à 2011 : 5.69 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 2012
-    fin: 2012
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+cotisation:
+  - du: 1971-01-01
+    au: 1983-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0210
+    part_salariale: 0.40
+  - du: 1983-01-01
+    au: 1988-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0280
+    part_salariale: 0.40
+  - du: 1988-01-01
+    au: 1989-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0350
+    part_salariale: 0.40
+    notes: >-
+      Tranche A de 1988 à 1988 : 3.50 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+  - du: 1989-01-01
+    au: 1991-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0490
+    part_salariale: 0.40
+    notes: >-
+      Tranche A de 1989 à 1990 : 4.90 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+  - du: 1991-01-01
+    au: 1992-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0528
+    part_salariale: 0.40
+    notes: >-
+      Tranche A de 1991 à 1991 : 5.28 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+  - du: 1992-01-01
+    au: 2009-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0563
+    part_salariale: 0.40
+    notes: >-
+      Tranche A de 1992 à 2008 : 5.63 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+  - du: 2009-01-01
+    au: 2010-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0563
+    part_salariale: 0.40
+    notes: >-
+      Tranche A en 2009 : 5.63 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      Les âges de 60 et 65 ans sont ceux de l'arrêté du 30 décembre 1970 jusqu'au
+      30 juin 2011 (LEGIARTI000019511923) ; la loi Woerth ne s'applique à l'Ircantec
+      qu'à compter du 1er juillet 2011, voir la première période.
+  - du: 2010-01-01
+    au: 2011-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0563
+    part_salariale: 0.40
+  - du: 2011-01-01
+    au: 2012-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.0569
+    part_salariale: 0.40
+  - du: 2012-01-01
+    au: 2013-01-01
     assiette: tranche_1
     taux_cotisation_retraite: 0.0588
     part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A de 2012 à 2012 : 5.88 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 2013
-    fin: 2013
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2013-01-01
+    au: 2014-01-01
     assiette: tranche_1
     taux_cotisation_retraite: 0.0613
     part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A de 2013 à 2013 : 6.13 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 2014
-    fin: 2014
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2014-01-01
+    au: 2015-01-01
     assiette: tranche_1
     taux_cotisation_retraite: 0.0634
     part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A de 2014 à 2014 : 6.34 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 2015
-    fin: 2015
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2015-01-01
+    au: 2016-01-01
     assiette: tranche_1
     taux_cotisation_retraite: 0.0660
     part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A de 2015 à 2015 : 6.60 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 2016
-    fin: 2016
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2016-01-01
+    au: 2017-01-01
     assiette: tranche_1
     taux_cotisation_retraite: 0.0680
     part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A de 2016 à 2016 : 6.80 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 2017
-    fin: 2025
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2017-01-01
+    au: 2026-01-01
     assiette: tranche_1
     taux_cotisation_retraite: 0.0700
     part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A de 2017 à 2025 : 7 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
-  - debut: 2026
-    fin: 2027
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2026-01-01
+    au: 2028-01-01
     assiette: tranche_1
     taux_cotisation_retraite: 0.0711
     part_salariale: 0.399
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A de 2026 à 2027 : 7.11 % appelés, 2,84 % et 4,27 %, soit les taux
       théoriques de 2,24 % et 3,36 % au taux d'appel de 127 % (arrêté du
       30 décembre 1970, article 9 bis, depuis le 1er janvier 2026) ; le décret
       n° 2026-926 du 5 octobre 2026 les garde « pour la période antérieure au
       31 décembre 2027 ».
-  - debut: 2028
-    fin: 2028
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2028-01-01
+    au: 2029-01-01
     assiette: tranche_1
     taux_cotisation_retraite: 0.0730
     part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A en 2028 : 7,30 % appelés, 2,92 % et 4,38 %, les taux théoriques
       de 2,30 % et 3,45 % du décret n° 2026-926 du 5 octobre 2026 (IV de
       l'article 7 du décret n° 70-1277) au taux d'appel de 127 %, arrondis au
       centième. Au-delà du dernier barème, le moteur convertit la cotisation au
       rendement de 2026 : les points de 2028 sont ceux de 5,75 % à 0,01 % près.
-  - debut: 2029
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2029-01-01
     assiette: tranche_1
     taux_cotisation_retraite: 0.0750
     part_salariale: 0.40
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche A à compter de 2029 : 7,50 % appelés, 3 % et 4,50 %, les taux
       théoriques de 2,36 % et 3,54 % du décret n° 2026-926 au taux d'appel de
       127 %, arrondis au centième ; converti au rendement de 2026, le taux de
       points vaut 5,907 % pour 5,90 %, 0,12 % de trop.
-  - debut: 1971
-    fin: 1982
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 1971-01-01
+    au: 1983-01-01
+    tranche: 2
     assiette: tranche_2_ircantec
     taux_cotisation_retraite: 0.0750
     part_salariale: 0.34
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       L'ASSIETTE EST LUE DANS LE TEXTE : « l'assiette de cotisation ainsi
       déterminée est toutefois limitée à 4,75 fois le plafond fixé pour
@@ -542,141 +342,63 @@ periodes:
       moyen versait 14 600 € par an au régime sans qu'aucun point ne lui
       soit porté — sa pension Ircantec ne dépassait celle d'un agent payé au
       plafond que de quinze pour cent, quand le droit la lui triple.
-  - debut: 1983
-    fin: 1987
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 1983-01-01
+    au: 1988-01-01
+    tranche: 2
     assiette: tranche_2_ircantec
     taux_cotisation_retraite: 0.1000
     part_salariale: 0.34
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 1983 à 1987 : 10.00 % appelés, de un à 4,75 plafonds.
-  - debut: 1988
-    fin: 1988
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 1988-01-01
+    au: 1989-01-01
+    tranche: 2
     assiette: tranche_2_ircantec
     taux_cotisation_retraite: 0.1250
     part_salariale: 0.34
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 1988 à 1988 : 12.50 % appelés, de un à 4,75 plafonds.
-  - debut: 1989
-    fin: 1990
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 1989-01-01
+    au: 1991-01-01
+    tranche: 2
     assiette: tranche_2_ircantec
     taux_cotisation_retraite: 0.1526
     part_salariale: 0.3401
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 1989 à 1990 : 15.26 % appelés, de un à 4,75 plafonds.
-  - debut: 1991
-    fin: 1991
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 1991-01-01
+    au: 1992-01-01
+    tranche: 2
     assiette: tranche_2_ircantec
     taux_cotisation_retraite: 0.1642
     part_salariale: 0.34
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 1991 à 1991 : 16.42 % appelés, de un à 4,75 plafonds.
-  - debut: 1992
-    fin: 2008
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 1992-01-01
+    au: 2009-01-01
+    tranche: 2
     assiette: tranche_2_ircantec
     taux_cotisation_retraite: 0.1750
     part_salariale: 0.34
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 1992 à 2008 : 17.50 % appelés, de un à 4,75 plafonds.
-  - debut: 2009
-    fin: 2009
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2009-01-01
+    au: 2010-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.1750
     part_salariale: 0.34
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B en 2009 : 17.50 % appelés, de un à huit plafonds.
       Les âges de 60 et 65 ans sont ceux de l'arrêté du 30 décembre 1970 jusqu'au
       30 juin 2011 (LEGIARTI000019511923) ; la loi Woerth ne s'applique à l'Ircantec
       qu'à compter du 1er juillet 2011, voir la première période.
-  - debut: 2010
-    fin: 2010
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2010-01-01
+    au: 2011-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.1750
     part_salariale: 0.34
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B en 2010 : 17.50 % appelés, de un à huit plafonds.
       Les âges de 60 et 65 ans sont ceux de l'arrêté du 30 décembre 1970 jusqu'au
@@ -688,228 +410,87 @@ periodes:
       qu'« à compter du 1er janvier 2010 » : une liquidation de 2009 n'en
       reçoit rien, une liquidation de 2010 la reçoit entière. D'où
       `surcote_points: ircantec` ici et non à la période précédente.
-  - debut: 2011
-    fin: 2011
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2011-01-01
+    au: 2012-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.1760
     part_salariale: 0.3409
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 2011 à 2011 : 17.60 % appelés, de un à huit plafonds.
-  - debut: 2012
-    fin: 2012
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2012-01-01
+    au: 2013-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.1780
     part_salariale: 0.3427
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 2012 à 2012 : 17.80 % appelés, de un à huit plafonds.
-  - debut: 2013
-    fin: 2013
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2013-01-01
+    au: 2014-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.1806
     part_salariale: 0.345
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 2013 à 2013 : 18.06 % appelés, de un à huit plafonds.
-  - debut: 2014
-    fin: 2014
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2014-01-01
+    au: 2015-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.1836
     part_salariale: 0.3475
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 2014 à 2014 : 18.36 % appelés, de un à huit plafonds.
-  - debut: 2015
-    fin: 2015
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2015-01-01
+    au: 2016-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.1876
     part_salariale: 0.3507
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 2015 à 2015 : 18.76 % appelés, de un à huit plafonds.
-  - debut: 2016
-    fin: 2016
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2016-01-01
+    au: 2017-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.1910
     part_salariale: 0.3534
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 2016 à 2016 : 19.10 % appelés, de un à huit plafonds.
-  - debut: 2017
-    fin: 2025
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2017-01-01
+    au: 2026-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.1950
     part_salariale: 0.3564
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 2017 à 2025 : 19.50 % appelés, de un à huit plafonds.
-  - debut: 2026
-    fin: 2027
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2026-01-01
+    au: 2028-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.1981
     part_salariale: 0.3564
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B de 2026 à 2027 : 19.81 % appelés, 7,06 % et 12,75 %, de un à huit
       plafonds ; les taux théoriques de 5,56 % et 10,04 % au taux d'appel de 127 %,
       que le décret n° 2026-926 garde jusqu'au 31 décembre 2027.
-  - debut: 2028
-    fin: 2028
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2028-01-01
+    au: 2029-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.2025
     part_salariale: 0.3674
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B en 2028 : 20,25 % appelés, 7,44 % et 12,81 %, de un à huit
       plafonds ; les taux théoriques de 5,86 % et 10,09 % du décret n° 2026-926 au
       taux d'appel de 127 %, arrondis au centième.
-  - debut: 2029
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    abattement_points: coefficient_anticipation_ircantec
+  - du: 2029-01-01
+    tranche: 2
     assiette: tranche_2
     taux_cotisation_retraite: 0.2070
     part_salariale: 0.3778
-    decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
-    surcote_points: surcote_ircantec
-    avantages_non_contributifs: [majoration_enfants, reversion]
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
       Tranche B à compter de 2029 : 20,70 % appelés, 7,82 % et 12,88 %, de un à
       huit plafonds ; les taux théoriques de 6,16 % et 10,14 % du décret

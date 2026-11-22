@@ -37,19 +37,16 @@ inventaire:
 # pour chaque enfant au-delà du troisième ». Le règlement d'avant
 # juillet 2008 n'est pas dans l'index LEGI : le même barème lui est
 # prêté. Barème `taux_majoration_enfants` de chaque période.
-periodes:
-  - debut: 1930
-    fin: 2008
-    date_effet: [1930-01-01, 2008-07-01]
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1930-01-01
+    au: 2008-07-01
     age_ouverture: 50
     age_taux_plein: 50
     duree_requise_trimestres: 150
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.079
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -60,13 +57,11 @@ periodes:
       agents du cadre permanent. Aucune décote avant 2008 : un départ à
       50 ans avec 150 trimestres donnait 75 % du dernier traitement.
       C'est le cas où l'écart à l'âge de référence atteint 15 ans.
-  - debut: 2009
-    fin: 2016
+  - du: 2008-07-01
+    au: 2017-01-01
     # Le règlement de 2008 vaut pour les pensions prenant effet à compter du
     # 1er juillet 2008 (SNCF, décret n° 2008-639, article 13 et 35, rédactions
     # du 1er juillet 2008 ; RATP, IEG, Opéra, Comédie-Française de même).
-    date_effet: [2008-07-01, 2017-01-01]
-    type_calcul: annuites
     age_ouverture: 52
     age_taux_plein: 57
     duree_requise_trimestres: 160
@@ -76,9 +71,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0892
-    perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
@@ -124,10 +116,8 @@ periodes:
       semestre de 2008 gardent 0,75 %
       (`liquider.coefficient_surcote_regimes_speciaux`). La fiche servait
       0,75 % à tous, quand la RATP, sous la même phrase, servait 1,25 %.
-
-  - debut: 2017
-    fin: 2017
-    type_calcul: annuites
+  - du: 2017-01-01
+    au: 2018-01-01
     age_ouverture: 52
     age_taux_plein: 57
     duree_requise_trimestres: 160
@@ -137,9 +127,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.0892
-    perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
@@ -152,10 +139,8 @@ periodes:
       que l'article 13, II, ne porte plus à compter du 1er janvier 2017 ; le
       relèvement des âges de 2017, étalé par génération, est dans les tables
       que les deux périodes nomment.
-
-  - debut: 2018
-    fin: 2024
-    type_calcul: annuites
+  - du: 2018-01-01
+    au: 2025-01-01
     age_ouverture: 52
     age_taux_plein: 57
     duree_requise_trimestres: 172
@@ -165,9 +150,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1085
-    perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
@@ -211,10 +193,7 @@ periodes:
       comme la CPRPSNCF l'écrit. La fiche la lisait à sa propre génération :
       168 trimestres, et non 167, à l'agent de conduite né en novembre
       1968, dont le droit s'ouvre en juillet 2019.
-
-  - debut: 2025
-    fin: null
-    type_calcul: annuites
+  - du: 2025-01-01
     age_ouverture: 54
     age_taux_plein: 57
     duree_requise_trimestres: 172
@@ -224,9 +203,6 @@ periodes:
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.1085
-    perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
@@ -291,3 +267,28 @@ periodes:
       conduite, que la CPRPSNCF suit, en demande un de moins à l'agent
       né d'avril à décembre 1975 ou d'octobre à décembre 1977, et les
       mêmes aux autres (fiche `duree_requise_sncf_ratp`).
+cotisation:
+  - du: 1930-01-01
+    au: 2009-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.079
+    perimetre_taux: agent_seul
+  - du: 2009-01-01
+    au: 2017-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0892
+    perimetre_taux: agent_seul
+  - du: 2017-01-01
+    au: 2018-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0892
+    perimetre_taux: agent_seul
+  - du: 2018-01-01
+    au: 2025-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul
+  - du: 2025-01-01
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.1085
+    perimetre_taux: agent_seul

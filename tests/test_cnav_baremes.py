@@ -16,6 +16,7 @@ import csv
 from pathlib import Path
 
 import pytest
+from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 RACINE = Path(__file__).resolve().parents[1]
 REGIMES = RACINE / "data" / "reference" / "regimes"
@@ -187,9 +188,8 @@ def test_les_assurances_sociales_de_1930_cotisent_ce_que_la_cnav_publie():
     cinquième catégorie de 1930 à 1935, que la fiche, d'un seul taux, ne
     distingue pas : un régime capitalisé, hors du compte notionnel, que la
     fiche garde pour dater le début des carrières."""
-    import yaml
 
-    fiche = yaml.safe_load((REGIMES / "assurances_sociales.yaml").read_text(encoding="utf-8"))
+    fiche = lire_fiche_de_regime(REGIMES / "assurances_sociales.yaml")
     (periode,) = fiche["periodes"]
     assert (periode["debut"], periode["fin"]) == (1930, 1945)
     for annee in (*range(1931, 1936), *range(1937, 1945)):
@@ -204,9 +204,8 @@ def test_les_assurances_sociales_de_1930_cotisent_ce_que_la_cnav_publie():
 
 
 def _fiche(code: str) -> dict:
-    import yaml
 
-    return yaml.safe_load((REGIMES / f"{code}.yaml").read_text(encoding="utf-8"))
+    return lire_fiche_de_regime(REGIMES / f"{code}.yaml")
 
 
 def _taux_de_la_fiche(code: str, annee: int) -> dict[str, float]:

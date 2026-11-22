@@ -32,19 +32,16 @@ inventaire:
     surcote parentale. La retraite forfaitaire et la cotisation de
     croisière sont celles de chaque barème depuis 2016 ; avant, celles de
     2016 ramenées par les prix.
-periodes:
-  - debut: 1948
-    fin: 2003
-    type_calcul: forfaitaire
+structure:
+  type_calcul: forfaitaire
+liquidation:
+  - du: 1948-01-01
+    au: 2004-01-01
     age_ouverture: 65
     age_taux_plein: 65
     duree_requise_trimestres: 160
     taux_plein: 1.0
     salaire_reference: sans_objet
-    assiette: forfaitaire
-    taux_cotisation_retraite: 0.09
-    pension_forfaitaire_annuelle: 16581
-    pension_forfaitaire_annee: 2016
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -65,29 +62,22 @@ periodes:
       aucune série historique n'en est publiée. Le report par les prix
       suppose que le forfait les a suivis, ce qui est vrai depuis les années
       2000 mais l'est moins avant.
-  - debut: 2004
-    fin: 2015
-    type_calcul: forfaitaire
+  - du: 2004-01-01
+    au: 2016-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
-    textes_des_renvois:
-      age_ouverture_par_generation: {id: LEGIARTI000006744100, depuis: "2004-01-01"}
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: sans_objet
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0300
-    cotisation_forfaitaire_euros: 1510
-    cotisation_forfaitaire_annee: 2016
-    pension_forfaitaire_annuelle: 16581
-    pension_forfaitaire_annee: 2016
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     surcote_bareme: cnbf_surcote
     avantages_non_contributifs: [reversion]
+    textes:
+      age_ouverture_par_generation: {id: LEGIARTI000006744100, depuis: "2004-01-01"}
     notes: >-
       AVANT 2016, AUCUN BARÈME PUBLIÉ : la période porte les valeurs
       du barème de 2016 — pension de 16 581 €, forfait de 1 510 €,
@@ -146,9 +136,8 @@ periodes:
       2017 à 2020, et la cotisation surestimée d'environ 8 %. La série
       est portée depuis le 23 septembre 2026 : une période par barème de
       2016 à 2026, avec celui de 2024 lu dans Internet Archive.
-  - debut: 2016
-    fin: 2016
-    type_calcul: forfaitaire
+  - du: 2016-01-01
+    au: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -157,12 +146,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: sans_objet
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0300
-    cotisation_forfaitaire_euros: 1510
-    cotisation_forfaitaire_annee: 2016
-    pension_forfaitaire_annuelle: 16581
-    pension_forfaitaire_annee: 2016
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     surcote_bareme: cnbf_surcote
@@ -171,9 +154,7 @@ periodes:
       Barème CNBF 2016 : retraite de base forfaitaire de 16 581 €
       au taux plein  cotisation forfaitaire de 1 510 € à partir de la
       sixième année, 3,0 % du revenu net.
-  - debut: 2017
-    fin: 2017
-    type_calcul: forfaitaire
+  - du: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -182,189 +163,6 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: sans_objet
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0310
-    cotisation_forfaitaire_euros: 1525
-    cotisation_forfaitaire_annee: 2017
-    pension_forfaitaire_annuelle: 16664
-    pension_forfaitaire_annee: 2017
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0075
-    surcote_bareme: cnbf_surcote
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Barème CNBF 2017 : retraite de base forfaitaire de 16 664 €
-      au taux plein  cotisation forfaitaire de 1 525 € à partir de la
-      sixième année, 3,1 % du revenu net.
-  - debut: 2018
-    fin: 2018
-    type_calcul: forfaitaire
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: sans_objet
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0310
-    cotisation_forfaitaire_euros: 1540
-    cotisation_forfaitaire_annee: 2018
-    pension_forfaitaire_annuelle: 16831
-    pension_forfaitaire_annee: 2018
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0075
-    surcote_bareme: cnbf_surcote
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Barème CNBF 2018 : retraite de base forfaitaire de 16 831 €
-      au taux plein  cotisation forfaitaire de 1 540 € à partir de la
-      sixième année, 3,1 % du revenu net.
-  - debut: 2019
-    fin: 2019
-    type_calcul: forfaitaire
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: sans_objet
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0310
-    cotisation_forfaitaire_euros: 1555
-    cotisation_forfaitaire_annee: 2019
-    pension_forfaitaire_annuelle: 16999
-    pension_forfaitaire_annee: 2019
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0075
-    surcote_bareme: cnbf_surcote
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Barème CNBF 2019 : retraite de base forfaitaire de 16 999 €
-      au taux plein  cotisation forfaitaire de 1 555 € à partir de la
-      sixième année, 3,1 % du revenu net.
-  - debut: 2020
-    fin: 2020
-    type_calcul: forfaitaire
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: sans_objet
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0310
-    cotisation_forfaitaire_euros: 1190
-    cotisation_forfaitaire_annee: 2020
-    pension_forfaitaire_annuelle: 17169
-    pension_forfaitaire_annee: 2020
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0075
-    surcote_bareme: cnbf_surcote
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Barème CNBF 2020 : retraite de base forfaitaire de 17 169 €
-      au taux plein  cotisation forfaitaire de 1 190 € à partir de la
-      sixième année, 3,1 % du revenu net.
-      Le forfait est celui du barème RÉVISÉ, réduit de 25 % au titre
-      de la crise sanitaire (1 586 € avant la mesure).
-  - debut: 2021
-    fin: 2021
-    type_calcul: forfaitaire
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: sans_objet
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0310
-    cotisation_forfaitaire_euros: 1610
-    cotisation_forfaitaire_annee: 2021
-    pension_forfaitaire_annuelle: 17255
-    pension_forfaitaire_annee: 2021
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0075
-    surcote_bareme: cnbf_surcote
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Barème CNBF 2021 : retraite de base forfaitaire de 17 255 €
-      au taux plein  cotisation forfaitaire de 1 610 € à partir de la
-      sixième année, 3,1 % du revenu net.
-  - debut: 2022
-    fin: 2022
-    type_calcul: forfaitaire
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: sans_objet
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0310
-    cotisation_forfaitaire_euros: 1658
-    cotisation_forfaitaire_annee: 2022
-    pension_forfaitaire_annuelle: 17428
-    pension_forfaitaire_annee: 2022
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0075
-    surcote_bareme: cnbf_surcote
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Barème CNBF 2022 : retraite de base forfaitaire de 17 428 €
-      au taux plein  cotisation forfaitaire de 1 658 € à partir de la
-      sixième année, 3,1 % du revenu net.
-  - debut: 2023
-    fin: 2023
-    type_calcul: forfaitaire
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: sans_objet
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0310
-    cotisation_forfaitaire_euros: 1774
-    cotisation_forfaitaire_annee: 2023
-    pension_forfaitaire_annuelle: 18299
-    pension_forfaitaire_annee: 2023
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0075
-    surcote_bareme: cnbf_surcote
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Barème CNBF 2023 : retraite de base forfaitaire de 18 299 €
-      au taux plein  cotisation forfaitaire de 1 774 € à partir de la
-      sixième année, 3,1 % du revenu net.
-  - debut: 2024
-    fin: 2024
-    type_calcul: forfaitaire
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: sans_objet
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.0310
-    cotisation_forfaitaire_euros: 1845
-    cotisation_forfaitaire_annee: 2024
-    pension_forfaitaire_annuelle: 18665
-    pension_forfaitaire_annee: 2024
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     surcote_bareme: cnbf_surcote
@@ -382,52 +180,160 @@ periodes:
       écrit « au 1er octobre 2023 ou postérieure pour le régime de base ».
       La majoration de durée d'assurance que le même article ouvre
       (L. 351-4 à L. 351-4-2) n'est pas portée.
-  - debut: 2025
-    fin: 2025
-    type_calcul: forfaitaire
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: sans_objet
+cotisation:
+  - du: 1948-01-01
+    au: 2004-01-01
+    assiette: forfaitaire
+    taux_cotisation_retraite: 0.09
+  - du: 2004-01-01
+    au: 2016-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0300
+    cotisation_forfaitaire_euros: 1510
+    cotisation_forfaitaire_annee: 2016
+  - du: 2016-01-01
+    au: 2017-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0300
+    cotisation_forfaitaire_euros: 1510
+    cotisation_forfaitaire_annee: 2016
+  - du: 2017-01-01
+    au: 2018-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0310
+    cotisation_forfaitaire_euros: 1525
+    cotisation_forfaitaire_annee: 2017
+  - du: 2018-01-01
+    au: 2019-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0310
+    cotisation_forfaitaire_euros: 1540
+    cotisation_forfaitaire_annee: 2018
+  - du: 2019-01-01
+    au: 2020-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0310
+    cotisation_forfaitaire_euros: 1555
+    cotisation_forfaitaire_annee: 2019
+  - du: 2020-01-01
+    au: 2021-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0310
+    cotisation_forfaitaire_euros: 1190
+    cotisation_forfaitaire_annee: 2020
+  - du: 2021-01-01
+    au: 2022-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0310
+    cotisation_forfaitaire_euros: 1610
+    cotisation_forfaitaire_annee: 2021
+  - du: 2022-01-01
+    au: 2023-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0310
+    cotisation_forfaitaire_euros: 1658
+    cotisation_forfaitaire_annee: 2022
+  - du: 2023-01-01
+    au: 2024-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0310
+    cotisation_forfaitaire_euros: 1774
+    cotisation_forfaitaire_annee: 2023
+  - du: 2024-01-01
+    au: 2025-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.0310
+    cotisation_forfaitaire_euros: 1845
+    cotisation_forfaitaire_annee: 2024
+  - du: 2025-01-01
+    au: 2026-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.0320
     cotisation_forfaitaire_euros: 1921
     cotisation_forfaitaire_annee: 2025
-    pension_forfaitaire_annuelle: 18964
-    pension_forfaitaire_annee: 2025
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0075
-    surcote_bareme: cnbf_surcote
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    notes: >-
-      Barème CNBF 2025 : retraite de base forfaitaire de 18 964 €
-      au taux plein  cotisation forfaitaire de 1 921 € à partir de la
-      sixième année, 3,2 % du revenu net.
-  - debut: 2026
-    fin: null
-    type_calcul: forfaitaire
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: sans_objet
+  - du: 2026-01-01
     assiette: deplafonnee
     taux_cotisation_retraite: 0.0320
     cotisation_forfaitaire_euros: 1988
     cotisation_forfaitaire_annee: 2026
+servi:
+  - du: 1948-01-01
+    au: 2017-01-01
+    pension_forfaitaire_annuelle: 16581
+    pension_forfaitaire_annee: 2016
+  - du: 2017-01-01
+    au: 2018-01-01
+    pension_forfaitaire_annuelle: 16664
+    pension_forfaitaire_annee: 2017
+    notes: >-
+      Barème CNBF 2017 : retraite de base forfaitaire de 16 664 €
+      au taux plein  cotisation forfaitaire de 1 525 € à partir de la
+      sixième année, 3,1 % du revenu net.
+  - du: 2018-01-01
+    au: 2019-01-01
+    pension_forfaitaire_annuelle: 16831
+    pension_forfaitaire_annee: 2018
+    notes: >-
+      Barème CNBF 2018 : retraite de base forfaitaire de 16 831 €
+      au taux plein  cotisation forfaitaire de 1 540 € à partir de la
+      sixième année, 3,1 % du revenu net.
+  - du: 2019-01-01
+    au: 2020-01-01
+    pension_forfaitaire_annuelle: 16999
+    pension_forfaitaire_annee: 2019
+    notes: >-
+      Barème CNBF 2019 : retraite de base forfaitaire de 16 999 €
+      au taux plein  cotisation forfaitaire de 1 555 € à partir de la
+      sixième année, 3,1 % du revenu net.
+  - du: 2020-01-01
+    au: 2021-01-01
+    pension_forfaitaire_annuelle: 17169
+    pension_forfaitaire_annee: 2020
+    notes: >-
+      Barème CNBF 2020 : retraite de base forfaitaire de 17 169 €
+      au taux plein  cotisation forfaitaire de 1 190 € à partir de la
+      sixième année, 3,1 % du revenu net.
+      Le forfait est celui du barème RÉVISÉ, réduit de 25 % au titre
+      de la crise sanitaire (1 586 € avant la mesure).
+  - du: 2021-01-01
+    au: 2022-01-01
+    pension_forfaitaire_annuelle: 17255
+    pension_forfaitaire_annee: 2021
+    notes: >-
+      Barème CNBF 2021 : retraite de base forfaitaire de 17 255 €
+      au taux plein  cotisation forfaitaire de 1 610 € à partir de la
+      sixième année, 3,1 % du revenu net.
+  - du: 2022-01-01
+    au: 2023-01-01
+    pension_forfaitaire_annuelle: 17428
+    pension_forfaitaire_annee: 2022
+    notes: >-
+      Barème CNBF 2022 : retraite de base forfaitaire de 17 428 €
+      au taux plein  cotisation forfaitaire de 1 658 € à partir de la
+      sixième année, 3,1 % du revenu net.
+  - du: 2023-01-01
+    au: 2024-01-01
+    pension_forfaitaire_annuelle: 18299
+    pension_forfaitaire_annee: 2023
+    notes: >-
+      Barème CNBF 2023 : retraite de base forfaitaire de 18 299 €
+      au taux plein  cotisation forfaitaire de 1 774 € à partir de la
+      sixième année, 3,1 % du revenu net.
+  - du: 2024-01-01
+    au: 2025-01-01
+    pension_forfaitaire_annuelle: 18665
+    pension_forfaitaire_annee: 2024
+  - du: 2025-01-01
+    au: 2026-01-01
+    pension_forfaitaire_annuelle: 18964
+    pension_forfaitaire_annee: 2025
+    notes: >-
+      Barème CNBF 2025 : retraite de base forfaitaire de 18 964 €
+      au taux plein  cotisation forfaitaire de 1 921 € à partir de la
+      sixième année, 3,2 % du revenu net.
+  - du: 2026-01-01
     pension_forfaitaire_annuelle: 19154
     pension_forfaitaire_annee: 2026
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0075
-    surcote_bareme: cnbf_surcote
-    avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Barème CNBF 2026 : retraite de base forfaitaire de 19 154 €
       au taux plein  cotisation forfaitaire de 1 988 € à partir de la

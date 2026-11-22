@@ -33,6 +33,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 from retraite_notionnelle.config import RACINE_PROJET
 
@@ -132,8 +133,7 @@ def test_la_fiche_porte_les_taux_les_dates_et_la_limite_du_texte():
 
 
 def test_toutes_les_periodes_du_reglement_renvoient_a_la_fiche():
-    regime = yaml.safe_load((REGLES.parent / "regimes" / "banque_de_france.yaml")
-                            .read_text("utf-8"))
+    regime = lire_fiche_de_regime(REGLES.parent / "regimes" / "banque_de_france.yaml")
     periodes = [p for p in regime["periodes"] if p["debut"] >= 2007]
     assert len(periodes) >= 16
     assert {p.get("surcote_bareme") for p in periodes} == {"surcote_banque_de_france"}

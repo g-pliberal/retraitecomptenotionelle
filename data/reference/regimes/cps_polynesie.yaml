@@ -39,18 +39,16 @@ inventaire:
     d'orientation et de suivi des retraites, et les abattements de la
     réforme de 2019 — 1,5 % par trimestre avant l'âge légal, 0,5 % par
     trimestre manquant à la durée, jusqu'à 65 ans — ne sont pas portés.
-periodes:
-  - debut: 1968
-    fin: 2019
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1968-01-01
+    au: 2020-01-01
     age_ouverture: 60
     age_taux_plein: 60
     duree_requise_trimestres: 140
     taux_plein: 0.70
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.2353
-    part_salariale: 0.3332
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -79,17 +77,13 @@ periodes:
       du même rapport). Salaire de référence : quinze ans, écrit ici
       comme les dix meilleures années, la valeur la plus proche du
       catalogue.
-  - debut: 2020
-    fin: 2020
-    type_calcul: annuites
+  - du: 2020-01-01
+    au: 2021-01-01
     age_ouverture: 60.5
     age_taux_plein: 60.5
     duree_requise_trimestres: 143
     taux_plein: 0.70
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.2353
-    part_salariale: 0.3332
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -114,17 +108,13 @@ periodes:
       du même rapport). Salaire de référence : quinze ans, écrit ici
       comme les dix meilleures années, la valeur la plus proche du
       catalogue.
-  - debut: 2021
-    fin: 2021
-    type_calcul: annuites
+  - du: 2021-01-01
+    au: 2022-01-01
     age_ouverture: 61
     age_taux_plein: 61
     duree_requise_trimestres: 146
     taux_plein: 0.70
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.2353
-    part_salariale: 0.3332
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -149,17 +139,13 @@ periodes:
       du même rapport). Salaire de référence : quinze ans, écrit ici
       comme les dix meilleures années, la valeur la plus proche du
       catalogue.
-  - debut: 2022
-    fin: 2022
-    type_calcul: annuites
+  - du: 2022-01-01
+    au: 2023-01-01
     age_ouverture: 61.5
     age_taux_plein: 61.5
     duree_requise_trimestres: 149
     taux_plein: 0.70
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.2353
-    part_salariale: 0.3332
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -184,17 +170,12 @@ periodes:
       du même rapport). Salaire de référence : quinze ans, écrit ici
       comme les dix meilleures années, la valeur la plus proche du
       catalogue.
-  - debut: 2023
-    fin: null
-    type_calcul: annuites
+  - du: 2023-01-01
     age_ouverture: 62
     age_taux_plein: 62
     duree_requise_trimestres: 152
     taux_plein: 0.70
     salaire_reference: 10_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.2353
-    part_salariale: 0.3332
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -221,3 +202,28 @@ periodes:
       du même rapport). Salaire de référence : quinze ans, écrit ici
       comme les dix meilleures années, la valeur la plus proche du
       catalogue.
+cotisation:
+  - du: 1968-01-01
+    au: 2020-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.2353
+    part_salariale: 0.3332
+  - du: 2020-01-01
+    au: 2021-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.2353
+    part_salariale: 0.3332
+  - du: 2021-01-01
+    au: 2022-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.2353
+    part_salariale: 0.3332
+  - du: 2022-01-01
+    au: 2023-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.2353
+    part_salariale: 0.3332
+  - du: 2023-01-01
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.2353
+    part_salariale: 0.3332

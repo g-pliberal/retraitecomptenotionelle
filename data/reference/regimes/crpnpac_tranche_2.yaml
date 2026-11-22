@@ -34,18 +34,16 @@ inventaire:
     - {reference: "code de l'aviation civile, R. 426-16-1-1", id: null}
   manque: >-
     Mêmes limites que la tranche 1 : taux d'appel de 2017 à 2023 non publiés, 111 % de 2024 et 2025 non appliqué, conditions de 2012 à 2021, à l'année d'effet, non portées, salaire moyen sur la carrière entière et non les vingt-cinq meilleures annuités (fiche crpn_pension_des_navigants).
-periodes:
-  - debut: 1963
-    fin: 1994
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1963-01-01
+    au: 2012-01-01
     age_ouverture: 50
     age_taux_plein: 50
     duree_requise_trimestres: 100
     taux_plein: 0.3500
     salaire_reference: carriere_entiere
-    assiette: tranche_c
-    taux_cotisation_retraite: 0.14400
-    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -54,36 +52,13 @@ periodes:
       (R. 426-16-1), dans la limite de 25 annuités — d'où un taux
       plein de 35.00%. Cotisation de 6 % pour l'affilié et 12 % pour l'employeur (R. 426-6, R. 426-7).
       Taux d'appel de 80 % (R. 426-8), déjà appliqué au taux ci-dessus.
-  - debut: 1995
-    fin: 2011
-    type_calcul: annuites
-    age_ouverture: 50
-    age_taux_plein: 50
-    duree_requise_trimestres: 100
-    taux_plein: 0.3500
-    salaire_reference: carriere_entiere
-    assiette: tranche_c
-    taux_cotisation_retraite: 0.18000
-    part_salariale: 0.3333
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Seconde tranche : 1.40% de taux de pension par annuité validée
-      (R. 426-16-1), dans la limite de 25 annuités — d'où un taux
-      plein de 35.00%. Cotisation de 6 % pour l'affilié et 12 % pour l'employeur (R. 426-6, R. 426-7).
-      Le taux d'appel de cette période suit une formule fondée sur la valeur N du fonds de retraite (R. 426-8), que la caisse ne publie pas : il n'est PAS appliqué ici, ce qui sous-estime la cotisation réellement appelée dès que N descend sous 6.
-  - debut: 2012
-    fin: 2015
-    type_calcul: annuites
+  - du: 2012-01-01
+    au: 2022-01-01
     age_ouverture: 50
     age_taux_plein: 60
     duree_requise_trimestres: 120
     taux_plein: 0.4200
     salaire_reference: carriere_entiere
-    assiette: tranche_c
-    taux_cotisation_retraite: 0.21832
-    part_salariale: 0.3600
     decote_par_trimestre: 0.0125
     decote_trimestres_maximum: 40
     surcote_par_trimestre: null
@@ -124,69 +99,13 @@ periodes:
       1er novembre 2023. Et le maximum de quarante trimestres n'est pas écrit : il se
       déduit de ce que la liquidation n'est pas ouverte avant vingt
       annuités et que le taux plein en demande trente.
-  - debut: 2016
-    fin: 2021
-    type_calcul: annuites
-    age_ouverture: 50
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    taux_plein: 0.4200
-    salaire_reference: carriere_entiere
-    assiette: tranche_c
-    taux_cotisation_retraite: 0.22365
-    part_salariale: 0.3600
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 40
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    notes: >-
-      Seconde tranche : 1.40% de taux de pension par annuité validée
-      (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
-      plein de 42.00%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
-      Taux d'appel de 105 % (R. 426-8), déjà appliqué au taux ci-dessus.
-      UNE DÉCOTE EXISTE DEPUIS 2012, et la fiche n'en portait aucune.
-      L'article R. 426-11, réécrit au 1er janvier 2012 : « la pension est
-      dite à taux plein si l'affilié réunit cumulativement […] 1° avoir
-      atteint l'âge de cinquante-cinq ans ou justifier de trente annuités
-      […] 2° la somme de l'âge et du nombre d'annuités […] est supérieure
-      ou égale à 80. Lorsque l'affilié ne remplit pas les conditions […]
-      il est appliqué à la pension une décote égale à 5 % par année
-      manquante » — et depuis le 1er janvier 2022, la condition d'âge
-      disparaît : « la pension est dite à taux plein si l'affilié justifie
-      […] d'au moins trente annuités […] lorsque l'affilié n'atteint pas
-      cette durée, il est appliqué à la pension une décote égale à 5 % par
-      annuité manquante ». Cinq pour cent par année, c'est 1,25 % par
-      trimestre, et cette décote s'ajoute à la proportionnalité : un
-      navigant parti avec vingt-cinq annuités touche 25/30 du taux plein,
-      puis 25 % de moins. TROIS ÉCARTS, NOMMÉS. Le décompte du droit prend
-      le PLUS GRAND des deux manques — âge et durée — quand l'affilié a
-      moins de cinquante-cinq ans, quand le moteur prend le plus petit :
-      la fiche décote donc moins que le droit dans ce cas. L'âge d'annulation est celui de l'article R. 426-12, qui écarte la
-      décote pour la pension prenant effet « à compter d'un âge au moins
-      égal à celui mentionné au premier alinéa de l'article L. 6521-4 du
-      code des transports » : SOIXANTE ANS, et non soixante-cinq comme la
-      fiche le portait. L. 6521-4 (version du 10 octobre 2021, lue sur
-      Légifrance le 23 septembre 2026) : « L'activité de pilote ou de
-      copilote […] ne peut être exercée dans le transport aérien public
-      au-delà de l'âge de soixante ans » ; soixante-cinq ans n'est que la
-      limite des prolongations annuelles, au troisième alinéa. Les
-      notices de la caisse le disent aussi : « droit à pension différé à
-      60 ans » de 2012 à 2021, « pension à 60 ans sans décote » depuis le
-      1er novembre 2023. Et le maximum de quarante trimestres n'est pas écrit : il se
-      déduit de ce que la liquidation n'est pas ouverte avant vingt
-      annuités et que le taux plein en demande trente.
-  - debut: 2022
-    fin: 2025
-    type_calcul: annuites
+  - du: 2022-01-01
     age_ouverture: 50
     age_taux_plein: 60
     duree_requise_trimestres: 120
     duree_requise_table: [crpn_2022]
     taux_plein: 0.4200
     salaire_reference: carriere_entiere
-    assiette: tranche_c
-    taux_cotisation_retraite: 0.22365
-    part_salariale: 0.3600
     decote_par_trimestre: 0.0125
     decote_trimestres_maximum: 40
     decote_par_la_duree_seule: decote_crpn
@@ -252,23 +171,77 @@ periodes:
       1er novembre 2023. Et le maximum de quarante trimestres n'est pas écrit : il se
       déduit de ce que la liquidation n'est pas ouverte avant vingt
       annuités et que le taux plein en demande trente.
-  - debut: 2026
-    fin: null
-    type_calcul: annuites
-    age_ouverture: 50
-    age_taux_plein: 60
-    duree_requise_trimestres: 120
-    duree_requise_table: [crpn_2022]
-    taux_plein: 0.4200
-    salaire_reference: carriere_entiere
+cotisation:
+  - du: 1963-01-01
+    au: 1995-01-01
+    assiette: tranche_c
+    taux_cotisation_retraite: 0.14400
+    part_salariale: 0.3333
+  - du: 1995-01-01
+    au: 2012-01-01
+    assiette: tranche_c
+    taux_cotisation_retraite: 0.18000
+    part_salariale: 0.3333
+    notes: >-
+      Seconde tranche : 1.40% de taux de pension par annuité validée
+      (R. 426-16-1), dans la limite de 25 annuités — d'où un taux
+      plein de 35.00%. Cotisation de 6 % pour l'affilié et 12 % pour l'employeur (R. 426-6, R. 426-7).
+      Le taux d'appel de cette période suit une formule fondée sur la valeur N du fonds de retraite (R. 426-8), que la caisse ne publie pas : il n'est PAS appliqué ici, ce qui sous-estime la cotisation réellement appelée dès que N descend sous 6.
+  - du: 2012-01-01
+    au: 2016-01-01
+    assiette: tranche_c
+    taux_cotisation_retraite: 0.21832
+    part_salariale: 0.3600
+  - du: 2016-01-01
+    au: 2022-01-01
+    assiette: tranche_c
+    taux_cotisation_retraite: 0.22365
+    part_salariale: 0.3600
+    notes: >-
+      Seconde tranche : 1.40% de taux de pension par annuité validée
+      (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
+      plein de 42.00%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
+      Taux d'appel de 105 % (R. 426-8), déjà appliqué au taux ci-dessus.
+      UNE DÉCOTE EXISTE DEPUIS 2012, et la fiche n'en portait aucune.
+      L'article R. 426-11, réécrit au 1er janvier 2012 : « la pension est
+      dite à taux plein si l'affilié réunit cumulativement […] 1° avoir
+      atteint l'âge de cinquante-cinq ans ou justifier de trente annuités
+      […] 2° la somme de l'âge et du nombre d'annuités […] est supérieure
+      ou égale à 80. Lorsque l'affilié ne remplit pas les conditions […]
+      il est appliqué à la pension une décote égale à 5 % par année
+      manquante » — et depuis le 1er janvier 2022, la condition d'âge
+      disparaît : « la pension est dite à taux plein si l'affilié justifie
+      […] d'au moins trente annuités […] lorsque l'affilié n'atteint pas
+      cette durée, il est appliqué à la pension une décote égale à 5 % par
+      annuité manquante ». Cinq pour cent par année, c'est 1,25 % par
+      trimestre, et cette décote s'ajoute à la proportionnalité : un
+      navigant parti avec vingt-cinq annuités touche 25/30 du taux plein,
+      puis 25 % de moins. TROIS ÉCARTS, NOMMÉS. Le décompte du droit prend
+      le PLUS GRAND des deux manques — âge et durée — quand l'affilié a
+      moins de cinquante-cinq ans, quand le moteur prend le plus petit :
+      la fiche décote donc moins que le droit dans ce cas. L'âge d'annulation est celui de l'article R. 426-12, qui écarte la
+      décote pour la pension prenant effet « à compter d'un âge au moins
+      égal à celui mentionné au premier alinéa de l'article L. 6521-4 du
+      code des transports » : SOIXANTE ANS, et non soixante-cinq comme la
+      fiche le portait. L. 6521-4 (version du 10 octobre 2021, lue sur
+      Légifrance le 23 septembre 2026) : « L'activité de pilote ou de
+      copilote […] ne peut être exercée dans le transport aérien public
+      au-delà de l'âge de soixante ans » ; soixante-cinq ans n'est que la
+      limite des prolongations annuelles, au troisième alinéa. Les
+      notices de la caisse le disent aussi : « droit à pension différé à
+      60 ans » de 2012 à 2021, « pension à 60 ans sans décote » depuis le
+      1er novembre 2023. Et le maximum de quarante trimestres n'est pas écrit : il se
+      déduit de ce que la liquidation n'est pas ouverte avant vingt
+      annuités et que le taux plein en demande trente.
+  - du: 2022-01-01
+    au: 2026-01-01
+    assiette: tranche_c
+    taux_cotisation_retraite: 0.22365
+    part_salariale: 0.3600
+  - du: 2026-01-01
     assiette: tranche_c
     taux_cotisation_retraite: 0.23643
     part_salariale: 0.3600
-    decote_par_trimestre: 0.0125
-    decote_trimestres_maximum: 40
-    decote_par_la_duree_seule: decote_crpn
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
     notes: >-
       TAUX D'APPEL DE 111 % EN 2026 : « taux de cotisations égal à 21,30 %
       (7,668 % part salariale et 13,632 % part patronale) appelé à 111 % »,

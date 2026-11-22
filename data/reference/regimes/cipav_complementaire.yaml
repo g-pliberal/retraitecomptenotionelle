@@ -34,10 +34,11 @@ inventaire:
     - {reference: "arrêté du 9 mars 1987 portant approbation des régimes complémentaires (architectes, ingénieurs, techniciens, experts et conseils)", id: LEGIARTI000006784842}
     - {reference: "décret n° 99-913 du 21 octobre 1999, article 6 (bonification pour enfants des géomètres intégrés au 1er janvier 2000)", id: JORFTEXT000000561136}
     - {reference: "décret n° 2026-418 du 29 mai 2026, article 20 : articles 5-1 à 5-6 du décret n° 79-262 (âges, minoration, majoration pour trois enfants, report)", id: JORFARTI000054153655}
-periodes:
-  - debut: 1979
-    fin: 1999
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1979-01-01
+    au: 2000-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -49,9 +50,6 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_3_pass
-    taux_cotisation_retraite: 0.0
-    cotisation_par_classes: cotisation_par_classes_liberales
     notes: >-
       DÉCRET N° 79-262 DU 21 MARS 1979, ARTICLE 2 (LEGIARTI000006767473,
       puis LEGIARTI000006767474 en 1985, qui ne touche pas l'option mais
@@ -108,9 +106,8 @@ periodes:
       carrière : la caisse ne publie que « 7 500 points × 2,63 = 19 725 € »
       (fiche pratique de 2018) et les points d'une année (« 72,13 points »
       pour 3 418,75 € en 2026).
-  - debut: 2000
-    fin: 2007
-    type_calcul: points
+  - du: 2000-01-01
+    au: 2008-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -122,9 +119,6 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: plafonnee_3_pass
-    taux_cotisation_retraite: 0.0
-    cotisation_par_classes: cotisation_par_classes_liberales
     notes: >-
       DÉCRET N° 79-262 DU 21 MARS 1979, ARTICLE 2 (LEGIARTI000006767473,
       puis LEGIARTI000006767474 en 1985, qui ne touche pas l'option mais
@@ -175,9 +169,8 @@ periodes:
       n° 2026-418 ; la fiche pratique de 2026 écrit de même — et la fiche
       la suppose identique depuis 2000. Avant, rien n'est lu, rien n'est
       servi.
-  - debut: 2008
-    fin: 2012
-    type_calcul: points
+  - du: 2008-01-01
+    au: 2022-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -195,9 +188,6 @@ periodes:
     surcote_affiliation_minimale_trimestres: 120
     surcote_premieres_annees: 30
     avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: plafonnee_3_pass
-    taux_cotisation_retraite: 0.0
-    cotisation_par_classes: cotisation_par_classes_liberales
     notes: >-
       DÉCRET N° 79-262 DU 21 MARS 1979, ARTICLE 2 (LEGIARTI000006767473,
       puis LEGIARTI000006767474 en 1985, qui ne touche pas l'option mais
@@ -255,9 +245,7 @@ periodes:
       n° 2026-418 ; la fiche pratique de 2026 écrit de même — et la fiche
       la suppose identique depuis 2000. Avant, rien n'est lu, rien n'est
       servi.
-  - debut: 2013
-    fin: 2021
-    type_calcul: points
+  - du: 2022-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -270,11 +258,34 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
-    surcote_age_debut: 65
     surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
     surcote_premieres_annees: 30
     avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Les règles de 2013, le report compté de l'âge du taux plein depuis
+      le 1er janvier 2022 : l'arrêté du 16 décembre 2021 remplace, à
+      l'article 3.15, « âgé de 65 ans » par « qui a atteint l'âge prévu
+      au deuxième alinéa du 1° de l'article 3.13 », l'âge du 1° de
+      L. 351-8, et laisse la borne « de 1 à 5 ans ».
+cotisation:
+  - du: 1979-01-01
+    au: 2000-01-01
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: cotisation_par_classes_liberales
+  - du: 2000-01-01
+    au: 2008-01-01
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: cotisation_par_classes_liberales
+  - du: 2008-01-01
+    au: 2013-01-01
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: cotisation_par_classes_liberales
+  - du: 2013-01-01
+    au: 2022-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
     cotisation_par_classes: cotisation_par_classes_liberales
@@ -326,53 +337,13 @@ periodes:
       partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2008, où tombent les
       derniers articles des statuts de 1979, et rien avant.
-  - debut: 2022
-    fin: 2022
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_pas_trimestres: 4
-    surcote_trimestres_maximum: 20
-    surcote_affiliation_minimale_trimestres: 120
-    surcote_premieres_annees: 30
-    avantages_non_contributifs: [reversion, majoration_enfants]
+  - du: 2022-01-01
+    au: 2023-01-01
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
     cotisation_par_classes: cotisation_par_classes_liberales
-    notes: >-
-      Les règles de 2013, le report compté de l'âge du taux plein depuis
-      le 1er janvier 2022 : l'arrêté du 16 décembre 2021 remplace, à
-      l'article 3.15, « âgé de 65 ans » par « qui a atteint l'âge prévu
-      au deuxième alinéa du 1° de l'article 3.13 », l'âge du 1° de
-      L. 351-8, et laisse la borne « de 1 à 5 ans ».
-  - debut: 2023
-    fin: 2024
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_pas_trimestres: 4
-    surcote_trimestres_maximum: 20
-    surcote_affiliation_minimale_trimestres: 120
-    surcote_premieres_annees: 30
-    avantages_non_contributifs: [reversion, majoration_enfants]
+  - du: 2023-01-01
+    au: 2025-01-01
     assiette: plafonnee
     taux_cotisation_retraite: 0.09
     notes: >-
@@ -402,25 +373,9 @@ periodes:
       partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2008, où tombent les
       derniers articles des statuts de 1979, et rien avant.
-  - debut: 2023
-    fin: 2023
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_pas_trimestres: 4
-    surcote_trimestres_maximum: 20
-    surcote_affiliation_minimale_trimestres: 120
-    surcote_premieres_annees: 30
-    avantages_non_contributifs: [reversion, majoration_enfants]
+  - du: 2023-01-01
+    au: 2024-01-01
+    tranche: 2
     assiette: tranche_1_3_pass
     taux_cotisation_retraite: 0.22
     notes: >-
@@ -449,26 +404,9 @@ periodes:
       partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2008, où tombent les
       derniers articles des statuts de 1979, et rien avant.
-
-  - debut: 2024
-    fin: 2024
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_pas_trimestres: 4
-    surcote_trimestres_maximum: 20
-    surcote_affiliation_minimale_trimestres: 120
-    surcote_premieres_annees: 30
-    avantages_non_contributifs: [reversion, majoration_enfants]
+  - du: 2024-01-01
+    au: 2025-01-01
+    tranche: 2
     assiette: tranche_1_3_5_pass
     taux_cotisation_retraite: 0.22
     notes: >-
@@ -491,26 +429,7 @@ periodes:
       partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2008, où tombent les
       derniers articles des statuts de 1979, et rien avant.
-
-  - debut: 2025
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_pas_trimestres: 4
-    surcote_trimestres_maximum: 20
-    surcote_affiliation_minimale_trimestres: 120
-    surcote_premieres_annees: 30
-    avantages_non_contributifs: [reversion, majoration_enfants]
+  - du: 2025-01-01
     assiette: plafonnee
     taux_cotisation_retraite: 0.11
     notes: >-
@@ -541,25 +460,8 @@ periodes:
       partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2008, où tombent les
       derniers articles des statuts de 1979, et rien avant.
-  - debut: 2025
-    fin: null
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_pas_trimestres: 4
-    surcote_trimestres_maximum: 20
-    surcote_affiliation_minimale_trimestres: 120
-    surcote_premieres_annees: 30
-    avantages_non_contributifs: [reversion, majoration_enfants]
+  - du: 2025-01-01
+    tranche: 2
     assiette: tranche_1_4_pass
     taux_cotisation_retraite: 0.21
     notes: >-

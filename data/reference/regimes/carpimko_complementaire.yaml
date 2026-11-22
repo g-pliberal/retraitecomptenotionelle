@@ -27,11 +27,11 @@ inventaire:
   statuts: [auxiliaire_medical]
   textes:
     - {reference: "décret n° 84-143 du 22 février 1984", id: null}
-periodes:
-  - debut: 1984
-    fin: 1986
-    date_effet: [1984-01-01, 1987-06-05]
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1984-01-01
+    au: 1987-06-05
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -46,10 +46,6 @@ periodes:
     surcote_par_trimestre: null
     effet_au_trimestre_civil: [1984-01-01, 1987-06-05]
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.0
-    cotisation_forfaitaire_euros: 624.00
-    cotisation_forfaitaire_annee: 2002
     notes: >-
       LE RÉGIME EST CRÉÉ PAR LE DÉCRET N° 84-143 DU 22 FÉVRIER 1984, et il est
       alors PUREMENT FORFAITAIRE : la cotisation proportionnelle n'est instituée
@@ -70,10 +66,8 @@ periodes:
       l'ancien prisonnier de guerre de la loi du 21 novembre 1973, aux âges
       de leur fiche (article 11). La période s'arrête au lendemain de la
       publication de l'arrêté du 20 mai 1987, dont le texte n'est pas lu.
-  - debut: 1987
-    fin: 1995
-    date_effet: [1987-06-05, 1996-01-01]
-    type_calcul: points
+  - du: 1987-06-05
+    au: 2015-10-03
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -85,10 +79,6 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.0
-    cotisation_forfaitaire_euros: 624.00
-    cotisation_forfaitaire_annee: 2002
     notes: >-
       LES STATUTS D'APRÈS L'ARRÊTÉ DU 20 MAI 1987 NE SONT PAS LUS : publié le
       4 juin 1987, il approuve des modifications du régime complémentaire dont
@@ -96,337 +86,8 @@ periodes:
       effet depuis le lendemain (`date_effet`) et garde, faute du texte, la
       minoration que la durée du régime de base annule, sans le report au
       trimestre civil. LE FORFAIT, extrapolé, est celui de la période de 1984.
-  - debut: 1996
-    fin: 2001
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 82446
-    cotisation_forfaitaire_euros: 624.00
-    cotisation_forfaitaire_annee: 2002
-    notes: >-
-      LA COTISATION PROPORTIONNELLE EST INSTITUÉE EN 1996, à 3 % — taux qu'elle
-      gardera trente ans, jusqu'à la réforme de 2026. Les bornes de son assiette
-      sont celles de 2002, premier exercice que les décrets couvrent ici.
-      LE SEUIL EST FIXÉ EN EUROS ET NE BOUGE JAMAIS : 25 246 €, de 2002 à 2025,
-      sans indexation d'aucune sorte. C'est pourquoi cette fiche porte des bornes
-      en euros et non en plafonds — les exprimer en multiples du plafond les
-      ferait dériver de 60 % sur la période.
-  - debut: 2002
-    fin: 2002
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 82446
-    cotisation_forfaitaire_euros: 624.00
-    cotisation_forfaitaire_annee: 2002
-    notes: >-
-      À PARTIR D'ICI, TOUT EST LU DANS LE JOURNAL OFFICIEL. Un décret par an
-      fixe ces trois nombres pour toutes les sections libérales à la fois :
-      « 5° Section professionnelle des auxiliaires médicaux : cotisation
-      forfaitaire : … ; taux de la cotisation proportionnelle : 3 % ; limites
-      de l'assiette de la cotisation proportionnelle : seuil : 25 246 euros ;
-      plafond : … ». Le forfait passe de 624 € en 2002 à 2 312 € en 2025, et
-      le plafond de 82 446 € à 237 179 € ; le seuil et le taux, eux, ne
-      bougent pas.
-  - debut: 2003
-    fin: 2003
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 87586
-    cotisation_forfaitaire_euros: 680.00
-    cotisation_forfaitaire_annee: 2003
-  - debut: 2004
-    fin: 2004
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 89046
-    cotisation_forfaitaire_euros: 696.00
-    cotisation_forfaitaire_annee: 2004
-  - debut: 2005
-    fin: 2005
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 89046
-    cotisation_forfaitaire_euros: 696.00
-    cotisation_forfaitaire_annee: 2005
-    notes: >-
-      Le décret de 2005 ne revient ni sur le forfait ni sur les bornes : ceux de 2004 restent en vigueur.
-  - debut: 2006
-    fin: 2006
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 89046
-    cotisation_forfaitaire_euros: 696.00
-    cotisation_forfaitaire_annee: 2006
-  - debut: 2007
-    fin: 2007
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 108846
-    cotisation_forfaitaire_euros: 912.00
-    cotisation_forfaitaire_annee: 2007
-  - debut: 2008
-    fin: 2008
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 116179
-    cotisation_forfaitaire_euros: 992.00
-    cotisation_forfaitaire_annee: 2008
-  - debut: 2009
-    fin: 2009
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 119113
-    cotisation_forfaitaire_euros: 1024.00
-    cotisation_forfaitaire_annee: 2009
-  - debut: 2010
-    fin: 2010
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 126446
-    cotisation_forfaitaire_euros: 1104.00
-    cotisation_forfaitaire_annee: 2010
-  - debut: 2011
-    fin: 2011
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 135246
-    cotisation_forfaitaire_euros: 1200.00
-    cotisation_forfaitaire_annee: 2011
-  - debut: 2012
-    fin: 2012
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 144046
-    cotisation_forfaitaire_euros: 1296.00
-    cotisation_forfaitaire_annee: 2012
-  - debut: 2013
-    fin: 2013
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 151379
-    cotisation_forfaitaire_euros: 1376.00
-    cotisation_forfaitaire_annee: 2013
-  - debut: 2014
-    fin: 2014
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 152846
-    cotisation_forfaitaire_euros: 1392.00
-    cotisation_forfaitaire_annee: 2014
-  - debut: 2015
-    fin: 2015
-    date_effet: [2015-01-01, 2015-10-03]
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 153579
-    cotisation_forfaitaire_euros: 1400.00
-    cotisation_forfaitaire_annee: 2015
-    notes: >-
-      AUCUNE MAJORATION DE REPORT AVANT L'ARRÊTÉ DU 31 JUILLET 2015, qui
-      l'insère ; la fiche portait 0,75 % sans texte, que le moteur ne
-      lisait pas. Cette période liquide jusqu'au 2 octobre 2015
-      (`date_effet`) : l'arrêté, publié le 2 octobre sans date d'effet,
-      entre en vigueur le 3, et la période de 2016 sert ses âges et sa
-      majoration aux pensions qui prennent effet depuis ce jour.
-  - debut: 2016
-    fin: 2016
-    date_effet: [2015-10-03, 2017-01-01]
-    type_calcul: points
+  - du: 2015-10-03
+    au: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -444,12 +105,6 @@ periodes:
     surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 153579
-    cotisation_forfaitaire_euros: 1400.00
-    cotisation_forfaitaire_annee: 2016
     notes: >-
       LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
       (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
@@ -489,317 +144,8 @@ periodes:
       quand leur durée est presque complète. Les statuts d'avant 2015 sont
       au Bulletin officiel (arrêté du 20 novembre 1996) et ne sont pas
       lus. Lu le 23 septembre 2026 (action 89).
-  - debut: 2017
-    fin: 2017
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carpimko_2016
-    fermee_a_la_carriere_longue: true
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_depuis_la_duree: surcote_par_age_seul
-    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
-    surcote_trimestres_maximum: 20
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 158713
-    cotisation_forfaitaire_euros: 1456.00
-    cotisation_forfaitaire_annee: 2017
-    notes: >-
-      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
-      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
-      liquidation de la retraite est ajournée au-delà de l'âge auquel
-      elle aurait pu être liquidée sans abattement, les assurés peuvent
-      bénéficier d'une majoration de leur pension. Cette majoration est
-      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
-      à l'âge du taux plein dans la limite de vingt trimestres » —, que
-      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
-      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
-      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge où la pension pouvait être liquidée sans abattement — l'âge
-      légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
-      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
-      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
-      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
-      le 14 novembre 2026).
-  - debut: 2018
-    fin: 2018
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carpimko_2016
-    fermee_a_la_carriere_longue: true
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_depuis_la_duree: surcote_par_age_seul
-    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
-    surcote_trimestres_maximum: 20
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 165313
-    cotisation_forfaitaire_euros: 1528.00
-    cotisation_forfaitaire_annee: 2018
-    notes: >-
-      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
-      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
-      liquidation de la retraite est ajournée au-delà de l'âge auquel
-      elle aurait pu être liquidée sans abattement, les assurés peuvent
-      bénéficier d'une majoration de leur pension. Cette majoration est
-      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
-      à l'âge du taux plein dans la limite de vingt trimestres » —, que
-      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
-      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
-      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge où la pension pouvait être liquidée sans abattement — l'âge
-      légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
-      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
-      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
-      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
-      le 14 novembre 2026).
-  - debut: 2019
-    fin: 2019
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carpimko_2016
-    fermee_a_la_carriere_longue: true
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_depuis_la_duree: surcote_par_age_seul
-    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
-    surcote_trimestres_maximum: 20
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 174113
-    cotisation_forfaitaire_euros: 1624.00
-    cotisation_forfaitaire_annee: 2019
-    notes: >-
-      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
-      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
-      liquidation de la retraite est ajournée au-delà de l'âge auquel
-      elle aurait pu être liquidée sans abattement, les assurés peuvent
-      bénéficier d'une majoration de leur pension. Cette majoration est
-      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
-      à l'âge du taux plein dans la limite de vingt trimestres » —, que
-      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
-      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
-      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge où la pension pouvait être liquidée sans abattement — l'âge
-      légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
-      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
-      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
-      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
-      le 14 novembre 2026).
-  - debut: 2020
-    fin: 2020
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carpimko_2016
-    fermee_a_la_carriere_longue: true
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_depuis_la_duree: surcote_par_age_seul
-    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
-    surcote_trimestres_maximum: 20
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 176313
-    cotisation_forfaitaire_euros: 1648.00
-    cotisation_forfaitaire_annee: 2020
-    notes: >-
-      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
-      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
-      liquidation de la retraite est ajournée au-delà de l'âge auquel
-      elle aurait pu être liquidée sans abattement, les assurés peuvent
-      bénéficier d'une majoration de leur pension. Cette majoration est
-      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
-      à l'âge du taux plein dans la limite de vingt trimestres » —, que
-      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
-      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
-      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge où la pension pouvait être liquidée sans abattement — l'âge
-      légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
-      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
-      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
-      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
-      le 14 novembre 2026).
-  - debut: 2021
-    fin: 2021
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carpimko_2016
-    fermee_a_la_carriere_longue: true
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_depuis_la_duree: surcote_par_age_seul
-    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
-    surcote_trimestres_maximum: 20
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 185113
-    cotisation_forfaitaire_euros: 1744.00
-    cotisation_forfaitaire_annee: 2021
-    notes: >-
-      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
-      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
-      liquidation de la retraite est ajournée au-delà de l'âge auquel
-      elle aurait pu être liquidée sans abattement, les assurés peuvent
-      bénéficier d'une majoration de leur pension. Cette majoration est
-      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
-      à l'âge du taux plein dans la limite de vingt trimestres » —, que
-      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
-      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
-      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge où la pension pouvait être liquidée sans abattement — l'âge
-      légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
-      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
-      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
-      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
-      le 14 novembre 2026).
-  - debut: 2022
-    fin: 2022
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carpimko_2016
-    fermee_a_la_carriere_longue: true
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_depuis_la_duree: surcote_par_age_seul
-    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
-    surcote_trimestres_maximum: 20
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 193913
-    cotisation_forfaitaire_euros: 1840.00
-    cotisation_forfaitaire_annee: 2022
-    notes: >-
-      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
-      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
-      liquidation de la retraite est ajournée au-delà de l'âge auquel
-      elle aurait pu être liquidée sans abattement, les assurés peuvent
-      bénéficier d'une majoration de leur pension. Cette majoration est
-      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
-      à l'âge du taux plein dans la limite de vingt trimestres » —, que
-      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
-      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
-      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge où la pension pouvait être liquidée sans abattement — l'âge
-      légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
-      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
-      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
-      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
-      le 14 novembre 2026).
-  - debut: 2023
-    fin: 2023
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carpimko_2016
-    fermee_a_la_carriere_longue: true
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_depuis_la_duree: surcote_par_age_seul
-    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
-    surcote_trimestres_maximum: 20
-    avantages_non_contributifs: [reversion]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 203446
-    cotisation_forfaitaire_euros: 1944.00
-    cotisation_forfaitaire_annee: 2023
-    notes: >-
-      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
-      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
-      liquidation de la retraite est ajournée au-delà de l'âge auquel
-      elle aurait pu être liquidée sans abattement, les assurés peuvent
-      bénéficier d'une majoration de leur pension. Cette majoration est
-      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
-      à l'âge du taux plein dans la limite de vingt trimestres » —, que
-      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
-      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
-      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge où la pension pouvait être liquidée sans abattement — l'âge
-      légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
-      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
-      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
-      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
-      le 14 novembre 2026).
-  - debut: 2024
-    fin: 2024
-    type_calcul: points
+  - du: 2024-01-01
+    au: 2026-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -816,12 +162,6 @@ periodes:
     surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 224713
-    cotisation_forfaitaire_euros: 2176.00
-    cotisation_forfaitaire_annee: 2024
     notes: >-
       LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
       (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
@@ -846,53 +186,7 @@ periodes:
       conditions que pour le régime de base, prévues aux articles L.
       643-1-1 et L. 351-12 », repris par l'article 5 du règlement de 2026
       : `majoration_enfants`.
-  - debut: 2025
-    fin: 2025
-    type_calcul: points
-    age_ouverture: 62
-    age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
-    age_table: carpimko_2016
-    fermee_a_la_carriere_longue: true
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_depuis_la_duree: surcote_par_age_seul
-    surcote_trimestres_maximum: 20
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: plafonnee_5_pass
-    taux_cotisation_retraite: 0.03
-    borne_basse_euros: 25246
-    borne_haute_euros: 237179
-    cotisation_forfaitaire_euros: 2312.00
-    cotisation_forfaitaire_annee: 2025
-    notes: >-
-      Dernier exercice de l'ancienne architecture. Décret n° 2025-1076 du 10 novembre 2025.
-      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
-      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
-      liquidation de la retraite est ajournée au-delà de l'âge auquel
-      elle aurait pu être liquidée sans abattement, les assurés peuvent
-      bénéficier d'une majoration de leur pension. Cette majoration est
-      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
-      à l'âge du taux plein dans la limite de vingt trimestres » —, que
-      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
-      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
-      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge où la pension pouvait être liquidée sans abattement — l'âge
-      légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
-      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
-      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
-      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
-      le 14 novembre 2026).
-  - debut: 2026
-    fin: null
-    type_calcul: points
+  - du: 2026-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -910,9 +204,6 @@ periodes:
     surcote_trimestres_maximum: 20
     effet_au_trimestre_civil: [2026-07-18, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
-    assiette: plafonnee_3_pass
-    assiette_minimale_pass: 0.5
-    taux_cotisation_retraite: 0.087
     notes: >-
       LA RÉFORME DU 1er JANVIER 2026 SUPPRIME LE FORFAIT. Le décret n° 2025-1076
       du 10 novembre 2025 écrit, pour 2026 : « taux de la cotisation
@@ -953,3 +244,391 @@ periodes:
       la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
       de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
       le 14 novembre 2026).
+cotisation:
+  - du: 1984-01-01
+    au: 1987-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_forfaitaire_euros: 624.00
+    cotisation_forfaitaire_annee: 2002
+  - du: 1987-01-01
+    au: 1996-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_forfaitaire_euros: 624.00
+    cotisation_forfaitaire_annee: 2002
+  - du: 1996-01-01
+    au: 2002-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 82446
+    cotisation_forfaitaire_euros: 624.00
+    cotisation_forfaitaire_annee: 2002
+    notes: >-
+      LA COTISATION PROPORTIONNELLE EST INSTITUÉE EN 1996, à 3 % — taux qu'elle
+      gardera trente ans, jusqu'à la réforme de 2026. Les bornes de son assiette
+      sont celles de 2002, premier exercice que les décrets couvrent ici.
+      LE SEUIL EST FIXÉ EN EUROS ET NE BOUGE JAMAIS : 25 246 €, de 2002 à 2025,
+      sans indexation d'aucune sorte. C'est pourquoi cette fiche porte des bornes
+      en euros et non en plafonds — les exprimer en multiples du plafond les
+      ferait dériver de 60 % sur la période.
+  - du: 2002-01-01
+    au: 2003-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 82446
+    cotisation_forfaitaire_euros: 624.00
+    cotisation_forfaitaire_annee: 2002
+    notes: >-
+      À PARTIR D'ICI, TOUT EST LU DANS LE JOURNAL OFFICIEL. Un décret par an
+      fixe ces trois nombres pour toutes les sections libérales à la fois :
+      « 5° Section professionnelle des auxiliaires médicaux : cotisation
+      forfaitaire : … ; taux de la cotisation proportionnelle : 3 % ; limites
+      de l'assiette de la cotisation proportionnelle : seuil : 25 246 euros ;
+      plafond : … ». Le forfait passe de 624 € en 2002 à 2 312 € en 2025, et
+      le plafond de 82 446 € à 237 179 € ; le seuil et le taux, eux, ne
+      bougent pas.
+  - du: 2003-01-01
+    au: 2004-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 87586
+    cotisation_forfaitaire_euros: 680.00
+    cotisation_forfaitaire_annee: 2003
+  - du: 2004-01-01
+    au: 2005-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 89046
+    cotisation_forfaitaire_euros: 696.00
+    cotisation_forfaitaire_annee: 2004
+  - du: 2005-01-01
+    au: 2006-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 89046
+    cotisation_forfaitaire_euros: 696.00
+    cotisation_forfaitaire_annee: 2005
+    notes: >-
+      Le décret de 2005 ne revient ni sur le forfait ni sur les bornes : ceux de 2004 restent en vigueur.
+  - du: 2006-01-01
+    au: 2007-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 89046
+    cotisation_forfaitaire_euros: 696.00
+    cotisation_forfaitaire_annee: 2006
+  - du: 2007-01-01
+    au: 2008-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 108846
+    cotisation_forfaitaire_euros: 912.00
+    cotisation_forfaitaire_annee: 2007
+  - du: 2008-01-01
+    au: 2009-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 116179
+    cotisation_forfaitaire_euros: 992.00
+    cotisation_forfaitaire_annee: 2008
+  - du: 2009-01-01
+    au: 2010-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 119113
+    cotisation_forfaitaire_euros: 1024.00
+    cotisation_forfaitaire_annee: 2009
+  - du: 2010-01-01
+    au: 2011-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 126446
+    cotisation_forfaitaire_euros: 1104.00
+    cotisation_forfaitaire_annee: 2010
+  - du: 2011-01-01
+    au: 2012-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 135246
+    cotisation_forfaitaire_euros: 1200.00
+    cotisation_forfaitaire_annee: 2011
+  - du: 2012-01-01
+    au: 2013-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 144046
+    cotisation_forfaitaire_euros: 1296.00
+    cotisation_forfaitaire_annee: 2012
+  - du: 2013-01-01
+    au: 2014-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 151379
+    cotisation_forfaitaire_euros: 1376.00
+    cotisation_forfaitaire_annee: 2013
+  - du: 2014-01-01
+    au: 2015-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 152846
+    cotisation_forfaitaire_euros: 1392.00
+    cotisation_forfaitaire_annee: 2014
+  - du: 2015-01-01
+    au: 2016-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 153579
+    cotisation_forfaitaire_euros: 1400.00
+    cotisation_forfaitaire_annee: 2015
+    notes: >-
+      AUCUNE MAJORATION DE REPORT AVANT L'ARRÊTÉ DU 31 JUILLET 2015, qui
+      l'insère ; la fiche portait 0,75 % sans texte, que le moteur ne
+      lisait pas. Cette période liquide jusqu'au 2 octobre 2015
+      (`date_effet`) : l'arrêté, publié le 2 octobre sans date d'effet,
+      entre en vigueur le 3, et la période de 2016 sert ses âges et sa
+      majoration aux pensions qui prennent effet depuis ce jour.
+  - du: 2016-01-01
+    au: 2017-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 153579
+    cotisation_forfaitaire_euros: 1400.00
+    cotisation_forfaitaire_annee: 2016
+  - du: 2017-01-01
+    au: 2018-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 158713
+    cotisation_forfaitaire_euros: 1456.00
+    cotisation_forfaitaire_annee: 2017
+    notes: >-
+      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
+      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
+      liquidation de la retraite est ajournée au-delà de l'âge auquel
+      elle aurait pu être liquidée sans abattement, les assurés peuvent
+      bénéficier d'une majoration de leur pension. Cette majoration est
+      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
+      à l'âge du taux plein dans la limite de vingt trimestres » —, que
+      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
+      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
+      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
+  - du: 2018-01-01
+    au: 2019-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 165313
+    cotisation_forfaitaire_euros: 1528.00
+    cotisation_forfaitaire_annee: 2018
+    notes: >-
+      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
+      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
+      liquidation de la retraite est ajournée au-delà de l'âge auquel
+      elle aurait pu être liquidée sans abattement, les assurés peuvent
+      bénéficier d'une majoration de leur pension. Cette majoration est
+      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
+      à l'âge du taux plein dans la limite de vingt trimestres » —, que
+      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
+      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
+      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
+  - du: 2019-01-01
+    au: 2020-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 174113
+    cotisation_forfaitaire_euros: 1624.00
+    cotisation_forfaitaire_annee: 2019
+    notes: >-
+      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
+      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
+      liquidation de la retraite est ajournée au-delà de l'âge auquel
+      elle aurait pu être liquidée sans abattement, les assurés peuvent
+      bénéficier d'une majoration de leur pension. Cette majoration est
+      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
+      à l'âge du taux plein dans la limite de vingt trimestres » —, que
+      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
+      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
+      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
+  - du: 2020-01-01
+    au: 2021-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 176313
+    cotisation_forfaitaire_euros: 1648.00
+    cotisation_forfaitaire_annee: 2020
+    notes: >-
+      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
+      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
+      liquidation de la retraite est ajournée au-delà de l'âge auquel
+      elle aurait pu être liquidée sans abattement, les assurés peuvent
+      bénéficier d'une majoration de leur pension. Cette majoration est
+      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
+      à l'âge du taux plein dans la limite de vingt trimestres » —, que
+      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
+      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
+      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
+  - du: 2021-01-01
+    au: 2022-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 185113
+    cotisation_forfaitaire_euros: 1744.00
+    cotisation_forfaitaire_annee: 2021
+    notes: >-
+      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
+      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
+      liquidation de la retraite est ajournée au-delà de l'âge auquel
+      elle aurait pu être liquidée sans abattement, les assurés peuvent
+      bénéficier d'une majoration de leur pension. Cette majoration est
+      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
+      à l'âge du taux plein dans la limite de vingt trimestres » —, que
+      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
+      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
+      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
+  - du: 2022-01-01
+    au: 2023-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 193913
+    cotisation_forfaitaire_euros: 1840.00
+    cotisation_forfaitaire_annee: 2022
+    notes: >-
+      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
+      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
+      liquidation de la retraite est ajournée au-delà de l'âge auquel
+      elle aurait pu être liquidée sans abattement, les assurés peuvent
+      bénéficier d'une majoration de leur pension. Cette majoration est
+      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
+      à l'âge du taux plein dans la limite de vingt trimestres » —, que
+      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
+      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
+      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
+  - du: 2023-01-01
+    au: 2024-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 203446
+    cotisation_forfaitaire_euros: 1944.00
+    cotisation_forfaitaire_annee: 2023
+    notes: >-
+      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
+      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
+      liquidation de la retraite est ajournée au-delà de l'âge auquel
+      elle aurait pu être liquidée sans abattement, les assurés peuvent
+      bénéficier d'une majoration de leur pension. Cette majoration est
+      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
+      à l'âge du taux plein dans la limite de vingt trimestres » —, que
+      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
+      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
+      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
+  - du: 2024-01-01
+    au: 2025-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 224713
+    cotisation_forfaitaire_euros: 2176.00
+    cotisation_forfaitaire_annee: 2024
+  - du: 2025-01-01
+    au: 2026-01-01
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.03
+    borne_basse_euros: 25246
+    borne_haute_euros: 237179
+    cotisation_forfaitaire_euros: 2312.00
+    cotisation_forfaitaire_annee: 2025
+    notes: >-
+      Dernier exercice de l'ancienne architecture. Décret n° 2025-1076 du 10 novembre 2025.
+      LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
+      (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
+      liquidation de la retraite est ajournée au-delà de l'âge auquel
+      elle aurait pu être liquidée sans abattement, les assurés peuvent
+      bénéficier d'une majoration de leur pension. Cette majoration est
+      égale à 1,25 % par trimestre civil entier d'ajournement postérieur
+      à l'âge du taux plein dans la limite de vingt trimestres » —, que
+      le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
+      reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
+      de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
+  - du: 2026-01-01
+    assiette: plafonnee_3_pass
+    assiette_minimale_pass: 0.5
+    taux_cotisation_retraite: 0.087

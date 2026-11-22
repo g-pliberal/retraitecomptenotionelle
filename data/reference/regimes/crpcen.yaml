@@ -63,19 +63,17 @@ inventaire:
 # de 1990) : 10 % pour les trois premiers enfants et 5 % par enfant
 # au-delà. Avant 1990, le même barème est prêté. Barème
 # `taux_majoration_enfants` de chaque période.
-periodes:
-  - debut: 1937
-    fin: 2007
-    type_calcul: annuites
+structure:
+  type_calcul: annuites
+liquidation:
+  - du: 1937-01-01
+    au: 2008-01-01
     age_ouverture: 55
     age_taux_plein: 60
     duree_requise_trimestres: 150
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.11
-    perimetre_taux: agent_seul
     decote_par_trimestre: null
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
@@ -99,9 +97,8 @@ periodes:
       dans le notariat — l'essentiel des affiliés —, soixante ans celui
       des hommes et des carrières courtes ; la fiche garde le premier, et
       l'inventaire porte le second comme manque.
-  - debut: 2008
-    fin: 2008
-    type_calcul: annuites
+  - du: 2008-01-01
+    au: 2009-01-01
     age_ouverture: 55
     age_taux_plein: 60
     duree_requise_trimestres: 160
@@ -112,9 +109,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.11
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -150,9 +144,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2009
-    fin: 2009
-    type_calcul: annuites
+  - du: 2009-01-01
+    au: 2010-01-01
     age_ouverture: 55.5
     age_taux_plein: 60.5
     duree_requise_trimestres: 160
@@ -163,9 +156,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -201,9 +191,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2010
-    fin: 2010
-    type_calcul: annuites
+  - du: 2010-01-01
+    au: 2011-01-01
     age_ouverture: 56
     age_taux_plein: 61
     duree_requise_trimestres: 160
@@ -214,9 +203,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -252,9 +238,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2011
-    fin: 2011
-    type_calcul: annuites
+  - du: 2011-01-01
+    au: 2012-01-01
     age_ouverture: 56.5
     age_taux_plein: 61.5
     duree_requise_trimestres: 172
@@ -265,9 +250,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -303,9 +285,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2012
-    fin: 2012
-    type_calcul: annuites
+  - du: 2012-01-01
+    au: 2013-01-01
     age_ouverture: 57.25
     age_taux_plein: 62.25
     duree_requise_trimestres: 172
@@ -316,9 +297,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -354,9 +332,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2013
-    fin: 2013
-    type_calcul: annuites
+  - du: 2013-01-01
+    au: 2014-01-01
     age_ouverture: 58
     age_taux_plein: 63
     duree_requise_trimestres: 172
@@ -367,9 +344,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -405,9 +379,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2014
-    fin: 2014
-    type_calcul: annuites
+  - du: 2014-01-01
+    au: 2015-01-01
     age_ouverture: 58.75
     age_taux_plein: 63.75
     duree_requise_trimestres: 172
@@ -418,9 +391,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -456,9 +426,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2015
-    fin: 2016
-    type_calcul: annuites
+  - du: 2015-01-01
+    au: 2017-01-01
     age_ouverture: 59.5
     age_taux_plein: 64.5
     duree_requise_trimestres: 172
@@ -469,9 +438,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -507,9 +473,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2017
-    fin: 2017
-    type_calcul: annuites
+  - du: 2017-01-01
+    au: 2018-01-01
     age_ouverture: 60.33
     age_taux_plein: 65.33
     duree_requise_trimestres: 172
@@ -520,9 +485,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1360
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -567,9 +529,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2018
-    fin: 2018
-    type_calcul: annuites
+  - du: 2018-01-01
+    au: 2020-01-01
     age_ouverture: 60.67
     age_taux_plein: 65.67
     duree_requise_trimestres: 172
@@ -580,9 +541,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1293
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -627,34 +585,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2019
-    fin: 2019
-    type_calcul: annuites
-    age_ouverture: 60.67
-    age_taux_plein: 65.67
-    duree_requise_trimestres: 172
-    duree_requise_par_generation: duree_requise_par_generation
-    age_table: crpcen_2011
-    duree_requise_table: [crpcen_2014, crpcen_calendrier_a_60]
-    duree_requise_calendrier: regimes_speciaux_2008
-    taux_plein: 0.75
-    salaire_reference: 10_meilleures_annees
-    ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1298
-    perimetre_taux: agent_seul
-    bareme_decote: decote_regimes_speciaux
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: 0.0125
-    age_surcote_regimes_speciaux: surcote_regimes_speciaux
-    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-    avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
-    notes: >-
-      Comme 2018 ; seul change le taux de la cotisation salariale
-      (décret n° 91-613, article 4).
-  - debut: 2020
-    fin: 2020
-    type_calcul: annuites
+  - du: 2020-01-01
+    au: 2021-01-01
     age_ouverture: 61
     age_taux_plein: 66
     duree_requise_trimestres: 172
@@ -665,9 +597,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1303
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -712,9 +641,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2021
-    fin: 2021
-    type_calcul: annuites
+  - du: 2021-01-01
+    au: 2022-01-01
     age_ouverture: 61.33
     age_taux_plein: 66.33
     duree_requise_trimestres: 172
@@ -725,9 +653,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1303
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -772,9 +697,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2022
-    fin: 2023
-    type_calcul: annuites
+  - du: 2022-01-01
+    au: 2024-01-01
     age_ouverture: 61.67
     age_taux_plein: 66.67
     duree_requise_trimestres: 172
@@ -785,9 +709,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1303
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -832,9 +753,8 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2024
-    fin: 2024
-    type_calcul: annuites
+  - du: 2024-01-01
+    au: 2025-01-01
     age_ouverture: 62
     age_taux_plein: 67
     duree_requise_trimestres: 172
@@ -845,9 +765,6 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1303
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
@@ -892,13 +809,9 @@ periodes:
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
-  - debut: 2025
-    fin: null
-    type_calcul: annuites
+  - du: 2025-01-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
-    textes_des_renvois:
-      age_ouverture_par_generation: {id: LEGIARTI000047910068, depuis: "2025-01-01"}
     age_taux_plein: 67
     age_table: crpcen_2023
     age_taux_plein_a_l_ouverture: decote_regimes_speciaux
@@ -909,15 +822,14 @@ periodes:
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
     ecretement_salaire_reference: [3, 0.5, 7]
-    assiette: deplafonnee
-    taux_cotisation_retraite: 0.1303
-    perimetre_taux: agent_seul
     bareme_decote: decote_regimes_speciaux
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     age_surcote_regimes_speciaux: surcote_regimes_speciaux
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [enfants_crpcen, majoration_enfants, reversion]
+    textes:
+      age_ouverture_par_generation: {id: LEGIARTI000047910068, depuis: "2025-01-01"}
     notes: >-
       Loi du 14 avril 2023 : l'âge d'ouverture passe à 64 ans. La fiche
       s'arrêtait à 62 — celui de 2011 —, et servait donc à un clerc
@@ -949,3 +861,91 @@ periodes:
       85, abrogé en 2025, la lisait, à soixante ans (`crpcen_calendrier_a_60`,
       âge de lecture de `crpcen_2014`) — lecture du dépôt, comme aux IEG ; la
       table de 2023 se lit à la génération du clerc.
+cotisation:
+  - du: 1937-01-01
+    au: 2008-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.11
+    perimetre_taux: agent_seul
+  - du: 2008-01-01
+    au: 2009-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.11
+    perimetre_taux: agent_seul
+  - du: 2009-01-01
+    au: 2010-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+  - du: 2010-01-01
+    au: 2011-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+  - du: 2011-01-01
+    au: 2012-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+  - du: 2012-01-01
+    au: 2013-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+  - du: 2013-01-01
+    au: 2014-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+  - du: 2014-01-01
+    au: 2015-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+  - du: 2015-01-01
+    au: 2017-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+  - du: 2017-01-01
+    au: 2018-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1360
+    perimetre_taux: agent_seul
+  - du: 2018-01-01
+    au: 2019-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1293
+    perimetre_taux: agent_seul
+  - du: 2019-01-01
+    au: 2020-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1298
+    perimetre_taux: agent_seul
+    notes: >-
+      Comme 2018 ; seul change le taux de la cotisation salariale
+      (décret n° 91-613, article 4).
+  - du: 2020-01-01
+    au: 2021-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1303
+    perimetre_taux: agent_seul
+  - du: 2021-01-01
+    au: 2022-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1303
+    perimetre_taux: agent_seul
+  - du: 2022-01-01
+    au: 2024-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1303
+    perimetre_taux: agent_seul
+  - du: 2024-01-01
+    au: 2025-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1303
+    perimetre_taux: agent_seul
+  - du: 2025-01-01
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.1303
+    perimetre_taux: agent_seul

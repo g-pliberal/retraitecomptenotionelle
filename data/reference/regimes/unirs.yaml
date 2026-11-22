@@ -31,23 +31,19 @@ inventaire:
     nom avant 1975, sans taux) : 2,5 % par continuité avec l'Arrco de 1962.
     Il sert aussi de barème aux services passés calédoniens de 1958 à 1960,
     que l'Arrco valide sans cotisation depuis 1995.
-periodes:
-  - debut: 1957
-    fin: 1961
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1957-01-01
+    au: 1962-01-01
     age_ouverture: 65
     age_taux_plein: 65
     duree_requise_trimestres: null
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 1000.0
-    plafond_majoration_annee: 2011
     plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
-    assiette: tranche_1
-    taux_cotisation_retraite: 0.025
-    part_salariale: 0.40   # prédécesseur de l'Arrco, même répartition — estimée
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -69,3 +65,14 @@ periodes:
       point sont celles de la fédération (regimes/valeurs_point.csv, série
       `unirs` depuis 1949), et la conversion de 1999 est portée par
       regimes/conversions_points.csv.
+cotisation:
+  - du: 1957-01-01
+    au: 1962-01-01
+    assiette: tranche_1
+    taux_cotisation_retraite: 0.025
+    part_salariale: 0.40   # prédécesseur de l'Arrco, même répartition — estimée
+servi:
+  - du: 1957-01-01
+    au: 1962-01-01
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011

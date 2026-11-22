@@ -30,18 +30,16 @@ inventaire:
     - {reference: "statuts du régime complémentaire de la CAVEC (arrêtés d'approbation)", id: null}
     - {reference: "statuts approuvés par l'arrêté du 22 février 2008, article 3.13 (taux plein à 65 ans, abattement de 1,25 % par trimestre manquant dès 60 ans)", id: JORFARTI000018197778}
     - {reference: "arrêté du 4 juillet 2025, article 20 des statuts (majoration de 10 % pour trois enfants)", id: JORFARTI000051849616}
-periodes:
-  - debut: 1953
-    fin: 2007
-    type_calcul: points
+structure:
+  type_calcul: points
+liquidation:
+  - du: 1953-01-01
+    au: 2008-01-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_4_pass
-    taux_cotisation_retraite: 0.0
-    cotisation_par_classes: cotisation_par_classes_liberales
     avantages_non_contributifs: [reversion]
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavec_minoration_age_seul
@@ -91,18 +89,13 @@ periodes:
       durée du régime général : 67 ans lus à la génération, et un taux
       plein que la durée ouvrait dès l'âge légal. Le taux de l'abattement
       d'avant 2008, lui, n'est pas connu.
-  - debut: 2008
-    fin: 2018
-    date_effet: [2008-01-01, 2018-09-05]
-    type_calcul: points
+  - du: 2008-01-01
+    au: 2018-09-05
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_4_pass
-    taux_cotisation_retraite: 0.0
-    cotisation_par_classes: cotisation_par_classes_liberales
     avantages_non_contributifs: [reversion]
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavec_minoration_age_seul
@@ -160,18 +153,13 @@ periodes:
       texte l'écrit : elle ne joue que pour qui liquide avant l'âge légal
       — carrière longue, handicap —, et le règlement ne prévoit alors
       aucune dispense, l'abattement court jusqu'à 65 ans.
-  - debut: 2019
-    fin: 2025
-    date_effet: [2018-09-05, 2025-07-07]
-    type_calcul: points
+  - du: 2018-09-05
+    au: 2025-07-07
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_4_pass
-    taux_cotisation_retraite: 0.0
-    cotisation_par_classes: cotisation_par_classes_liberales
     avantages_non_contributifs: [reversion]
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavec_minoration_age_seul
@@ -216,18 +204,12 @@ periodes:
       Journal officiel du 4 septembre 2018, n'a pas de date d'effet propre :
       il vaut le lendemain, et la période liquide les pensions qui prennent
       effet depuis le 5 septembre 2018 (`date_effet`).
-  - debut: 2026
-    fin: 2026
-    date_effet: [2025-07-07, 2027-01-01]
-    type_calcul: points
+  - du: 2025-07-07
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
-    assiette: plafonnee_4_pass
-    taux_cotisation_retraite: 0.0
-    cotisation_par_classes: cotisation_par_classes_liberales
     avantages_non_contributifs: [reversion, majoration_enfants]
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavec_minoration_age_seul
@@ -286,24 +268,31 @@ periodes:
       majoration vaut pour les pensions qui prennent effet depuis le 7
       juillet 2025, lendemain de sa publication (`date_effet` de la période
       de 2026).
-  - debut: 2027
-    fin: null
-    type_calcul: points
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
+cotisation:
+  - du: 1953-01-01
+    au: 2008-01-01
     assiette: plafonnee_4_pass
     taux_cotisation_retraite: 0.0
     cotisation_par_classes: cotisation_par_classes_liberales
-    avantages_non_contributifs: [reversion, majoration_enfants]
-    decote_par_trimestre: 0.0125
-    decote_annulee_par_la_duree: cavec_minoration_age_seul
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_age_debut: 65
-    surcote_trimestres_maximum: 20
+  - du: 2008-01-01
+    au: 2019-01-01
+    assiette: plafonnee_4_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: cotisation_par_classes_liberales
+  - du: 2019-01-01
+    au: 2026-01-01
+    assiette: plafonnee_4_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: cotisation_par_classes_liberales
+  - du: 2026-01-01
+    au: 2027-01-01
+    assiette: plafonnee_4_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: cotisation_par_classes_liberales
+  - du: 2027-01-01
+    assiette: plafonnee_4_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: cotisation_par_classes_liberales
     notes: >-
       Les statuts approuvés par l'arrêté du 4 juillet 2025 fixent une cible
       au conseil : « ces paramètres sont déterminés de sorte que le taux de
