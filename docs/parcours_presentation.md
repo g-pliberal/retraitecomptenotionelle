@@ -354,7 +354,7 @@ Onglet **Droits non cotisés**. La page qui explique les écarts du
 simulateur : ce que le système actuel verse sans que personne l'ait cotisé.
 Trois chiffres :
 <!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->46<!--/--> dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.gratuit/1000)-->98,1<!--/--> Md € en <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.annee)-->2024<!--/--> pour les 23 que le modèle sait chiffrer, dont
+cinquième ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.gratuit/1000)-->99,7<!--/--> Md € en <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.annee)-->2024<!--/--> pour les 23 que le modèle sait chiffrer, dont
 <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.lignes.reversion/1000)-->38,3<!--/--> Md € de réversion, qui est lue et non calculée ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.anticipee/1000)-->8,5<!--/--> Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
