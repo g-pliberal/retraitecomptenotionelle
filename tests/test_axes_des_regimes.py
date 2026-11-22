@@ -187,3 +187,89 @@ def _fiche(**blocs):
 def test_la_vue_refuse_ce_qu_elle_ne_saurait_refaire(blocs, message):
     with pytest.raises(ValueError, match=message):
         vue_ancienne(_fiche(**blocs))
+
+
+# -- Le chargeur Python en blocs (étape 4) : ses lectures à la date et à l'année
+
+
+@pytest.fixture(scope="module")
+def catalogue():
+    from retraite_notionnelle.donnees.regimes import CatalogueRegimes
+    return CatalogueRegimes(RACINE_DONNEES)
+
+
+def test_le_regime_porte_ses_quatre_blocs(catalogue):
+    """Banque de France : une liquidation qui change le 1er avril 2007, une
+    ligne de cotisation par année de 2007 à 2009 (banque_de_france.yaml)."""
+    regime = catalogue["banque_de_france"]
+    assert [l["du"] for l in regime.liquidation[:2]] == ["1930-01-01", "2007-04-01"]
+    assert regime.liquidation[0]["au"] == "2007-04-01"
+    assert regime.liquidation[0]["age_ouverture"] == 55
+    assert "taux_cotisation_retraite" not in regime.liquidation[0]
+    assert [l["type_calcul"] for l in regime.structure] == ["annuites"]
+    de_2007 = [l for l in regime.cotisation if l["du"] == 2007]
+    assert de_2007 == [{"du": 2007, "au": 2007, **{
+        c: v for c, v in de_2007[0].items() if c not in ("du", "au")}}]
+    assert de_2007[0]["taux_cotisation_retraite"] == 0.0785
+    assert "age_ouverture" not in de_2007[0]
+
+
+def test_la_liquidation_se_lit_a_sa_date(catalogue):
+    """Le règlement annexé au décret n° 2007-262 vaut à compter du 1er avril
+    2007 : une pension du 31 mars 2007 ouvre à 55 ans, une du 1er avril à
+    60, l'une et l'autre avec la cotisation de 2007, à 7,85 %."""
+    regime = catalogue["banque_de_france"]
+    avant, apres = regime.a_la_date("2007-03-31"), regime.a_la_date("2007-04-01")
+    assert (avant.age_ouverture, apres.age_ouverture) == (55, 60)
+    assert avant.taux_cotisation_retraite == apres.taux_cotisation_retraite == 0.0785
+    assert regime.a_la_date("1929-12-31") is None
+    assert regime.a_la_date("2007-04-01") is regime.a_la_date("2007-06-01")
+
+
+def test_une_annee_d_acquisition_lit_ses_tranches_et_la_liquidation_de_son_premier_janvier(
+        catalogue):
+    """L'Agirc-Arrco cotise en 2019 sur deux tranches, à 7,87 % puis 21,59 %
+    (agirc_arrco.yaml) ; la Banque de France, en 2007, lit la liquidation du
+    1er janvier, à 55 ans, ou celle du jour qu'on lui donne."""
+    tranches = catalogue["agirc_arrco"].de_l_annee(2019)
+    assert [(p.assiette, p.taux_cotisation_retraite) for p in tranches] == [
+        ("tranche_1", 0.0787), ("tranche_2", 0.2159)]
+    regime = catalogue["banque_de_france"]
+    (de_2007,) = regime.de_l_annee(2007)
+    assert (de_2007.age_ouverture, de_2007.taux_cotisation_retraite) == (55, 0.0785)
+    assert regime.de_l_annee(2007, "2007-04-01")[0].age_ouverture == 60
+    assert regime.de_l_annee(1900) == ()
+
+
+def test_les_lectures_par_axe_rendent_la_cotisation_des_periodes(catalogue):
+    """Pendant le gel, une année d'acquisition lit les mêmes lignes de
+    cotisation que les périodes qui couvrent l'année, dans le même ordre."""
+    from retraite_notionnelle.donnees.axes import famille
+    for regime in catalogue:
+        for annee in range(1900, 2071, 3):
+            actives = regime.periodes_actives(annee)
+            lues = regime.de_l_annee(annee)
+            assert len(lues) == len(actives), (regime.code, annee)
+            for lue, active in zip(lues, actives):
+                for champ in ("assiette", "taux_cotisation_retraite", "part_salariale",
+                              "borne_basse_euros", "borne_haute_euros"):
+                    assert famille(champ) == "cotisation"
+                    assert getattr(lue, champ) == getattr(active, champ), (
+                        regime.code, annee, champ)
+
+
+def test_un_assemblage_sans_liquidation_ou_sans_cotisation_est_refuse(catalogue):
+    """Le moteur assemblerait, sans la ligne qui manque, des paramètres où ses
+    champs manquent ; une période Python les porte tous : le chargeur refuse,
+    plutôt que de prêter ceux d'une autre ligne. Aucun régime n'y tombe."""
+    from dataclasses import replace
+    regime = catalogue["banque_de_france"]
+    (de_2007,) = [p for p in regime.periodes if p.debut == 2007]
+    sans_tranche = replace(regime, periodes=(
+        replace(de_2007, date_effet=("2000-01-01", None)),))
+    with pytest.raises(ValueError, match="aucune ligne de cotisation"):
+        sans_tranche.a_la_date("2010-01-01")
+    sans_liquidation = replace(regime, periodes=(
+        replace(de_2007, date_effet=("2008-01-01", None)),))
+    with pytest.raises(ValueError, match="aucune ligne de liquidation"):
+        sans_liquidation.de_l_annee(2007)

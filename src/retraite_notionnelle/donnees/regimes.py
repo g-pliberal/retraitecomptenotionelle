@@ -5,12 +5,13 @@ from __future__ import annotations
 import csv
 import math
 import re
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field, fields, replace
 from functools import cached_property
 from pathlib import Path
 
 from ..somme import somme_ordonnee
-from .axes import vue_ancienne
+from .axes import (blocs_des_periodes, en_vigueur_au_jour, tranches_de_l_annee,
+                   vue_ancienne)
 from .chargement import Fiabilite, au_mois, charger_yaml, une_fois_par_instantane
 
 #: Familles de régimes reconnues.
@@ -1228,6 +1229,100 @@ class Regime:
             if p.liquide(jour):
                 return p
         return None
+
+    # -- Les quatre blocs, et leurs lectures à la date et à l'année ----------
+    #
+    # Note de décision 0009, amendement du 22 novembre 2026 ; ``Regime`` de
+    # ``moteur/js/regimes.js``, dont ``a_la_date`` et ``de_l_annee`` sont les
+    # jumeaux. PENDANT LE GEL, les blocs se refont des périodes
+    # (:func:`~.axes.blocs_des_periodes`) ; à l'étape 5, la vue part, et les
+    # périodes avec elle.
+
+    @cached_property
+    def _blocs(self) -> dict[str, tuple[dict, ...]]:
+        lignes = [{f.name: getattr(p, f.name) for f in fields(p)} for p in self.periodes]
+        blocs = blocs_des_periodes(lignes, cle=lambda champs: repr(sorted(
+            champs.items(), key=lambda paire: paire[0])))
+        return {bloc: tuple(siennes) for bloc, siennes in blocs.items()}
+
+    @property
+    def structure(self) -> tuple[dict, ...]:
+        """Ce qui décrit le régime, en lignes au jour ``[du, au)``."""
+        return self._blocs["structure"]
+
+    @property
+    def liquidation(self) -> tuple[dict, ...]:
+        """Les règles choisies à la date d'effet de la pension, au jour."""
+        return self._blocs["liquidation"]
+
+    @property
+    def cotisation(self) -> tuple[dict, ...]:
+        """Les paramètres de l'année où le droit s'acquiert, ``du`` et ``au``
+        des années incluses ; deux lignes de la même année, deux tranches."""
+        return self._blocs["cotisation"]
+
+    @property
+    def servi(self) -> tuple[dict, ...]:
+        """Les montants que le service revalorise, au jour."""
+        return self._blocs["servi"]
+
+    @cached_property
+    def _assembles(self) -> dict[tuple, PeriodeRegime]:
+        return {}
+
+    def _assembler(self, liquidation, structure, servi, cotisation) -> PeriodeRegime:
+        """Les paramètres d'une ligne de liquidation, de la structure, d'une
+        ligne servie et d'une ligne de cotisation : la période de la ligne de
+        cotisation, dont les champs de liquidation, de structure et du servi
+        sont ceux des trois autres lignes. Une même combinaison rend le même
+        objet. Ses ``debut``, ``fin`` et ``date_effet`` restent ceux de la
+        période : son ``effet`` n'est pas celui de sa ligne de liquidation, et
+        aucun lecteur ne doit s'y fier. Le moteur assemble sans la ligne qui
+        manque, et ses champs y manquent ; une période Python les porte tous :
+        sans ligne de liquidation ou de cotisation, le chargeur refuse."""
+        for bloc, ligne in (("liquidation", liquidation), ("cotisation", cotisation)):
+            if ligne is None:
+                raise ValueError(f"{self.code} : aucune ligne de {bloc} à assembler")
+        rangs = tuple(None if ligne is None else next(
+            rang for rang, l in enumerate(lignes) if l is ligne)
+            for ligne, lignes in ((liquidation, self.liquidation),
+                                  (structure, self.structure), (servi, self.servi),
+                                  (cotisation, self.cotisation)))
+        assemble = self._assembles.get(rangs)
+        if assemble is None:
+            base = self.periodes[rangs[3]]
+            champs = {}
+            for ligne in (liquidation, structure, servi):
+                if ligne is not None:
+                    champs.update({c: v for c, v in ligne.items() if c not in ("du", "au")})
+            assemble = replace(base, **champs)
+            self._assembles[rangs] = assemble
+        return assemble
+
+    def a_la_date(self, jour: str) -> PeriodeRegime | None:
+        """Les paramètres qui liquident une pension prenant effet ce jour
+        (AAAA-MM-JJ) : la ligne de liquidation, la structure et la ligne servie
+        en vigueur ce jour-là, et la première tranche de la cotisation de son
+        année. ``None`` quand aucune ligne de liquidation ne le couvre."""
+        liquidation = en_vigueur_au_jour(self.liquidation, jour)
+        if liquidation is None:
+            return None
+        tranches = tranches_de_l_annee(self.cotisation, int(jour[:4]))
+        return self._assembler(liquidation, en_vigueur_au_jour(self.structure, jour),
+                               en_vigueur_au_jour(self.servi, jour),
+                               tranches[0] if tranches else None)
+
+    def de_l_annee(self, annee: int, jour: str | None = None) -> tuple[PeriodeRegime, ...]:
+        """Les paramètres d'une année d'acquisition, un par tranche, dans
+        l'ordre : chaque ligne de cotisation qui couvre l'année, avec la
+        liquidation, la structure et la ligne servie en vigueur au jour
+        ``jour`` (AAAA-MM-JJ, le 1er janvier de l'année par défaut)."""
+        jour = f"{annee:04d}-01-01" if jour is None else jour
+        liquidation = en_vigueur_au_jour(self.liquidation, jour)
+        structure = en_vigueur_au_jour(self.structure, jour)
+        servi = en_vigueur_au_jour(self.servi, jour)
+        return tuple(self._assembler(liquidation, structure, servi, cotisation)
+                     for cotisation in tranches_de_l_annee(self.cotisation, annee))
 
     def ouvert(self, annee: int) -> bool:
         """Le régime accepte-t-il de nouveaux affiliés cette année-là ?"""

@@ -213,7 +213,8 @@ def _forfait(catalogue, regimes: frozenset[str], annee: int, macro, part: float)
     """Le forfait sur lequel l'un de ``regimes`` prélève, l'année ``annee`` —
     le SMIC des cultes —, proratisé sur ``part`` ; ``None`` sans forfait."""
     for code in sorted(regimes):
-        periode = catalogue[code].periode(annee) if code in catalogue else None
+        tranches = catalogue[code].de_l_annee(annee) if code in catalogue else ()
+        periode = tranches[0] if tranches else None
         if periode is not None and periode.assiette_forfaitaire:
             return periode.repere_assiette(
                 macro.plafond_securite_sociale(annee),

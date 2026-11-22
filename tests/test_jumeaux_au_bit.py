@@ -393,6 +393,10 @@ CHAMPS_DE_LA_PERIODE = ("regime", "debut", "fin", "type_calcul", "age_ouverture"
                         "age_taux_plein", "taux_cotisation_retraite", "part_salariale",
                         "assiette", "effet")
 
+#: Ce qu'on compare des paramètres qu'un régime lit à une date ou à une année :
+#: ceux d'une période, hors de ses années, qu'ils n'ont pas au portage.
+CHAMPS_DES_AXES = tuple(c for c in CHAMPS_DE_LA_PERIODE if c not in ("debut", "fin", "effet"))
+
 
 def _morceau(valeur, cote: str):
     """Un morceau de période : une période en Python, la fiche dont le portage
@@ -732,12 +736,17 @@ def _grilles() -> dict[tuple[str, str], Grille]:
         (HISTORIQUES, "csg_deductible_pension"): Grille(("historiques",), tuple(
             (*jour, taux) for jour in jours for taux in ("plein", "median", "reduit"))),
 
-        # Les régimes : la période de chaque année, sous les taux de la fiche
-        # et sous les taux moyens des entreprises (``dater_les_taux_moyens``).
-        (REGIMES, "periode"): Grille(regimes, annees_des_regimes,
-                                    champs=CHAMPS_DE_LA_PERIODE),
-        (REGIMES, "periodes_actives"): Grille(regimes, annees_des_regimes,
-                                              champs=CHAMPS_DE_LA_PERIODE),
+        # Les régimes : les tranches de chaque année d'acquisition, et ce qui
+        # liquide à chaque date, sous les taux de la fiche et sous les taux
+        # moyens des entreprises (``dater_les_taux_moyens``).
+        (REGIMES, "de_l_annee"): Grille(regimes, annees_des_regimes,
+                                       champs=CHAMPS_DES_AXES),
+        (REGIMES, "a_la_date"): Grille(regimes, tuple(
+            (f"{annee:04d}-{mois:02d}-{jour:02d}",) for annee in (
+                *range(1850, 2101, 5), 1945, 1946, 1972, 1983, 1993, 2003, 2004, 2007,
+                2012, 2015, 2019, 2023, 2026)
+            for mois, jour in ((1, 1), (4, 1), (7, 1), (10, 3), (12, 31))),
+            champs=CHAMPS_DES_AXES),
         (REGIMES, "couvre"): Grille(periodes, tuple((annee,) for annee in (
             1800, 1900, 1945, 1946, 1972, 1983, 1993, 2003, 2004, 2019, 2026, 2100))),
         (REGIMES, "effet"): Grille(periodes),
@@ -864,8 +873,11 @@ PAR_L_APPELANT = {
     (REGIMES, "_en_vigueur"): (
         (REGIMES, "taux"),
         "les deux côtés n'ont pas la même signature ; taux le lit à chaque année"),
+    (REGIMES, "_assembler"): (
+        (REGIMES, "de_l_annee"),
+        "les lignes qu'il assemble sont celles que de_l_annee et a_la_date choisissent"),
     (REGIMES, "dater_les_taux_moyens"): (
-        (REGIMES, "periode"),
+        (REGIMES, "de_l_annee"),
         "le catalogue aux taux moyens le fait courir sur chaque régime"),
     (CONTEXTE, "_donnee"): (
         (CONTEXTE, "comptes"),

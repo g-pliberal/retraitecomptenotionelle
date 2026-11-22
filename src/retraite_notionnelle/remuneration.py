@@ -1775,7 +1775,7 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
         forfait_salarie = forfait_employeur = 0.0
         classes: tuple[Classe, ...] = ()
         part_des_classes = 1.0
-        for periode in regime.periodes_actives(annee):
+        for periode in regime.de_l_annee(annee):
             basse, haute = periode.bornes_assiette_en_pass()
             # Les bornes en euros, qui priment : le plafond propre du RCI de
             # l'année, les tranches que la CNBF et la CARPIMKO fixent en euros.
@@ -1912,7 +1912,7 @@ def _etage_hors_repartition(catalogue, regime, statut: str, annee: int,
     ``None`` quand rien n'est prélevé : pas de primes, ou pas de période."""
     salarie: list[Segment] = []
     employeur: list[Segment] = []
-    for periode in regime.periodes_actives(annee):
+    for periode in regime.de_l_annee(annee):
         soumise = (charger_primes_soumises(catalogue.racine).parts(
             statut, annee, part_primes).soumise
             if periode.assiette == "primes_uniquement" else 0.0)
@@ -2296,7 +2296,7 @@ def profil_de_la_fiche(affiliations, catalogue, statut: str, annee: int,
         regime = catalogue[code]
         if regime.hors_repartition:
             continue
-        for periode in regime.periodes_actives(annee):
+        for periode in regime.de_l_annee(annee):
             if periode.perimetre_taux == "agent_seul":
                 return "agent_seul"
     if famille == "public":

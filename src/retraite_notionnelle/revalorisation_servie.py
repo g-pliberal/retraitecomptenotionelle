@@ -312,7 +312,8 @@ class RevalorisationServie:
         regle = REGLE_GENERALE
         fiche = self._catalogue[regime] if regime in self._catalogue else None
         if fiche is not None:
-            periode = fiche.periode(min(annee_liquidation, _derniere_annee(fiche)))
+            periode = fiche.a_la_date(
+                f"{min(annee_liquidation, _derniere_annee(fiche)):04d}-01-01")
             if periode is not None and periode.type_calcul in ("points", "mixte"):
                 bareme = periode.points_de or regime
                 if self._derniere_valeur_publiee(bareme) is not None:

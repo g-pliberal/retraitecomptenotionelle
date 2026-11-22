@@ -23,6 +23,8 @@ part avec la vue, à l'étape 5.
 from __future__ import annotations
 
 import datetime as dt
+import json
+from collections.abc import Callable, Mapping, Sequence
 
 #: Les quatre blocs, dans l'ordre où le fichier les écrit.
 BLOCS = ("structure", "liquidation", "cotisation", "servi")
@@ -259,3 +261,88 @@ def vue_ancienne(fiche: dict) -> dict:
     vue = {c: v for c, v in fiche.items() if c not in BLOCS}
     vue["periodes"] = periodes
     return vue
+
+
+# -- Les blocs refaits des périodes, pendant le gel ---------------------------
+
+#: Ce qu'une période porte en plus de ses champs : son régime, ses bornes, sa note.
+HORS_DES_BLOCS = frozenset({"regime", "debut", "fin", "date_effet", "notes"})
+
+
+def _cle_json(champs: Mapping) -> str:
+    return json.dumps(sorted(champs.items()), default=repr)
+
+
+def _effet(periode: Mapping) -> tuple[str, str | None]:
+    """Les dates d'effet qu'une période liquide, ``[début, fin)`` en AAAA-MM-JJ :
+    celles qu'elle déclare, sinon ses années (``PeriodeRegime.effet``)."""
+    if periode.get("date_effet") is not None:
+        return tuple(periode["date_effet"])
+    return (f"{periode['debut']:04d}-01-01",
+            None if periode["fin"] is None else f"{periode['fin'] + 1:04d}-01-01")
+
+
+def blocs_des_periodes(periodes: Sequence[Mapping],
+                       cle: Callable[[Mapping], object] = _cle_json) -> dict[str, list[dict]]:
+    """Les quatre blocs d'un régime, refaits des périodes de la vue ancienne,
+    comme le moteur les refaisait (``axesDesPeriodes``, ``moteur/js/axes.js``).
+
+    La cotisation garde une ligne par période, dans leur ordre, bornée à ses
+    années (``au`` inclus) ; la liquidation, la structure et le servi, des
+    lignes au jour ``[du, au)`` en AAAA-MM-JJ, chaque intervalle entre deux
+    bornes d'effet prenant la première période qui le liquide, deux intervalles
+    contigus aux mêmes champs fondus (``cle`` dit quand deux lignes ont les
+    mêmes champs). Un intervalle qu'aucune période ne liquide n'a pas de ligne.
+    PENDANT LE GEL seulement : le chargeur et la fabrique du paquet lisent
+    encore les périodes de :func:`vue_ancienne` ; elle part avec elle."""
+
+    def champs(periode: Mapping, bloc: str) -> dict:
+        return {c: v for c, v in periode.items()
+                if c not in HORS_DES_BLOCS and famille(c) == bloc}
+
+    effets = [_effet(p) for p in periodes]
+    bornes = sorted({b for effet in effets for b in effet if b is not None})
+
+    def au_jour(bloc: str) -> list[dict]:
+        lignes: list[dict] = []
+        precedente = None
+        for rang, du in enumerate(bornes):
+            au = bornes[rang + 1] if rang + 1 < len(bornes) else None
+            periode = next((p for p, (debut, fin) in zip(periodes, effets)
+                            if debut <= du and (fin is None or du < fin)), None)
+            if periode is None:
+                precedente = None
+                continue
+            siens = champs(periode, bloc)
+            empreinte = cle(siens)
+            if precedente is not None and precedente[0] == empreinte \
+                    and precedente[1]["au"] == du:
+                precedente[1]["au"] = au
+                continue
+            ligne = {"du": du, "au": au, **siens}
+            lignes.append(ligne)
+            precedente = (empreinte, ligne)
+        return lignes
+
+    return {
+        "structure": au_jour("structure"),
+        "liquidation": au_jour("liquidation"),
+        "servi": au_jour("servi"),
+        "cotisation": [{"du": p["debut"], "au": p["fin"], **champs(p, "cotisation")}
+                       for p in periodes],
+    }
+
+
+def en_vigueur_au_jour(lignes: Sequence[Mapping], jour: str) -> Mapping | None:
+    """La ligne au jour en vigueur ce jour-là (AAAA-MM-JJ), ou ``None``
+    (``enVigueurAuJour``)."""
+    for ligne in lignes:
+        if ligne["du"] <= jour and (ligne["au"] is None or jour < ligne["au"]):
+            return ligne
+    return None
+
+
+def tranches_de_l_annee(lignes: Sequence[Mapping], annee: int) -> list[Mapping]:
+    """Les lignes de cotisation qui couvrent l'année, dans l'ordre : ses tranches
+    (``tranchesDeLAnnee``)."""
+    return [l for l in lignes if l["du"] <= annee and (l["au"] is None or annee <= l["au"])]

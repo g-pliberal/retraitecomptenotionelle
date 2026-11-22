@@ -133,10 +133,10 @@ def hypotheses(simulateur: SimulateurDeDonnees, annee: int) -> dict[str, Hypothe
     la fusion rend : le portage la calcule, sous les paramètres du simulateur
     (``pont.droit``, ``"fusion.fusionner"`` ; action 161, lot A)."""
     catalogue = simulateur.catalogue
-    general = min(catalogue["regime_general"].periodes_actives(annee),
+    general = min(catalogue["regime_general"].de_l_annee(annee),
                   key=lambda p: p.bornes_assiette_en_pass()[0])
     tranche_1, tranche_2 = sorted(
-        catalogue["agirc_arrco"].periodes_actives(annee),
+        catalogue["agirc_arrco"].de_l_annee(annee),
         key=lambda p: p.bornes_assiette_en_pass()[0],
     )[:2]
     plafonne = general.taux_cotisation_retraite

@@ -1,16 +1,16 @@
 # Le paquet porte les quatre blocs d'un régime, et non plus ses périodes
 
-**Reprise, au 22 novembre 2026.** L'étape 4 est commencée : le paquet porte
-les quatre blocs de chaque régime, et le moteur les lit tels quels. Aucun
-résultat n'a bougé. Le chargeur Python lit encore des périodes, et la
-fabrique du paquet en refait les blocs. Le moteur refait de ces blocs une vue
-des périodes, que lisent encore le pont, les tests, le taux moyen de
-l'Agirc-Arrco et la page Avantages. Reste, une session chacun : le chargeur
-Python en blocs, avec ses lectures à la date et à l'année ; le pont, qui
-passe une période par son rang ; les tests qui lisent des périodes ; les
-cliquets recomptés à valeur égale ; la page Avantages. Par quoi commencer :
-le chargeur Python. Les données restent gelées. L'oracle de référence est
-sous `architecture/separation-des-axes/oracle/`, dans les fichiers du projet.
+**Reprise, au 22 novembre 2026.** L'étape 4 avance : le paquet porte les
+quatre blocs de chaque régime, que le moteur lit tels quels, et le chargeur
+Python les porte aussi, avec ses lectures à la date et à l'année. Aucun
+résultat n'a bougé. Les lecteurs Python d'une période passent par ces
+lectures ; seuls le pont, les tests et l'oracle lisent encore la vue des
+périodes, que le chargeur et le moteur refont des blocs. Reste, une session
+chacun : le pont, qui passe une période par son rang ; les tests qui lisent
+des périodes ; les cliquets recomptés à valeur égale ; la page Avantages.
+Par quoi commencer : le pont, dont la note dit les quatre sites. Les données
+restent gelées. L'oracle de référence est sous
+`architecture/separation-des-axes/oracle/`, dans les fichiers du projet.
 
 **La demande.** L'étape 4 de la séparation des axes, décidée le 22 novembre
 2026 : le chargeur Python, le paquet, le pont, les tests, les cliquets et la
@@ -65,3 +65,46 @@ cotisation. La page Avantages compte 975 périodes qui annoncent la
 réversion ; compter les lignes de liquidation donnerait 318, et les régimes
 78 sur 80 : le chiffre affiché changera, à soumettre au propriétaire avec
 les autres décisions de la fin du gel.
+
+## Le chargeur Python en blocs (deuxième lot, 22 novembre 2026)
+
+**Ce qui est fait.** `Regime` (`donnees/regimes.py`) porte les quatre blocs,
+`structure`, `liquidation`, `cotisation` et `servi`, et les lit comme le
+moteur : `a_la_date(jour)` rend ce qui liquide une pension prenant effet ce
+jour, `de_l_annee(annee, jour)` les tranches d'une année d'acquisition, avec
+la liquidation du 1er janvier ou du jour donné. Ce sont les jumeaux de
+`aLaDate` et `deLAnnee`, confrontés au bit près sur chaque régime, au taux
+de la fiche et au taux moyen (`test_jumeaux_au_bit.py`) ; `_assembler` l'est
+par eux. Pendant le gel, les blocs se refont des périodes, par la même
+fonction que la fabrique du paquet (`blocs_des_periodes`, `donnees/axes.py`),
+où `_blocs_du_paquet` n'est plus qu'un appel. Les lecteurs Python d'une
+période passent par eux : la paie et ses composantes (`remuneration.py`,
+trois sites), le forfait des cultes (`contributions_equilibre.py`), les
+barèmes de la fusion (`solde_fusion.py`), la règle de revalorisation d'une
+pension servie (`revalorisation_servie.py`, à la date, comme le moteur).
+`periode` et `periodes_actives` n'ont plus de lecteur Python hors des tests
+et de l'oracle : la liste des jumeaux les range au moteur.
+
+**Vérifié.** Le paquet, refait, est identique au caractère près ; l'oracle,
+identique à celui du gel ; les six familles de témoins, identiques. Une année
+d'acquisition lit les mêmes lignes de cotisation que les périodes qui la
+couvrent, dans le même ordre, sur chaque régime de 1900 à 2070. Aucun régime
+n'a, de 1850 à 2100, une année cotisée sans ligne de liquidation au
+1er janvier, ni une date liquidée sans ligne de cotisation dans son année.
+
+**Relu sur Opus, dans un contexte neuf.** La relecture a relevé chaque champ
+que les lecteurs basculés lisent, méthodes comprises : tous de la cotisation,
+et la structure seule pour la revalorisation ; sur tout le catalogue, au taux
+de la fiche et au taux moyen, de 1800 à 2100, les lectures à l'année ne
+diffèrent des périodes que par des champs de liquidation, qu'aucun d'eux ne
+lit. Elle a trouvé deux écarts latents avec le moteur, qu'aucune donnée
+n'atteint : un assemblage sans ligne de liquidation, ou sans ligne de
+cotisation, prêtait les champs d'une autre ligne. Le chargeur le refuse
+désormais, un test posé à la main le dit.
+
+**Ce qui reste.** Le pont passe une période par son rang
+(`commun.periode_de_liquidation`, la marque `periode` de la façade et
+l'argument `Periode` du droit, `scenario_actuel.catalogue.periodes`), et la
+fusion lit `periodesActives` (`fusion.taux_total.tranche_1`, `pont.mjs`) : il
+passera les lectures à la date et à l'année. Viennent ensuite les tests, les
+cliquets et la page Avantages, comme au premier lot.
