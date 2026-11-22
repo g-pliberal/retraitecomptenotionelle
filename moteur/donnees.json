@@ -27667,6 +27667,7 @@ null
 "id":"loi_du_23_aout_1948",
 "parametres":{
 "age":65,
+"avant_l_age":{"part":0.5,"plafond":7.622451},
 "droits_ouverts_avant":"2011-01-01",
 "existe":true,
 "montants":[

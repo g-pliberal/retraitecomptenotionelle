@@ -52,8 +52,16 @@ versions:
     avant la réforme de 1975, la majoration est entière quelle que soit la durée : les «
     anciennes règles demeureront en vigueur chaque fois que la prestation de base aura
     un point de départ antérieur au 1er mars 1975 », la proratisation en 150es étant
-    nouvelle (circulaire Cnav n° 31/75) ; la majoration de 50 F du conjoint de moins de
-    soixante-cinq ans, que la réforme supprime, n'est pas servie
+    nouvelle (circulaire Cnav n° 31/75). Avant les soixante-cinq ans du conjoint, la
+    majoration de moitié de la pension, au plus 5 000 anciens francs par an, est lue au
+    texte de 1948 (nouvel article 68, § 2, de l'ordonnance du 19 octobre 1945, rédaction
+    de la loi n° 48-1306, Journal officiel du 24 août 1948, lu sur Gallica le 21 novembre
+    2026) : « La pension prévue aux articles 63 à 65 est majorée, le cas échéant, de
+    moitié, sans que cette majoration puisse être supérieure à 5.000 F par an, lorsque le
+    conjoint à charge du titulaire n'est pas bénéficiaire d'un avantage au titre d'une
+    législation de sécurité sociale » ; le plafond est présumé resté à 50 F jusqu'en 1975,
+    la circulaire n° 31/75 disant supprimée par la réforme « la majoration de 50 F » ; le
+    code de 1956 (L. 339), qui la reprend, n'est pas lu
   fiabilite: moyenne
   bornes:
     liquidation.date_effet: [1948-07-01, 1975-03-01]
@@ -65,11 +73,13 @@ versions:
       au 1er janvier 1974 (barème de la Cnav)
     beneficiaire: >-
       le titulaire d'une pension de vieillesse du régime général dont le conjoint à
-      charge a soixante-cinq ans
+      charge a soixante-cinq ans ; avant, la moitié de sa pension, au plus 50 F par an,
+      quand le conjoint n'a aucun avantage de sécurité sociale
     parametres:
       existe: true
       regimes: [regime_general]
       age: 65
+      avant_l_age: {part: 0.5, plafond: 7.622451}
       prorata: aucun
       droits_ouverts_avant: "2011-01-01"
       montants: [["1948-07-01", 22.105107], ["1948-10-01", 29.270211],
@@ -272,7 +282,7 @@ code:
     moteur/js/droit/commun.js : majorationDuConjoint ; moteur/js/revalorisation.js :
     faireVivre ; moteur/js/echeancier.js : Echeancier._pensionsEuesAuDeces
   parametres: >-
-    contenu.parametres de chaque version : existe, regimes, age, prorata,
+    contenu.parametres de chaque version : existe, regimes, age, avant_l_age, prorata,
     droits_ouverts_avant, montants
   tests: [tests/test_majoration_conjoint_a_charge.py]
   moteur: >-
@@ -293,7 +303,12 @@ historique:
 - >-
   2026-10-08 — écrite à l'étape 17 de l'action 138, sur les points des barèmes IPP et
   d'OpenFisca-France au registre (chantier 138.17).
+- >-
+  2026-11-21 — de 1948 à 1975, la majoration avant les soixante-cinq ans du conjoint, la
+  moitié de la pension au plus 50 F par an, lue au Journal officiel du 24 août 1948 (loi n°
+  48-1306, nouvel article 68, § 2) et servie (`avant_l_age`).
 effet: >-
   Le retraité du régime général parti avant 2011, dont le conjoint sans pension a eu
   soixante-cinq ans avant 2011, reçoit 609,80 € par an au plus, proratisés par sa durée
-  depuis 1975, que le modèle ne lui servait pas.
+  depuis 1975, que le modèle ne lui servait pas ; parti de 1948 à 1975, avant les
+  soixante-cinq ans de son conjoint, la moitié de sa pension, au plus 50 F par an.

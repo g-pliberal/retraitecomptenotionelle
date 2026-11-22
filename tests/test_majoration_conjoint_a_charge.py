@@ -124,6 +124,32 @@ def test_avant_1975_la_majoration_est_entiere(saisies):
     assert _majoration(comparaison).montant == pytest.approx(1850 / 6.55957)
 
 
+def test_de_1948_a_1975_le_conjoint_de_moins_de_soixante_cinq_ans_majore_la_pension(saisies):
+    """Loi n° 48-1306 du 23 août 1948, nouvel article 68, § 2, lu au Journal
+    officiel du 24 août 1948 : la pension « est majorée, le cas échéant, de
+    moitié, sans que cette majoration puisse être supérieure à 5.000 F par
+    an, lorsque le conjoint à charge du titulaire n'est pas bénéficiaire d'un
+    avantage au titre d'une législation de sécurité sociale » ; § 3 : portée
+    au montant du barème quand il a soixante-cinq ans. Parti en avril 1972,
+    son conjoint né en juin 1912 a soixante ans : 5 000 anciens francs, 50 F,
+    dès le départ, la moitié de la pension les passant ; le barème entier à
+    compter de juillet 1977."""
+    _, comparaison = _simuler(saisies, naissance="1910-03-15", debut="1930-09",
+                              liquidation="1972-04", conjoint="1912-06",
+                              ressources_conjoint="0")
+    _, sans = _simuler(saisies, naissance="1910-03-15", debut="1930-09",
+                       liquidation="1972-04")
+    assert _general(sans).montant / 2 > 50 / 6.55957
+    assert _majoration(comparaison).montant == pytest.approx(50 / 6.55957)
+    etapes = _general(comparaison).conjoint
+    assert etapes[0] == ("1972-04-01", pytest.approx(50 / 6.55957))
+    assert etapes[1][0] == "1977-07-01" and etapes[1][1] > 50 / 6.55957
+    _, pensionne = _simuler(saisies, naissance="1910-03-15", debut="1930-09",
+                            liquidation="1972-04", conjoint="1912-06",
+                            ressources_conjoint="100")
+    assert _majoration(pensionne) is None
+
+
 def test_le_droit_ouvert_a_compter_de_2011_n_est_pas_servi(saisies):
     """La retraite qui prend effet en 2011 n'y a pas droit ; celle de 2009 non
     plus quand le conjoint n'a soixante-cinq ans qu'en 2011, et y a droit quand

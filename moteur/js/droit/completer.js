@@ -238,7 +238,7 @@ function moisSuivant(jour) {
  * vide sans elle. Voir `majoration_pour_conjoint_a_charge` du Python.
  */
 export function majorationPourConjointACharge(moteur, carriere, dateEffet, trimestres,
-  proratisation, substituee) {
+  proratisation, substituee, pension = 0.0) {
   const version = moteur.fichesDatees.version(FICHE_DU_CONJOINT, dateEffet);
   const conjoint = carriere.conjoint;
   if (version === null || !version.parametres.existe || conjoint === null
@@ -272,6 +272,20 @@ export function majorationPourConjointACharge(moteur, carriere, dateEffet, trime
       etapes = [[ouverte, servie]];
     } else {
       etapes.push([String(depuis), servie]);
+    }
+  }
+  // AVANT SES SOIXANTE-CINQ ANS, de 1948 à 1975 : la pension « est majorée, le
+  // cas échéant, de moitié, sans que cette majoration puisse être supérieure à
+  // 5.000 F par an, lorsque le conjoint à charge du titulaire n'est pas
+  // bénéficiaire d'un avantage au titre d'une législation de sécurité sociale »
+  // (loi n° 48-1306, nouvel article 68, § 2). Tout ou rien : des ressources
+  // dites l'excluent.
+  const avant = regle.avant_l_age ?? null;
+  if (avant !== null && ressources <= 0.0) {
+    const debut = conjoint.mariage <= dateEffet ? dateEffet : moisSuivant(conjoint.mariage);
+    const servie = Math.min(Number(avant.part) * pension, Number(avant.plafond));
+    if (debut < ouverte && servie > 0.0) {
+      etapes = [[debut, servie], ...etapes];
     }
   }
   return etapes.some(([, servie]) => servie > 0.0) ? etapes : [];
@@ -2100,7 +2114,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         : liquider.dureeProratisation(moteur, periode, carriere, ouverture.requis)[0];
       const etapes = majorationPourConjointACharge(
         moteur, carriere, dateEffet, durees.trimestresParRegime.get(base.regime) ?? 0,
-        proratisation, substitution(moteur, carriere) !== null);
+        proratisation, substitution(moteur, carriere) !== null, base.montant);
       if (etapes.length > 0) {
         const auDepart = majorationDuConjoint(etapes, dateEffet);
         const [debut, premiere] = etapes[0];
