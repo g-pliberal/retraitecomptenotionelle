@@ -1773,6 +1773,37 @@ test("l'assiette de l'AVPF et la colonne de revalorisation sont celles de la Cna
 });
 
 /**
+ * Le portage des coefficients de `test_apres_1948_les_cotisations_d_avant_1945_suivent_la_colonne_de_la_cnav`
+ * et de `test_les_salaires_des_assurances_sociales_entrent_au_salaire_annuel_moyen`
+ * (tests/test_salaire_annuel_moyen.py) : la circulaire n° 151 du 5 août 1946
+ * et les colonnes de la Cnav sur les cotisations, recopiées à la main.
+ */
+test("les salaires des assurances sociales suivent les coefficients de leurs cotisations", () => {
+  const macro = new DonneesMacro(paquet);
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu / attendu - 1) < 1e-6,
+    `${obtenu} contre ${attendu}`);
+  const lu = (depart, arrivee, circulaire) => macro.coefficientDesAssurancesSociales(
+    depart, arrivee, 1, circulaire);
+  proche(lu(1935, 1948, 3), 3);
+  proche(lu(1942, 1948, 2), 2);
+  proche(lu(1944, 1948, 1), 1);
+  proche(lu(1938, 1950, 3), 263.75 * 3 / 37.5);
+  proche(lu(1944, 1950, 1), 83.75 / 18.75);
+  proche(lu(1930, 2026, 3), 64805.725 * 3 / 75);
+  // La colonne en vigueur au mois de l'effet : l'arrêté du 18 avril 1957
+  // jusqu'en mars 1958, celui du 14 avril 1958 dès avril.
+  proche(macro.coefficientDesAssurancesSociales(1938, 1958, 3, 3), 533.125 * 3 / 37.5);
+  proche(macro.coefficientDesAssurancesSociales(1938, 1958, 4, 3), 573.125 * 3 / 37.5);
+  assert.equal(lu(1945, 1950, 1), null);
+  assert.equal(lu(1929, 1950, 3), null);
+  // La version de la fiche porte les coefficients de la circulaire n° 151.
+  const simulateur = new Contexte(paquet).simulateur();
+  assert.deepEqual(simulateur.scenarioActuel.fichesDatees.regle("sam_annees_d_avant_1947",
+    "1948-01-01").coefficients_des_cotisations, [[1930, 1941, 3], [1942, 1943, 2],
+    [1944, 1944, 1]]);
+});
+
+/**
  * Le portage de `test_l_avpf_compte_avant_avril_1983` (tests/test_salaire_annuel_moyen.py) :
  * l'AVPF de 1972 à 1977 dans une pension de janvier 1983.
  */

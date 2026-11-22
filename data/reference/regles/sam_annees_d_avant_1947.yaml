@@ -1,9 +1,10 @@
 schema_version: 1
 id: sam_annees_d_avant_1947
 intitule: >-
-  Les années d'avant 1947 au salaire annuel moyen du régime général, quand elles sont
-  prises à défaut d'assez d'années postérieures à 1947 : la caisse revalorise leurs
-  cotisations, par des coefficients que le modèle ne lit pas.
+  Les années d'avant 1947 au salaire annuel moyen du régime général, celles des
+  assurances sociales de 1930 à 1944 comprises : la caisse revalorise leurs
+  cotisations, par des coefficients que le modèle lit depuis le 22 novembre 2026 pour
+  1930 à 1944.
 domaine: salaire_de_reference
 regimes: [regime_general, msa_salaries]
 etape: liquider_chaque_regime
@@ -11,6 +12,7 @@ face: droit
 etat: approchee
 lit:
 - les salaires des années 1930 à 1946, à défaut de leurs cotisations
+- les coefficients de la Cnav sur les cotisations de 1930 à 1944, à chaque date d'effet
 ecrit:
 - le salaire revalorisé de ces années
 dates_qui_decident:
@@ -42,24 +44,83 @@ versions:
       « demeurent applicables les dispositions [...] du troisième alinéa de l'article
       R. 351-29 [...] dans leur rédaction antérieure au décret n° 2025-1409 »
     lu_le: 2026-11-20
+  - reference: >-
+      circulaire ministérielle n° 151 du 5 août 1946 (CR_MIN_151_05081946), b), 1° :
+      « il doit être procédé, pour la période du 1er juillet 1930 au 31 décembre
+      1944, à la revalorisation des salaires correspondant aux cotisations versées
+      [...]. Par mesure de simplification, les cotisations seront directement
+      revalorisées avant la recherche du salaire annuel moyen. Les coefficients
+      suivants devront être appliqués : 3 pour la période antérieure au 31 décembre
+      1941 ; 2 pour les années 1942 et 1943 ; 1 pour l'année 1944 »
+    lu_le: 2026-11-22
+  - reference: >-
+      Cnav, « Coefficients de revalorisation des salaires et cotisations » : la page
+      d'avant le 1er avril 2013 (colonne « Avant le 01/01/1949 », arrêté du 14 mai
+      1946 : 75,000 de 1930 à 1935, 1re à 4e catégorie, 67,500 la 5e, 42,857 en
+      1936, 37,500 de 1937 à 1941, 25,000 en 1942 et 1943, 18,750 en 1944), puis
+      chaque édition du barème, « Coefficients applicables aux cotisations avant
+      1947 » (legislation/revalorisation_cotisations_1930_1944.csv)
+    lu_le: 2026-11-22
   bornes:
     liquidation.date_effet: [null, null]
   contenu:
     droit: >-
-      les années d'avant 1948, prises à défaut, entrent pour leurs cotisations
-      revalorisées ; le moteur les prend à défaut (`moyenneSelonLaRegle`,
-      moteur/js/droit/liquider.js) mais n'a de coefficient que depuis 1947
+      les années d'avant 1948 entrent pour leurs cotisations revalorisées ; celles
+      des assurances sociales, de 1930 à 1944, au salaire annuel moyen du régime qui
+      reprend leur durée (`regimesRepris`), chaque salaire revalorisé par le rapport
+      de la colonne de la Cnav en vigueur à celle de l'arrêté du 14 mai 1946,
+      multiplié par le coefficient de la circulaire n° 151, 3, 2 ou 1
+      (`coefficientDesAssurancesSociales`, moteur/js/macro.js)
+    parametres:
+      # [première année, dernière année, coefficient] de la circulaire n° 151.
+      coefficients_des_cotisations: [[1930, 1941, 3], [1942, 1943, 2], [1944, 1944, 1]]
   exemples: aucun trouvé
+  exemples_cherches: >-
+    le 22 novembre 2026, dans la circulaire ministérielle n° 151 du 5 août 1946 (la
+    formule seule, sans pension chiffrée), dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) et dans la base de législation de la
+    Cnav : aucune pension chiffrée sur des cotisations d'avant 1945
 approximations:
 - ecart: >-
-    pour 1930 à 1946, la caisse publie des coefficients de cotisations, et non de
-    salaires ; le modèle, qui porte des salaires, prolonge sa colonne par son
+    pour 1945 et 1946, la caisse publie aussi des coefficients de cotisations, et non
+    de salaires ; le modèle, qui porte des salaires, prolonge sa colonne par son
     approximation « les salaires jusqu'en 1986, les prix depuis » (macro.js,
-    coefficientRevalorisationParRapport)
+    coefficientRevalorisationParRapport). La colonne de 1946 leur donne 1,000, et la
+    circulaire n° 151 un salaire de 1946 non revalorisé
+  effet: non mesuré
+- ecart: >-
+    de 1930 à 1944, le modèle part du salaire, non de la cotisation : il lit le
+    rapport d'une colonne à celle de 1946, que le multiplicateur qui convertit la
+    cotisation en salaire ne change pas. Il suppose les coefficients de la
+    circulaire n° 151 inscrits dans la colonne de 1946, 3 en 1936 (42,857, soit 300/7)
+    et 1 en 1944 (18,750) ; l'arrêté du 14 mai 1946, que le dépôt n'a pas lu (ni à
+    l'index JORF de la DILA ni parmi les fac-similés), pourrait y porter 3,43 et
+    1,5 sur des cotisations de 8 % : les salaires de 1936 et de 1944 seraient alors
+    revalorisés de 14 % et de 50 % de plus. La 5e catégorie de 1930 à 1935, au
+    multiplicateur de 22,5, suit le rapport des quatre premières, à 0,1 % près
+    (l'arrondi des colonnes récentes)
+  effet: non mesuré
+- ecart: >-
+    la pension des salariés agricoles reçoit les coefficients de la circulaire n° 151,
+    qui vise les professions non agricoles, et les colonnes de la Cnav : le dépôt n'a
+    pas lu ce que la MSA appliquait aux cotisations agricoles de 1930 à 1945
+  effet: non mesuré
+- ecart: >-
+    une pension prenant effet après la dernière colonne publiée prolonge celle-ci
+    par la revalorisation d'un salaire de son année
+  effet: non mesuré
+- ecart: >-
+    le plafond d'assujettissement aux assurances sociales borne le salaire, non les
+    classes de salaires de 1930 à 1935, dont la cotisation était forfaitaire
   effet: non mesuré
 sources:
-  lu_le: 2026-11-20
+  lu_le: 2026-11-22
   prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Lire au Journal officiel l'arrêté du 14 mai 1946, qui fixe les coefficients des
+    cotisations d'avant 1945 : il dira si la colonne de 1946 porte, en 1936 et en
+    1944, les coefficients 3 et 1 de la circulaire n° 151.
   lectures:
   - type: legifrance
     reference: >-
@@ -67,11 +128,22 @@ sources:
       R. 351-39 (LEGIARTI000053327980) garde depuis 2026 ; en-tête de
       legislation/revalorisation_salaires_anciennes.csv
     date: 2026-11-20
+  - type: circulaire_cnav
+    reference: >-
+      circulaire ministérielle n° 151 du 5 août 1946 (CR_MIN_151_05081946) ; page
+      des coefficients d'avant 2013 (decREVCOEFSALCOT.js) et éditions du barème
+      revalorisation_coefficient_revalorisation_salaire_cotisation_*_bar
+    date: 2026-11-22
 historique:
 - >-
   2026-11-20 — née de la fiche salaire_annuel_moyen (action 194) : ne touche que qui a
   travaillé avant 1947 et compte moins d'années ensuite que le nombre retenu.
+- >-
+  2026-11-22 — les salaires des assurances sociales de 1930 à 1944 entrent au salaire
+  annuel moyen, revalorisés par les coefficients de la caisse sur leurs cotisations ;
+  ils n'y entraient pas du tout (action 191).
 exemples: []
 effet: >-
-  Les assurés qui ont cotisé avant 1947 et comptent, après, moins d'années que le nombre
-  retenu : nés avant 1933 pour l'essentiel.
+  Les assurés qui ont cotisé avant 1947 et dont les années retenues remontent avant
+  1947 : nés avant 1933 pour l'essentiel, et surtout les pensions liquidées avant
+  1960, dont les dix dernières années avant soixante ans remontent avant 1945.

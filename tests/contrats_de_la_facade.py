@@ -394,6 +394,7 @@ class _Regles_liquider:
             plancher=False,
             affilie_avant_2016=False,
             au_compte_de_la_maternite=None,
+            eteints_repris=None,
     ) -> float: ...
     @staticmethod
     def taux_acquis_l_emporte(

@@ -162,13 +162,13 @@
   "valeur": "2d78dc8a08d2992a"
  },
  "test_pont.py::coût des avantages": {
-  "valeur": "83c642914eb9cc33"
+  "valeur": "9ad1b4023f585d30"
  },
  "test_pont.py::dates des départs des facteurs de la dépense": {
   "valeur": "3f02fbdd62b702eb"
  },
  "test_pont.py::décomposition des avantages": {
-  "valeur": "85fd2f0be7d8c442"
+  "valeur": "171bfc40ee6f1111"
  },
  "test_pont.py::grille d'essai du coût": {
   "valeur": "32a0213d3c00f092"
@@ -216,10 +216,10 @@
   "valeur": "ba2a9aa693f6f807"
  },
  "test_solde_fusion.py::grille sous l'hypothèse B": {
-  "valeur": "f73081e45b253f1e"
+  "valeur": "825f8fcc5aec482a"
  },
  "test_solde_fusion.py::grille sous l'hypothèse C": {
-  "valeur": "b8e225f6e727e72f"
+  "valeur": "c7cbbb3ad4cec9f9"
  },
  "test_stock_age_legal.py::pensions des cas sous droit_commun": {
   "valeur": "cce68b194d743c0f"

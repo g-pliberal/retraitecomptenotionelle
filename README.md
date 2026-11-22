@@ -183,8 +183,8 @@ de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Lire une page transfère son
 texte et de quoi l'animer : <!--chiffre:poids_comprime(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->169<!--/--> Ko compressés
 (<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->547<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
-le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->989<!--/--> Ko compressés, et le paquet
-de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->839<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->6 189<!--/--> Ko bruts) ; le tout prend quelques dixièmes
+le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->990<!--/--> Ko compressés, et le paquet
+de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->843<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->6 203<!--/--> Ko bruts) ; le tout prend quelques dixièmes
 de seconde, et les chargements suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -229,7 +229,7 @@ Chaque page est écrite toute faite, et ne charge qu'au premier calcul
 `moteur/js/`, le moteur qui calcule, en JavaScript et sans aucune bibliothèque,
 ce qui dépend de ce que le lecteur saisit — sa carrière, ses droits et sa
 pension —, et `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->6 189<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->6 203<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->80<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
 sous les réglages de référence : le coût et les carrières types, que les pages
@@ -771,9 +771,9 @@ de chaque cas type :
 | 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->13 767<!--/--> Md € | réf. |
 | 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 613<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−81,0<!--/--> % |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 188<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−55,0<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 189<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−55,0<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->7 835<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−43,1<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->7 836<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−43,1<!--/--> % |
 | *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->3 075<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et

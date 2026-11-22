@@ -48,6 +48,7 @@ LECTEURS_DE_LA_BASE = (
     "cnav_minimum_contributif.py",
     "cnav_minimum_vieillesse.py",
     "cnav_points_avant_1973.py",
+    "cnav_revalorisation_cotisations.py",
     "cnav_revalorisation_pensions.py",
     "cnav_revalorisation_salaires.py",
     "cnav_revalorisation_salaires_anciennes.py",

@@ -2417,6 +2417,26 @@ institutions:
           la colonne d'octobre 2015 se raccorde à celle d'octobre 2017 à
           l'arrondi près. Fiabilité `haute`, comme les circulaires.
 
+      - id: cnav_revalorisation_cotisations
+        titre: Coefficients de revalorisation des cotisations des assurances sociales, 1930-1944, quatre-vingt-dix-huit colonnes 1946-2026
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=revalorisation_coefficient_revalorisation_salaire_cotisation_bar.aspx
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/legislation/revalorisation_cotisations_1930_1944.csv
+        recuperation: scripts/fetch/cnav_revalorisation_cotisations.py
+        note: >-
+          Le tableau des cotisations d'avant 1947 que la page d'avant le
+          1er avril 2013 et chaque édition du barème portent à côté de celui
+          des salaires : un coefficient par année de 1930 à 1946 (1930 à 1935
+          en deux catégories), qui convertit et revalorise d'un même geste la
+          cotisation portée au compte (circulaire ministérielle n° 151 du
+          5 août 1946). Le modèle garde 1930 à 1944, les années des
+          assurances sociales, et en tire le salaire revalorisé par le rapport
+          de la colonne en vigueur à celle de l'arrêté du 14 mai 1946, que
+          multiplie le coefficient de la circulaire (3, 2 ou 1). Deux
+          coquilles de la page corrigées, que le récupérateur dit. Fiabilité
+          `haute` : la caisse transcrit l'arrêté qu'elle cite.
+
       - id: cnav_revalorisation_pensions
         titre: Coefficients de revalorisation des pensions servies, date d'effet par date d'effet, 1949-2026
         url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=revalorisation_coefficient_revalorisation_retraite_bar.aspx

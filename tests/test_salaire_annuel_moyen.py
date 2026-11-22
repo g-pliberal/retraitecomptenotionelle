@@ -684,24 +684,63 @@ def test_une_pension_du_debut_de_1948_complete_ses_annees_par_celles_d_apres_soi
     assert sam == pytest.approx(sum(revalorise) * 4 / 12)
 
 
-def test_les_trimestres_des_assurances_sociales_ecartent_le_complement(simulateur):
+def test_les_salaires_des_assurances_sociales_entrent_au_salaire_annuel_moyen(simulateur):
     """Un assuré né en 1886, soixante ans en 1946, liquidé à soixante-deux ans
     au début de 1948 : neuf années aux assurances sociales, 1936 à 1944, et
     1945 au régime général, quarante trimestres avant soixante ans ; 1946 et
-    1947 n'entrent pas (article 74, § 4, du décret n° 45-0179). Le salaire des
-    années 1936 à 1944 n'entre pas dans le salaire moyen du modèle (écart dit
-    par la note du 20 novembre 2026 sur les assurances sociales) : reste 1945."""
+    1947 n'entrent pas (article 74, § 4, du décret n° 45-0179). Les dix années
+    entrent au salaire annuel moyen, celles de 1936 à 1944 revalorisées « pour
+    la période du 1er juillet 1930 au 31 décembre 1944 » par les coefficients
+    de la circulaire ministérielle n° 151 du 5 août 1946 : « 3 pour la période
+    antérieure au 31 décembre 1941 ; 2 pour les années 1942 et 1943 ; 1 pour
+    l'année 1944 ». Posé à la main : 100 F par an de 1936 à 1944, sous le
+    plafond d'assujettissement, 6 × 300 + 2 × 200 + 100 = 2 300 F, et 600 F
+    en 1945 ; moyenne des dix années, 290 F."""
     actuel = simulateur.scenario_actuel
     macro = simulateur.macro
     code = "regime_general"
-    lignes = ([(annee, 140.0 / 6.55957, 4) for annee in range(1936, 1945)]
+    lignes = ([(annee, 100.0 / 6.55957, 4) for annee in range(1936, 1945)]
               + [(1945, 600.0 / 6.55957, 4), (1946, 900.0 / 6.55957, 4),
                  (1947, 1_200.0 / 6.55957, 4)])
     carriere = _carriere(1886, 62, lignes)
     periode = simulateur.catalogue[code].periode(1948)
-    revenu_1945 = 600.0 / 6.55957
-    attendu = (min(revenu_1945, macro.plafond_securite_sociale(1945))
-               * macro.coefficient_revalorisation_portee_au_compte(
-                   1945, 1948, carriere.mois_liquidation))
+    revalorise_1945 = 600.0 / 6.55957 * macro.coefficient_revalorisation_portee_au_compte(
+        1945, 1948, carriere.mois_liquidation)
+    attendu = (2_300.0 / 6.55957 + revalorise_1945) / 10
     sam = liquider.salaire_de_reference(actuel, code, carriere, periode, 1948, True, 1886)
     assert sam == pytest.approx(attendu)
+
+
+def test_apres_1948_les_cotisations_d_avant_1945_suivent_la_colonne_de_la_cnav(simulateur):
+    """La Cnav publie, à chaque date d'effet, un coefficient des COTISATIONS de
+    1930 à 1946, qui les convertit en salaire et les revalorise d'un même
+    geste : la colonne « Avant le 01/01/1949 », de l'arrêté du 14 mai 1946,
+    porte 37,500 pour 1938 à 1941, 25,000 pour 1942 et 1943, 18,750 pour 1944,
+    soit les coefficients 3, 2 et 1 de la circulaire n° 151 sur les
+    cotisations d'un salaire, à 8 % puis à 5,33 % ; celle de l'arrêté du
+    19 avril 1950 porte 263,750 (1938), 242,500 (1939 et 1940), 161,250
+    (1941), 103,750 (1942 et 1943) et 83,750 (1944). Le salaire d'une année
+    est donc revalorisé du rapport des deux colonnes, par le coefficient de la
+    circulaire. Recopiés à la main de la page de la Cnav.
+
+    Né en 1888, soixante ans en 1948, liquidé à soixante-deux ans au début de
+    1950 : 100 F par an aux assurances sociales de 1938 à 1944, puis au régime
+    général de 1945 à 1949 ; les dix dernières années avant soixante ans, 1938
+    à 1947."""
+    actuel = simulateur.scenario_actuel
+    macro = simulateur.macro
+    code = "regime_general"
+    lignes = [(annee, 100.0 / 6.55957, 4) for annee in range(1938, 1950)]
+    carriere = _carriere(1888, 62, lignes)
+    assert carriere.annee_liquidation == 1950
+    periode = simulateur.catalogue[code].periode(1950)
+    coefficients = {1938: 263.75 * 3 / 37.5, 1939: 242.5 * 3 / 37.5,
+                    1940: 242.5 * 3 / 37.5, 1941: 161.25 * 3 / 37.5,
+                    1942: 103.75 * 2 / 25.0, 1943: 103.75 * 2 / 25.0,
+                    1944: 83.75 * 1 / 18.75}
+    assert coefficients[1938] == pytest.approx(21.1)
+    avant_1945 = sum(coefficients.values()) * 100.0 / 6.55957
+    apres = sum(100.0 / 6.55957 * macro.coefficient_revalorisation_portee_au_compte(
+        annee, 1950, carriere.mois_liquidation) for annee in (1945, 1946, 1947))
+    sam = liquider.salaire_de_reference(actuel, code, carriere, periode, 1950, True, 1888)
+    assert sam == pytest.approx((avant_1945 + apres) / 10)

@@ -629,6 +629,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         carriere.annee_naissance, avpf, membres, enfantsMajores,
         dureesCultes === null ? null : cultes.ALIGNEMENT,
         anneesAlignees === null ? null : anneesAlignees[0],
+        false, false, null, regimesRepris(moteur, membres, droits.codes, durees),
       );
     // L'ABATTEMENT DES MARINS (R. 11, 3°) : au-delà de huit fois le traitement
     // de l'indice 100 à la date d'effet, la portion du salaire « n'est comptée
@@ -2126,11 +2127,51 @@ export function revalorisationExceptionnelleDeMayotte(mahorais, annee, anneeEffe
   return annee < 2023 ? 1.1 : 1 + 0.1 * 8 / 12;
 }
 
+/**
+ * Le coefficient du salaire d'une année des assurances sociales au salaire
+ * annuel moyen d'une pension prenant effet au premier jour de ce mois : celui
+ * que la version de `sam_annees_d_avant_1947` donne à son année (circulaire
+ * n° 151 du 5 août 1946), porté par les colonnes de la Cnav
+ * (`coefficientDesAssurancesSociales`) ; `null` sans lui.
+ */
+function coefficientDesCotisations(moteur, annee, anneeEffet, moisEffet) {
+  const regle = moteur.fichesDatees.regle("sam_annees_d_avant_1947",
+    `${String(anneeEffet).padStart(4, "0")}-${String(moisEffet).padStart(2, "0")}-01`);
+  const tranche = (regle?.coefficients_des_cotisations ?? [])
+    .find(([premiere, derniere]) => premiere <= annee && annee <= derniere);
+  return tranche === undefined ? null
+    : moteur.macro.coefficientDesAssurancesSociales(annee, anneeEffet, moisEffet, tranche[2]);
+}
+
+/** Les régimes éteints dont un autre reprend la durée, et leurs repreneurs. */
+const _eteintsAReprendre = new WeakMap();
+function eteintsAReprendre(catalogue) {
+  if (!_eteintsAReprendre.has(catalogue)) {
+    _eteintsAReprendre.set(catalogue, [...catalogue]
+      .filter((regime) => (regime.duree_reprise_par ?? []).length > 0)
+      .map((regime) => [regime.code, regime.duree_reprise_par]));
+  }
+  return _eteintsAReprendre.get(catalogue);
+}
+
 export function salaireDeReference(moteur, code, carriere, periode, anneeLiquidation, plafonner,
   generation = null, avpf = true, membres = null, enfantsMajores = 0,
   depuis = null, anneesRetenues = null, plancher = false, affilieAvant2016 = false,
-  auCompteDeLaMaternite = null) {
+  auCompteDeLaMaternite = null, eteintsRepris = null) {
   const codesAdmis = new Set(membres && membres.length > 0 ? membres : [code]);
+  // LES ANNÉES DES ASSURANCES SOCIALES, de 1930 à 1944 : leur salaire entre
+  // au salaire annuel moyen du régime qui reprend leur durée (`regimesRepris`),
+  // revalorisé par les coefficients de la caisse sur leurs cotisations
+  // (`coefficientDesAssurancesSociales`). La liquidation dit quels régimes
+  // éteints ce régime reprend ; un autre appel, ceux que leur fiche lui donne.
+  const repris = eteintsRepris ?? eteintsAReprendre(moteur.catalogue)
+    .filter(([eteint, repreneurs]) => !codesAdmis.has(eteint)
+      && repreneurs.some((repreneur) => codesAdmis.has(repreneur)))
+    .map(([eteint]) => eteint);
+  for (const eteint of repris) {
+    codesAdmis.add(eteint);
+  }
+  const anneesDesAssurancesSociales = new Set();
   const avpfOuvert = avpf
     && periode.avantages_non_contributifs.includes("avpf");
   // Les coefficients des arrêtés ne valent que pour un salaire PORTÉ AU
@@ -2154,7 +2195,9 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     ? carriere.moisLiquidation
     : 1;
   const revaloriser = porteAuCompte
-    ? (depart, arrivee) => moteur.macro.coefficientRevalorisationPorteeAuCompte(
+    ? (depart, arrivee) => (anneesDesAssurancesSociales.has(depart)
+      ? coefficientDesCotisations(moteur, depart, arrivee, moisLiquidation)
+      : null) ?? moteur.macro.coefficientRevalorisationPorteeAuCompte(
       depart, arrivee, moisLiquidation)
     : (depart, arrivee) => {
       if (suitLePoint) {
@@ -2220,12 +2263,16 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     if (depuis !== null && ligne.annee < depuis) {
       continue;
     }
-    if (!coordonner.regimesDe(moteur,
+    const regimesDeLaLigne = coordonner.regimesDe(moteur,
       ligne, ligne.annee, moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
       ligne.cotise ? ligne.revenu : ligne.revenu_reference,
       moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
-    ).some((c) => codesAdmis.has(c))) {
+    );
+    if (!regimesDeLaLigne.some((c) => codesAdmis.has(c))) {
       continue;
+    }
+    if (regimesDeLaLigne.some((c) => repris.includes(c))) {
+      anneesDesAssurancesSociales.add(ligne.annee);
     }
     const avpfDeLaLigne = !ligne.cotise && avpfOuvert && ligne.revenu_avpf > 0;
     if (regle !== null) {
@@ -2540,8 +2587,8 @@ export function materniteAuCompte(moteur, code, carriere, periode, anneeLiquidat
 /**
  * Les trimestres que le salarié justifie avant l'année de ses soixante ans,
  * au régime et dans ceux dont il reprend la durée — les assurances sociales
- * de 1930 à 1944 —, dont le salaire n'entre pas dans la moyenne : ce qui
- * décide le complément d'avant juillet 1948 (`moyenneSelonLaRegle`).
+ * de 1930 à 1944 — : ce qui décide le complément d'avant juillet 1948
+ * (`moyenneSelonLaRegle`).
  */
 export function trimestresAvantSoixanteAns(moteur, carriere, codesAdmis) {
   const soixante = carriere.annee_naissance + AGE_DES_DIX_DERNIERES_ANNEES;

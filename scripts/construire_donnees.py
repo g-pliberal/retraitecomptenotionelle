@@ -1349,6 +1349,18 @@ def _rendements() -> list:
 
 
 
+def _revalorisation_cotisations() -> list:
+    """Les colonnes de la Cnav des cotisations de 1930 à 1944, sous la forme
+    de celles des salaires (``_revalorisation_salaires``)."""
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+
+    return [
+        [annee, mois, min(table),
+         [table[a] for a in range(min(table), max(table) + 1)]]
+        for annee, mois, table in DonneesMacro(DONNEES).revalorisation_cotisations_1930_1944
+    ]
+
+
 def _revalorisation_salaires(anciennes: bool = False) -> list:
     """Colonnes de revalorisation publiées par la Cnav, par date d'effet :
     celles des circulaires depuis octobre 2017, ou, ``anciennes``, celles de
@@ -2753,6 +2765,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "durees_proratisation": _table_par_generation(DureesProratisation),
         "revalorisation_salaires": _revalorisation_salaires(),
         "revalorisation_salaires_anciennes": _revalorisation_salaires(anciennes=True),
+        "revalorisation_cotisations_1930_1944": _revalorisation_cotisations(),
         "revalorisation_pensions": _revalorisation_pensions(),
         # L'âge légal n'est plus une table du paquet : le moteur le lit dans
         # les versions de sa fiche (``fiches_datees``,

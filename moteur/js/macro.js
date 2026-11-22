@@ -244,6 +244,11 @@ export class DonneesMacro {
      * jamais par rapport de deux de leurs valeurs. Voir le Python.
      */
     this.revalorisationPorteeAuCompteAnciennes = colonnes("revalorisation_salaires_anciennes");
+    /**
+     * Les colonnes des COTISATIONS de 1930 à 1944, de l'arrêté du 14 mai 1946
+     * à la dernière édition du barème (`coefficientDesAssurancesSociales`).
+     */
+    this.revalorisationCotisations = colonnes("revalorisation_cotisations_1930_1944");
     /** Toutes les colonnes, anciennes et récentes, triées par date d'effet. */
     this._colonnesEnVigueur = [
       ...this.revalorisationPorteeAuCompteAnciennes, ...this.revalorisationPorteeAuCompte,
@@ -768,6 +773,47 @@ export class DonneesMacro {
       return null;
     }
     return colonnes[rang];
+  }
+
+  /**
+   * La revalorisation du SALAIRE d'une année des assurances sociales, de 1930
+   * à 1944, au salaire annuel moyen d'une pension prenant effet au premier
+   * jour de ce mois.
+   *
+   * Le compte portait alors des cotisations, et la caisse les « revalorise
+   * directement avant la recherche du salaire annuel moyen », d'un coefficient
+   * qui les convertit en salaire du même geste (circulaire ministérielle
+   * n° 151 du 5 août 1946) : à la première colonne, celle de l'arrêté du
+   * 14 mai 1946, que la caisse oppose aux pensions d'avant 1949, 75,000 pour
+   * 1930 à 1935 (25 fois la cotisation, revalorisée par 3), 37,500 pour 1937
+   * à 1941, 25,000 pour 1942 et 1943, 18,750 pour 1944. Le modèle part du
+   * salaire : il lit le rapport de la colonne EN VIGUEUR à celle de 1946,
+   * multiplié par le coefficient de la circulaire (3, 2 ou 1), que la
+   * version de la fiche `sam_annees_d_avant_1947` porte et que l'appelant
+   * passe en `circulaire`. Après la dernière colonne, la revalorisation qui
+   * suit est celle d'un salaire de son année. `null` hors des colonnes.
+   */
+  coefficientDesAssurancesSociales(depart, arrivee, moisArrivee, circulaire) {
+    const colonnes = this.revalorisationCotisations;
+    if (colonnes.length === 0 || !colonnes[0].coefficients.has(depart)) {
+      return null;
+    }
+    let rang = 0;
+    for (let i = 0; i < colonnes.length; i += 1) {
+      const c = colonnes[i];
+      if (c.annee < arrivee || (c.annee === arrivee && c.mois <= moisArrivee)) {
+        rang = i;
+      }
+    }
+    const colonne = colonnes[rang];
+    const coefficient = circulaire * colonne.coefficients.get(depart)
+      / colonnes[0].coefficients.get(depart);
+    const derniere = colonnes[colonnes.length - 1];
+    if (rang === colonnes.length - 1 && arrivee > derniere.annee) {
+      return coefficient * this.coefficientRevalorisationPorteeAuCompte(
+        derniere.annee, arrivee, moisArrivee);
+    }
+    return coefficient;
   }
 
   /**

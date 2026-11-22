@@ -1043,6 +1043,16 @@ class DonneesMacro:
         """
         return self._colonnes_de_revalorisation("revalorisation_salaires_anciennes.csv")
 
+    @cached_property
+    def revalorisation_cotisations_1930_1944(
+            self) -> list[tuple[int, int, dict[int, float]]]:
+        """Les colonnes de la Cnav des COTISATIONS de 1930 à 1944, par date
+        d'effet, de l'arrêté du 14 mai 1946 à la dernière édition du barème
+        (``revalorisation_cotisations_1930_1944.csv``) : le moteur en tire le
+        salaire revalorisé des années des assurances sociales
+        (``coefficientDesAssurancesSociales``, moteur/js/macro.js)."""
+        return self._colonnes_de_revalorisation("revalorisation_cotisations_1930_1944.csv")
+
     def _colonnes_de_revalorisation(self, fichier: str
                                     ) -> list[tuple[int, int, dict[int, float]]]:
         import csv
