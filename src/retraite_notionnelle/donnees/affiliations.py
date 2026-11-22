@@ -223,6 +223,22 @@ class Affiliations:
         depuis = self.sans_prise_en_charge_depuis(affiliation)
         return depuis is not None and annee >= depuis
 
+    def au_menu(self, affiliation: str) -> bool:
+        """Le statut se choisit-il pour un métier ? Non quand il porte
+        ``menu: false`` : l'assurance volontaire du salarié expatrié, que la
+        saisie dit sur une période passée hors de France."""
+        return bool(self._profils.get(affiliation, {}).get("menu", True))
+
+    def assurance_volontaire(self, affiliation: str) -> dict | None:
+        """Le barème de l'assurance volontaire que porte le statut — la part du
+        plafond de chaque catégorie, l'âge où finit la 4e —, ou rien."""
+        bareme = self._profils.get(affiliation, {}).get("assurance_volontaire")
+        if bareme is None:
+            return None
+        return {"parts_du_plafond": {str(categorie): float(part) for categorie, part
+                                     in bareme["parts_du_plafond"].items()},
+                "age_de_la_4e_categorie": int(bareme["age_de_la_4e_categorie"])}
+
     def sans_prise_en_charge_depuis(self, affiliation: str) -> int | None:
         """L'année depuis laquelle :meth:`sans_prise_en_charge` vaut, ou rien."""
         depuis = self._profils.get(affiliation, {}).get("sans_prise_en_charge_depuis")

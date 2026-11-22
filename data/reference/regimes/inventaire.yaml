@@ -3226,14 +3226,23 @@ inventaire:
     succede_a: []
     integre_dans: null
     gestionnaire: cfe
-    couverture: hors_champ
-    statuts: []
+    couverture: routage
+    statuts: [assure_volontaire_expatrie]
     textes:
     - {reference: "loi n° 84-604 du 13 juillet 1984 et décret n° 84-780 du 9 août 1984",
       id: LEGITEXT000006064599}
-    raison_hors_champ: >-
-      Adhésion facultative qui ouvre des droits au régime général : ce n'est pas un
-      régime distinct, et le modèle ne décrit que des affiliations obligatoires.
+    - {reference: "code de la sécurité sociale, L. 742-1 (assurance volontaire vieillesse\
+        \ des salariés hors de France)", id: LEGIARTI000047453412}
+    manque: >-
+      Le statut `assure_volontaire_expatrie`, que la saisie pose sur une période hors
+      de France par sa catégorie (`etranger<n>_avv`), route le régime général sur le
+      salaire forfaitaire de la classe (R. 742-4 : le plafond, ses trois quarts, sa
+      moitié, son quart avant le trimestre des vingt-deux ans), par trimestre civil
+      entier, depuis juillet 1966 ; les trimestres se décomptent comme ceux de l'assurance
+      obligatoire (R. 742-8, R. 351-9). Non portés : l'assurance volontaire des non-salariés
+      (L. 742-6), du parent chargé de famille, de la tierce personne, le rachat de L.
+      742-2, la superposition aux périodes que la coordination fait compter, et la retraite
+      complémentaire individuelle que la CFE propose par contrat.
 
   # ---------------------------------------------------------------------
   # Non-salariés agricoles

@@ -1134,6 +1134,52 @@ export function avecPeriodesAssimilees(chronologie, declarees, personne_ = ASSUR
   return { ...chronologie, faits };
 }
 
+/**
+ * La chronologie, et l'assurance volontaire vieillesse que l'assuré a payée
+ * hors de France (L. 742-1, 3e alinéa, 1°) : chaque période déclarée,
+ * `{debut, fin, categorie, affiliation}` — ses deux dates au premier jour d'un
+ * trimestre civil, la fin exclue, la catégorie de 1 à 3 —, devient une période
+ * d'activité AJOUTÉE à la carrière, sous le statut `affiliation`, que la
+ * carrière porte au compte au forfait de sa catégorie
+ * (`forfaitDeLAssuranceVolontaire`, dans `carriere.js`). Comme une activité
+ * ajoutée, elle tient dans la carrière : après son premier emploi, avant le
+ * départ.
+ */
+export function avecAssuranceVolontaire(chronologie, declarees, personne_ = ASSURE) {
+  if (!declarees || declarees.length === 0) {
+    return chronologie;
+  }
+  const faits = (chronologie.faits ?? []).map((f) => ({ ...f }));
+  const emplois = faits.filter((f) => f.personne === personne_ && f.sorte === EMPLOI);
+  const depart_ = faits.find((f) => f.personne === personne_
+    && f.sorte === "acte_de_la_personne" && f.attributs.acte === "depart");
+  if (emplois.length === 0 || !depart_) {
+    throw new Error("une assurance volontaire s'ajoute à une carrière, qui a son "
+      + "premier emploi et son départ");
+  }
+  const premier = emplois.map((f) => f.debut).sort()[0];
+  declarees.forEach((declaree, i) => {
+    const { debut, fin, categorie, affiliation } = declaree;
+    if (![1, 2, 3].includes(categorie)) {
+      throw new Error(`une assurance volontaire en catégorie « ${categorie} » : 1, 2 ou 3`);
+    }
+    for (const date of [debut, fin]) {
+      if (!/^\d{4}-(01|04|07|10)-01$/.test(date)) {
+        throw new Error(`une assurance volontaire datée du ${date} : le premier jour `
+          + "d'un trimestre civil");
+      }
+    }
+    if (fin <= debut || debut < premier || fin > depart_.debut) {
+      throw new Error(`une assurance volontaire du ${debut} au ${fin} : elle tient `
+        + `dans la carrière, du ${premier} au ${depart_.debut}`);
+    }
+    faits.push(fait(`assurance_volontaire_${i + 1}`, personne_, EMPLOI, debut, fin, {
+      affiliation, niveau_salaire: 0, assurance_volontaire: categorie, cumul: true,
+    }));
+  });
+  return { ...chronologie, faits };
+}
+
 /** La sorte et les attributs du fait de chaque motif de prolongation. */
 const FAIT_DE_LA_PROLONGATION = Object.freeze({
   etudes: [ETUDES, {}],

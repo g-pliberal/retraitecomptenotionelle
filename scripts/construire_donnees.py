@@ -1208,6 +1208,9 @@ def _affiliations() -> dict:
             "releve_par": affiliations.releve_par(code),
             "periodes": list(affiliations.periodes(code)),
             **_sans_prise_en_charge(affiliations, code),
+            **({} if affiliations.au_menu(code) else {"menu": False}),
+            **({} if (bareme := affiliations.assurance_volontaire(code)) is None
+               else {"assurance_volontaire": bareme}),
         }
         for code in affiliations.codes
     }

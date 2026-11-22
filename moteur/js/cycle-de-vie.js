@@ -613,7 +613,7 @@ export function cotisationsLiberales(simulateur, versees, liberal) {
 
 /** Les revenus d'activité des années cotisées, en euros courants. */
 export function revenusDActivite(carriere) {
-  return parAnnee(carriere.lignes.filter((ligne) => ligne.cotise)
+  return parAnnee(carriere.lignes.filter((ligne) => ligne.remuneree)
     .map((ligne) => [ligne.annee, ligne.revenu]));
 }
 
@@ -741,7 +741,7 @@ function paies(simulateur, carriere, imposable) {
   const indemnites = indemnitesDesLignes(carriere, simulateur.macro, simulateur.catalogue,
     simulateur.affiliations);
   for (const [rang, ligne] of carriere.lignes.entries()) {
-    if (!ligne.cotise) continue;
+    if (!ligne.remuneree) continue;
     const paie = netAnnualise(simulateur, carriere, ligne, indemnites[rang], imposable);
     if (paie === null) return null;
     const [net, nonDeductible] = paie;
@@ -1645,7 +1645,7 @@ export function beneficesParAnnee(simulateur, carriere) {
   const revenus = new Map();
   const independants = new Map();
   for (const ligne of carriere.lignes) {
-    if (!ligne.cotise) continue;
+    if (!ligne.remuneree) continue;
     revenus.set(ligne.annee, (revenus.get(ligne.annee) ?? 0.0) + ligne.revenu);
     const entree = simulateur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee);
     const profil = profilDeLaFiche(simulateur.affiliations, simulateur.catalogue,
@@ -2173,7 +2173,7 @@ export function minimumVieillesse(simulateur, annee) {
 export function derniereAnneePleine(carriere) {
   const couverture = new Map();
   for (const ligne of carriere.lignes) {
-    if (ligne.cotise && ligne.annee < carriere.anneeLiquidation) {
+    if (ligne.remuneree && ligne.annee < carriere.anneeLiquidation) {
       couverture.set(ligne.annee, (couverture.get(ligne.annee) ?? 0.0) + ligne.fraction_annee);
     }
   }

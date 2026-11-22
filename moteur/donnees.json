@@ -558,6 +558,18 @@
 "sans_employeur":true
 },
 "artiste_auteur":{"categorie_active":null,"famille":"prive","libelle":"Artiste-auteur (écrivain, illustrateur, photographe…)","part_salariale_seule":true,"pension_militaire":null,"periodes":[{"debut":1977,"fin":null,"regimes":["regime_general","ircec_raap"]}],"releve_par":null,"sans_employeur":false},
+"assure_volontaire_expatrie":{
+"assurance_volontaire":{"age_de_la_4e_categorie":22,"parts_du_plafond":{"1":1.0,"2":0.75,"3":0.5,"4":0.25}},
+"categorie_active":null,
+"famille":"hors_emploi",
+"libelle":"Assuré volontaire vieillesse, salarié expatrié",
+"menu":false,
+"part_salariale_seule":false,
+"pension_militaire":null,
+"periodes":[{"debut":1966,"fin":null,"regimes":["regime_general"]}],
+"releve_par":null,
+"sans_employeur":true
+},
 "auteur_dramatique":{
 "categorie_active":null,
 "famille":"prive",
@@ -32494,20 +32506,20 @@ null
 },
 {
 "code":"caisse_francais_etranger",
-"couverture":"hors_champ",
+"couverture":"routage",
 "creation":1984,
 "extinction":null,
 "famille":"base_prive",
 "fermeture":null,
 "gestionnaires":["cfe"],
 "integre_dans":null,
-"manque":"",
+"manque":"Le statut `assure_volontaire_expatrie`, que la saisie pose sur une période hors de France par sa catégorie (`etranger<n>_avv`), route le régime général sur le salaire forfaitaire de la classe (R. 742-4 : le plafond, ses trois quarts, sa moitié, son quart avant le trimestre des vingt-deux ans), par trimestre civil entier, depuis juillet 1966 ; les trimestres se décomptent comme ceux de l'assurance obligatoire (R. 742-8, R. 351-9). Non portés : l'assurance volontaire des non-salariés (L. 742-6), du parent chargé de famille, de la tierce personne, le rachat de L. 742-2, la superposition aux périodes que la coordination fait compter, et la retraite complémentaire individuelle que la CFE propose par contrat.",
 "nom":"Caisse des Français de l'étranger et assurance volontaire vieillesse",
 "population":"Français expatriés, sur adhésion",
-"raison_hors_champ":"Adhésion facultative qui ouvre des droits au régime général : ce n'est pas un régime distinct, et le modèle ne décrit que des affiliations obligatoires.",
-"statuts":[],
+"raison_hors_champ":"",
+"statuts":["assure_volontaire_expatrie"],
 "succede_a":[],
-"textes":[{"id":"LEGITEXT000006064599","reference":"loi n° 84-604 du 13 juillet 1984 et décret n° 84-780 du 9 août 1984"}]
+"textes":[{"id":"LEGITEXT000006064599","reference":"loi n° 84-604 du 13 juillet 1984 et décret n° 84-780 du 9 août 1984"},{"id":"LEGIARTI000047453412","reference":"code de la sécurité sociale, L. 742-1 (assurance volontaire vieillesse des salariés hors de France)"}]
 },
 {
 "code":"msa_non_salaries",

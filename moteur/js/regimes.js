@@ -3358,6 +3358,15 @@ export class Affiliations {
     return this._profil(code).famille;
   }
 
+  /**
+   * Le statut se choisit-il pour un métier ? Non quand le paquet porte
+   * `menu: false` : l'assurance volontaire du salarié expatrié, que la saisie
+   * dit sur une période passée hors de France. Voir `au_menu` du Python.
+   */
+  auMenu(code) {
+    return this._profil(code).menu !== false;
+  }
+
   /** Les tranches temporelles déclarées par ce statut, telles qu'écrites. */
   periodes(affiliation) {
     return this._profil(affiliation).periodes || [];

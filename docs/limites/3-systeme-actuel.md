@@ -317,11 +317,17 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   arriérées que l'assuré verse quand son employeur ne les a pas versées, dont
   celles de l'artiste-auteur depuis 1976 et du vétérinaire sous mandat
   sanitaire avant 1990. Ni l'assurance volontaire vieillesse que l'assuré
-  choisit — l'expatrié, la tierce personne d'un proche invalide, le parent
-  chargé de famille qu'aucun régime n'assure, le bénéficiaire de l'indemnité
-  de soins aux tuberculeux — (`regimes/caisse_francais_etranger.yaml`).
-  La saisie n'a pas de quoi les dire, et aucun trimestre ainsi
-  acquis n'entre au compte.
+  choisit, hors celle du salarié expatrié — la tierce personne d'un proche
+  invalide, le parent chargé de famille qu'aucun régime n'assure, le
+  bénéficiaire de l'indemnité de soins aux tuberculeux, le non-salarié
+  expatrié (L. 742-6) — (`regimes/caisse_francais_etranger.yaml`). La
+  saisie n'a pas de quoi les dire, et aucun trimestre ainsi acquis n'entre
+  au compte. Le salarié expatrié, lui, dit sa catégorie sur sa période hors
+  de France (action 177, étape 10) : le régime général porte au compte le
+  salaire forfaitaire de la classe, par trimestre civil entier ; ni la
+  retraite complémentaire individuelle que la Caisse des Français de
+  l'étranger propose par contrat, ni la superposition de cette assurance aux
+  périodes qu'une convention fait compter ne sont portées.
 - **aidants** — le modèle sert l'assurance vieillesse des parents au foyer
   pendant l'interruption pour enfant (fiche `avpf`), non l'affiliation de
   l'aidant d'un proche handicapé ou en perte d'autonomie, que l'assurance

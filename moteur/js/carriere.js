@@ -55,6 +55,58 @@ export const CONJOINTS_COLLABORATEURS = new Set([
   "conjoint_collaborateur_artisan",
   "conjoint_collaborateur_commercant",
 ]);
+/**
+ * Le statut de l'ASSURANCE VOLONTAIRE VIEILLESSE du salarié expatrié (L. 742-1,
+ * 3e alinéa, 1° ; R. 742-30) : une ligne au régime général seul, dont le revenu
+ * est le salaire forfaitaire de sa catégorie, que l'assuré est « censé avoir
+ * perçu » et que la caisse porte au compte (R. 742-8 ; exposé « Assurance
+ * volontaire » de la Cnav). Ce n'est pas un revenu d'activité : la ligne est
+ * cotisée, mais rien ne s'en nette ni ne s'en impose (`remuneree`).
+ */
+export const ASSURANCE_VOLONTAIRE = "assure_volontaire_expatrie";
+
+/**
+ * Le barème de l'assurance volontaire, que le paquet porte au statut
+ * (`affiliations.yaml`) : la part du plafond annuel de chaque catégorie
+ * (R. 742-4 ; arrêté du 9 décembre 1968 ; exposé « Assurance volontaire » de
+ * la Cnav), et l'âge où finit la 4e, celle des moins de vingt-deux ans.
+ */
+export function baremeDeLAssuranceVolontaire(paquet) {
+  return paquet.affiliations[ASSURANCE_VOLONTAIRE].assurance_volontaire;
+}
+
+/**
+ * Le premier mois où l'assuré né en `naissance` sort de la 4e catégorie :
+ * celui qui suit le trimestre civil de son anniversaire (exposé « Assurance
+ * volontaire » de la Cnav : la classification « est valable jusqu'à la fin du
+ * trimestre civil qui comprend le 22e anniversaire »).
+ */
+export function finDeLaQuatriemeCategorie(naissance, bareme) {
+  const anniversaire = naissance.plusMois(bareme.age_de_la_4e_categorie * MOIS_PAR_AN);
+  return new DateMois(anniversaire.annee,
+    Math.floor((anniversaire.mois - 1) / 3) * 3 + 1).plusMois(3);
+}
+
+/**
+ * Le salaire forfaitaire que l'assurance volontaire porte au compte de
+ * l'année `annee`, pour la période [ouverture, cloture) en `categorie` : le
+ * plafond de l'année, pour chaque mois couvert, à la part de sa catégorie, la
+ * 4e jusqu'au trimestre des vingt-deux ans. La période se compte en
+ * trimestres civils entiers, que la chronologie a déjà arrondis.
+ */
+export function forfaitDeLAssuranceVolontaire(macro, categorie, annee, ouverture, cloture,
+  naissance) {
+  const bareme = baremeDeLAssuranceVolontaire(macro.paquet);
+  const parts = bareme.parts_du_plafond;
+  const bascule = finDeLaQuatriemeCategorie(naissance, bareme);
+  const jeune = moisTravailles(annee, ouverture,
+    bascule.rang < cloture.rang ? bascule : cloture);
+  const adulte = moisTravailles(annee,
+    bascule.rang > ouverture.rang ? bascule : ouverture, cloture);
+  return macro.plafond_securite_sociale.valeur(annee) * (
+    parts[4] * jeune + parts[categorie] * adulte) / MOIS_PAR_AN;
+}
+
 /** L'affiliation obligatoire du 1er juillet 2007 (loi n° 2005-882, art. 15, XIV). */
 export const CONJOINT_COLLABORATEUR_OBLIGATOIRE = 2007;
 /** « Un revenu forfaitaire égal au tiers du plafond » (D. 633-19-2, 1°). */
@@ -213,6 +265,15 @@ export class AnneeCarriere {
 
   get cotise() {
     return this.cotisations_versees && this.revenu > 0;
+  }
+
+  /**
+   * La ligne porte-t-elle un REVENU D'ACTIVITÉ, que la paie nette et que
+   * l'impôt saisit ? Toute ligne cotisée, sauf celle de l'assurance volontaire,
+   * dont le salaire forfaitaire ne se perçoit pas (`ASSURANCE_VOLONTAIRE`).
+   */
+  get remuneree() {
+    return this.cotise && this.affiliation !== ASSURANCE_VOLONTAIRE;
   }
 
   /**
@@ -2367,16 +2428,19 @@ export class Carriere {
     reversion_agricole = null,
     prolongations_de_la_charge = [],
     outre_mer = null,
+    assurance_volontaire = [],
   }) {
     const chronologie = preparer(chrono.avecProlongationsDeLaCharge(
-      chrono.avecPeriodesAssimilees(chrono.duParcours({
+      chrono.avecPeriodesAssimilees(chrono.avecAssuranceVolontaire(chrono.duParcours({
         annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
         profil_carriere, interruptions, temps_partiel, nombre_enfants, part_primes,
         naissances_enfants,
         jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
         retraite_progressive, emploi_retraite, demandes_de_pension, invalidite, etranger,
         dispenses, reversion_agricole, outre_mer,
-      }), periodes_assimilees), prolongations_de_la_charge), macro.paquet.presomptions);
+      }), assurance_volontaire.map((periode) => ({
+        ...periode, affiliation: ASSURANCE_VOLONTAIRE }))), periodes_assimilees),
+      prolongations_de_la_charge), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
 
@@ -2761,9 +2825,13 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
       if (mois <= 0) {
         continue;
       }
-      const revenu = revenuAnnuel(macro, metier, annee - anneeNaissance, annee,
-        salaireMoyen)
-        * (mois / MOIS_PAR_AN);
+      // L'assurance volontaire cotise sur le forfait de sa catégorie, une
+      // part du plafond de l'année (R. 742-4), et non sur un salaire.
+      const revenu = metier.assurance_volontaire
+        ? forfaitDeLAssuranceVolontaire(macro, metier.assurance_volontaire, annee,
+          ouverture, cloture, dateNaissance)
+        : revenuAnnuel(macro, metier, annee - anneeNaissance, annee, salaireMoyen)
+          * (mois / MOIS_PAR_AN);
       // Après la limite du chômage non indemnisé, qui ne regarde que
       // l'activité principale — comme en Python.
       limitees.push(ligneAnnuelle({

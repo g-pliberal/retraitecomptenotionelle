@@ -476,6 +476,12 @@ export class Contexte {
           `Statut d'affiliation inconnu : « ${metier.affiliation} ».`,
         );
       }
+      if (!simulateur.affiliations.auMenu(metier.affiliation)) {
+        throw new ErreurSaisie(
+          `Le statut « ${metier.affiliation} » n'est pas un métier : il se déclare `
+          + "sur une période à l'étranger, par sa catégorie d'assurance volontaire.",
+        );
+      }
     }
     const emploiRetraite = this.emploiRetraite(simulateur, saisie);
     const demandes = demandesDePension(simulateur, saisie);
@@ -504,6 +510,7 @@ export class Contexte {
       invalidite: saisie.invaliditeDeclaree(),
       etranger,
       periodes_assimilees: saisie.periodesAssimileesDeclarees(),
+      assurance_volontaire: saisie.assuranceVolontaireDeclaree(),
       prolongations_de_la_charge: saisie.prolongationsDeLaChargeDeclarees(),
       dispenses,
       outre_mer: saisie.outreMerAnalyse(),

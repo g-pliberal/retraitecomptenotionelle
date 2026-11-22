@@ -547,6 +547,21 @@ const CODE_D_ETAT = /^[A-Z]{2}$/;
  * coordonne souvent que les salariés (`personnes` au tableau des accords). La
  * première est celle d'une ligne qui ne la dit pas.
  */
+/**
+ * Les catégories d'assurance volontaire que la saisie reçoit sur une période
+ * hors de France (R. 742-4) : la 4e, celle des moins de vingt-deux ans, ne se
+ * choisit pas, elle s'applique.
+ */
+export const CATEGORIES_D_ASSURANCE_VOLONTAIRE_SAISIES = Object.freeze(["1", "2", "3"]);
+
+/**
+ * Le premier trimestre que l'assurance volontaire des salariés expatriés peut
+ * porter : celui qui suit le décret n° 66-303 du 13 mai 1966, qui applique la
+ * loi n° 65-555 du 10 juillet 1965, l'adhésion prenant effet au premier jour
+ * du trimestre civil qui suit la demande.
+ */
+const DEBUT_DE_L_ASSURANCE_VOLONTAIRE = new DateMois(1966, 7);
+
 export const ACTIVITES_A_L_ETRANGER = [
   ["salariee", "salariée"],
   ["non_salariee", "non salariée"],
@@ -3040,6 +3055,87 @@ export class Saisie {
    * accords connaisse l'État, c'est au contexte de le dire, qui a les données ;
    * ce que chaque accord fait des périodes, au calcul.
    */
+  /**
+   * Les trimestres civils entiers qu'une période hors de France couvre,
+   * `[premier, fin)` en `DateMois` : l'assurance volontaire se paie par
+   * trimestre civil (R. 742-6 ; D. 742-7), et l'adhésion prend effet au
+   * premier jour d'un trimestre (R. 742-6, D. 742-4).
+   */
+  trimestresDeLaPeriode(periode) {
+    const debut = this.dateDe(periode.debut);
+    const fin = this.dateDe(periode.fin);
+    const premier = new DateMois(debut.annee, Math.floor((debut.mois - 1) / 3) * 3 + 1);
+    return [premier.rang < debut.rang ? premier.plusMois(3) : premier,
+      new DateMois(fin.annee, Math.floor((fin.mois - 1) / 3) * 3 + 1)];
+  }
+
+  /**
+   * L'assurance volontaire vieillesse d'une période hors de France (L. 742-1,
+   * 3e alinéa, 1°) : sa catégorie, de 1 à 3 — la 4e, celle des moins de
+   * vingt-deux ans, s'applique d'elle-même (R. 742-4, R. 742-34) —, pour une
+   * activité salariée, sur une carrière de métiers, depuis juillet 1966, sur
+   * au moins un trimestre civil entier, après le premier emploi déclaré.
+   */
+  verifierAssuranceVolontaire(periode, quoi) {
+    if (!periode.avv) {
+      return;
+    }
+    if (!CATEGORIES_D_ASSURANCE_VOLONTAIRE_SAISIES.includes(periode.avv)) {
+      throw new ErreurSaisie(
+        `${quoi} : « ${periode.avv} » n'est pas une catégorie d'assurance volontaire `
+        + "— 1, 2 ou 3 ; la 4e, celle des moins de vingt-deux ans, s'applique "
+        + "d'elle-même.",
+      );
+    }
+    if (periode.activite !== ACTIVITES_A_L_ETRANGER[0][0]) {
+      throw new ErreurSaisie(
+        `${quoi} : l'assurance volontaire que ce champ décrit est celle des salariés `
+        + "(L. 742-1) ; celle des non-salariés (L. 742-6) n'est pas modélisée.",
+      );
+    }
+    if (this.releveActif) {
+      throw new ErreurSaisie(
+        `${quoi} : un relevé porte déjà les salaires de l'assurance volontaire ; `
+        + "écrivez-les à ses années, sous le statut « assure_volontaire_expatrie ».",
+      );
+    }
+    const [premier, fin] = this.trimestresDeLaPeriode(periode);
+    if (premier.rang < DEBUT_DE_L_ASSURANCE_VOLONTAIRE.rang) {
+      throw new ErreurSaisie(
+        `${quoi} : l'assurance volontaire des salariés expatriés ne court qu'à partir `
+        + "de juillet 1966 (loi n° 65-555 du 10 juillet 1965, décret n° 66-303 du "
+        + "13 mai 1966).",
+      );
+    }
+    if (fin.rang <= premier.rang) {
+      throw new ErreurSaisie(
+        `${quoi} : l'assurance volontaire se paie par trimestre civil entier, et la `
+        + "période n'en couvre aucun.",
+      );
+    }
+    const carriere = this.dateDe(this.debut);
+    if (premier.rang < carriere.rang) {
+      throw new ErreurSaisie(
+        `${quoi} : le modèle ne porte l'assurance volontaire qu'après le début de la `
+        + `carrière déclarée, en ${carriere} ; faites commencer la période après lui.`,
+      );
+    }
+  }
+
+  /**
+   * L'assurance volontaire que la saisie déclare, telle que
+   * `avecAssuranceVolontaire` la reçoit : pour chaque période qui la porte, ses
+   * trimestres civils entiers, au jour, et sa catégorie.
+   */
+  assuranceVolontaireDeclaree() {
+    const jour = (mois) => `${String(mois.annee).padStart(4, "0")}-`
+      + `${String(mois.mois).padStart(2, "0")}-01`;
+    return this.etranger.filter((periode) => periode.avv).map((periode) => {
+      const [premier, fin] = this.trimestresDeLaPeriode(periode);
+      return { debut: jour(premier), fin: jour(fin), categorie: Number(periode.avv) };
+    });
+  }
+
   verifierEtranger() {
     const depart = this.dateDe(this.liquidation, true);
     const bornes = [];
@@ -3067,6 +3163,7 @@ export class Saisie {
         );
       }
       bornes.push([debut.rang, fin.rang, rang]);
+      this.verifierAssuranceVolontaire(periode, quoi);
     });
     bornes.sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);
     for (let i = 1; i < bornes.length; i += 1) {
@@ -3617,6 +3714,9 @@ export class Saisie {
       if (periode.activite !== ACTIVITES_A_L_ETRANGER[0][0]) {
         champs[`etranger${rang}_activite`] = periode.activite;
       }
+      if (periode.avv) {
+        champs[`etranger${rang}_avv`] = periode.avv;
+      }
     });
     this.pensions_etrangeres.forEach((pension, index) => {
       const rang = index + 1;
@@ -3799,7 +3899,8 @@ function periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante = fals
     const debut = String(parametres[`etranger${rang}_debut`] ?? "").trim();
     const fin = String(parametres[`etranger${rang}_fin`] ?? "").trim();
     const activite = String(parametres[`etranger${rang}_activite`] ?? "").trim();
-    if (!pays && !debut && !fin && !activite) {
+    const avv = String(parametres[`etranger${rang}_avv`] ?? "").trim();
+    if (!pays && !debut && !fin && !activite && !avv) {
       continue;
     }
     // Remontrée, la ligne incomplète n'est pas une période : la lecture s'y
@@ -3830,6 +3931,7 @@ function periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante = fals
       debut: ageSaisi(parametres, `etranger${rang}_debut`, 0.0, moisDeNaissance),
       fin: ageSaisi(parametres, `etranger${rang}_fin`, 0.0, moisDeNaissance),
       activite: activite || activites[0],
+      avv,
     });
   }
   return periodes;

@@ -1373,6 +1373,20 @@ def _cas() -> list[dict]:
         "naissance": "1950-02-15", "debut": "1978-01", "liquidation": "2012-03",
         "etranger1_pays": "autre", "etranger1_debut": "1968-01",
         "etranger1_fin": "1978-01"}))
+    # L'ASSURANCE VOLONTAIRE DES EXPATRIÉS (L. 742-1, R. 742-4 ; action 177,
+    # étape 10) : la salariée partie de 2015 à 2024 hors de tout accord, qui
+    # cotise en 3e catégorie, et que le régime général compte comme en France
+    # sur le salaire forfaitaire, la moitié du plafond ; le jeune parti à
+    # vingt ans, en 4e catégorie jusqu'au trimestre de ses vingt-deux ans, en
+    # 1re ensuite.
+    cas.append(("assurance_volontaire_3e_categorie", {
+        "naissance": "1962-03-15", "debut": "1984-01", "liquidation": "2027-04",
+        "etranger1_pays": "autre", "etranger1_debut": "2015-01",
+        "etranger1_fin": "2025-01", "etranger1_avv": "3"}))
+    cas.append(("assurance_volontaire_avant_22_ans", {
+        "naissance": "1991-05-10", "debut": "2009-09", "liquidation": "2056-06",
+        "etranger1_pays": "autre", "etranger1_debut": "2012-01",
+        "etranger1_fin": "2016-01", "etranger1_avv": "1"}))
     # La pension nationale contre la pension proratisée, chacune à son
     # minimum : au petit salaire, cinq ans en Allemagne puis une carrière
     # française complète, la nationale l'emporte ; vingt-cinq ans en Espagne,

@@ -557,7 +557,7 @@ function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coeffici
  * non un changement d'unité.
  */
 function dernierRevenuAnnualise(carriere, macro) {
-  const derniers = carriere.lignes.filter((ligne) => ligne.cotise);
+  const derniers = carriere.lignes.filter((ligne) => ligne.remuneree);
   if (derniers.length === 0) return 0.0;
   // Toutes les activités de la dernière année cotisée : c'est le revenu
   // d'activité que la pension remplace, et non celui d'une seule d'entre elles.

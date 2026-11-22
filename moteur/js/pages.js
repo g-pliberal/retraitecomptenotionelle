@@ -555,6 +555,11 @@ export function optionsStatuts(affiliations, entree, sansEmploi = false) {
     if (sansEmploi && CODES_SANS_EMPLOI.has(code)) {
       continue;
     }
+    // L'assurance volontaire se dit sur une période hors de France, non comme
+    // un métier.
+    if (!affiliations.auMenu(code)) {
+      continue;
+    }
     const fermeture = affiliations.fermetureEntrants(code);
     const disponible = entree === null || fermeture === null
       || entree.rang < fermeture.rang;
@@ -1550,7 +1555,15 @@ function etrangerFormulaire(saisie, contexte) {
       + g.liste(`etranger${rang}_activite`, "Activité",
         [["", ACTIVITES_A_L_ETRANGER[0][1]], ...ACTIVITES_A_L_ETRANGER.slice(1)],
         periode === null || periode.activite === ACTIVITES_A_L_ETRANGER[0][0]
-          ? "" : periode.activite);
+          ? "" : periode.activite)
+      + g.liste(`etranger${rang}_avv`, "Assurance volontaire",
+        [["", "aucune"], ["1", "1re catégorie"], ["2", "2e catégorie"], ["3", "3e catégorie"]],
+        periode?.avv ?? "", "", {},
+        rang > 1 ? "" : "Le salarié expatrié qui cotise à l'assurance volontaire de la "
+          + "Caisse des Français de l'étranger valide ses trimestres comme en France, "
+          + "sur un salaire forfaitaire : le plafond de la sécurité sociale en 1re "
+          + "catégorie, ses trois quarts en 2e, sa moitié en 3e, son quart avant le "
+          + "trimestre de ses vingt-deux ans.");
     return ligne(`Période hors de France n° ${rang}`, champs, periode === null);
   });
   const pensions = [...saisie.pensions_etrangeres, null].slice(0, ETRANGER_MAXIMUM);

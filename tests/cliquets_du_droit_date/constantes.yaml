@@ -167,6 +167,7 @@ constantes:
   "moteur/js/revalorisation.js : TAUX_PLEIN_DE_LA_PMR_DEPUIS": {classe: droit, fiches: []}
   "moteur/js/saisie.js : ANNEE_MAXIMALE": {classe: hors, raison: saisie}
   "moteur/js/saisie.js : ANNEE_MINIMALE": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : DEBUT_DE_L_ASSURANCE_VOLONTAIRE": {classe: hors, raison: saisie}
   "moteur/js/saisie.js : DEFAUTS": {classe: hors, raison: saisie}
   "moteur/js/saisie.js : NAISSANCE_MAXIMALE": {classe: hors, raison: saisie}
   "moteur/js/saisie.js : NAISSANCE_MINIMALE": {classe: hors, raison: saisie}

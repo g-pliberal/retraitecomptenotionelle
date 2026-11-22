@@ -1338,6 +1338,35 @@ affiliations:
       n'est marqué `sans_employeur` : la congrégation paie la part collective
       de la base (R. 382-90), que les scénarios 4 et 5 doivent compter.
 
+  assure_volontaire_expatrie:
+    libelle: Assuré volontaire vieillesse, salarié expatrié
+    famille: hors_emploi
+    sans_employeur: true
+    menu: false
+    # R. 742-4, arrêté du 9 décembre 1968, exposé « Assurance volontaire » de
+    # la Cnav : le salaire forfaitaire de chaque catégorie, en part du plafond,
+    # la 4e jusqu'au trimestre civil du 22e anniversaire.
+    assurance_volontaire:
+      parts_du_plafond: {1: 1.0, 2: 0.75, 3: 0.5, 4: 0.25}
+      age_de_la_4e_categorie: 22
+    periodes:
+      - {debut: 1966, fin: null, regimes: [regime_general]}
+    note: >-
+      L'assurance volontaire vieillesse du salarié qui travaille hors de
+      France sans relever de la législation française (L. 742-1, 3e alinéa,
+      1°, issu de la loi n° 65-555 du 10 juillet 1965 ; décret n° 66-303 du
+      13 mai 1966 ; R. 742-30 et suivants). Elle ne se choisit pas comme un
+      métier (`menu: false`) : la saisie la dit sur une période passée hors
+      de France, avec sa catégorie, et le relevé sous ce statut. Le revenu de
+      la ligne est le salaire forfaitaire de la catégorie, une part du
+      plafond (R. 742-4), que la caisse porte au compte du régime général
+      comme un salaire (R. 742-8) ; ce n'est pas un revenu d'activité, que
+      la paie nette ou que l'impôt saisit (`remuneree`, dans `carriere.js`).
+      L'assuré paie seul la part salariale et la part patronale du risque
+      vieillesse (R. 742-6), d'où `sans_employeur`. Aucune complémentaire :
+      l'adhésion individuelle à l'Agirc-Arrco que la CFE propose avec
+      Malakoff Humanis n'est pas du droit, et n'est pas modélisée.
+
   sans_activite:
     libelle: Sans activité professionnelle
     famille: hors_emploi

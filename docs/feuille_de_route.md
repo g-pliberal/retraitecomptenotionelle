@@ -7881,15 +7881,14 @@ avec son test. Le modèle et le site gardent PyYAML seul.
 
 ### 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite — `en cours`
 
-**Reprise, au 5 novembre 2026.** Étapes 1 à 9 faites ; les forfaits de début lus au
-droit, écrits dans les deux moteurs : le commerçant de 2004 à 2008 sur 18 puis 27
-bases mensuelles, définitives ; de 2009 à 2011, tout forfait régularisé
-(`177/2026-11-05-forfaits-de-debut-des-independants.md`). Par quoi commencer : sa
-relecture. Au propriétaire, avant d'y toucher : le salarié de Mayotte (plafond de la
-caisse depuis 2012, articles 28-2 et 4) ; la cessation de 2012 (décret n° 2012-443,
-article 10, II), complémentaire et base, où un trimestre peut manquer. Candidats
-déclarés : l'invalide exonéré de complémentaire (D. 635-2, 2013) ; le minimum au
-revenu nul. Le site tient l'assurance maladie du micro-entrepreneur (étape 6). Opus.
+**Reprise, au 21 novembre 2026.** Étapes 1 à 10 faites ; la 10e porte
+l'assurance volontaire des salariés expatriés au régime général, au salaire
+forfaitaire de sa catégorie (`177/2026-11-21-etape-10-assurance-volontaire-des-expatries.md`).
+Par quoi commencer : la relecture des étapes 9 et 10. Au propriétaire, avant
+d'y toucher : le salarié de Mayotte (plafond de la caisse depuis 2012) ; la
+cessation de 2012 (décret n° 2012-443, article 10, II). Candidats déclarés :
+l'invalide exonéré de complémentaire (D. 635-2, 2013) ; le minimum au revenu
+nul ; l'assurance volontaire des non-salariés (L. 742-6). Opus.
 
 **D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
 barèmes de la base de législation de la Cnav confrontés, un à un, aux séries

@@ -4022,6 +4022,31 @@
   "script": "comparer-droit.mjs",
   "sortie": "f37d839021ead32a"
  },
+ "15ebb688207be68f": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "2010:2011:chomage_indemnise, 2012:2014:chomage_solidarite",
+   "liquidation": "64",
+   "naissance": "1965",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1.5",
+   "sexe": "H",
+   "statut": "salarie_prive_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "8441d7c86db00cbc"
+ },
  "1648ade024ad169e": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -4435,6 +4460,31 @@
   "script": "comparer-droit.mjs",
   "sortie": "e022bd936bbeb72a"
  },
+ "185cca58114966f2": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "35",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "65",
+   "naissance": "1925",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "ministre_du_culte",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "1e54e205980e92c9"
+ },
  "18740d6d65d61e64": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -4535,6 +4585,31 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "bda9649da2c59041"
  },
+ "19453a04d4972636": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "2010:2011:chomage_indemnise, 2012:2014:chomage_solidarite",
+   "liquidation": "64",
+   "naissance": "1965",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1.5",
+   "sexe": "H",
+   "statut": "salarie_prive_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "1f361384cedf85ce"
+ },
  "19505488292b9bcb": {
   "entree": {
    "conjoint": "1960",
@@ -4632,6 +4707,32 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "be0c4bf10867967d"
  },
+ "1a2f79ee4f4a851a": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "banque": "direction_6",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1972-02",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2014-07",
+   "naissance": "1950-01-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "agent_banque_de_france",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "6748d364042b899f"
+ },
  "1a4daa39b7de9b67": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -4685,6 +4786,32 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "4781d0bcf682dead"
+ },
+ "1a79a5086e5d5dee": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "30",
+   "emploi": "cor_2026",
+   "enfants": "3",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1972",
+   "naissances": "1999,2004-11,2008",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "fonctionnaire_etat",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "3c1204962e298194"
  },
  "1a87b475929a1ce8": {
   "entree": {
@@ -5462,6 +5589,35 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "c2cc5dd06db53198"
+ },
+ "1e20ebdececabe03": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1990-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "etranger1_activite": "non_salariee",
+   "etranger1_debut": "1980-01",
+   "etranger1_fin": "1990-09",
+   "etranger1_pays": "DZ",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2026-04",
+   "naissance": "1962-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "f2f7cb8f9dbca693"
  },
  "1e28f174b139482b": {
   "entree": {
@@ -7728,6 +7884,32 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "f04d67656fc3793e"
  },
+ "2884c1ae4a438de3": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "30",
+   "emploi": "cor_2026",
+   "enfants": "3",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1975",
+   "naissances": "2006,2009,2012",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "agent_sncf",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "e2ac0072c7f89c1b"
+ },
  "28984d77a59664fc": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -7891,6 +8073,62 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "9ee13a3f1f50b05a"
+ },
+ "29508118c68581ef": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "60",
+   "naissance": "1965",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "agent_ieg",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "a9bf64e47dc365d1"
+ },
+ "29543645cc6fce31": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1993-01",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "etranger1_debut": "1969-07",
+   "etranger1_fin": "1988-01",
+   "etranger1_pays": "DE",
+   "etranger2_debut": "1988-01",
+   "etranger2_fin": "1993-01",
+   "etranger2_pays": "BE",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2009-07",
+   "naissance": "1949-01-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "00b3e6519b550c28"
  },
  "29639a62fe3e550b": {
   "entree": {
@@ -8224,6 +8462,31 @@
   "script": "comparer-droit.mjs",
   "sortie": "b705d7739c7a22b8"
  },
+ "2a9317b39bb4e4c2": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2060",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1990",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "b16e488a7b259ed0"
+ },
  "2adeb1c1c08a1ab0": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -8274,6 +8537,31 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "76a924e1c68bb1d1"
  },
+ "2aeb52440ccfb4c7": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "20",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "2016:2024:chomage_indemnise",
+   "liquidation": "66",
+   "naissance": "1958",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1.5",
+   "sexe": "H",
+   "statut": "salarie_prive_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "f56bf1ea66f5edd8"
+ },
  "2b0dfe646770726d": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -8298,6 +8586,33 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "6f282ae7350395c2"
+ },
+ "2b3d5f29885a444d": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "22",
+   "emploi": "cor_2026",
+   "enfants": "2",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "metier2_debut": "40",
+   "metier2_statut": "fonctionnaire_etat",
+   "naissance": "1962",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "ae1977fd28f1e5d7"
  },
  "2b4c5c5f5a7f1695": {
   "entree": {
@@ -8961,6 +9276,32 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "559d5fd25e7c0d2b"
+ },
+ "2e0926674d1ce075": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "2004-01",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "handicap": "2004-01",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2027-06",
+   "naissance": "1970-06-01",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "fonctionnaire_territorial_hospitalier",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "ef7d4c93273ec397"
  },
  "2e3144492b69054a": {
   "entree": {
@@ -11593,6 +11934,31 @@
   "script": "comparer-droit.mjs",
   "sortie": "953dd08ff43dfec6"
  },
+ "3a3c62adda06aea4": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "60",
+   "naissance": "1965",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "agent_ieg",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "f8dc19af70b6d076"
+ },
  "3a3f993b065fdb51": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -12180,6 +12546,33 @@
   "script": "comparer-droit.mjs",
   "sortie": "34810a847a309260"
  },
+ "3c0c2a8ce4de410c": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1990-01",
+   "dispenses": "2010:2027:rsa",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2027-04",
+   "naissance": "1962-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "releve": "1990:artisan:3000,1991:artisan:3000,1992:artisan:3000,1993:artisan:3000,1994:artisan:3000,1995:artisan:3000,1996:artisan:3000,1997:artisan:3000,1998:artisan:3000,1999:artisan:3000,2000:artisan:3000,2001:artisan:3000,2002:artisan:3000,2003:artisan:3000,2004:artisan:3000,2005:artisan:3000,2006:artisan:3000,2007:artisan:3000,2008:artisan:3000,2009:artisan:3000,2010:artisan:3000,2011:artisan:3000,2012:artisan:3000,2013:artisan:3000,2014:artisan:3000,2015:artisan:3000,2016:artisan:3000,2017:artisan:3000,2018:artisan:3000,2019:artisan:3000,2020:artisan:3000,2021:artisan:3000,2022:artisan:3000,2023:artisan:3000,2024:artisan:3000,2025:artisan:3000",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "artisan",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "ee71d611d1f2e80f"
+ },
  "3c0d363b1f201dca": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -12305,6 +12698,35 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "84561bfec0953fec"
+ },
+ "3c8c54f6ec753bba": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "26",
+   "emploi": "cor_2026",
+   "emploi_retraite": "2017-02",
+   "emploi_retraite_fin": "2018-08",
+   "emploi_retraite_salaire": "3",
+   "emploi_retraite_statut": "medecin_liberal",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "62",
+   "naissance": "1954",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "medecin_liberal",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "61d7e4e468557cc8"
  },
  "3c955957e6efe6a5": {
   "entree": {
@@ -12712,6 +13134,37 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "15ea34f134f16a3a"
+ },
+ "3ee680fe4ee47e61": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1993-01",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "etranger1_debut": "1969-07",
+   "etranger1_fin": "1988-01",
+   "etranger1_pays": "DE",
+   "etranger2_debut": "1988-01",
+   "etranger2_fin": "1993-01",
+   "etranger2_pays": "BE",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2009-07",
+   "naissance": "1949-01-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "49478eaaef7c2cbf"
  },
  "3f78c67ee9dc7377": {
   "entree": {
@@ -15250,6 +15703,34 @@
   "script": "comparer-droit.mjs",
   "sortie": "04c0ee5afedc06b1"
  },
+ "4e77889f3b8c6f7f": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1990-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "etranger1_debut": "2011-01",
+   "etranger1_fin": "2014-07",
+   "etranger1_pays": "OI",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2026-04",
+   "naissance": "1962-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "fonctionnaire_territorial_hospitalier",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "f22a381424bf378b"
+ },
  "4ea45d0d2b477d2a": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -16015,6 +16496,33 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "0cd562a239b9c65d"
+ },
+ "531b9540258abe6d": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "22",
+   "emploi": "cor_2026",
+   "enfants": "2",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "metier2_debut": "50",
+   "metier2_statut": "salarie_prive_non_cadre",
+   "naissance": "1962",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "fonctionnaire_etat",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "2ab137839dd20d36"
  },
  "531dce9de3ecb9ce": {
   "entree": {
@@ -17435,6 +17943,33 @@
   "script": "comparer-droit.mjs",
   "sortie": "8a9baefda6616a85"
  },
+ "5a9952b5a80536d2": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conjoint": "1928",
+   "conversion_acquis": "reference",
+   "debut": "1952-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "1995-04",
+   "naissance": "1930-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "ressources_conjoint": "0",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "a845b914ae5c0a04"
+ },
  "5ab308063774cb57": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -17459,6 +17994,31 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "9820e3adaecb5726"
+ },
+ "5ada8ab169c4b4c1": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1940",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "966aba1bbb249d12"
  },
  "5b14cc6872120f18": {
   "entree": {
@@ -17814,6 +18374,32 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "67f76c7ef3581d48"
+ },
+ "5cd9f709b59359f6": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "62",
+   "naissance": "1961",
+   "naissance_mois": "10",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "d85c9465a6de164f"
  },
  "5ce1947abed6acd7": {
   "entree": {
@@ -19349,6 +19935,33 @@
   "script": "comparer-droit.mjs",
   "sortie": "640be4dc0ff02bc0"
  },
+ "66e17d848559cbba": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conjoint": "1928",
+   "conversion_acquis": "reference",
+   "debut": "1952-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "1995-04",
+   "naissance": "1930-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "ressources_conjoint": "0",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "d69479eb051e1c3d"
+ },
  "66eb6b35b8d601a4": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -19398,6 +20011,31 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "cf1e23b58c879378"
+ },
+ "67402345db8faf39": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2000",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1975",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "9ee13a3f1f50b05a"
  },
  "6745e8aab91d911a": {
   "entree": {
@@ -19713,6 +20351,34 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "ea7a8a27d2b00707"
+ },
+ "68de0c73970c8d35": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1990-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "etranger1_debut": "1980-01",
+   "etranger1_fin": "1990-09",
+   "etranger1_pays": "MA",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2026-04",
+   "naissance": "1962-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "fonctionnaire_etat",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "7ffbac41eba8fd1a"
  },
  "68dfc9894ac29616": {
   "entree": {
@@ -20505,6 +21171,33 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "2d028848a00fab86"
+ },
+ "6c3df27eb88f3baa": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "18",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "metier2_debut": "35",
+   "metier2_statut": "salarie_prive_non_cadre",
+   "naissance": "1965",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "militaire",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "bafc342f21df843b"
  },
  "6c45a249e7cb1be3": {
   "entree": {
@@ -22243,6 +22936,31 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "fd05ef9fe65006f2"
+ },
+ "756bcec2c9bef7a4": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1940",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "e14196ece87acbd9"
  },
  "75a165d30aabe217": {
   "entree": {
@@ -24775,6 +25493,34 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "ac143516c7e0c45c"
+ },
+ "836d981d8c971891": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "20",
+   "emploi": "cor_2026",
+   "emploi_retraite": "1995-08",
+   "emploi_retraite_employeur": "dernier",
+   "emploi_retraite_fin": "1997-02",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "61",
+   "naissance": "1934",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "819a9a9f8250f309"
  },
  "83b85f3d7321a5be": {
   "entree": {
@@ -28838,6 +29584,31 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "0296c5779c47d0e2"
  },
+ "97296fe477b74520": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "35",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "65",
+   "naissance": "1925",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "ministre_du_culte",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "fa7c85ddb9e2d2e2"
+ },
  "974f280168125034": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -29121,6 +29892,32 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "ff31cc185b48130f"
+ },
+ "981860d73c09a7f4": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "62",
+   "naissance": "1961",
+   "naissance_mois": "10",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "6febec433b773632"
  },
  "9842034de2ded9e5": {
   "entree": {
@@ -31089,6 +31886,32 @@
   "script": "comparer-droit.mjs",
   "sortie": "ec611d56643745b1"
  },
+ "a25d925654a90487": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1992-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "inaptitude": "oui",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2026-03",
+   "naissance": "1964-02-10",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "contractuel_public",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "3d535f0fc1560695"
+ },
  "a28e8287cf5664fb": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -31584,6 +32407,31 @@
   },
   "script": "simuler.mjs",
   "sortie": "bde68d7334fabafb"
+ },
+ "a5b1134dfc9ec989": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "30",
+   "emploi": "cor_2026",
+   "enfants": "1",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "60.5",
+   "naissance": "1914",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "f20aeac238cc7340"
  },
  "a5bc581d0ec60141": {
   "entree": {
@@ -32157,6 +33005,31 @@
   "script": "comparer-droit.mjs",
   "sortie": "807bbd996a031b13"
  },
+ "a8f72c6e64844ac4": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "30",
+   "emploi": "cor_2026",
+   "enfants": "3",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "60",
+   "naissance": "1910",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "3308e58da4f815f2"
+ },
  "a9006602610aebd0": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -32567,6 +33440,35 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "a39b311eb65fa63c"
  },
+ "ac29cae773e15e4c": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1990-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "etranger1_activite": "non_salariee",
+   "etranger1_debut": "1980-01",
+   "etranger1_fin": "1990-09",
+   "etranger1_pays": "DZ",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2026-04",
+   "naissance": "1962-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "c42713f0816fbd97"
+ },
  "ac3c8aa14c42751b": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -32752,6 +33654,34 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "d74942beadd6592a"
+ },
+ "ace3a3d03f3d5b71": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "26",
+   "emploi": "cor_2026",
+   "emploi_retraite": "2022-08",
+   "emploi_retraite_fin": "2025-02",
+   "emploi_retraite_salaire": "0.6",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "62.25",
+   "naissance": "1960",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "artisan",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "cd1a44dedee32bfb"
  },
  "ad0345e90ebefeb3": {
   "entree": {
@@ -33266,6 +34196,33 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "d74942beadd6592a"
+ },
+ "afa6e2de2908ef85": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1990-01",
+   "dispenses": "2010:2027:rsa",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2027-04",
+   "naissance": "1962-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "releve": "1990:artisan:3000,1991:artisan:3000,1992:artisan:3000,1993:artisan:3000,1994:artisan:3000,1995:artisan:3000,1996:artisan:3000,1997:artisan:3000,1998:artisan:3000,1999:artisan:3000,2000:artisan:3000,2001:artisan:3000,2002:artisan:3000,2003:artisan:3000,2004:artisan:3000,2005:artisan:3000,2006:artisan:3000,2007:artisan:3000,2008:artisan:3000,2009:artisan:3000,2010:artisan:3000,2011:artisan:3000,2012:artisan:3000,2013:artisan:3000,2014:artisan:3000,2015:artisan:3000,2016:artisan:3000,2017:artisan:3000,2018:artisan:3000,2019:artisan:3000,2020:artisan:3000,2021:artisan:3000,2022:artisan:3000,2023:artisan:3000,2024:artisan:3000,2025:artisan:3000",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "artisan",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "a60747c5e1956f3c"
  },
  "afaf2fb86ca73262": {
   "entree": {
@@ -34131,6 +35088,34 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "626b276f0c2bef51"
+ },
+ "b3fd6941fe5a1e42": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1990-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "etranger1_debut": "2011-01",
+   "etranger1_fin": "2014-07",
+   "etranger1_pays": "OI",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2026-04",
+   "naissance": "1962-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "fonctionnaire_territorial_hospitalier",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "d36852f75c240237"
  },
  "b401566c4c23ffc2": {
   "entree": {
@@ -35353,6 +36338,31 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "5c45263009b39f83"
  },
+ "bb351afa99ea798f": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "prix",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1975",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "9ee13a3f1f50b05a"
+ },
  "bb45e43a70e08467": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -36046,6 +37056,32 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "6cba7bd8f262126a"
  },
+ "bd65edfc459ce86f": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1992-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "inaptitude": "oui",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2026-03",
+   "naissance": "1964-02-10",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "contractuel_public",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "79c7ae81222e8de5"
+ },
  "bd7a07ca196b1d3f": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -36200,6 +37236,31 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "f983cb58a3de0cad"
+ },
+ "be6ff0034159d144": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "20",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "2016:2024:chomage_indemnise",
+   "liquidation": "66",
+   "naissance": "1958",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1.5",
+   "sexe": "H",
+   "statut": "salarie_prive_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "0d8476789e457a47"
  },
  "bf290c3006ef6c23": {
   "entree": {
@@ -36401,6 +37462,32 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "af38c828a6f210ac"
+ },
+ "c023deec2371086f": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "contribution_etat": "entiere",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1975",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "militaire",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "76146843f95fc007"
  },
  "c044ad1d80d02f73": {
   "entree": {
@@ -36898,6 +37985,31 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "cd7424497ba08347"
+ },
+ "c2df5647505b958c": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "prix",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1975",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "d74942beadd6592a"
  },
  "c329f2da8c1c7f8c": {
   "entree": {
@@ -37463,6 +38575,34 @@
   "script": "comparer-droit.mjs",
   "sortie": "60d6597a7a2c399e"
  },
+ "c578e6f5a6d3a268": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1990-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "etranger1_debut": "1980-01",
+   "etranger1_fin": "1990-09",
+   "etranger1_pays": "MA",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2026-04",
+   "naissance": "1962-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "fonctionnaire_etat",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "a348132a4d20f47d"
+ },
  "c5d2c0d24f80b0c5": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -37512,6 +38652,31 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "17a947f5c0bdddc3"
+ },
+ "c5fe20e7ad441085": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2060",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1990",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "e5bd72923c845746"
  },
  "c6167fea12bd28ad": {
   "entree": {
@@ -37734,6 +38899,34 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "75a480687ea5a742"
+ },
+ "c7ba74033ec0f978": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "26",
+   "emploi": "cor_2026",
+   "emploi_retraite": "2020-08",
+   "emploi_retraite_fin": "2022-02",
+   "emploi_retraite_statut": "contractuel_public",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "62.25",
+   "naissance": "1958",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "contractuel_public",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "dea0afd7c189b983"
  },
  "c7e4dcfe81126a6d": {
   "entree": {
@@ -38112,6 +39305,57 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "a63e3cae0b42db4a"
+ },
+ "c9a7435d623230bf": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "21",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2000",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "64",
+   "naissance": "1975",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "d74942beadd6592a"
+ },
+ "c9e5fc1bdefd7e62": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "2004-01",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "handicap": "2004-01",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2027-06",
+   "naissance": "1970-06-01",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "fonctionnaire_territorial_hospitalier",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "641826a6433d701c"
  },
  "c9fbd4433aaad181": {
   "entree": {
@@ -39104,6 +40348,32 @@
   "script": "comparer-droit.mjs",
   "sortie": "0b64cc4a975e163c"
  },
+ "cef6c3653a75ca4f": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "banque": "direction_6",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1972-02",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "2014-07",
+   "naissance": "1950-01-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "agent_banque_de_france",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "6f2510eacc83276e"
+ },
  "cf0bb656e79cd6e1": {
   "entree": {
    "releve": {
@@ -39213,6 +40483,34 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "0977565a9805de7a"
+ },
+ "cf881b78853546d5": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "20",
+   "demande_regime_general": "2025-01",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "57",
+   "metier2_debut": "30",
+   "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
+   "naissance": "1965",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "F",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "447aeb1cd566d887"
  },
  "cf8d20f9465363a0": {
   "entree": {
@@ -45561,6 +46859,31 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "9292b45f5a7a9b53"
  },
+ "ed717c2d0112c80b": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "35",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "68",
+   "naissance": "1925",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "9ff3c4b713b113b3"
+ },
  "ed87b66ae9f22823": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -45636,6 +46959,33 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "64b3332a676b40d9"
+ },
+ "edd28762d0196257": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1998-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "indice": "majore",
+   "interruptions": "",
+   "liquidation": "2039-04",
+   "naissance": "1975-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "500",
+   "sexe": "H",
+   "statut": "fonctionnaire_etat",
+   "stock": "prix",
+   "table": "unisexe",
+   "unite_revenu": "euros_mois"
+  },
+  "script": "comparer-droit.mjs",
+  "sortie": "4e3b2f7daf9990c4"
  },
  "ede077e5bc9b920d": {
   "entree": {
@@ -47477,6 +48827,31 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "d99c90e878aaa015"
  },
+ "f56a52ce4a3eb5fa": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "35",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "interruptions": "",
+   "liquidation": "68",
+   "naissance": "1925",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "1",
+   "sexe": "H",
+   "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
+   "table": "unisexe"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "12c6b03c343813f5"
+ },
  "f60dd6bc8468f953": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -48326,6 +49701,33 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "335a23fcc576efc8"
+ },
+ "fa49edb199724102": {
+  "entree": {
+   "age_reference": "fixe_apres_bascule",
+   "bascule": "2026",
+   "conversion_acquis": "reference",
+   "debut": "1998-09",
+   "emploi": "cor_2026",
+   "enfants": "0",
+   "euros": "2026",
+   "indexation": "triple_lock_inverse",
+   "indice": "majore",
+   "interruptions": "",
+   "liquidation": "2039-04",
+   "naissance": "1975-03-15",
+   "primes": "0",
+   "profil": "ascendant",
+   "projection": "cor_reference",
+   "salaire": "500",
+   "sexe": "H",
+   "statut": "fonctionnaire_etat",
+   "stock": "prix",
+   "table": "unisexe",
+   "unite_revenu": "euros_mois"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "a560ced415fb0ead"
  },
  "fa5d37fc10d7ed99": {
   "entree": {
