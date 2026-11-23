@@ -198,6 +198,8 @@ def test_les_regimes_qu_un_texte_coupe_au_jour():
                        "banque_de_france",
                        # décret n° 2012-1129, en vigueur le 7 octobre 2012
                        "organic_avant_1973", "cancava_avant_1973",
+                       # ordonnance n° 82-270, en vigueur le 1er avril 1983
+                       "organic", "cancava",
                        # décret n° 2006-1325, en vigueur le 2 novembre 2006
                        "cavimac",
                        # décrets de juin 2008, pour les pensions prenant effet

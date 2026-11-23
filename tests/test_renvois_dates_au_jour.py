@@ -25,6 +25,8 @@ vient du texte.
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
@@ -168,6 +170,45 @@ def test_la_pension_du_1er_novembre_2006_garde_la_formule_d_avant_le_decret(simu
     assert _pension_cavimac(simulateur, novembre).montant == pytest.approx(
         _pension_cavimac(simulateur, octobre).montant)
     assert majoration in _pension_cavimac(simulateur, decembre).detail
+
+
+# -- les artisans et les commerçants, le 1er avril 1983 ---------------------------
+
+
+def _taux_du_regime(simulateur, regime, carriere) -> float:
+    """Le taux que le détail de la pension du régime écrit, en pour cent."""
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    pension = next(p for p in resultat.pensions_par_regime if p.regime == regime)
+    return float(re.search(r"taux ([0-9]+\.[0-9]+)%", pension.detail).group(1))
+
+
+@pytest.mark.parametrize("affiliation,regime", [
+    ("artisan", "cancava"),
+    ("commercant", "organic"),
+])
+def test_les_artisans_et_les_commercants_gardent_l_ancien_taux_jusqu_au_31_mars_1983(
+        simulateur, affiliation, regime):
+    """Le décret n° 73-937, article 2 (LEGIARTI000006765813), rend l'article 70
+    du décret n° 45-179 applicable aux droits d'après 1972 de ces régimes.
+    Jusqu'à l'ordonnance n° 82-270, en vigueur « le 1er avril 1983 » (article 9,
+    LEGIARTI000006275868), cet article écrit : « la pension liquidée à l'âge de
+    soixante ans est égale à 25 p. 100 du salaire annuel moyen de base », et
+    elle « est majorée de 5 p. 100 […] par année postérieure à cet âge »
+    (LEGIARTI000006760656) : 35 % à soixante-deux ans. Ensuite : « le "taux
+    plein", soit 50 p. 100 », pour 150 trimestres (LEGIARTI000006760657) ; ici
+    160, de vingt à soixante ans. Le dépôt servait 50 % dès le 1er janvier. Si
+    le taux plein n'a valu pour eux que du 1er juillet 1984, question que la
+    fiche `decote_avant_1983` garde ouverte, la pension de mars 1983 relève
+    de l'ancien article dans les deux lectures."""
+    mars = _carriere(simulateur, affiliation, 1923, 2, 60.0)
+    assert date_d_effet(mars) == "1983-03-01"
+    assert _taux_du_regime(simulateur, regime, mars) == pytest.approx(25.0)
+    mars_a_62_ans = _carriere(simulateur, affiliation, 1921, 2, 62.0)
+    assert date_d_effet(mars_a_62_ans) == "1983-03-01"
+    assert _taux_du_regime(simulateur, regime, mars_a_62_ans) == pytest.approx(35.0)
+    avril = _carriere(simulateur, affiliation, 1923, 3, 60.0)
+    assert date_d_effet(avril) == "1983-04-01"
+    assert _taux_du_regime(simulateur, regime, avril) == pytest.approx(50.0)
 
 
 # -- les dix renvois, cités au jour de leur texte (note 0009, étape 4) ---------------
