@@ -1,15 +1,19 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: vert
-sources: 1bb8b1a1ca230a905a4a2f25489f4f7df8cf635a
-date: 2026-11-23T16:41:00Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/45214272956
-presomptions: vert
+sources: eccf8f66ddf8291ad955156cef118830c5399a82
+date: 2026-11-23T18:05:13Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/45231287305
+presomptions: rouge
+presomptions_echecs:
+  - "FAILED tests/test_sections_liberales.py::test_la_surcote_des_liberaux_garde_0_75_aux_trimestres_d_avant_septembre_2023[62.75-1.0225] - AssertionError: 18,950.44 points × valeur de service 0.6076 € × coefficient de majoration 1.0150"
+  - "FAILED tests/test_sections_liberales.py::test_la_surcote_des_liberaux_garde_0_75_aux_trimestres_d_avant_septembre_2023[63.0-1.0350] - AssertionError: 19,083.97 points × valeur de service 0.6076 € × coefficient de majoration 1.0225"
+  - "FAILED tests/test_sections_liberales.py::test_la_surcote_des_liberaux_garde_0_75_aux_trimestres_d_avant_septembre_2023[64.0-1.0850] - AssertionError: 19,617.87 points × valeur de service 0.6399 € × coefficient de majoration 1.0725"
 durees:
-  fabrique: 762
-  suite: 704
-  tranche_1: 704
-  tranche_2: 572
-  tranche_3: 606
-  tranche_4: 519
-  garde: 248
+  fabrique: 497
+  suite: 496
+  tranche_1: 323
+  tranche_2: 306
+  tranche_3: 429
+  tranche_4: 496
+  garde: 184
