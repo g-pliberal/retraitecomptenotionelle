@@ -82,6 +82,37 @@ liquidation:
       de synthèse que la fiche `organic` portait, qui ne sert qu'au compte
       notionnel.
   - du: 1973-01-01
+    au: 1984-07-01
+    age_ouverture: 65
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: sans_objet
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      Du 1er janvier 1973 au 30 juin 1984, ces droits « demeurent calculées,
+      liquidées et servies dans les conditions définies par les dispositions
+      législatives et réglementaires en vigueur au 31 décembre 1972 » (L.
+      634-3, alors L. 663-5) : le décret n° 66-248 sert l'allocation à
+      soixante-cinq ans, ou à soixante ans à qui est reconnu inapte au travail
+      (articles 7, I, et 15 : l'entrée en jouissance ne peut « être antérieure
+      au soixante-cinquième anniversaire »), sans abattement ni condition de
+      durée, et sans liquidation anticipée, hors les anciens combattants et
+      prisonniers de guerre, servis sans abattement entre soixante et
+      soixante-cinq ans depuis 1974 (article 2-1 des décrets n° 64-993 et n°
+      66-247, décret n° 74-434), que la ligne ne sait pas. Qui part plus tôt
+      les reçoit à soixante-cinq ans, ou le 1er juillet 1984 si la ligne
+      suivante les lui ouvre d'abord. Ce que la ligne ne sait pas :
+      l'inaptitude et la grande invalidité, qui les ouvraient à soixante ans,
+      et la majoration pour ajournement au-delà de soixante-cinq ans (son
+      article 16), dont le barème, du règlement intérieur ou d'un arrêté,
+      n'est pas dans l'index. Le modèle les sert à la première date où ils
+      s'ouvrent, quand l'article 13 laisse l'assuré choisir la sienne : qui
+      n'a pas la durée et n'a pas soixante-cinq ans le 1er juillet 1984 les
+      reçoit minorés, alors qu'il pouvait attendre.
+  - du: 1984-07-01
     au: 1994-01-01
     age_ouverture: 60
     age_taux_plein: 65
@@ -90,18 +121,19 @@ liquidation:
     salaire_reference: sans_objet
     decote_par_trimestre: 0.025
     decote_par_generation: decote_regime_general
-    decote_annulee_par_la_duree: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, reversion]
     notes: >-
-      Article 3 du décret n° 73-937 : liquidables dès soixante ans, sans
-      abattement pour qui justifie de 150 trimestres dans les régimes de base
-      (rédaction de 1990, LEGIARTI000006765816), sinon minorés de 2,5 % par
-      trimestre manquant, au plus petit des trimestres manquant à la durée et
-      de ceux qui séparent de soixante-cinq ans. Avant 1990, l'article
-      renvoyait aux règles du régime général (rédaction du 5 mars 1976,
-      LEGIARTI000006765815) : la fiche leur applique celles de 1990, et la
-      durée qui annule la décote avant 1983 comme l'ORGANIC.
+      Article 12-2 du décret n° 73-937, créé par le décret n° 84-560 du 28
+      juin 1984, en vigueur le 1er juillet 1984 (LEGIARTI000006765853) :
+      liquidables « à compter de l'âge de soixante ans », sans abattement pour
+      qui justifie de 150 trimestres dans les régimes de base, sinon minorés
+      de 2,5 % par trimestre manquant, au plus petit des trimestres manquant à
+      la durée et de ceux qui séparent de soixante-cinq ans. L'article 3
+      reprend la même règle le 1er janvier 1990 (LEGIARTI000006765816).
+      L'article 13-8 (LEGIARTI000006765863) arrête les majorations pour
+      ajournement pour les pensions prenant effet après le 30 juin 1984,
+      celles acquises à cette date restant dues : la ligne n'en sert aucune.
   - du: 1994-01-01
     au: 2004-01-01
     age_ouverture: 60

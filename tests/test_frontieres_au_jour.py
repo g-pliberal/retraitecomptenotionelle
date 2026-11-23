@@ -12,6 +12,12 @@ frontière par frontière, la phrase lue.
 - **1er avril 1983.** Arrêté du 27 janvier 1983 (JORFTEXT000000654120) :
   l'Ircantec liquide sans coefficient de réduction les titulaires d'une
   pension à taux plein du régime général « à compter du 01-04-1983 ».
+- **1er juillet 1984.** Décret n° 73-937, articles 12-2 et 13-8, créés par
+  le décret n° 84-560 du 28 juin 1984 (LEGIARTI000006765853,
+  LEGIARTI000006765863) : les droits d'avant 1973 des artisans et des
+  commerçants « peuvent être liquidées à compter de l'âge de soixante ans »,
+  rédaction en vigueur le 1er juillet 1984 ; jusque-là, soixante-cinq ans
+  (décret n° 64-994, articles 19 et 22 ; décret n° 66-248, articles 7 et 15).
 - **1er juillet 1992.** Décret n° 46-2769, article 131 : « pour les pensions
   liquidées à compter du 1er juillet 1992 » (LEGIARTI000006765010).
 - **1er avril 2010.** Loi n° 2009-1646, article 65 (JORFARTI000021529299) :
@@ -145,3 +151,88 @@ def test_la_base_des_liberaux_majore_la_duree_pour_enfant_au_1er_avril_2010(simu
     assert (effet, majoree) == ("2010-03-01", False) and mars <= 140
     effet, avril, majoree = duree(3)
     assert (effet, majoree) == ("2010-04-01", True) and avril >= mars + 24
+
+
+# -- les droits d'avant 1973 des artisans et des commerçants, le 1er juillet 1984 --
+
+AVANT_1973 = [("artisan", "cancava_avant_1973"), ("commercant", "organic_avant_1973")]
+
+
+def _avant_1973(simulateur, affiliation, regime, naissance, mois, liquidation, debut):
+    effet, resultat = _calculer(simulateur, affiliation, naissance, mois, liquidation, debut)
+    pension = next(p for p in resultat.pensions_par_regime if p.regime == regime)
+    return effet, pension
+
+
+@pytest.mark.parametrize("affiliation,regime", AVANT_1973)
+def test_les_droits_d_avant_1973_ont_une_ligne_au_1er_juillet_1984(
+        catalogue, affiliation, regime):
+    """Avant le 1er juillet 1984, la pension s'attribue « à partir de l'âge de
+    soixante-cinq ans ou en cas d'inaptitude au travail à partir de soixante
+    ans » (décret n° 64-994, article 22 ; de même le décret n° 66-248,
+    articles 7 et 15), sans abattement ni condition de durée ; depuis, à
+    soixante ans, sans abattement pour 150 trimestres (article 12-2)."""
+    lignes = {ligne["du"]: ligne for ligne in catalogue[regime].liquidation}
+    avant, depuis = lignes["1973-01-01"], lignes["1984-07-01"]
+    assert avant["au"] == "1984-07-01"
+    assert (avant["age_ouverture"], avant["age_taux_plein"]) == (65, 65)
+    assert avant["decote_par_trimestre"] is None
+    assert (depuis["age_ouverture"], depuis["age_taux_plein"]) == (60, 65)
+    assert depuis["duree_requise_trimestres"] == 150
+    assert depuis["decote_par_trimestre"] == pytest.approx(0.025)
+
+
+@pytest.mark.parametrize("affiliation,regime", AVANT_1973)
+def test_a_soixante_ans_avec_150_trimestres_sans_abattement_le_1er_juillet_1984(
+        simulateur, affiliation, regime):
+    """Article 12-2, I : « Pour les assurés qui justifient […] d'une durée au
+    moins égale à 150 trimestres, il n'est appliqué aucun abattement ». Né en
+    juin 1924, entré à vingt ans, parti à soixante ans le 1er juillet 1984,
+    160 trimestres en comptant ses années d'activité d'avant 1949 (III : les
+    périodes reconnues équivalentes) : ses points à leur valeur, sans
+    coefficient. Le dépôt lui en ôtait la
+    moitié jusqu'en 1994."""
+    effet, pension = _avant_1973(simulateur, affiliation, regime, 1924, 6, 60.0, 20.0)
+    assert effet == "1984-07-01"
+    assert pension.date_effet is None
+    assert pension.montant > 0 and "coefficient" not in pension.detail, pension.detail
+
+
+@pytest.mark.parametrize("affiliation,regime", AVANT_1973)
+def test_a_soixante_deux_ans_sans_la_duree_douze_trimestres_d_abattement(
+        simulateur, affiliation, regime):
+    """Article 12-2, II : « le nombre de trimestres manquant […] par rapport à
+    150 trimestres », ou celui qui sépare « de leur soixante-cinquième
+    anniversaire », « Le plus petit de ces deux nombres », à 2,50 p. 100. Né en
+    juin 1922, entré à quarante-cinq ans, parti à soixante-deux ans le
+    1er juillet 1984 : douze trimestres jusqu'à soixante-cinq ans, bien moins
+    que ceux qui manquent à la durée, 1 − 12 × 2,5 % = 0,70."""
+    effet, pension = _avant_1973(simulateur, affiliation, regime, 1922, 6, 62.0, 45.0)
+    assert effet == "1984-07-01"
+    assert "coefficient d'anticipation 0.7000" in pension.detail, pension.detail
+
+
+@pytest.mark.parametrize("affiliation,regime", AVANT_1973)
+def test_avant_le_1er_juillet_1984_les_droits_d_avant_1973_attendent_soixante_cinq_ans(
+        simulateur, affiliation, regime):
+    """Décret n° 64-994, articles 19 et 22, et décret n° 66-248, articles 7
+    et 15 : soixante-cinq ans, hors inaptitude. Parti à soixante ans le 1er juin 1984
+    avec 150 trimestres, l'assuré reçoit ces droits le 1er juillet 1984, dès
+    que l'article 12-2 les ouvre, sans abattement. Parti à soixante ans le
+    1er avril 1978 sans la durée, il les reçoit à soixante-cinq ans, le
+    1er avril 1983, entiers. Le dépôt les servait dès soixante ans, de
+    moitié."""
+    effet, pension = _avant_1973(simulateur, affiliation, regime, 1924, 5, 60.0, 20.0)
+    assert effet == "1984-06-01"
+    assert pension.date_effet == "1984-07-01"
+    assert "coefficient" not in pension.detail, pension.detail
+
+    effet, pension = _avant_1973(simulateur, affiliation, regime, 1918, 3, 60.0, 45.0)
+    assert effet == "1978-04-01"
+    assert pension.date_effet == "1983-04-01"
+    assert "coefficient" not in pension.detail, pension.detail
+
+    effet, pension = _avant_1973(simulateur, affiliation, regime, 1915, 3, 65.0, 45.0)
+    assert effet == "1980-04-01"
+    assert pension.date_effet is None
+    assert pension.montant > 0 and "coefficient" not in pension.detail, pension.detail

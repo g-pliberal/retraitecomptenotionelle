@@ -162,13 +162,13 @@
   "valeur": "2d78dc8a08d2992a"
  },
  "test_pont.py::coût des avantages": {
-  "valeur": "7a6d35f6cfcdf794"
+  "valeur": "7c3147bb1fc39115"
  },
  "test_pont.py::dates des départs des facteurs de la dépense": {
   "valeur": "3f02fbdd62b702eb"
  },
  "test_pont.py::décomposition des avantages": {
-  "valeur": "e0824380069d4dce"
+  "valeur": "bbf45cdf188bdb6d"
  },
  "test_pont.py::grille d'essai du coût": {
   "valeur": "32a0213d3c00f092"
@@ -216,10 +216,10 @@
   "valeur": "ba2a9aa693f6f807"
  },
  "test_solde_fusion.py::grille sous l'hypothèse B": {
-  "valeur": "d1bddc2317450b38"
+  "valeur": "bb676e881985ad99"
  },
  "test_solde_fusion.py::grille sous l'hypothèse C": {
-  "valeur": "27f7b174cb140631"
+  "valeur": "1f5be9c3997253a3"
  },
  "test_stock_age_legal.py::pensions des cas sous droit_commun": {
   "valeur": "cce68b194d743c0f"
@@ -228,6 +228,6 @@
   "valeur": "b2ab98b567a93888"
  },
  "test_web.py::carrières tirées au hasard": {
-  "valeur": "18366ab66f5ddb0e"
+  "valeur": "e5720e0040d71e9b"
  }
 }

@@ -192,17 +192,31 @@ approximations:
     commerçant, cent vingt points au plus, décret n° 66-248, art. 17 ; tableau de
     reconstitution chez l'artisan), ni les rachats, ni la bonification des points
     acquis au 1er décembre 1962 (décret n° 66-248, art. 20), ni la majoration pour
-    ajournement d'avant juillet 1984 (décret n° 73-937, art. 12), ni la bonification
+    ajournement au-delà de soixante-cinq ans des pensions prenant effet jusqu'au 30
+    juin 1984 (décret n° 64-994, art. 46, II ; décret n° 66-248, art. 16 ; décret
+    n° 73-937, art. 13-8, LEGIARTI000006765863), dont le barème est au règlement
+    intérieur de la caisse ou dans un arrêté que l'index ne porte pas, ni la bonification
     des points de la mère sans période d'assurance après 1972, la moyenne
     trimestrielle de ses points par année d'éducation, huit au plus par enfant (même
     décret, art. 5)
   effet: non mesuré ; les carrières du modèle commencent après 1949
 - ecart: >-
-    avant 1990, l'article 3 renvoyait aux règles du régime général ; la fiche applique
-    celles de la rédaction de 1990 (150 trimestres, 2,5 % par trimestre) dès 1973, et
-    coupe à l'année la rédaction du 7 octobre 2012 ; en 2020, la valeur du point est
-    celle des pensions d'au plus 2 000 € par mois
-  effet: non mesuré
+    du 1er janvier 1973 au 30 juin 1984, ces droits ne s'ouvrent qu'à soixante-cinq ans
+    (décret n° 64-994, art. 19 et 22 ; décret n° 66-248, art. 7, I, et 15), puis à
+    soixante ans, sans abattement pour 150 trimestres, à 2,5 % par trimestre sinon (décret
+    n° 73-937, art. 12-2, créé par le décret n° 84-560, LEGIARTI000006765853, que
+    l'article 3 reprend le 1er janvier 1990) : les fichiers de régime portent les deux
+    lignes depuis le 23 novembre 2026. Avant le 1er juillet 1984, l'inaptitude et la
+    grande invalidité ouvraient ces droits à soixante ans, et la captivité ou les services
+    de guerre entre soixante et soixante-cinq ans depuis 1974 (article 2-1 des décrets n°
+    64-993 et n° 66-247, décret n° 74-434), ce que la ligne ne sait pas ; le modèle sert
+    ces droits à la première date où ils s'ouvrent, quand l'article 13 du décret n° 73-937
+    laisse l'assuré la choisir ; en 2020, la valeur du point est celle des pensions d'au
+    plus 2 000 € par mois
+  effet: >-
+    l'inapte, le grand invalide et l'ancien prisonnier de soixante à soixante-cinq ans
+    partis avant le 1er juillet 1984 attendent, dans le modèle, leurs soixante-cinq ans
+    ou le 1er juillet 1984 ; non mesuré
 - ecart: >-
     l'article 3 bis, qui fait liquider ces droits avec la retraite anticipée pour
     carrière longue, et l'article 3 ter, le versement pour la retraite, ne sont pas
@@ -222,6 +236,15 @@ sources:
     Un exemple chiffré de la Cnav ou de la Sécurité sociale des indépendants : une
     pension de droits d'avant 1973, ses points et leur valeur.
   lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 73-937, articles 12-2 (LEGIARTI000006765853) et 13-8
+      (LEGIARTI000006765863), en vigueur le 1er juillet 1984, et article 3 dans sa
+      rédaction du 5 mars 1976 (LEGIARTI000006765815), qui ne dit rien de l'âge ;
+      décret n° 64-994, articles 19, 22 et 46 ; décret n° 66-248, articles 7, 15 et 16 ;
+      décret n° 64-993 et décret n° 66-247, article 2-1 ; lus
+      dans l'index LEGI du dépôt à jour au 23 novembre 2026
+    date: 2026-11-23
   - type: legifrance
     reference: >-
       action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas

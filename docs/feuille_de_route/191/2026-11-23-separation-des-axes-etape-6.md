@@ -1,16 +1,17 @@
 # Le passage au jour, premier lot : les artisans et les commerçants en 1983, les libéraux en 2023
 
 **Reprise, au 23 novembre 2026.** Les lignes de liquidation des fichiers de
-régime prennent une à une la date de leur texte, au jour. Deux lots sont
-publiés, et le second pose vingt et une dates, dont dix-neuf ne changent
-aucun résultat. Reste à faire, dans cet ordre. La surcote de la base
-des libéraux sert 1,25 % à tous les trimestres depuis 2024, quand le texte
-garde 0,75 % à ceux d'avant le 1er septembre 2023. Les droits d'avant 1973
-des artisans et des commerçants n'ont pas de ligne au 1er juillet 1984. Une
-quinzaine de frontières attendent que leur texte soit lu. Les taux de
-cotisation qui changent en cours d'année attendent une décision du
-propriétaire. Le détail et la liste sont dans la note du second lot,
-`2026-11-23-etape-6-les-dates-sans-effet.md`, à lire d'abord.
+régime prennent une à une la date de leur texte, au jour. Trois lots sont
+publiés. Le troisième donne aux droits d'avant 1973 des artisans et des
+commerçants leur ligne du 1er juillet 1984. Reste à faire, dans cet ordre.
+La surcote de la base des libéraux sert 1,25 % à tous les trimestres depuis
+2024, quand le texte garde 0,75 % à ceux d'avant le 1er septembre 2023 :
+ce point attend le propriétaire. Une quinzaine de frontières attendent que
+leur texte soit lu. Les taux de cotisation qui changent en cours d'année
+attendent une décision du propriétaire. Le détail et la liste sont dans la
+note du second lot, `2026-11-23-etape-6-les-dates-sans-effet.md`, à lire
+d'abord ; le troisième lot est dans
+`2026-11-23-etape-6-droits-d-avant-1973-en-1984.md`.
 
 **La demande.** L'étape 6 de la séparation des axes (note de décision 0009) :
 donner à chaque frontière la date de son texte, au jour. Sur Fable 5.2, au

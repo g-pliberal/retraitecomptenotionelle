@@ -6,8 +6,7 @@ intitule: >-
   soixante ans, majorés de 1,25 point par trimestre d'ajournement — ; la durée
   n'ouvrait le taux de soixante-cinq ans qu'à des catégories nommées, dont, depuis 1978,
   les femmes justifiant de trente-sept ans et demi d'assurance.
-regimes: [cancava, cancava_avant_1973, msa_salaries, organic, organic_avant_1973,
-  regime_general]
+regimes: [cancava, msa_salaries, organic, regime_general]
 etat: approchee
 etape: liquider_chaque_regime
 effet: >-
@@ -49,18 +48,14 @@ effet: >-
   l'âge, quand le moteur la majore déjà. Pour les artisans et
   commerçants, le moteur passe à la règle nouvelle le 1er avril 1983 pour les droits d'après
   1972, comme le décret n° 73-937 d'origine le veut, et il arrête leur taux au taux
-  plein, faute d'avoir lu que l'ajournement y courait au-delà.
+  plein, faute d'avoir lu que l'ajournement y courait au-delà. Leurs droits d'avant 1973
+  ne relèvent plus de cette fiche depuis le 23 novembre 2026 : ils ne s'ouvrent qu'à
+  soixante-cinq ans jusqu'au 30 juin 1984, puis à soixante ans, sans abattement pour 150
+  trimestres (décret n° 73-937, article 12-2 ; fiche `points_avant_1973_independants`).
 sources:
   lu_le: 2026-11-12
   prochaine_relecture: 2026-12-31
   a_relire:
-  - >-
-    Artisans et commerçants, droits d'avant 1973 : le décret n° 84-560 (articles 12-2 et
-    13-8 du décret n° 73-937) leur ouvre le 1er juillet 1984 le taux plein à soixante ans,
-    pour 150 trimestres, et arrête les majorations pour ajournement ; les fiches
-    cancava_avant_1973 et organic_avant_1973 n'ont pas de ligne à cette date. La part
-    alignée, elle, est tranchée le 23 novembre 2026 : le 1er avril 1983 (lecture du
-    Journal officiel du 4 octobre 1973).
   - >-
     Lire ce qui reste du droit de 1945 à 1972, que ni les index, ni Gallica, ni la base
     de la Cnav ne portent : l'article L. 331 du code de la sécurité sociale de 1956 à
@@ -503,8 +498,8 @@ code:
     tauxAcquisLEmporte, trimestresCotisesApres, ORDONNANCE_DU_26_MARS_1982 ;
     moteur/js/droit/ouvrir.js : ageOuverture, ageTauxPlein
   parametres: >-
-    regimes/cancava.yaml, regimes/cancava_avant_1973.yaml, regimes/msa_salaries.yaml,
-    regimes/organic.yaml, regimes/organic_avant_1973.yaml, regimes/regime_general.yaml :
+    regimes/cancava.yaml, regimes/msa_salaries.yaml, regimes/organic.yaml,
+    regimes/regime_general.yaml :
     decote_par_trimestre, taux_plein, age_ouverture, age_taux_plein,
     age_taux_plein_femmes, duree_taux_plein_femmes_trimestres,
     duree_taux_plein_femmes_regimes
