@@ -350,7 +350,7 @@ liquidation:
       Loi Fillon du 21 août 2003 : création de la surcote, décote allégée,
       dispositif « carrières longues », durée indexée sur l'espérance de vie.
   - du: 2009-01-01
-    au: 2011-01-01
+    au: 2011-07-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -375,8 +375,8 @@ liquidation:
       Loi de financement de la sécurité sociale pour 2009 : la surcote passe
       de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
       même barème par ailleurs — seul le taux de surcote change.
-  - du: 2011-01-01
-    au: 2023-01-01
+  - du: 2011-07-01
+    au: 2023-09-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -398,10 +398,15 @@ liquidation:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        avpf, reversion, periodes_assimilees, carriere_longue, penibilite]
     notes: >-
+      AU 1er JUILLET 2011, et non au 1er janvier : les articles 18 à 40
+      et 79 de la loi n° 2010-1330 « sont applicables aux pensions
+      prenant effet à compter du 1er juillet 2011 » (article 118, II,
+      JORFARTI000023022348 ; L. 351-1, LEGIARTI000023035688 ; L.
+      351-1-4, LEGIARTI000023032128).
       Loi du 9 novembre 2010 (âges 60->62 et 65->67, montée en charge
       2011-2017) puis loi du 20 janvier 2014 (durée 43 ans pour la
       génération 1973). Les âges affichés sont les cibles.
-  - du: 2023-01-01
+  - du: 2023-09-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -424,6 +429,10 @@ liquidation:
        avpf, reversion, periodes_assimilees, carriere_longue, penibilite,
        surcote_parentale]
     notes: >-
+      AU 1er SEPTEMBRE 2023, et non au 1er janvier : la loi n° 2023-270
+      s'applique « aux pensions prenant effet à compter du 1er septembre
+      2023 » (article 10, XXX, B, et article 11, VII, B ; L. 351-1-2-1,
+      LEGIARTI000047449229).
       Loi du 14 avril 2023 : âge d'ouverture 62 -> 64 ans (générations
       1961 T3 à 1968), accélération Touraine (172 trimestres dès la
       génération 1965). Taux de cotisation vieillesse 2025 :

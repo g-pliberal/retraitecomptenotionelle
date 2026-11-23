@@ -1,15 +1,16 @@
 # Le passage au jour, premier lot : les artisans et les commerçants en 1983, les libéraux en 2023
 
 **Reprise, au 23 novembre 2026.** Les lignes de liquidation des fichiers de
-régime prennent une à une la date de leur texte, au jour. Sur 44 dates
-essayées, deux changent un résultat, et les deux sont corrigées. Les artisans
-et les commerçants passent à la retraite à soixante ans le 1er avril 1983.
-La base des libéraux sert la majoration pour trois enfants dès le
-1er septembre 2023. Restent les dates qui ne changent aucun résultat, à
-poser par lots, puis les taux de cotisation qui changent en cours d'année.
-Restent aussi quatre défauts trouvés en chemin et laissés, dont la caisse
-des avocats, qui a le même retard de quatre mois en 2023. Commencer par le
-tableau de cette note, puis par la sonde du dossier partagé du projet.
+régime prennent une à une la date de leur texte, au jour. Deux lots sont
+publiés, et le second pose vingt et une dates, dont dix-neuf ne changent
+aucun résultat. Reste à faire, dans cet ordre. La surcote de la base
+des libéraux sert 1,25 % à tous les trimestres depuis 2024, quand le texte
+garde 0,75 % à ceux d'avant le 1er septembre 2023. Les droits d'avant 1973
+des artisans et des commerçants n'ont pas de ligne au 1er juillet 1984. Une
+quinzaine de frontières attendent que leur texte soit lu. Les taux de
+cotisation qui changent en cours d'année attendent une décision du
+propriétaire. Le détail et la liste sont dans la note du second lot,
+`2026-11-23-etape-6-les-dates-sans-effet.md`, à lire d'abord.
 
 **La demande.** L'étape 6 de la séparation des axes (note de décision 0009) :
 donner à chaque frontière la date de son texte, au jour. Sur Fable 5.2, au

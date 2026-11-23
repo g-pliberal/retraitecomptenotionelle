@@ -36,7 +36,7 @@ structure:
   type_calcul: points
 liquidation:
   - du: 1971-01-01
-    au: 1983-01-01
+    au: 1983-04-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
@@ -130,7 +130,7 @@ liquidation:
       une seule rédaction depuis 1971), sans plafond, ce que la page de
       l'Ircantec redit. La fiche la servait au taux commun, 10 % dès trois
       enfants, jusqu'au 4 octobre 2026 (fiche `ircantec_majoration_enfants`).
-  - du: 1983-01-01
+  - du: 1983-04-01
     au: 2010-01-01
     age_ouverture: 60
     age_taux_plein: 65
@@ -144,9 +144,13 @@ liquidation:
     avantages_non_contributifs: [majoration_enfants, reversion]
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
+      AU 1er AVRIL 1983, et non au 1er janvier : l'arrêté du 27 janvier
+      1983 (JORFTEXT000000654120) liquide sans coefficient de réduction
+      les titulaires d'une pension à taux plein du régime général « à
+      compter du 01-04-1983 ».
       Tranche A de 1983 à 1987 : 2.80 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
   - du: 2010-01-01
-    au: 2011-01-01
+    au: 2011-07-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
@@ -170,7 +174,7 @@ liquidation:
       qu'« à compter du 1er janvier 2010 » : une liquidation de 2009 n'en
       reçoit rien, une liquidation de 2010 la reçoit entière. D'où
       `surcote_points: ircantec` ici et non à la période précédente.
-  - du: 2011-01-01
+  - du: 2011-07-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -186,6 +190,9 @@ liquidation:
     avantages_non_contributifs: [majoration_enfants, reversion]
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
+      AU 1er JUILLET 2011, et non au 1er janvier : l'arrêté du 21 juin
+      2011 est applicable « aux pensions prenant effet à compter du 1er
+      juillet 2011 » (article 4, JORFARTI000024249370).
       Tranche A de 2011 à 2011 : 5.69 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
 cotisation:
   - du: 1971-01-01

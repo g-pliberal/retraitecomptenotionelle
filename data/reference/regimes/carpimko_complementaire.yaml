@@ -87,7 +87,7 @@ liquidation:
       minoration que la durée du régime de base annule, sans le report au
       trimestre civil. LE FORFAIT, extrapolé, est celui de la période de 1984.
   - du: 2015-10-03
-    au: 2024-01-01
+    au: 2024-01-10
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -144,7 +144,7 @@ liquidation:
       quand leur durée est presque complète. Les statuts d'avant 2015 sont
       au Bulletin officiel (arrêté du 20 novembre 1996) et ne sont pas
       lus. Lu le 23 septembre 2026 (action 89).
-  - du: 2024-01-01
+  - du: 2024-01-10
     au: 2026-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -163,6 +163,9 @@ liquidation:
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
+      AU 10 JANVIER 2024, et non au 1er : l'arrêté du 27 décembre 2023
+      (JORFTEXT000048880637), publié le 9 janvier 2024 sans date propre,
+      vaut le lendemain.
       LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
       (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
       liquidation de la retraite est ajournée au-delà de l'âge auquel

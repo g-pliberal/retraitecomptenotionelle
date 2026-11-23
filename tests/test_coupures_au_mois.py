@@ -207,7 +207,11 @@ def test_les_regimes_qu_un_texte_coupe_au_jour():
                        "cavimac",
                        # décrets de juin 2008, pour les pensions prenant effet
                        # à compter du 1er juillet 2008
-                       "sncf", "ratp", "ieg", "opera_de_paris", "comedie_francaise"}
+                       "sncf", "ratp", "ieg", "opera_de_paris", "comedie_francaise",
+                       # les dates lues le 23 novembre 2026, une à une dans
+                       # `test_frontieres_au_jour.py`
+                       "fonction_publique_etat", "cnracl", "fspoeie", "msa_non_salaries",
+                       "ircantec", "rafp", "mines", "asv_directeurs_laboratoire", "cnbf"}
 
 
 # -- les deux moteurs ----------------------------------------------------------

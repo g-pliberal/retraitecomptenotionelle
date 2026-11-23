@@ -80,7 +80,7 @@ liquidation:
       age_taux_plein_par_generation: {id: LEGIARTI000006400937, depuis: "2004-01-01"}
     notes: Alignement Fillon.
   - du: 2009-01-01
-    au: 2011-01-01
+    au: 2011-07-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -100,8 +100,8 @@ liquidation:
       Loi de financement de la sécurité sociale pour 2009 : la surcote passe
       de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
       même barème par ailleurs — seul le taux de surcote change.
-  - du: 2011-01-01
-    au: 2023-01-01
+  - du: 2011-07-01
+    au: 2023-09-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -118,6 +118,9 @@ liquidation:
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
+      AU 1er JUILLET 2011, et non au 1er janvier : la loi n° 2010-1330
+      vaut pour les « pensions prenant effet à compter du 1er juillet
+      2011 » (article 118, II, JORFARTI000023022348).
       Réforme de 2010 : âge d'ouverture porté à 62 ans, âge d'annulation de
       la décote à 67. La période s'arrêtait à tort en 2011 avec les
       paramètres de 2023, ce qui opposait l'âge légal de 64 ans à des
@@ -128,7 +131,7 @@ liquidation:
       l'article L. 61 est confrontée aux fiches : 8,12 % en 2011, là où la
       fiche portait 10,29 % — le taux de 2017 — sur toute la période
       2011-2022.
-  - du: 2023-01-01
+  - du: 2023-09-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -146,6 +149,9 @@ liquidation:
       [bonifications, categorie_active, majoration_enfants, reversion,
        minimum_garanti, surcote_parentale]
     notes: >-
+      AU 1er SEPTEMBRE 2023, et non au 1er janvier : la loi n° 2023-270
+      s'applique « aux pensions prenant effet à compter du 1er septembre
+      2023 » (article 10, XXX, B, et article 11, VII, B).
       Réforme de 2023. `taux_cotisation_retraite` ne porte que la retenue
       salariale, 11,10 %. La contribution des employeurs territoriaux et
       hospitaliers est dans

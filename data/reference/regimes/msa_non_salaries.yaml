@@ -370,7 +370,7 @@ liquidation:
       par trimestre, comme la fiche du régime général le fait pour la
       même période.
   - du: 2009-01-01
-    au: 2011-01-01
+    au: 2011-07-01
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 160
@@ -440,7 +440,7 @@ liquidation:
       qu'il écrit pour les trimestres d'avant 2009 est ramené à 0,75 %
       par trimestre, comme la fiche du régime général le fait pour la
       même période.
-  - du: 2011-01-01
+  - du: 2011-07-01
     au: 2026-01-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
@@ -458,6 +458,10 @@ liquidation:
     avantages_non_contributifs:
       [majoration_enfants, minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-
+      AU 1er JUILLET 2011, et non au 1er janvier : L. 732-18 du code
+      rural, dans la rédaction de l'article 21 de la loi n° 2010-1330,
+      vaut pour les « pensions prenant effet à compter du 1er juillet
+      2011 » (article 118, II ; LEGIARTI000023030985).
       Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
       des non-salariés agricoles, en points. Cette fiche ne porte plus que
       l'étage de BASE : la RCO a désormais la sienne (`msa_rco`), et le taux

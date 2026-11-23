@@ -98,7 +98,7 @@ structure:
   type_calcul: points
 liquidation:
   - du: 1981-01-01
-    au: 2009-01-01
+    au: 2011-06-30
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
@@ -122,7 +122,7 @@ liquidation:
       de service, de 0,35 à 1,40 € selon l'année d'acquisition en 2008
       (article 3, II), que le modèle ne sert pas : il les vaut au point
       d'après 2006, 0,30 € en 2008. Niveau `estimee`.
-  - du: 2009-01-01
+  - du: 2011-06-30
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -134,6 +134,10 @@ liquidation:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
+      AU 30 JUIN 2011, et non au 1er janvier 2009, POUR LA LIQUIDATION :
+      l'arrêté du 23 juin 2011 (JORFTEXT000024270202, annexe,
+      JORFARTI000024270214), publié le 29 juin sans date propre, vaut le
+      lendemain ; les âges qu'il pose se lisent à la génération.
       FORFAIT TOTAL : « 1 296 euros pour les exercices 2009 et 2010 », puis
       revalorisé sur les prix (décret n° 2007-597, article 1er,
       LEGIARTI000006263088), dont le tiers au biologiste.

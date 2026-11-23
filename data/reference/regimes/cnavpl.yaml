@@ -94,7 +94,7 @@ liquidation:
       le scénario notionnel, la pension du système actuel ne dépendant plus,
       pour ces années, que des trimestres.
   - du: 2004-01-01
-    au: 2010-01-01
+    au: 2010-04-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -142,7 +142,7 @@ liquidation:
       l'écrivait pour rien ; `surcote_points: regime_general` la fait
       compter comme la branche en annuités, trimestres cotisés au-delà
       de l'âge légal et de la durée requise.
-  - du: 2010-01-01
+  - du: 2010-04-01
     au: 2023-09-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -158,6 +158,10 @@ liquidation:
     surcote_points: surcote_regime_general
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
+      AU 1er AVRIL 2010, et non au 1er janvier : L. 643-1-1, créé par
+      l'article 65 de la loi n° 2009-1646 (JORFARTI000021529299), donne
+      la majoration de durée pour enfant aux pensions « prenant effet à
+      compter du 1er avril 2010 » (LEGIARTI000021537910).
       Réforme du 21 août 2003 : régime de base unique en points,
       proportionnel au revenu, sur DEUX TRANCHES — d'où deux fiches par
       période, qui se cumulent comme le fait la cotisation elle-même.

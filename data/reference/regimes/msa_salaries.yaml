@@ -249,7 +249,7 @@ liquidation:
     notes: >-
       Mêmes règles que le régime général sur 2004-2008 : la MSA les applique à l'identique.
   - du: 2009-01-01
-    au: 2011-01-01
+    au: 2011-07-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -270,8 +270,8 @@ liquidation:
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue]
     notes: >-
       Mêmes règles que le régime général sur 2009-2010 : la MSA les applique à l'identique.
-  - du: 2011-01-01
-    au: 2023-01-01
+  - du: 2011-07-01
+    au: 2023-09-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -291,8 +291,12 @@ liquidation:
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue, penibilite]
     notes: >-
+      AU 1er JUILLET 2011, et non au 1er janvier : les articles 18 à 40
+      et 79 de la loi n° 2010-1330 « sont applicables aux pensions
+      prenant effet à compter du 1er juillet 2011 » (article 118, II,
+      JORFARTI000023022348).
       Mêmes règles que le régime général sur 2011-2022 : la MSA les applique à l'identique.
-  - du: 2023-01-01
+  - du: 2023-09-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -312,6 +316,9 @@ liquidation:
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue, penibilite, surcote_parentale]
     notes: >-
+      AU 1er SEPTEMBRE 2023, et non au 1er janvier : la loi n° 2023-270
+      s'applique « aux pensions prenant effet à compter du 1er septembre
+      2023 » (article 10, XXX, B, et article 11, VII, B).
       Mêmes règles que le régime général sur 2023-aujourd’hui : la MSA les applique à l'identique.
 cotisation:
   - du: 1945-01-01

@@ -65,7 +65,7 @@ structure:
   type_calcul: points
 liquidation:
   - du: 1930-01-01
-    au: 1992-01-01
+    au: 1992-07-01
     age_ouverture: 55
     age_ouverture_services: 50
     services_ouverture_annees: 30
@@ -94,7 +94,7 @@ liquidation:
       suivi les prix depuis 1930. Il ne les a pas suivis — il a longtemps
       suivi les salaires —, et une liquidation des années 1950 est donc
       incertaine dans les deux sens.
-  - du: 1992-01-01
+  - du: 1992-07-01
     age_ouverture: 55
     age_ouverture_services: 50
     services_ouverture_annees: 30
@@ -109,6 +109,9 @@ liquidation:
     avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
     bareme_trimestre: mines
     notes: >-
+      AU 1er JUILLET 1992, et non au 1er janvier : l'article 131 vise «
+      les pensions liquidées à compter du 1er juillet 1992 »
+      (LEGIARTI000006765010).
       « Le montant de pension pour un trimestre de services s'élève, pour
       les pensions liquidées à compter du 1er juillet 1992, à 382,08 F »
       (article 131, rédaction du 1er janvier 1993), soit 58,25 € au taux

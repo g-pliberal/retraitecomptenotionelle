@@ -81,7 +81,7 @@ liquidation:
       euros constants vers l'amont — soixante-quinze ans depuis un seul
       chiffre, et la fiche ne vaut pas mieux que cela.
   - du: 2009-01-01
-    au: 2012-01-01
+    au: 2011-06-30
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -123,7 +123,7 @@ liquidation:
       régime de base, que la durée annule. Article 17 : « une bonification
       d'un dixième pour tout allocataire ayant eu au moins trois enfants »
       : `majoration_enfants`. Lu le 23 septembre 2026 (action 89).
-  - du: 2012-01-01
+  - du: 2011-06-30
     au: 2024-01-10
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -144,6 +144,9 @@ liquidation:
     effet_au_trimestre_civil: [2009-06-07, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
+      AU 30 JUIN 2011, et non au 1er janvier 2012 : l'arrêté du 23 juin
+      2011 (JORFTEXT000024270202), publié le 29 juin sans date propre,
+      vaut le lendemain.
       DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
       (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
       cotisation de référence est fixée chaque année par le conseil
@@ -163,8 +166,8 @@ liquidation:
       Douze trimestres au plus, depuis l'âge du taux plein lu à la
       génération ; les générations 1951 à 1955, bornées à un ou deux
       ans, reçoivent ici trois ans, et celles d'avant juillet 1951, qui
-      n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
-      Servie à partir de 2012.
+      n'en ont aucune, ne reçoivent rien : la table `cavp` borne leur
+      majoration à leur âge du taux plein. Servie depuis le 30 juin 2011.
       DEUX PENTES DEPUIS L'ARRÊTÉ DU 23 JUIN 2011 (JORFTEXT000024270202),
       repris par l'article 12 du règlement du 10 juillet 2026. Taux plein
       à l'âge du 1° de L. 351-8 pour les nés depuis 1956, à 65 ans

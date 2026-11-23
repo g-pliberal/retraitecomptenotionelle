@@ -33,7 +33,7 @@ structure:
   type_calcul: points
 liquidation:
   - du: 2005-01-01
-    au: 2011-01-01
+    au: 2011-06-03
     age_ouverture: 60
     age_taux_plein: 60
     duree_requise_trimestres: null
@@ -71,7 +71,7 @@ liquidation:
       à la condition qu'ils aient atteint l'âge de soixante ans » ; la
       fiche opposait 62 ans dès 2005. Aucune décote : l'âge d'ouverture est
       aussi celui du taux plein.
-  - du: 2011-01-01
+  - du: 2011-06-03
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
@@ -84,6 +84,9 @@ liquidation:
     capital_seuil_points: 5125
     avantages_non_contributifs: [reversion]
     notes: >-
+      AU 3 JUIN 2011, et non au 1er janvier : c'est le jour où la
+      rédaction qui renvoie à l'âge de L. 161-17-2 entre en vigueur
+      (LEGIARTI000024113145).
       RÉGIME PAR CAPITALISATION PROVISIONNÉE — EXCLU DU PÉRIMÈTRE NOTIONNEL.
       5 % agent + 5 % employeur sur les primes, dans la limite de 20 % du
       traitement indiciaire, plafond appliqué — voir la première période.

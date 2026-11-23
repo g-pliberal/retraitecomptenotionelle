@@ -137,7 +137,7 @@ liquidation:
       est portée depuis le 23 septembre 2026 : une période par barème de
       2016 à 2026, avec celui de 2024 lu dans Internet Archive.
   - du: 2016-01-01
-    au: 2024-01-01
+    au: 2023-09-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -154,7 +154,7 @@ liquidation:
       Barème CNBF 2016 : retraite de base forfaitaire de 16 581 €
       au taux plein  cotisation forfaitaire de 1 510 € à partir de la
       sixième année, 3,0 % du revenu net.
-  - du: 2024-01-01
+  - du: 2023-09-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -168,6 +168,9 @@ liquidation:
     surcote_bareme: cnbf_surcote
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
+      AU 1er SEPTEMBRE 2023, et non au 1er janvier 2024 : L. 653-3
+      s'applique « aux pensions prenant effet à compter du 1er septembre
+      2023 » (loi n° 2023-270, article 21, II ; LEGIARTI000047453367).
       Barème CNBF 2024 : retraite de base forfaitaire de 18 665 €
       au taux plein  cotisation forfaitaire de 1 845 € à partir de la
       sixième année, 3,1 % du revenu net.

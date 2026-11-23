@@ -12,9 +12,9 @@ effet: >-
   : 10 % de pension en moins pour tout parent de trois enfants liquidant depuis
   2023. Depuis le 23 septembre 2026, `majoration_enfants` sur leurs périodes de
   2024 et après ; tenu par tests/test_sections_juridiques.py. Depuis le 23 novembre
-  2026, la CNAVPL la sert dès le 1er septembre 2023 (tests/test_renvois_dates_au_jour.py).
-  Approximation qui reste : à la CNBF, la maille est l'année, et les pensions de base
-  prenant effet de septembre à décembre 2023 en sont privées.
+  2026, la CNAVPL la sert dès le 1er septembre 2023 (tests/test_renvois_dates_au_jour.py),
+  et la CNBF de même (tests/test_frontieres_au_jour.py) : sa ligne commençait en 2024,
+  et les pensions de base prenant effet de septembre à décembre 2023 en étaient privées.
 sources:
   lu_le: 2026-09-23
   prochaine_relecture: 2027-03-31
@@ -56,9 +56,8 @@ code:
     Les périodes de 2024 et après de la CNAVPL, de la CNBF et de la complémentaire de la
     CNBF déclarent `majoration_enfants`, que `completer` sert au barème commun de
     `_taux_majoration_enfants`, 10 % dès trois enfants, sur la pension de chacune. La
-    CNAVPL la déclare dès sa ligne du 1er septembre 2023 ; à la CNBF, la maille est
-    l'année, et les pensions de base prenant effet de septembre à décembre 2023 n'en
-    ont pas.
+    CNAVPL et la CNBF la déclarent dès leur ligne du 1er septembre 2023 ; la
+    complémentaire de la CNBF, depuis le 1er janvier 2024.
   javascript: >-
     moteur/js/droit/completer.js : completer, tauxMajorationEnfants
   parametres: >-

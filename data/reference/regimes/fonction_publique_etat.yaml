@@ -51,7 +51,7 @@ structure:
   type_calcul: annuites
 liquidation:
   - du: 1948-01-01
-    au: 1964-01-01
+    au: 1964-12-01
     age_ouverture: 60
     age_taux_plein: 60
     duree_requise_trimestres: 150
@@ -64,7 +64,7 @@ liquidation:
       Loi du 20 septembre 1948 : 2 % par annuité, 37,5 annuités, 75 % du
       traitement des six derniers mois. Catégorie active : ouverture à
       55 ans, voire 50 ans pour les emplois « super-actifs ».
-  - du: 1964-01-01
+  - du: 1964-12-01
     au: 2004-01-01
     age_ouverture: 60
     age_taux_plein: 60
@@ -76,6 +76,9 @@ liquidation:
     surcote_par_trimestre: null
     avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
+      AU 1er DÉCEMBRE 1964, et non au 1er janvier : les dispositions du
+      code « prendront effet au 1er décembre 1964 » (loi n° 64-1339,
+      article 1er, LEGIARTI000006450745).
       Code des pensions civiles et militaires de retraite (loi du 26
       décembre 1964). Aucune décote : la seule sanction d'une carrière
       courte est la proratisation. SIX POUR CENT JUSQU'EN 1983, et la fiche
@@ -115,7 +118,7 @@ liquidation:
       d'une décote et d'une surcote dans la fonction publique, création du
       RAFP sur les primes.
   - du: 2009-01-01
-    au: 2011-01-01
+    au: 2011-07-01
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
@@ -135,8 +138,8 @@ liquidation:
       Loi de financement de la sécurité sociale pour 2009 : la surcote passe
       de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
       même barème par ailleurs — seul le taux de surcote change.
-  - du: 2011-01-01
-    au: 2023-01-01
+  - du: 2011-07-01
+    au: 2023-09-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -153,6 +156,10 @@ liquidation:
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
+      AU 1er JUILLET 2011, et non au 1er janvier : L. 24, dans la
+      rédaction de la loi n° 2010-1330, vaut pour les « pensions prenant
+      effet à compter du 1er juillet 2011 » (article 118, II ;
+      LEGIARTI000023033603).
       Loi de 2010 : alignement progressif de la retenue pour pension sur le
       taux du privé (7,85 % -> 11,10 % en 2020), report des âges de 2 ans,
       y compris pour les catégories actives (55 -> 57, 50 -> 52).
@@ -161,7 +168,7 @@ liquidation:
       l'article L. 61 est confrontée aux fiches : 8,12 % en 2011, là où la
       fiche portait 10,29 % — le taux de 2017 — sur toute la période
       2011-2022.
-  - du: 2023-01-01
+  - du: 2023-09-01
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -179,6 +186,10 @@ liquidation:
       [bonifications, categorie_active, majoration_enfants, reversion,
        minimum_garanti, surcote_parentale]
     notes: >-
+      AU 1er SEPTEMBRE 2023, et non au 1er janvier : la loi n° 2023-270
+      s'applique « aux pensions prenant effet à compter du 1er septembre
+      2023 » (article 10, XXX, B, et article 11, VII, B ; L. 14,
+      LEGIARTI000047452815).
       Loi du 14 avril 2023 : catégories actives portées de 57 à 59 ans et de
       52 à 54 ans. `taux_cotisation_retraite` ne porte ici que la RETENUE
       SALARIALE, 11,10 % : c'est ce que dit `perimetre_taux: agent_seul`,
