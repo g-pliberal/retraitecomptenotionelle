@@ -277,6 +277,6 @@ def test_le_maximum_de_r_732_70_lit_l_avts(simulateur):
     actuel = simulateur.scenario_actuel
     assert actuel.minimum_contributif.avts(2025)[0] == pytest.approx(4_023.51)
     assert actuel.minimum_contributif.avts(2015)[0] == pytest.approx(3_379.95)
-    periode = simulateur.catalogue["msa_non_salaries"].periode(2025)
+    periode = simulateur.catalogue["msa_non_salaries"].de_l_annee(2025)[0]
     plafond = simulateur.macro.plafond_securite_sociale(2025)
     assert acquerir.points_msa(actuel, periode, 2025, plafond) == 113

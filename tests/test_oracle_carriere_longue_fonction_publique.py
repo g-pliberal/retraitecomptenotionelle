@@ -31,7 +31,7 @@ import pytest
 
 from facade import Carriere, Simulateur, ouvrir
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
-from retraite_notionnelle.calendrier import DateMois
+from retraite_notionnelle.calendrier import DateMois, date_d_effet
 from retraite_notionnelle.config import Parametres
 from test_oracle_familles import AFFILIATIONS, PRECISION_OPENFISCA, PREFIXES
 
@@ -128,7 +128,7 @@ def _le_droit(simulateur: Simulateur, profil: dict,
     scenario = simulateur.scenario_actuel
     carriere = _carriere(profil, absentes, sans_cotisation)
     resultat = scenario.calculer(carriere)
-    periode = simulateur.catalogue[profil["regime"]].periode(profil["liquidation"])
+    periode = simulateur.catalogue[profil["regime"]].a_la_date(date_d_effet(carriere))
     pension = next(p for p in resultat.pensions_par_regime if p.regime == profil["regime"])
     return {
         "ouverte": resultat.liquidation_ouverte,
@@ -284,9 +284,9 @@ def test_la_duree_est_fixe_avant_2009(simulateur, constantes_du_portage):
     assert ouverte["ouverte"] and ouverte["motif"] == "carriere_longue"
     assert not refusee["ouverte"] and refusee["motif"] == "non_ouverte"
     assert not sans_assurance["ouverte"] and sans_assurance["motif"] == "non_ouverte"
-    periode = simulateur.catalogue[profil["regime"]].periode(profil["liquidation"])
-    requis, _ = ouvrir.duree_requise(simulateur.scenario_actuel, periode,
-                                     _carriere(profil, une, trois))
+    carriere = _carriere(profil, une, trois)
+    periode = simulateur.catalogue[profil["regime"]].a_la_date(date_d_effet(carriere))
+    requis, _ = ouvrir.duree_requise(simulateur.scenario_actuel, periode, carriere)
     cotises = 4 * (profil["liquidation"] - profil["debut"] - len(une) - len(trois))
     assert requis < cotises < DUREE_FIXE
     assert simulateur.scenario_actuel.calculer(

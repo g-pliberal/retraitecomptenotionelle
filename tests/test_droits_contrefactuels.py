@@ -17,6 +17,8 @@ from __future__ import annotations
 
 import pytest
 
+from retraite_notionnelle.calendrier import date_d_effet
+
 from facade import Simulateur, ouvrir
 from outils_pont import Saisies
 
@@ -121,7 +123,7 @@ def test_l_age_du_taux_plein_est_le_meme_sous_les_trois_etats_du_droit(du_portag
     parametres, carriere = du_portage.lire({"naissance": naissance, "debut": f"{annee + 23}-09",
                                             "liquidation": f"{annee + 67}{naissance[4:7]}"})
     simulateur = du_portage.simulateur(parametres.avec(droit_contrefactuel=droit))
-    periode = simulateur.catalogue["regime_general"].periode(annee + 67)
+    periode = simulateur.catalogue["regime_general"].a_la_date(date_d_effet(carriere))
     age = ouvrir.age_taux_plein(simulateur.scenario_actuel, periode, carriere)
     assert age == pytest.approx(AGE_DU_TAUX_PLEIN)
 

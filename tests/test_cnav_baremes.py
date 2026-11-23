@@ -1488,7 +1488,7 @@ def test_la_duree_majoree_apres_l_age_du_taux_plein_suit_le_bareme_de_la_caisse(
 
     simulateur = Simulateur()
     scenario = simulateur.scenario_actuel
-    periode = simulateur.catalogue["regime_general"].periode(2004)
+    periode = simulateur.catalogue["regime_general"].a_la_date("2004-01-01")
     assert len(MAJORATION_APRES_TAUX_PLEIN) == 60
     for ajournement, milliemes in enumerate(MAJORATION_APRES_TAUX_PLEIN, start=1):
         assert milliemes == 1000 + 25 * ajournement, ajournement

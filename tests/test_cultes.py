@@ -151,7 +151,7 @@ def test_de_1979_a_1997_le_compte_porte_les_cotisations_des_arretes(simulateur):
     # Depuis 1998, la fiche reprend la main : 169 SMIC horaires par mois, au
     # SMIC de chaque mois — 40,72 F jusqu'en juin 2000 (décret n° 99-546),
     # 42,02 F ensuite (décret n° 2000-589).
-    periode = simulateur.catalogue["cavimac"].periode(2000)
+    periode = simulateur.catalogue["cavimac"].de_l_annee(2000)[0]
     ligne = salariale.cotisation_annuelle(carriere, 2000)
     assert dict(ligne.par_regime)["cavimac"] == pytest.approx(
         169 * (6 * 40.72 + 6 * 42.02) / FRANCS_PAR_EURO * periode.taux_cotisation_salarie,

@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import pytest
 
+from retraite_notionnelle.calendrier import date_d_effet
 from retraite_notionnelle.types_du_pont.carriere import Metier
 
 from facade import Carriere, Simulateur, ouvrir
@@ -51,7 +52,7 @@ def _carriere(simulateur: Simulateur, naissance: int, debut: float, liquidation:
 
 def _depart(simulateur: Simulateur, carriere: Carriere, regime: str = "fonction_publique_etat"):
     actuel = simulateur.scenario_actuel
-    periode = simulateur.catalogue[regime].periode(carriere.annee_liquidation)
+    periode = simulateur.catalogue[regime].a_la_date(date_d_effet(carriere))
     return ouvrir.depart_parent_trois_enfants(actuel, periode, carriere)
 
 

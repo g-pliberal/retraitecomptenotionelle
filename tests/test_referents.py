@@ -1005,7 +1005,7 @@ def _agirc_arrco_au_depot(simulateur, annee: int, brut: float) -> tuple[float, f
                                                   revenu=brut, plafond=plafond))
     salarie = employeur = 0.0
     for code in sorted(codes & {"arrco", "arrco_tranche_2", "agirc_arrco"}):
-        for periode in simulateur.catalogue[code].periodes_actives(annee):
+        for periode in simulateur.catalogue[code].de_l_annee(annee):
             bas, haut = periode.bornes_assiette_en_euros(plafond, annee)
             assiette = max(0.0, min(brut, haut) - bas)
             salarie += assiette * periode.taux_cotisation_salarie

@@ -108,12 +108,10 @@ def test_les_points_du_medecin_ne_changent_pas(simulateur):
     """Les deux tiers du forfait et de l'ajustement : le rapport des
     cotisations totales est celui des parts du médecin, et ses points
     d'ajustement restent ce qu'ils étaient."""
-    periode = next(p for p in simulateur.catalogue["asv_conventionnes"].periodes
-                   if p.debut == 2020)
+    periode = simulateur.catalogue["asv_conventionnes"].de_l_annee(2020)[0]
     assert periode.ajustement_total(1616.67, 600.0) == pytest.approx(600.0 / 1616.67,
                                                                      rel=1e-5)
-    auxiliaire = next(p for p in simulateur.catalogue["asv_auxiliaires_medicaux"].periodes
-                      if p.debut == 2011)
+    auxiliaire = simulateur.catalogue["asv_auxiliaires_medicaux"].de_l_annee(2011)[0]
     # 0,16 % payés sur 0,40 %, 180 € sur 540 € : le rapport total est 0,40 %
     # du revenu sur 540 €.
     assert auxiliaire.ajustement_total(180.0, 0.0016 * 40000) == pytest.approx(
@@ -125,8 +123,7 @@ def test_les_points_du_medecin_ne_changent_pas(simulateur):
 def test_le_dentiste_compte_ses_points_au_plafond(simulateur):
     """Au-delà de cinq plafonds, 1,93 point d'ajustement depuis 2019 ; dix
     points de forfait par an."""
-    periode = next(p for p in simulateur.catalogue["asv_chirurgiens_dentistes"].periodes
-                   if p.debut == 2019)
+    periode = simulateur.catalogue["asv_chirurgiens_dentistes"].de_l_annee(2019)[0]
     assert periode.points_ajustement_au_plafond == pytest.approx(1.93)
     assert periode.points_par_trimestre_valide * 4 == pytest.approx(10.0)
 

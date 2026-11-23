@@ -280,6 +280,6 @@ def test_chaque_droit_non_cotise_du_modele_est_sur_la_page():
     libelle = {nom: a["libelle"] for a in brut["avantages"]
                for nom in [a["code"], *a.get("alias", [])]}
     for regime in CatalogueRegimes(DONNEES):
-        for periode in regime.periodes:
-            for code in periode.avantages_non_contributifs or ():
+        for ligne in regime.liquidation:
+            for code in ligne["avantages_non_contributifs"] or ():
                 assert any(r.strip().startswith(libelle[code]) for r in rangees), code

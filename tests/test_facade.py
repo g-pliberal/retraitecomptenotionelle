@@ -23,7 +23,7 @@ from types import SimpleNamespace
 import pytest
 
 from retraite_notionnelle import memoire, pont
-from retraite_notionnelle.calendrier import DateMois
+from retraite_notionnelle.calendrier import DateMois, date_d_effet
 from retraite_notionnelle.types_du_pont.carriere import LigneRelevee, Metier
 from retraite_notionnelle.types_du_pont.carriere import PensionDInvalidite
 from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutralisations,
@@ -704,7 +704,7 @@ def test_une_regle_du_droit_se_demande_par_son_module_et_son_nom(simulateur):
     que la règle rend revient sous le type que son jumeau annonce."""
     moteur = simulateur.scenario_actuel
     carriere = simulateur.carriere_simple(**NE_EN_1955)
-    periode = simulateur.catalogue["regime_general"].periode(2017)
+    periode = simulateur.catalogue["regime_general"].a_la_date(date_d_effet(carriere))
     requis, fiabilite = ouvrir.duree_requise(moteur, periode, carriere)
     assert (requis, type(requis), type(fiabilite)) == (166, int, Fiabilite)
     ouverture = ouvrir.age_ouverture(moteur, periode, carriere)
@@ -712,7 +712,7 @@ def test_une_regle_du_droit_se_demande_par_son_module_et_son_nom(simulateur):
     assert ouvrir.age_taux_plein(moteur, periode, carriere) == 67.0
 
     parti_tot = simulateur.carriere_simple(**{**SALARIE, "age_debut": 25, "age_liquidation": 57})
-    complementaire = simulateur.catalogue["agirc_arrco"].periode(2019)
+    complementaire = simulateur.catalogue["agirc_arrco"].a_la_date("2019-01-01")
     assert liquider.abattement_points(
         moteur, complementaire, parti_tot, 100, 172, 57.0, 2022) == pytest.approx(0.43)
     assert liquider.abattement_points(
@@ -732,7 +732,7 @@ def test_une_regle_recoit_la_carriere_nue_comme_celle_des_regles(simulateur):
     nue = CarriereNue(**{champ.name: getattr(carriere, champ.name)
                          for champ in dataclasses.fields(CarriereNue)})
     assert type(nue) is CarriereNue
-    periode = simulateur.catalogue["regime_general"].periode(2017)
+    periode = simulateur.catalogue["regime_general"].a_la_date(date_d_effet(carriere))
     assert ouvrir.duree_requise(moteur, periode, nue) == ouvrir.duree_requise(
         moteur, periode, carriere)
     assert ouvrir.age_ouverture(moteur, periode, nue) == 62.0
@@ -744,7 +744,7 @@ def test_les_arguments_d_une_regle_se_lient_comme_le_python_les_lie(simulateur):
     node."""
     moteur = simulateur.scenario_actuel
     carriere = simulateur.carriere_simple(**NE_EN_1955)
-    periode = simulateur.catalogue["regime_general"].periode(2017)
+    periode = simulateur.catalogue["regime_general"].a_la_date(date_d_effet(carriere))
     assert ouvrir.age_ouverture(moteur, carriere=carriere, periode=periode,
                                 parents_compris=False) == 62.0
     with pytest.raises(TypeError, match="generation"):
@@ -802,7 +802,7 @@ def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
     n'arriveraient pas au portage : la règle est refusée."""
     moteur = simulateur.scenario_actuel
     carriere = simulateur.carriere_simple(**NE_EN_1955)
-    periode = simulateur.catalogue["regime_general"].periode(2017)
+    periode = simulateur.catalogue["regime_general"].a_la_date(date_d_effet(carriere))
     with pytest.raises(NonTransmissible, match="moteur"):
         ouvrir.duree_requise(None, periode, carriere)
     retouchee = dataclasses.replace(periode, age_taux_plein=65.0)
@@ -1230,8 +1230,7 @@ def test_le_constructeur_du_compte_rend_le_taux_effectif_d_une_periode(simulateu
     taux de l'État que la Cour des comptes rattache à sa retraite (tableau
     n° 15), que le compte des scénarios 4 et 5 reçoit par défaut. La période
     passe au portage par son rang dans le catalogue."""
-    periode = next(iter(
-        simulateur.catalogue["fonction_publique_etat"].periodes_actives(2025)))
+    periode = simulateur.catalogue["fonction_publique_etat"].de_l_annee(2025)[0]
     taux, employeur, origine, fiabilite = simulateur.constructeur_employeur.taux_effectif(
         "fonction_publique_etat", periode, 2025, militaire=False)
     assert (employeur, origine, fiabilite) == (pytest.approx(0.441), "retraite_seule",
@@ -1263,8 +1262,7 @@ def test_le_prelevement_porte_le_taux_entier_de_l_etat(simulateur):
     ``contribution_employeur_public.csv``), quand son compte
     ne reçoit par défaut que 44,1 %. Sous le taux entier, le constructeur du
     prélèvement est celui des scénarios 4 et 5."""
-    periode = next(iter(
-        simulateur.catalogue["fonction_publique_etat"].periodes_actives(2025)))
+    periode = simulateur.catalogue["fonction_publique_etat"].de_l_annee(2025)[0]
     _, employeur, origine, _ = simulateur.constructeur_prelevement.taux_effectif(
         "fonction_publique_etat", periode, 2025, militaire=False)
     assert (employeur, origine) == (pytest.approx(0.7828), "appelee")
@@ -1917,7 +1915,7 @@ def test_le_salaire_annuel_moyen_retient_les_annees_de_la_generation(simulateur)
     """Les dix meilleures années pour la génération 1933, une de plus par
     génération, vingt-cinq à partir de 1948 (décret n° 93-1022, art. 1er) :
     dix-sept pour la génération 1940."""
-    periode = simulateur.catalogue["regime_general"].periode(2005)
+    periode = simulateur.catalogue["regime_general"].a_la_date("2005-01-01")
     carriere = _fonctionnaire(1940, 1960, 2005)
     assert liquider.nombre_d_annees_retenues(simulateur.scenario_actuel, periode,
                                              carriere, 1940) == 17
@@ -1936,7 +1934,7 @@ def test_la_carriere_longue_du_fonctionnaire_s_ouvre_par_le_portage(simulateur):
     assert {porte[2] for porte in actuel.carriere_longue._portes(en_2005)} == {
         56.0, 58.0, 59.0}
     assert [porte[2] for porte in actuel.carriere_longue._portes(en_2005, True)] == [59.0]
-    periode = simulateur.catalogue["fonction_publique_etat"].periode(2014)
+    periode = simulateur.catalogue["fonction_publique_etat"].a_la_date("2014-01-01")
     assert ouvrir.ouverture_carriere_longue(
         actuel, periode, _fonctionnaire(1955, 1970, 2014)) == 15 + 174 / 4
 
@@ -2702,7 +2700,7 @@ def test_la_duree_majoree_des_regimes_alignes_se_demande_au_portage(simulateur):
     et six mois, deux trimestres d'ajournement, 5 % ; 130 trimestres au
     régime général et 10 à la MSA, 147 tous régimes sous la limite de 150 :
     130 + 6,5, soit 137. Des durées posées (``pont.DureesPosees``)."""
-    periode = simulateur.catalogue["regime_general"].periode(2004)
+    periode = simulateur.catalogue["regime_general"].a_la_date("2004-01-01")
     carriere = Carriere(annee_naissance=1938, sexe="H", mois_naissance=10,
                         jour_naissance=1, age_liquidation=65 + 7 / 12)
     durees = pont.DureesPosees({"regime_general": 130, "msa_salaries": 10})

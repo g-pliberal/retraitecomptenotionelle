@@ -33,7 +33,7 @@ test("né en mai 1925, pension de 1990 : soixante-cinq ans (R. 351-27), et non l
     affiliation: "salarie_prive_non_cadre", age_debut: 25, age_liquidation: 65,
   });
   for (const regime of ["carpimko_complementaire", "regime_general"]) {
-    const periode = moteur.catalogue.obtenir(regime).periode(1990);
+    const periode = moteur.catalogue.obtenir(regime).aLaDate("1990-01-01");
     assert.equal(ouvrir.ageTauxPlein(moteur, periode, carriere), 65, regime);
   }
 });

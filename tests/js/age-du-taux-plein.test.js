@@ -179,8 +179,8 @@ test("une pension d'avant le 1er avril 1983 garde la valeur de la p√©riode du r√
     age_liquidation: age,
   });
   const carmf = scenario.catalogue.obtenir("carmf_complementaire");
-  const avant = carmf.periode(1980);
+  const avant = carmf.aLaDate("1980-01-01");
   assert.ok(avant.age_taux_plein_par_generation);
   assert.equal(ouvrir.ageTauxPlein(scenario, avant, carriere(65)), avant.age_taux_plein);
-  assert.equal(ouvrir.ageTauxPlein(scenario, carmf.periode(1984), carriere(69)), 65);
+  assert.equal(ouvrir.ageTauxPlein(scenario, carmf.aLaDate("1984-01-01"), carriere(69)), 65);
 });

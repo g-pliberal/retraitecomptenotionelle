@@ -23,6 +23,7 @@ import pytest
 import yaml
 
 from retraite_notionnelle import pont
+from retraite_notionnelle.calendrier import date_d_effet
 
 from facade import Simulateur, liquider
 
@@ -48,7 +49,7 @@ def _coefficient(simulateur: Simulateur, annee: int, age: float) -> float:
     carriere = simulateur.carriere_simple(
         annee_naissance=annee - int(age), sexe="H", affiliation="salarie_prive_cadre",
         age_debut=25, age_liquidation=age)
-    periode = simulateur.catalogue["agirc"].periode(annee)
+    periode = simulateur.catalogue["agirc"].a_la_date(date_d_effet(carriere))
     return liquider.abattement_points(
         simulateur.scenario_actuel, periode, carriere, 120, 120, age, annee)
 

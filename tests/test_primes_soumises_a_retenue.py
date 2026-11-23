@@ -134,7 +134,7 @@ def test_le_rafp_plafonne_les_primes_au_cinquieme_du_seul_traitement(simulateur,
     """Les primes n'entrent au RAFP que jusqu'à 20 % du « traitement
     indiciaire brut total perçu au cours de l'année » (décret n° 2004-569,
     article 2) : l'indemnité du policier n'en est pas."""
-    periode = simulateur.catalogue["rafp"].periode(2018)
+    periode = simulateur.catalogue["rafp"].de_l_annee(2018)[0]
     soumise = table.parts(POLICIER, 2018, 0.3).soumise
     assert periode.part_du_revenu(1000.0, 0.3, soumise) == pytest.approx(
         0.2 * 1000.0 * 0.7 / 1.27)

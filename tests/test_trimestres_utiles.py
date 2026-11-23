@@ -41,6 +41,7 @@ import pytest
 from facade import Carriere, Simulateur, liquider, ouvrir, releve
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.calendrier import date_d_effet
 
 PRIVE = "salarie_prive_non_cadre"
 ETAT = "fonctionnaire_etat"
@@ -175,7 +176,7 @@ def _retraits(simulateur: Simulateur, exemple: Exemple, carriere: Carriere
     régimes, et le numérateur du coefficient de chaque régime."""
     actuel = simulateur.scenario_actuel
     annee = carriere.annee_liquidation
-    periode = simulateur.catalogue[REGIME_GENERAL].periode(annee)
+    periode = simulateur.catalogue[REGIME_GENERAL].a_la_date(date_d_effet(carriere))
     requis, _ = ouvrir.duree_requise(actuel, periode, carriere)
     proratisation, _ = liquider.duree_proratisation(actuel, periode, carriere, requis)
     _, age_annulation, _ = liquider.decote_opposable(actuel, periode, carriere, annee)

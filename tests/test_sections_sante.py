@@ -1060,9 +1060,9 @@ def _chaque_version_est_portee(simulateur, regime, fiche, date_qui_decide, hors_
             hors = any(v == version["id"] and date.fromisoformat(d) <= jour < date.fromisoformat(f)
                        for v, d, f in hors_du_modele)
             if lus and not hors:
-                periode = (caisse.periode_a_l_effet(jour.isoformat())
+                periode = (caisse.a_la_date(jour.isoformat())
                            if date_qui_decide == "liquidation.date_effet"
-                           else caisse.periode(jour.year))
+                           else caisse.de_l_annee(jour.year)[0])
                 assert {cle: getattr(periode, cle) for cle in lus} == lus, (version["id"], jour)
             jour = date(jour.year + jour.month // 12, jour.month % 12 + 1, 1)
 
@@ -1706,9 +1706,9 @@ def test_la_fiche_de_l_asv_porte_la_duree_d_exercice_de_l_article_7(simulateur):
     """Un an depuis le décret n° 85-205 du 12 février 1985 (JORFTEXT000000520378,
     en vigueur le 15 février 1985) ; la règle d'avant, non lue, n'est pas
     portée."""
-    periodes = simulateur.catalogue["asv_conventionnes"].periodes
-    assert {p.exercice_minimum_annees for p in periodes if p.debut >= 1985} == {1}
-    assert {p.exercice_minimum_annees for p in periodes if p.debut < 1985} == {None}
+    lignes = simulateur.catalogue["asv_conventionnes"].liquidation
+    assert {l["exercice_minimum_annees"] for l in lignes if l["du"] >= "1985"} == {1}
+    assert {l["exercice_minimum_annees"] for l in lignes if l["du"] < "1985"} == {None}
 
 
 # -- la CAVP : la carrière longue depuis le 10 janvier 2024 (action 130, la file) --
@@ -1968,7 +1968,7 @@ def test_la_proportionnelle_de_la_carmf_achete_au_prix_du_forfait_de_1983_a_1995
         # 1995 : la caisse écrit « 6 », sans décimale, quand le calcul rend 5,98.
         assert maximale / (forfait / 4) == pytest.approx(
             points, abs=0.02 if annee == 1995 else 0.005), annee
-        periode = fiche.periode(annee)
+        periode = fiche.de_l_annee(annee)[0]
         assert periode.taux_cotisation_retraite == pytest.approx(taux), annee
         assert dict(periode.borne_basse_par_annee)[annee] == pytest.approx(plancher), annee
         assert dict(periode.borne_haute_par_annee)[annee] == pytest.approx(plafond), annee

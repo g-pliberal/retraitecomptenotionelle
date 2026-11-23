@@ -34,6 +34,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import chronologie
+from retraite_notionnelle.calendrier import date_d_effet
 from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 from retraite_notionnelle.config import Parametres
 
@@ -112,7 +113,7 @@ def _le_droit(simulateur: Simulateur, profil: dict) -> dict:
     durees = releve.construire(scenario, carriere).durees
     resultat = scenario.calculer(carriere)
     base = next(p for p in resultat.pensions_par_regime if p.regime == _REGIME)
-    periode = simulateur.catalogue[_REGIME].periode(profil["liquidation"])
+    periode = simulateur.catalogue[_REGIME].a_la_date(date_d_effet(carriere))
     assimiles: dict[str, dict[str, int]] = {}
     for assimilee in durees.assimilees:
         annees = assimiles.setdefault(assimilee.motif, {})

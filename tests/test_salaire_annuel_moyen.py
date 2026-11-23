@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import pytest
 
+from retraite_notionnelle.calendrier import date_d_effet
+from retraite_notionnelle.donnees.axes import en_vigueur_au_jour
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import RACINE_PROJET
 
@@ -126,7 +128,7 @@ def test_une_annee_sans_trimestre_ne_compte_plus_depuis_2004(simulateur):
     code = "regime_general"
 
     tardive = _carriere(1950, 62, lignes)
-    periode = simulateur.catalogue[code].periode(2012)
+    periode = simulateur.catalogue[code].a_la_date(date_d_effet(tardive))
     revalorise = [min(30_000.0, macro.plafond_securite_sociale(annee))
                   * macro.coefficient_revalorisation_portee_au_compte(
                       annee, 2012, tardive.mois_liquidation)
@@ -135,7 +137,7 @@ def test_une_annee_sans_trimestre_ne_compte_plus_depuis_2004(simulateur):
     assert sam == pytest.approx(sum(sorted(revalorise, reverse=True)) / len(revalorise))
 
     precoce = _carriere(1950, 53, lignes)
-    periode = simulateur.catalogue[code].periode(2003)
+    periode = simulateur.catalogue[code].a_la_date(date_d_effet(precoce))
     revalorise = [min(revenu, macro.plafond_securite_sociale(annee))
                   * macro.coefficient_revalorisation_portee_au_compte(
                       annee, 2003, precoce.mois_liquidation)
@@ -153,7 +155,7 @@ def test_avant_juillet_1995_la_moyenne_se_rapporte_aux_trimestres(simulateur):
     macro = simulateur.macro
     lignes = [(1975, 4_000.0, 2)] + [(annee, 20_000.0, 4) for annee in range(1976, 1985)]
     carriere = _carriere(1925, 65, lignes)
-    periode = simulateur.catalogue["regime_general"].periode(1990)
+    periode = simulateur.catalogue["regime_general"].a_la_date(date_d_effet(carriere))
     revalorise = [min(revenu, macro.plafond_securite_sociale(annee))
                   * macro.coefficient_revalorisation_portee_au_compte(
                       annee, 1990, carriere.mois_liquidation)
@@ -168,12 +170,12 @@ def test_les_artisans_et_commercants_ont_leur_table(simulateur):
     1943, vingt-quatre pour 1952, quand les salariés en ont vingt-cinq dès
     1948 ; depuis 2026, la règle commune de R. 173-3-2."""
     actuel = simulateur.scenario_actuel
-    periode = simulateur.catalogue["rsi"].periode(2010)
+    periode = simulateur.catalogue["rsi"].a_la_date("2010-01-01")
     for naissance, attendu in ((1943, 15), (1948, 20), (1952, 24), (1953, 25)):
         carriere = _carriere(naissance, 2010.5 - naissance, [(2000, 30_000.0, 4)])
         assert liquider.nombre_d_annees_retenues(
             actuel, periode, carriere, naissance) == attendu, naissance
-    salarie = simulateur.catalogue["regime_general"].periode(2010)
+    salarie = simulateur.catalogue["regime_general"].a_la_date("2010-01-01")
     carriere = _carriere(1948, 62, [(2000, 30_000.0, 4)])
     assert liquider.nombre_d_annees_retenues(actuel, salarie, carriere, 1948) == 25
 
@@ -202,7 +204,8 @@ def test_l_avpf_compte_avant_avril_1983(simulateur):
         age_debut=50, age_liquidation=65, niveau_salaire=0.4,
         profil_carriere="plat", nombre_enfants=2, jour_naissance=1,
         interruptions={a: "education_enfant" for a in range(1972, 1978)})
-    assert simulateur.catalogue["regime_general"].periode(1982).date_effet[1] == "1983-04-01"
+    assert en_vigueur_au_jour(simulateur.catalogue["regime_general"].liquidation,
+                              "1982-01-01")["au"] == "1983-04-01"
     resultat = simulateur.scenario_actuel.calculer(carriere)
     applique = {a.code: a.montant for a in resultat.avantages_appliques}
     assert applique["avpf"] == pytest.approx(7.0812, abs=1e-3)
@@ -413,7 +416,7 @@ def test_le_salaire_d_un_non_assujetti_n_entre_pas_au_salaire_annuel_moyen(simul
                                affiliation="salarie_prive_cadre", trimestres_valides=0),
                  AnneeCarriere(annee=1946, revenu=2_000.0 / 6.55957,
                                affiliation="salarie_prive_cadre", trimestres_valides=0)]
-    periode = simulateur.catalogue[code].periode(1980)
+    periode = simulateur.catalogue[code].a_la_date("1980-01-01")
 
     def sam(lignes_de_la_carriere: list[AnneeCarriere]) -> float:
         carriere = Carriere.depuis_lignes(1915, "H", lignes_de_la_carriere,
@@ -675,7 +678,7 @@ def test_une_pension_du_debut_de_1948_complete_ses_annees_par_celles_d_apres_soi
               (1947, 1_200.0 / 6.55957, 4)]
     carriere = _carriere(1886, 62, lignes)
     assert carriere.mois_liquidation < 7
-    periode = simulateur.catalogue[code].periode(1948)
+    periode = simulateur.catalogue[code].a_la_date(date_d_effet(carriere))
     revalorise = [min(revenu, macro.plafond_securite_sociale(annee))
                   * macro.coefficient_revalorisation_portee_au_compte(
                       annee, 1948, carriere.mois_liquidation)
@@ -703,7 +706,7 @@ def test_les_salaires_des_assurances_sociales_entrent_au_salaire_annuel_moyen(si
               + [(1945, 600.0 / 6.55957, 4), (1946, 900.0 / 6.55957, 4),
                  (1947, 1_200.0 / 6.55957, 4)])
     carriere = _carriere(1886, 62, lignes)
-    periode = simulateur.catalogue[code].periode(1948)
+    periode = simulateur.catalogue[code].a_la_date(date_d_effet(carriere))
     revalorise_1945 = 600.0 / 6.55957 * macro.coefficient_revalorisation_portee_au_compte(
         1945, 1948, carriere.mois_liquidation)
     attendu = (2_300.0 / 6.55957 + revalorise_1945) / 10
@@ -733,7 +736,7 @@ def test_apres_1948_les_cotisations_d_avant_1945_suivent_la_colonne_de_la_cnav(s
     lignes = [(annee, 100.0 / 6.55957, 4) for annee in range(1938, 1950)]
     carriere = _carriere(1888, 62, lignes)
     assert carriere.annee_liquidation == 1950
-    periode = simulateur.catalogue[code].periode(1950)
+    periode = simulateur.catalogue[code].a_la_date(date_d_effet(carriere))
     coefficients = {1938: 263.75 * 3 / 37.5, 1939: 242.5 * 3 / 37.5,
                     1940: 242.5 * 3 / 37.5, 1941: 161.25 * 3 / 37.5,
                     1942: 103.75 * 2 / 25.0, 1943: 103.75 * 2 / 25.0,

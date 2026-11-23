@@ -34,6 +34,7 @@ import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as limiteAge from "../../moteur/js/droit/limite_age.js";
 import * as leCumul from "../../moteur/js/droit/cumul.js";
 import { DateMois } from "../../moteur/js/calendrier.js";
+import { dateDEffet } from "../../moteur/js/droit/commun.js";
 import { acquerir } from "../../moteur/js/droit/acquerir.js";
 import { compter } from "../../moteur/js/droit/compter.js";
 import { coordonner } from "../../moteur/js/droit/coordonner.js";
@@ -357,7 +358,8 @@ test("le salaire des marins ne compte que pour moitié au-delà du plafond de R.
   const scenario = simulateur.scenarioActuel;
   const proche = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} ≠ ${b}`);
   const plafond = (annee, mois, code = "marins") => plafondDuSalaireDeReference(
-    scenario, scenario.catalogue.obtenir(code).periode(annee), annee, mois);
+    scenario, scenario.catalogue.obtenir(code)
+      .aLaDate(`${annee}-${String(mois).padStart(2, "0")}-01`), annee, mois);
   proche(plafond(2026, 1), 98298.1376);
   proche(plafond(1990, 1), 53785.4304);
   proche(plafond(2008, 6), 86622.7896);
@@ -819,7 +821,7 @@ test("le revenu annuel moyen du micro-entrepreneur porte son revenu cotisé", ()
       })),
     });
     const annee = carriere.anneeLiquidation;
-    const periode = simulateur.catalogue.obtenir(code).periode(annee);
+    const periode = simulateur.catalogue.obtenir(code).aLaDate(dateDEffet(carriere));
     const revalorise = (perception) => simulateur.macro
       .coefficientRevalorisationPorteeAuCompte(perception, annee, carriere.moisLiquidation);
     return [revalorise, salaireDeReference(simulateur.scenarioActuel, code, carriere,
@@ -1482,7 +1484,7 @@ test("la pension militaire de 2027 se cumule entièrement, plafonnée devant l'e
 test("les primes cotisent au RAFP dans la limite de 20 % du traitement", () => {
   const contexte = new Contexte(paquet);
   const simulateur = contexte.simulateur();
-  const periode = simulateur.catalogue.obtenir("rafp").periode(2026);
+  const periode = simulateur.catalogue.obtenir("rafp").deLAnnee(2026)[0];
   assert.ok(Math.abs(periode.plafond_primes_traitement - 0.20) < 1e-12);
   assert.ok(Math.abs(periode.partDuRevenu(40000, 0.10) - 4000) < 1e-6);
   assert.ok(Math.abs(periode.partDuRevenu(40000, 0.25) - 6000) < 1e-6);
@@ -1948,7 +1950,7 @@ test("le salaire d'un non-assujetti n'entre pas au salaire annuel moyen", () => 
   }
   const anciennes = [ligne(1945, 1500 / 6.55957, "salarie_prive_cadre", 0),
     ligne(1946, 2000 / 6.55957, "salarie_prive_cadre", 0)];
-  const periode = simulateur.catalogue.obtenir("regime_general").periode(1980);
+  const periode = simulateur.catalogue.obtenir("regime_general").aLaDate("1980-01-01");
   const sam = (lignesDeLaCarriere) => salaireDeReference(simulateur.scenarioActuel,
     "regime_general", new Carriere({ annee_naissance: 1915, sexe: "H", age_liquidation: 65,
       jour_naissance: 1, lignes: lignesDeLaCarriere }), periode, 1980, true, 1915);

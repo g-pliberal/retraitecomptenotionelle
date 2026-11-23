@@ -33,6 +33,7 @@ from pathlib import Path
 
 import pytest
 
+from retraite_notionnelle.calendrier import date_d_effet
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
 
@@ -94,7 +95,7 @@ def _le_droit(simulateur: Simulateur, profil: dict) -> dict:
     """Ce que le scénario 1 rend au régime général."""
     scenario = simulateur.scenario_actuel
     histoire = carriere(simulateur, profil)
-    periode = simulateur.catalogue[_REGIME].periode(profil["liquidation"])
+    periode = simulateur.catalogue[_REGIME].a_la_date(date_d_effet(histoire))
     resultat = scenario.calculer(histoire)
     base = next(p for p in resultat.pensions_par_regime if p.regime == _REGIME)
     return {

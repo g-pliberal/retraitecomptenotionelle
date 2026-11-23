@@ -464,7 +464,7 @@ def test_chaque_pension_minoree_porte_les_ages_et_le_taux_de_sa_version(
         debut, fin = version["bornes"]["liquidation.date_effet"]
         jour = debut or date(caisse.creation, 1, 1)
         while jour < (fin or date(2041, 1, 1)):
-            periode = caisse.periode_a_l_effet(jour.isoformat())
+            periode = caisse.a_la_date(jour.isoformat())
             portes = {cle: getattr(periode, cle) for cle in lus}
             portes = {cle: list(v) if isinstance(v, tuple) else v for cle, v in portes.items()}
             assert portes == lus, (version["id"], jour)
@@ -857,7 +857,7 @@ def test_chaque_version_de_la_seconde_tranche_de_la_cipav_est_portee_par_le_mode
         debut, fin = version["bornes"]["revenu.annee"]
         for annee in range(max(debut.year, 2023), (fin.year if fin else 2041)):
             portees = sorted((p.assiette, p.taux_cotisation_retraite)
-                             for p in caisse.periodes_actives(annee))
+                             for p in caisse.de_l_annee(annee))
             assert portees == attendues, (version["id"], annee)
             lues += 1
     assert lues == 18
@@ -1146,7 +1146,7 @@ def test_l_age_legal_de_la_base_borne_la_majoration_de_la_carpimko_de_2015_a_202
     caisse = simulateur.catalogue["carpimko_complementaire"]
 
     def derniere(jour):
-        return (caisse.periode_a_l_effet(jour)
+        return (caisse.a_la_date(jour)
                 .surcote_age_legal_de_la_base_jusqu_a_la_generation)
 
     assert derniere("2015-10-01") is None
@@ -1181,7 +1181,7 @@ def test_la_cnavpl_donne_aux_meres_leurs_trimestres_depuis_2010(simulateur):
 def test_la_majoration_de_duree_n_ouvre_pas_les_bonifications_des_mines(simulateur):
     """Seule `mda` passe par un régime en points : les mines déclarent des
     bonifications, qui entrent aux services qu'elles n'ont pas."""
-    periode = simulateur.catalogue["mines"].periode(2020)
+    periode = simulateur.catalogue["mines"].a_la_date("2020-01-01")
     assert periode.type_calcul == "points"
     assert "bonifications" in periode.avantages_non_contributifs
     mere = Carriere.depuis_parcours(
@@ -1245,7 +1245,7 @@ def test_chaque_annee_de_la_cnavpl_porte_les_points_de_sa_version(simulateur):
         debut, fin = version["bornes"]["revenu.annee"]
         for annee in range(debut.year if debut else regime.creation,
                            fin.year if fin else 2041):
-            periodes = regime.periodes_actives(annee)
+            periodes = regime.de_l_annee(annee)
             if "points_par_trimestre_valide" in lus:
                 assert [p.points_par_trimestre_valide for p in periodes] == [
                     lus["points_par_trimestre_valide"]], (version["id"], annee)
@@ -1613,7 +1613,7 @@ def test_les_quatre_caisses_portent_la_date_d_effet_au_trimestre_civil(simulateu
         for annee in range(1949, 2041):
             for mois in range(1, 13):
                 jour = f"{annee:04d}-{mois:02d}-01"
-                periode = caisse.periode_a_l_effet(jour)
+                periode = caisse.a_la_date(jour)
                 plage = None if periode is None else periode.effet_au_trimestre_civil
                 porte = plage is not None and plage[0] <= jour and (
                     plage[1] is None or jour < plage[1])
@@ -1621,8 +1621,8 @@ def test_les_quatre_caisses_portent_la_date_d_effet_au_trimestre_civil(simulateu
                               for depuis, jusqu in plages)
                 assert porte == attendu, (code, jour)
     autres = sorted(regime.code for regime in simulateur.catalogue
-                    for periode in regime.periodes
-                    if periode.effet_au_trimestre_civil is not None)
+                    for ligne in regime.liquidation
+                    if ligne["effet_au_trimestre_civil"] is not None)
     assert sorted(set(autres)) == sorted(TRIMESTRE_CIVIL)
 
 

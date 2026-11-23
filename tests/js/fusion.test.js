@@ -184,7 +184,7 @@ const approx = (lu, attendu, quoi) => assert.ok(
 /** Les périodes de 2026 des régimes vivants en répartition. */
 const repartition2026 = () => [...FICHES]
   .filter((regime) => !regime.hors_repartition && regime.vivant(2026))
-  .flatMap((regime) => regime.periodesActives(2026));
+  .flatMap((regime) => regime.deLAnnee(2026));
 
 test("les fiches : le régime unique retient les âges les plus élevés", () => {
   const fusionne = fusionner(FICHES, 2026);
@@ -214,8 +214,8 @@ test("les fiches : le taux somme le statut pivot, cotisation déplafonnée compr
   // plafonnée, et s'y ajoute. L'omettre faisait perdre au compte notionnel,
   // après la bascule, ce que la séparation des deux taux y portait avant elle.
   const fusionne = fusionner(FICHES, 2026);
-  const base = FICHES.obtenir("regime_general").periode(2026);
-  const tranches = FICHES.obtenir("agirc_arrco").periodesActives(2026);
+  const base = FICHES.obtenir("regime_general").deLAnnee(2026)[0];
+  const tranches = FICHES.obtenir("agirc_arrco").deLAnnee(2026);
   const complementaire = tranches.reduce((retenue, p) =>
     p.bornesAssietteEnPass()[0] < retenue.bornesAssietteEnPass()[0] ? p : retenue);
   const attendu = base.taux_cotisation_retraite + base.taux_cotisation_deplafonnee

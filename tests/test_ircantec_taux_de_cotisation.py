@@ -36,8 +36,8 @@ def test_les_taux_ircantec_du_decret_du_5_octobre_2026(catalogue):
     La fiche portait 7,11 % et 19,81 % « de 2026 à aujourd'hui », sans fin."""
 
     def periode(annee, assiette):
-        trouvees = [p for p in catalogue["ircantec"].periodes
-                    if p.debut <= annee <= (p.fin or 9999) and p.assiette == assiette]
+        trouvees = [p for p in catalogue["ircantec"].de_l_annee(annee)
+                    if p.assiette == assiette]
         assert len(trouvees) == 1, (annee, assiette, trouvees)
         return trouvees[0]
 

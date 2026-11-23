@@ -112,7 +112,7 @@ test("la base forfaitaire des cultes suit le SMIC de chaque mois", () => {
   for (const [annee, base] of Object.entries(BASES)) {
     const ligne = carriere.lignes.find((l) => l.annee === Number(annee));
     assert.equal(ligne.fraction_annee, 1.0, annee);
-    const periode = cavimac.periode(Number(annee));
+    const periode = cavimac.deLAnnee(Number(annee))[0];
     assert.equal(periode.smic_du_mois, true, annee);
     const calculee = assietteDeReference(simulateur.scenarioActuel, periode, ligne);
     assert.ok(Math.abs(calculee - base) < 0.01, `${annee} : ${calculee} contre ${base}`);
@@ -123,12 +123,12 @@ test("le forfait d'avant 1998 et l'assiette plancher gardent le SMIC de janvier"
   const simulateur = new Contexte(paquet).simulateur();
   // Avant 1998, la cotisation des cultes est fixée par arrêté, sans SMIC ; la
   // complémentaire agricole n'est pas lue ici.
-  assert.ok(!simulateur.catalogue.obtenir("cavimac").periode(1997).smic_du_mois);
-  assert.ok(!simulateur.catalogue.obtenir("msa_rco").periode(2007).smic_du_mois);
+  assert.ok(!simulateur.catalogue.obtenir("cavimac").deLAnnee(1997)[0].smic_du_mois);
+  assert.ok(!simulateur.catalogue.obtenir("msa_rco").deLAnnee(2007)[0].smic_du_mois);
   // L'Arrco des cultes prélève sur la même assiette forfaitaire (circulaire
   // n° 2025/01) : elle suit le SMIC de chaque mois.
   for (const annee of [2006, 2019, 2026]) {
-    assert.equal(simulateur.catalogue.obtenir("arrco_cultes").periode(annee).smic_du_mois,
+    assert.equal(simulateur.catalogue.obtenir("arrco_cultes").deLAnnee(annee)[0].smic_du_mois,
       true, annee);
   }
 });

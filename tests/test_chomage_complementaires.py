@@ -154,7 +154,7 @@ def test_la_solidarite_vaut_des_points_a_son_taux(simulateur):
         assurance = _points(simulateur, regime, {2010: "chomage_indemnise"})
         solidarite = _points(simulateur, regime, {2010: "chomage_solidarite"})
         assert assurance == pytest.approx(travaillee, abs=0.01)
-        (periode,) = [p for p in simulateur.catalogue[regime].periodes_actives(2010)
+        (periode,) = [p for p in simulateur.catalogue[regime].de_l_annee(2010)
                       if p.assiette in ("tranche_1", "tranche_a", "tranche_b")]
         appel = simulateur.scenario_actuel.valeurs_point.achat(regime, 2010)[1]
         contractuel = periode.taux_cotisation_retraite / appel
@@ -239,7 +239,7 @@ def test_l_etat_verse_la_garantie_de_la_preretraite(simulateur):
     verse = dict(_compte(simulateur, chomee, 2005, PartCotisation.TOTALE).par_regime)
     travaillee = _carriere(simulateur, {}, niveau=0.8, naissance=1975)
     agirc = _compte(simulateur, travaillee, 2005, PartCotisation.TOTALE)
-    (periode,) = [p for p in simulateur.catalogue["agirc"].periodes_actives(2005)
+    (periode,) = [p for p in simulateur.catalogue["agirc"].de_l_annee(2005)
                   if p.assiette == "tranche_b"]
     appel = simulateur.scenario_actuel.valeurs_point.achat("agirc", 2005)[1]
     assiette = dict(agirc.par_regime)["agirc"] / periode.taux_cotisation_retraite

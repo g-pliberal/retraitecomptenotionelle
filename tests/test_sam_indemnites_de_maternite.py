@@ -17,6 +17,7 @@ import subprocess
 
 import pytest
 
+from retraite_notionnelle.calendrier import date_d_effet
 from retraite_notionnelle.config import RACINE_PROJET
 from retraite_notionnelle.donnees.chargement import charger_yaml
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
@@ -168,7 +169,7 @@ def _sam(simulateur, carriere, code: str = "regime_general") -> float:
     annee = carriere.annee_liquidation
     return liquider.salaire_de_reference(
         simulateur.scenario_actuel, code, carriere,
-        simulateur.catalogue[code].periode(annee), annee, True, carriere.annee_naissance)
+        simulateur.catalogue[code].a_la_date(date_d_effet(carriere)), annee, True, carriere.annee_naissance)
 
 
 NAISSANCES = ("1998-05-12", "2007-03-03", "2013-06-01")
@@ -242,7 +243,7 @@ def test_les_parents_nes_avant_1948_gardent_les_annees_de_leur_generation(simula
                            trimestres_valides=4) for annee, revenu in lignes],
             age_liquidation=2027 - naissance, nombre_enfants=2,
             naissances_enfants=("1975-04-04", "1978-05-05"))
-        periode = simulateur.catalogue["regime_general"].periode(mere.annee_liquidation)
+        periode = simulateur.catalogue["regime_general"].a_la_date(date_d_effet(mere))
         return liquider.nombre_d_annees_retenues(
             simulateur.scenario_actuel, periode, mere, naissance, 2)
 

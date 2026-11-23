@@ -219,7 +219,7 @@ test("les lecteurs du moteur lisent les versions : une version retouchÃ©e les dÃ
   const retouche = moteurSur(paquetRetouche((fiche) => {
     version(fiche, "suspension_de_2025").table.at(-1)[2] = 65;
   }));
-  const periode = retouche.catalogue.obtenir("regime_general").periode(2035);
+  const periode = retouche.catalogue.obtenir("regime_general").aLaDate("2035-01-01");
   for (const [lecteur, lu] of [
     ["categories.ageLegal", (m) => categories.ageLegal(m, carriere)],
     ["departs.ageLegal", (m) => lesDeparts.ageLegal(m, carriere)],

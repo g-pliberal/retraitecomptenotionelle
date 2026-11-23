@@ -153,7 +153,7 @@ def test_le_plafond_de_la_cavom_monte_par_marches(simulateur):
         2019: (7.0, 0.19), 2020: (8.0, 0.19), 2026: (8.0, 0.19),
     }
     for annee, (plafonds, minimum) in attendus.items():
-        (periode,) = regime.periodes_actives(annee)
+        (periode,) = regime.de_l_annee(annee)
         assert periode.bornes_assiette_en_pass() == (0.0, plafonds), annee
         assert periode.assiette_minimale_pass == pytest.approx(minimum), annee
         assert periode.taux_cotisation_retraite == pytest.approx(0.125), annee
@@ -473,7 +473,7 @@ def test_la_surcote_des_avocats_passe_a_un_quart_le_1er_juillet_2010(simulateur)
     avril, juillet = DateMois(2010, 4), DateMois(2010, 7)
     coefficient, _ = baremes.coefficient("cnbf", [(avril, False), (juillet, False)])
     assert coefficient == pytest.approx(1.0 + 0.0075 + 0.0125)
-    (periode,) = simulateur.catalogue["cnbf"].periodes_actives(2026)
+    periode = simulateur.catalogue["cnbf"].a_la_date("2026-01-01")
     assert periode.surcote_bareme == "cnbf"
 
 

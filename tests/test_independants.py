@@ -75,7 +75,7 @@ def simulateur() -> Simulateur:
 
 
 def _tranches(catalogue, annee: int):
-    premiere, seconde = sorted(catalogue["rci"].periodes_actives(annee),
+    premiere, seconde = sorted(catalogue["rci"].de_l_annee(annee),
                                key=lambda p: p.taux_cotisation_retraite)
     return premiere, seconde
 
@@ -97,13 +97,13 @@ def test_chaque_annee_d_une_periode_a_bornes_annuelles_a_sa_borne():
     """Une année sans montant retomberait sans bruit sur le plafond de la
     sécurité sociale : toute période qui en porte les couvre toutes."""
     for regime in CatalogueRegimes(RACINE_DONNEES):
-        for periode in regime.periodes:
-            for bornes in (periode.borne_basse_par_annee, periode.borne_haute_par_annee):
+        for ligne in regime.cotisation:
+            for bornes in (ligne["borne_basse_par_annee"], ligne["borne_haute_par_annee"]):
                 if not bornes:
                     continue
-                assert periode.fin is not None, (regime.code, periode.debut)
+                assert ligne["au"] is not None, (regime.code, ligne["du"])
                 assert [annee for annee, _ in bornes] == list(
-                    range(periode.debut, periode.fin + 1)), (regime.code, periode.debut)
+                    range(ligne["du"], ligne["au"] + 1)), (regime.code, ligne["du"])
 
 
 def test_depuis_2025_la_premiere_tranche_s_arrete_au_plafond_de_la_securite_sociale(
@@ -195,12 +195,12 @@ def test_au_regime_general_l_artisan_garde_son_bareme(simulateur):
     propre du non-salarié à côté des taux du salarié, qu'il ne remplace pas."""
     catalogue = CatalogueRegimes(RACINE_DONNEES)
     for annee, attendu in BAREME_PROPRE.items():
-        (periode,) = [p for p in catalogue["regime_general"].periodes_actives(annee)
+        (periode,) = [p for p in catalogue["regime_general"].de_l_annee(annee)
                       if p.assiette == "plafonnee"]
         assert periode.taux_du_cotisant(True) == pytest.approx(attendu), annee
         assert periode.taux_du_cotisant(False) == (
             periode.taux_cotisation_retraite, periode.taux_cotisation_deplafonnee)
-    (avant,) = catalogue["regime_general"].periodes_actives(2017)
+    (avant,) = catalogue["regime_general"].de_l_annee(2017)
     assert avant.taux_du_cotisant(True) == avant.taux_du_cotisant(False)
 
 
@@ -366,7 +366,7 @@ import { BaremePrelevements, ConstructeurFiche, blocDroitEnVigueur }
 const { annees, pss, fiche } = JSON.parse(process.argv[1]);
 const paquet = JSON.parse(readFileSync("./moteur/donnees.json", "utf8"));
 const catalogue = new CatalogueRegimes(paquet);
-const bornes = annees.map((annee, rang) => catalogue.obtenir("rci").periodesActives(annee)
+const bornes = annees.map((annee, rang) => catalogue.obtenir("rci").deLAnnee(annee)
   .map((p) => p.bornesAssietteEnEuros(pss[rang], annee)));
 const bloc = blocDroitEnVigueur(catalogue, new Affiliations(paquet), "artisan", fiche.annee);
 const profil = new BaremePrelevements(paquet.prelevements_remuneration).profil("independant");
@@ -395,7 +395,7 @@ def test_le_portage_javascript_rend_les_memes_plafond_bareme_et_assiette(simulat
     profil = _profil_independant()
     attendu = {
         "bornes": [[list(p.bornes_assiette_en_euros(plafond, annee))
-                    for p in catalogue["rci"].periodes_actives(annee)]
+                    for p in catalogue["rci"].de_l_annee(annee)]
                    for annee, plafond in zip(annees, pss)],
         "retraite": _fiche(simulateur, 2019, 60_000.0),
         "abattues": [
@@ -445,8 +445,8 @@ def test_les_annees_d_avant_1973_ont_leur_regime():
                                  ("commercant", "organic_avant_1973", "organic")):
         assert affiliations.regimes(statut, 1972) == (avant,)
         assert apres in affiliations.regimes(statut, 1973)
-        assert catalogue[apres].periodes[0].debut == 1973
-        assert catalogue[avant].periode(1960).type_calcul == "points"
+        assert catalogue[apres].cotisation[0]["du"] == 1973
+        assert catalogue[avant].a_la_date("1960-01-01").type_calcul == "points"
 
 
 @pytest.mark.parametrize("statut, regime, points", [
@@ -527,7 +527,7 @@ def test_les_complementaires_des_artisans_et_des_commercants_portent_la_regle():
     for code, (par, proportionnels, forfait, depuis) in attendues.items():
         regime = catalogue[code]
         for annee in range(regime.creation, 2027 if code == "rci" else 2013):
-            regles = [p.points_invalidite for p in regime.periodes_actives(annee)
+            regles = [p.points_invalidite for p in regime.de_l_annee(annee)
                       if p.points_invalidite is not None]
             assert len(regles) == 1, (code, annee)
             regle = regles[0]

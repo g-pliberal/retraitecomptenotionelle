@@ -42,7 +42,7 @@ import pytest
 
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, LigneRelevee
 
-from retraite_notionnelle.calendrier import DateMois
+from retraite_notionnelle.calendrier import DateMois, date_d_effet
 
 from facade import Carriere, commun, liquider, Simulateur
 
@@ -184,7 +184,7 @@ def test_le_salaire_annuel_moyen_de_mayotte_s_ecrete_au_plafond_de_la_caisse(sim
         min(25_000.0, plafond) * macro.coefficient_revalorisation_portee_au_compte(
             annee, liquidation, carriere.mois_liquidation)
         for annee, plafond in PLAFONDS_DE_LA_CAISSE.items()) / len(PLAFONDS_DE_LA_CAISSE)
-    periode = simulateur.catalogue["cssm_mayotte"].periode(liquidation)
+    periode = simulateur.catalogue["cssm_mayotte"].a_la_date(date_d_effet(carriere))
     assert liquider.salaire_de_reference(
         simulateur.scenario_actuel, "cssm_mayotte", carriere, periode, liquidation,
         True, 1961) == pytest.approx(attendu, rel=1e-12)
@@ -227,7 +227,7 @@ def test_les_salaires_de_mayotte_d_avant_septembre_2023_gagnent_dix_pour_cent(si
     assert carriere.annee_liquidation == 2025
     attendu = _sam_attendu(simulateur.macro, carriere, lambda annee: (
         1.1 if annee < 2023 else 1 + 0.1 * 8 / 12 if annee == 2023 else 1.0))
-    periode = simulateur.catalogue["cssm_mayotte"].periode(2025)
+    periode = simulateur.catalogue["cssm_mayotte"].a_la_date(date_d_effet(carriere))
     assert liquider.salaire_de_reference(
         simulateur.scenario_actuel, "cssm_mayotte", carriere, periode, 2025,
         True, 1961) == pytest.approx(attendu, rel=1e-12)
@@ -240,7 +240,7 @@ def test_une_pension_de_mayotte_d_avant_septembre_2023_n_est_pas_revalorisee(sim
     # septembre, quel qu'il soit.
     assert carriere.annee_liquidation == 2023 and carriere.mois_liquidation < 9
     attendu = _sam_attendu(simulateur.macro, carriere, lambda annee: 1.0)
-    periode = simulateur.catalogue["cssm_mayotte"].periode(2023)
+    periode = simulateur.catalogue["cssm_mayotte"].a_la_date(date_d_effet(carriere))
     assert liquider.salaire_de_reference(
         simulateur.scenario_actuel, "cssm_mayotte", carriere, periode, 2023,
         True, 1961) == pytest.approx(attendu, rel=1e-12)
@@ -348,7 +348,7 @@ def test_l_independant_de_mayotte_cotise_au_taux_de_l_article_4_2(simulateur):
     l'article 4 de 2012 à 2018, rien sur la totalité du revenu (article 28-2)."""
     regime = simulateur.catalogue["cssm_mayotte"]
     for annee, taux in {**TAUX_PRESUME, **TAUX_DE_L_INDEPENDANT}.items():
-        (periode,) = [p for p in regime.periodes_actives(annee) if p.assiette == "plafonnee"]
+        (periode,) = [p for p in regime.de_l_annee(annee) if p.assiette == "plafonnee"]
         assert periode.taux_du_cotisant(True) == pytest.approx((taux, 0.0)), annee
         assert periode.taux_du_cotisant(False) == (
             periode.taux_cotisation_retraite, periode.taux_cotisation_deplafonnee)

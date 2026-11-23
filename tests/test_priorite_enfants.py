@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import pytest
 
+from retraite_notionnelle.calendrier import date_d_effet
 from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.donnees.chargement import Fiabilite
 
@@ -326,7 +327,7 @@ def test_l_enfant_ne_apres_la_radiation(simulateur):
     carriere = _carriere(simulateur, 1962, [("fonctionnaire_etat", 22),
                                             ("salarie_prive_non_cadre", 23)], 64)
     actuel = simulateur.scenario_actuel
-    periode = simulateur.catalogue["fonction_publique_etat"].periode(2026)
+    periode = simulateur.catalogue["fonction_publique_etat"].a_la_date(date_d_effet(carriere))
     pension, ouvert, _ = compter.droit_regime_special(
         actuel, periode, carriere, 2026, "ne_avant_radiation", 1992)
     assert not ouvert and not pension

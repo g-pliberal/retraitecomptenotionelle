@@ -141,7 +141,7 @@ def test_l_annee_validante_du_salaire_annuel_moyen_suit_le_seuil(simulateur):
                    for statut in (STATUT, "salarie_prive_cadre")]
         return Carriere.depuis_lignes(1950, "H", lignes, age_liquidation=62)
 
-    periode = simulateur.catalogue[code].periode(2012)
+    periode = simulateur.catalogue[code].a_la_date("2012-01-01")
 
     def revalorise(annee: int, revenu: float, mois: int) -> float:
         return (min(revenu, macro.plafond_securite_sociale(annee))

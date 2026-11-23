@@ -36,6 +36,8 @@ from __future__ import annotations
 
 import pytest
 
+from retraite_notionnelle.calendrier import date_d_effet
+
 from facade import Simulateur, ouvrir
 
 
@@ -71,7 +73,7 @@ def _agent(simulateur: Simulateur, naissance: int, mois: int, depart: float):
 def test_l_age_du_taux_plein_est_celui_de_l_article_70(
         simulateur, naissance, mois, depart, attendu):
     carriere = _agent(simulateur, naissance, mois, depart)
-    periode = simulateur.catalogue["banque_de_france"].periode(carriere.annee_liquidation)
+    periode = simulateur.catalogue["banque_de_france"].a_la_date(date_d_effet(carriere))
     assert ouvrir.age_taux_plein(simulateur.scenario_actuel, periode, carriere) == pytest.approx(
         attendu)
 

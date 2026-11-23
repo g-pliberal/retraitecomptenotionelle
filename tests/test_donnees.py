@@ -25,7 +25,9 @@ from retraite_notionnelle.donnees.population import (AGE_MINIMAL, ArriveesTardiv
                                                     Population, VARIANTES_DEMOGRAPHIQUES)
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
+from retraite_notionnelle.donnees.axes import en_vigueur_au_jour
 from retraite_notionnelle.donnees.regimes import (
+    BORNES_ASSIETTE,
     CatalogueRegimes,
     ContributionsEmployeurPubliques,
     PartRetraiteSeuleEtat,
@@ -1099,14 +1101,14 @@ def test_periodes_de_regime_sont_ordonnees_et_jointives(catalogue):
     for regime in catalogue:
         # Les régimes à tranches ont plusieurs périodes simultanées : on ne
         # teste la continuité que pour les autres.
-        assiettes = {p.assiette for p in regime.periodes}
-        if len(assiettes) > 1 and len(regime.periodes) > len(assiettes):
+        assiettes = {l["assiette"] for l in regime.cotisation}
+        if len(assiettes) > 1 and len(regime.cotisation) > len(assiettes):
             continue
         precedente = None
-        for periode in regime.periodes:
-            if precedente is not None and precedente.fin is not None:
-                assert periode.debut >= precedente.debut, regime.code
-            precedente = periode
+        for ligne in regime.cotisation:
+            if precedente is not None and precedente["au"] is not None:
+                assert ligne["du"] >= precedente["du"], regime.code
+            precedente = ligne
 
 
 def test_taux_de_cotisation_plausibles(catalogue):
@@ -1126,27 +1128,27 @@ def test_taux_de_cotisation_plausibles(catalogue):
     durée de chaque époque (action 138, étape 18).
     """
     for regime in catalogue:
-        for periode in regime.periodes:
-            forfait = periode.cotisation_forfaitaire_euros or 0.0
-            if (periode.taux_cotisation_retraite == 0.0 and regime.fermeture is not None
-                    and periode.debut > regime.fermeture):
+        for ligne in regime.cotisation:
+            forfait = ligne["cotisation_forfaitaire_euros"] or 0.0
+            if (ligne["taux_cotisation_retraite"] == 0.0 and regime.fermeture is not None
+                    and ligne["du"] > regime.fermeture):
                 continue
-            if periode.taux_cotisation_retraite == 0.0:
-                assert forfait > 0.0 or periode.cotisation_par_classes, (
-                    f"{regime.code} {periode.debut} : taux nul sans forfait "
+            if ligne["taux_cotisation_retraite"] == 0.0:
+                assert forfait > 0.0 or ligne["cotisation_par_classes"], (
+                    f"{regime.code} {ligne['du']} : taux nul sans forfait "
                     f"ni grille de classes"
                 )
                 continue
-            assert 0.0 < periode.taux_cotisation_retraite < 0.60, (
-                f"{regime.code} {periode.debut} : taux hors plage plausible"
+            assert 0.0 < ligne["taux_cotisation_retraite"] < 0.60, (
+                f"{regime.code} {ligne['du']} : taux hors plage plausible"
             )
 
 
 def test_ages_ouverture_inferieurs_au_taux_plein(catalogue):
     for regime in catalogue:
-        for periode in regime.periodes:
-            assert periode.age_ouverture <= periode.age_taux_plein, (
-                f"{regime.code} {periode.debut}"
+        for ligne in regime.liquidation:
+            assert ligne["age_ouverture"] <= ligne["age_taux_plein"], (
+                f"{regime.code} {ligne['du']}"
             )
 
 
@@ -1402,13 +1404,13 @@ def test_toute_annee_routee_trouve_une_periode_de_regime(catalogue):
                 continue
             for code in periode["regimes"] or ():
                 regime = catalogue[code]
-                if fin is None and not any(p.fin is None for p in regime.periodes):
+                if fin is None and not any(l["au"] is None for l in regime.cotisation):
                     manquants.append(
                         f"{statut}/{code} : routage ouvert vers un régime clos"
                     )
                     continue
                 for annee in range(periode["debut"], (fin or 2026) + 1):
-                    if not regime.periodes_actives(annee):
+                    if not regime.de_l_annee(annee):
                         manquants.append(f"{statut}/{code} : {annee}")
                         break
     assert not manquants, "années routées sans période de régime : " + "; ".join(
@@ -1508,35 +1510,35 @@ def test_la_cotisation_est_celle_de_chaque_annee_et_non_une_moyenne(catalogue):
         assert set(annees) == set(range(min(annees), max(annees) + 1)), regime
 
     general = catalogue["regime_general"]
-    assert general.periode(1972).taux_cotisation_retraite == pytest.approx(0.0875)
-    assert general.periode(1979).taux_cotisation_retraite == pytest.approx(0.129)
-    assert general.periode(1979).part_salariale == pytest.approx(0.047 / 0.129)
+    assert general.de_l_annee(1972)[0].taux_cotisation_retraite == pytest.approx(0.0875)
+    assert general.de_l_annee(1979)[0].taux_cotisation_retraite == pytest.approx(0.129)
+    assert general.de_l_annee(1979)[0].part_salariale == pytest.approx(0.047 / 0.129)
     # La cotisation déplafonnée naît le 1er février 1991 (décret n° 91-91) :
     # au 1er janvier de cette année-là elle n'existe pas encore, et 1991 porte
     # donc les 15,8 % plafonnés d'avant la réforme.
-    assert general.periode(1991).taux_cotisation_deplafonnee == 0.0
-    assert general.periode(1991).taux_cotisation_retraite == pytest.approx(0.158)
-    assert general.periode(1992).taux_cotisation_deplafonnee == pytest.approx(0.016)
-    assert general.periode(1992).taux_cotisation_retraite == pytest.approx(0.1475)
-    assert general.periode(1985).taux_cotisation_deplafonnee == 0.0
+    assert general.de_l_annee(1991)[0].taux_cotisation_deplafonnee == 0.0
+    assert general.de_l_annee(1991)[0].taux_cotisation_retraite == pytest.approx(0.158)
+    assert general.de_l_annee(1992)[0].taux_cotisation_deplafonnee == pytest.approx(0.016)
+    assert general.de_l_annee(1992)[0].taux_cotisation_retraite == pytest.approx(0.1475)
+    assert general.de_l_annee(1985)[0].taux_cotisation_deplafonnee == 0.0
     # Avant 1967, la part vieillesse conventionnelle des assurances sociales,
     # datée d'après le COR : 6 + 10 de 1947 à 1958, dont 8,5/21 pour la vieillesse.
-    assert general.periode(1950).taux_cotisation_retraite == pytest.approx(0.16 * 8.5 / 21, abs=1e-6)
-    # La liquidation est recopiée telle quelle sur chaque tranche.
-    assert general.periode(1972).duree_requise_trimestres == 150
-    assert general.periode(1979).duree_requise_trimestres == 150
-    assert general.periode(1994).salaire_reference == "25_meilleures_annees"
+    assert general.de_l_annee(1950)[0].taux_cotisation_retraite == pytest.approx(0.16 * 8.5 / 21, abs=1e-6)
+    # La liquidation se lit à la date.
+    assert general.a_la_date("1972-01-01").duree_requise_trimestres == 150
+    assert general.a_la_date("1979-01-01").duree_requise_trimestres == 150
+    assert general.a_la_date("1994-01-01").salaire_reference == "25_meilleures_annees"
     # Une période ouverte reste ouverte, au dernier taux connu.
-    assert general.periodes[-1].fin is None
-    assert general.periode(2040) is not None
+    assert general.cotisation[-1]["au"] is None
+    assert general.a_la_date("2040-01-01") is not None
     # Avant 1980, les salariés agricoles n'ont que la série du régime général
     # faute de mieux ; à partir de 1980, ils ont la leur, lue dans leur décret.
-    assert catalogue["msa_salaries"].periode(1979).taux_cotisation_retraite == pytest.approx(0.129)
-    assert catalogue["cancava"].periode(1973).taux_cotisation_retraite == pytest.approx(0.0875)
+    assert catalogue["msa_salaries"].de_l_annee(1979)[0].taux_cotisation_retraite == pytest.approx(0.129)
+    assert catalogue["cancava"].de_l_annee(1973)[0].taux_cotisation_retraite == pytest.approx(0.0875)
     # Avant 1973, les années d'artisan sont des points (action 138, étape 18).
-    assert catalogue["cancava"].periode(1960) is None
-    assert catalogue["cancava_avant_1973"].periode(1960).taux_cotisation_retraite == pytest.approx(0.085)
-    assert catalogue["rsi"].periode(2015).taux_cotisation_deplafonnee == pytest.approx(0.0035)
+    assert not catalogue["cancava"].de_l_annee(1960)
+    assert catalogue["cancava_avant_1973"].de_l_annee(1960)[0].taux_cotisation_retraite == pytest.approx(0.085)
+    assert catalogue["rsi"].de_l_annee(2015)[0].taux_cotisation_deplafonnee == pytest.approx(0.0035)
 
 
 def test_la_grille_des_marins_est_lue_et_le_marin_range_dans_sa_categorie(catalogue):
@@ -1564,19 +1566,19 @@ def test_la_grille_des_marins_est_lue_et_le_marin_range_dans_sa_categorie(catalo
     forfait, categorie, fiabilite = grilles.forfait(
         "marins", 1990, 6000.0, lambda a: {1990: 0.5, 2008: 1.0}[a])
     assert (forfait, categorie, fiabilite) == pytest.approx((5774.665, 1, Fiabilite.ESTIMEE))
-    assert catalogue["marins"].periode(2024).assiette_grille == "marins"
+    assert catalogue["marins"].de_l_annee(2024)[0].assiette_grille == "marins"
 
 
 def test_les_taux_d_avant_1967_sont_dates_par_convention_nommee(catalogue):
     """La part vieillesse des assurances sociales, 8,5/21 des taux que le COR
     date d'après la Cnav : 6 + 6 en 1945, 6 + 10 de 1947 à 1958, 6 + 15 en 1966."""
     general = catalogue["regime_general"]
-    assert general.periode(1945).taux_cotisation_retraite == pytest.approx(0.12 * 8.5 / 21, abs=1e-6)
-    assert general.periode(1950).taux_cotisation_retraite == pytest.approx(0.16 * 8.5 / 21, abs=1e-6)
-    assert general.periode(1950).part_salariale == pytest.approx(6 / 16, abs=1e-6)
-    assert general.periode(1962).taux_cotisation_retraite == pytest.approx(0.2025 * 8.5 / 21, abs=1e-6)
-    assert general.periode(1966).taux_cotisation_retraite == pytest.approx(0.085)
-    assert catalogue["msa_salaries"].periode(1950).taux_cotisation_retraite == pytest.approx(0.16 * 8.5 / 21, abs=1e-6)
+    assert general.de_l_annee(1945)[0].taux_cotisation_retraite == pytest.approx(0.12 * 8.5 / 21, abs=1e-6)
+    assert general.de_l_annee(1950)[0].taux_cotisation_retraite == pytest.approx(0.16 * 8.5 / 21, abs=1e-6)
+    assert general.de_l_annee(1950)[0].part_salariale == pytest.approx(6 / 16, abs=1e-6)
+    assert general.de_l_annee(1962)[0].taux_cotisation_retraite == pytest.approx(0.2025 * 8.5 / 21, abs=1e-6)
+    assert general.de_l_annee(1966)[0].taux_cotisation_retraite == pytest.approx(0.085)
+    assert catalogue["msa_salaries"].de_l_annee(1950)[0].taux_cotisation_retraite == pytest.approx(0.16 * 8.5 / 21, abs=1e-6)
 
 
 def test_le_manifeste_dit_pourquoi_deux_series_ne_se_certifient_pas():
@@ -1621,13 +1623,13 @@ def test_la_retenue_des_fonctionnaires_passe_a_8_9_pour_cent_en_1989(catalogue):
     ne commande que 1992. Seule celle de 1989 tombe un 1er janvier.
     """
     for code in ("fonction_publique_etat", "cnracl", "fspoeie"):
-        assert catalogue[code].periode(1986).taux_cotisation_retraite == pytest.approx(0.07), code
-        assert catalogue[code].periode(1987).taux_cotisation_retraite == pytest.approx(0.077), code
-        assert catalogue[code].periode(1988).taux_cotisation_retraite == pytest.approx(0.079), code
-        assert catalogue[code].periode(1989).taux_cotisation_retraite == pytest.approx(0.089), code
-        assert catalogue[code].periode(1990).taux_cotisation_retraite == pytest.approx(0.089), code
-        assert catalogue[code].periode(1991).taux_cotisation_retraite == pytest.approx(0.089), code
-        assert catalogue[code].periode(1992).taux_cotisation_retraite == pytest.approx(0.0785), code
+        assert catalogue[code].de_l_annee(1986)[0].taux_cotisation_retraite == pytest.approx(0.07), code
+        assert catalogue[code].de_l_annee(1987)[0].taux_cotisation_retraite == pytest.approx(0.077), code
+        assert catalogue[code].de_l_annee(1988)[0].taux_cotisation_retraite == pytest.approx(0.079), code
+        assert catalogue[code].de_l_annee(1989)[0].taux_cotisation_retraite == pytest.approx(0.089), code
+        assert catalogue[code].de_l_annee(1990)[0].taux_cotisation_retraite == pytest.approx(0.089), code
+        assert catalogue[code].de_l_annee(1991)[0].taux_cotisation_retraite == pytest.approx(0.089), code
+        assert catalogue[code].de_l_annee(1992)[0].taux_cotisation_retraite == pytest.approx(0.0785), code
 
 
 def test_les_taux_du_journal_officiel_sont_certifies_et_dates_au_1er_janvier(catalogue):
@@ -1683,8 +1685,8 @@ def test_les_taux_du_journal_officiel_sont_certifies_et_dates_au_1er_janvier(cat
         assert (certifiees[("msa_salaries", annee, "taux_plafonne")]
                 == certifiees[("regime_general", annee, "taux_plafonne")]), annee
     # Et le catalogue sert bien ces taux-là.
-    assert catalogue["msa_salaries"].periode(1984).taux_cotisation_retraite == pytest.approx(0.129)
-    assert catalogue["msa_salaries"].periode(2020).taux_cotisation_retraite == pytest.approx(0.1545)
+    assert catalogue["msa_salaries"].de_l_annee(1984)[0].taux_cotisation_retraite == pytest.approx(0.129)
+    assert catalogue["msa_salaries"].de_l_annee(2020)[0].taux_cotisation_retraite == pytest.approx(0.1545)
 
 
 def test_tout_regime_du_catalogue_est_route_ou_declare(catalogue):
@@ -1800,7 +1802,7 @@ def test_le_salaire_de_reference_se_borne_a_sa_tranche():
     from dataclasses import replace
 
     def borne(assiette: str, revenu: float, pass_annuel: float) -> float:
-        modele = CatalogueRegimes(RACINE_DONNEES)["regime_general"].periodes[0]
+        modele = CatalogueRegimes(RACINE_DONNEES)["regime_general"].de_l_annee(1972)[0]
         periode = replace(modele, assiette=assiette)
         basse, haute = periode.bornes_assiette_en_euros(pass_annuel)
         if basse > 0:
@@ -1834,9 +1836,9 @@ def test_la_cavimac_ne_derive_jamais_du_regime_general(catalogue):
     """
     cultes = catalogue["cavimac"]
     general = catalogue["regime_general"]
-    for annee in range(cultes.periodes[0].debut, 2027):
-        chez_cultes = cultes.periode(annee)
-        chez_general = general.periode(annee)
+    for annee in range(cultes.cotisation[0]["du"], 2027):
+        chez_cultes = next(iter(cultes.de_l_annee(annee)), None)
+        chez_general = next(iter(general.de_l_annee(annee)), None)
         assert chez_cultes is not None, annee
         assert chez_general is not None, annee
         assert chez_cultes.taux_cotisation_retraite == chez_general.taux_cotisation_retraite, (
@@ -1857,12 +1859,12 @@ def test_l_assiette_forfaitaire_suppose_un_repere(catalogue):
     repère sans condition, une fiche mal réglée ne prélèverait plus rien.
     """
     for regime in catalogue:
-        for periode in regime.periodes:
-            if not periode.assiette_forfaitaire:
+        for ligne in regime.cotisation:
+            if not ligne["assiette_forfaitaire"]:
                 continue
-            borne_haute = periode.bornes_assiette_en_pass()[1]
-            assert periode.assiette_repere_smic or borne_haute, (
-                f"{regime.code} {periode.debut} : assiette forfaitaire sans repère"
+            borne_haute = BORNES_ASSIETTE.get(ligne["assiette"], (0.0, None))[1]
+            assert ligne["assiette_repere_smic"] or borne_haute, (
+                f"{regime.code} {ligne['du']} : assiette forfaitaire sans repère"
             )
 
 
@@ -1891,9 +1893,9 @@ def test_toute_assiette_ecrite_dans_une_fiche_est_une_assiette_connue(catalogue)
         f"{declarees ^ set(BORNES_ASSIETTE)}"
     )
     for regime in catalogue:
-        for periode in regime.periodes:
-            assert periode.assiette in BORNES_ASSIETTE, (
-                f"{regime.code} {periode.debut} : assiette « {periode.assiette} » "
+        for ligne in regime.cotisation:
+            assert ligne["assiette"] in BORNES_ASSIETTE, (
+                f"{regime.code} {ligne['du']} : assiette « {ligne['assiette']} » "
                 "inconnue du moteur, donc déplafonnée sans le dire"
             )
 
@@ -1932,17 +1934,18 @@ def test_tout_regime_en_points_sait_convertir_ses_points(catalogue):
     for regime in catalogue:
         if regime.hors_repartition:
             continue
-        if not any(p.type_calcul == "points" for p in regime.periodes):
+        if not any(l["type_calcul"] == "points" for l in regime.structure):
             continue
-        if any(p.points_maximum is not None for p in regime.periodes):
+        if any(l["points_maximum"] is not None for l in regime.cotisation):
             continue
-        if any(p.bareme_points or p.points_par_trimestre_valide is not None
-               or p.valeur_point_euros is not None for p in regime.periodes):
+        if (any(l["bareme_points"] or l["points_par_trimestre_valide"] is not None
+                for l in regime.cotisation)
+                or any(l["valeur_point_euros"] is not None for l in regime.servi)):
             continue
         # Le barème emprunté à un autre régime compte, à condition que celui-là
         # en ait un : c'est le cas de la tranche 2 de l'Arrco, dont les points
         # sont des points Arrco.
-        empruntes = {p.points_de for p in regime.periodes if p.points_de}
+        empruntes = {l["points_de"] for l in regime.structure if l["points_de"]}
         if empruntes and empruntes <= (avec_point | avec_rendement):
             continue
         if regime.code in avec_point or regime.code in avec_rendement:
@@ -1985,7 +1988,7 @@ def test_deux_complementaires_du_prive_ne_couvrent_pas_la_meme_part(catalogue):
                 regime = catalogue[code]
                 if regime.famille != "complementaire_prive":
                     continue
-                for periode in regime.periodes_actives(annee):
+                for periode in regime.de_l_annee(annee):
                     if periode.assiette in sans_borne:
                         continue
                     basse, haute = BORNES_ASSIETTE[periode.assiette]
@@ -3110,12 +3113,12 @@ def test_toute_periode_de_salaries_porte_sa_part_salariale(catalogue):
     """
     familles = {"base_prive", "complementaire_prive", "additionnel_capitalise"}
     oublies = [
-        f"{regime.code} {periode.debut}-{periode.fin}"
+        f"{regime.code} {ligne['du']}-{ligne['au']}"
         for regime in catalogue
-        for periode in regime.periodes
+        for ligne in regime.cotisation
         if (regime.famille in familles or regime.code == "msa_salaries")
-        and periode.perimetre_taux != "agent_seul"
-        and periode.part_salariale >= 1.0
+        and ligne["perimetre_taux"] != "agent_seul"
+        and ligne["part_salariale"] >= 1.0
     ]
     assert oublies == []
 
@@ -3123,11 +3126,9 @@ def test_toute_periode_de_salaries_porte_sa_part_salariale(catalogue):
 def test_la_retenue_de_l_agent_est_deja_la_part_salariale(catalogue):
     """Une période `agent_seul` ne porte que ce que l'agent verse."""
     for regime in catalogue:
-        for periode in regime.periodes:
-            if periode.perimetre_taux == "agent_seul":
-                assert periode.part_salariale == 1.0, regime.code
-                assert (periode.taux_cotisation_salarie
-                        == periode.taux_cotisation_retraite), regime.code
+        for ligne in regime.cotisation:
+            if ligne["perimetre_taux"] == "agent_seul":
+                assert ligne["part_salariale"] == 1.0, regime.code
 
 
 def test_les_non_salaries_cotisent_seuls(catalogue):
@@ -3146,15 +3147,15 @@ def test_les_non_salaries_cotisent_seuls(catalogue):
     """
     for regime in catalogue:
         if regime.famille in ("non_salarie", "liberal"):
-            for periode in regime.periodes:
+            for ligne in regime.cotisation:
                 if regime.code == "cavamac_complementaire":
                     continue
-                assert periode.part_salariale == 1.0, regime.code
-    concours = [p for p in catalogue["cavamac_complementaire"].periodes
-                if p.part_salariale < 1.0]
+                assert ligne["part_salariale"] == 1.0, regime.code
+    concours = [l for l in catalogue["cavamac_complementaire"].cotisation
+                if l["part_salariale"] < 1.0]
     assert concours, "le concours des compagnies mandantes a disparu de la fiche"
-    for periode in concours:
-        assert abs(periode.part_salariale - 5.16 / 7.66) < 1e-6
+    for ligne in concours:
+        assert abs(ligne["part_salariale"] - 5.16 / 7.66) < 1e-6
 
 
 def test_les_parts_salariales_sont_plausibles(catalogue):
@@ -3166,12 +3167,10 @@ def test_les_parts_salariales_sont_plausibles(catalogue):
     salarié (action 145, ``tests/test_caisses_du_pacifique.py``).
     """
     for regime in catalogue:
-        for periode in regime.periodes:
-            assert 0.25 <= periode.part_salariale <= 1.0, (
-                f"{regime.code} {periode.debut}: {periode.part_salariale}"
+        for ligne in regime.cotisation:
+            assert 0.25 <= ligne["part_salariale"] <= 1.0, (
+                f"{regime.code} {ligne['du']}: {ligne['part_salariale']}"
             )
-            assert (periode.taux_cotisation_salarie
-                    <= periode.taux_cotisation_retraite + 1e-12), regime.code
 
 
 def test_les_statuts_sans_employeur_sont_marques():
@@ -3292,8 +3291,8 @@ def test_les_statuts_classes_atteignent_un_regime_qui_sert_la_categorie_active(
                  for code in periode["regimes"] or ()}
         servants = [
             code for code in codes
-            if any("categorie_active" in periode.avantages_non_contributifs
-                   for periode in catalogue[code].periodes)
+            if any("categorie_active" in ligne["avantages_non_contributifs"]
+                   for ligne in catalogue[code].liquidation)
         ]
         assert servants, f"{statut} : aucun régime ne sert la catégorie active"
 
@@ -3665,22 +3664,22 @@ def test_les_complementaires_suivent_l_asf_de_1983(catalogue):
     anticipation abattue à l'âge seul : aucune durée requise. Depuis, la durée
     du régime de base, lue à la génération — jamais un nombre en dur."""
     for code in ("agirc", "arrco", "arrco_tranche_2"):
-        for periode in catalogue[code].periodes:
-            assert periode.duree_requise_trimestres is None, (code, periode.debut)
-            assert periode.duree_requise_par_generation is (periode.debut >= 1983), (
-                code, periode.debut)
-            assert periode.age_ouverture_par_generation is (periode.debut >= 1983), (
-                code, periode.debut)
-            assert periode.age_taux_plein_par_generation is (periode.debut >= 2011), (
-                code, periode.debut)
+        for ligne in catalogue[code].liquidation:
+            assert ligne["duree_requise_trimestres"] is None, (code, ligne["du"])
+            assert ligne["duree_requise_par_generation"] is (ligne["du"] >= "1983"), (
+                code, ligne["du"])
+            assert ligne["age_ouverture_par_generation"] is (ligne["du"] >= "1983"), (
+                code, ligne["du"])
+            assert ligne["age_taux_plein_par_generation"] is (ligne["du"] >= "2011"), (
+                code, ligne["du"])
 
 
 def test_le_coefficient_de_solidarite_disparait_en_2024(catalogue):
     """Avenant n° 17 du 22 novembre 2023 : plus de malus temporaire."""
-    for periode in catalogue["agirc_arrco"].periodes:
-        attendu = periode.debut < 2024
-        assert ("coefficient_solidarite" in periode.avantages_non_contributifs) is attendu, (
-            periode.debut, periode.avantages_non_contributifs)
+    for ligne in catalogue["agirc_arrco"].liquidation:
+        attendu = ligne["du"] < "2024"
+        assert ("coefficient_solidarite" in ligne["avantages_non_contributifs"]) is attendu, (
+            ligne["du"], ligne["avantages_non_contributifs"])
 
 
 def test_les_taux_des_complementaires_sont_contractuel_fois_appel(catalogue):
@@ -3690,13 +3689,15 @@ def test_les_taux_des_complementaires_sont_contractuel_fois_appel(catalogue):
     valeurs = _simulateur().scenario_actuel.valeurs_point
     verifiees = 0
     for code in ("agirc", "arrco", "arrco_tranche_2"):
-        for periode in catalogue[code].periodes:
-            bareme = periode.points_de or code
-            achat = valeurs.achat(bareme, periode.debut)
-            assert achat is not None, (code, periode.debut)
-            contractuel = periode.taux_cotisation_retraite / achat[1]
+        regime = catalogue[code]
+        for ligne in regime.cotisation:
+            annee = ligne["du"]
+            bareme = en_vigueur_au_jour(regime.structure, f"{annee}-01-01")["points_de"] or code
+            achat = valeurs.achat(bareme, annee)
+            assert achat is not None, (code, annee)
+            contractuel = ligne["taux_cotisation_retraite"] / achat[1]
             assert abs(contractuel * 10000 - round(contractuel * 10000)) < 1e-6, (
-                code, periode.debut, periode.taux_cotisation_retraite, achat[1])
+                code, annee, ligne["taux_cotisation_retraite"], achat[1])
             verifiees += 1
     assert verifiees >= 70
 
@@ -3710,8 +3711,8 @@ def test_les_precurseurs_de_l_ircantec_ne_se_recouvrent_pas(catalogue):
     assert list(affiliations.regimes("contractuel_public", 1951)) == ["regime_general", "ipacte"]
     assert list(affiliations.regimes("contractuel_public", 1965)) == [
         "regime_general", "ipacte", "igrante"]
-    assert catalogue["ipacte"].periode(1955).assiette == "tranche_b"
-    assert catalogue["igrante"].periode(1965).assiette == "tranche_1"
+    assert catalogue["ipacte"].de_l_annee(1955)[0].assiette == "tranche_b"
+    assert catalogue["igrante"].de_l_annee(1965)[0].assiette == "tranche_1"
     assert catalogue["ipacte"].creation == 1951
     assert catalogue["igrante"].creation == 1960
 
@@ -3724,15 +3725,15 @@ def test_les_entreprises_nouvelles_ont_leur_bareme_et_leurs_statuts(catalogue):
     affiliations = _affiliations()
     nouvelles = catalogue["agirc_entreprises_nouvelles"]
     anciennes = catalogue["agirc"]
-    assert nouvelles.periode(1985).points_de == "agirc"
+    assert nouvelles.a_la_date("1985-01-01").points_de == "agirc"
     # 12 % × 106 % en 1986 contre 8 % × 106 %
-    assert nouvelles.periode(1986).taux_cotisation_retraite > anciennes.periode(1986).taux_cotisation_retraite * 1.4
+    assert nouvelles.de_l_annee(1986)[0].taux_cotisation_retraite > anciennes.de_l_annee(1986)[0].taux_cotisation_retraite * 1.4
     # les deux barèmes se rejoignent en 1996
-    assert nouvelles.periode(2000).taux_cotisation_retraite == pytest.approx(
-        anciennes.periode(2000).taux_cotisation_retraite)
+    assert nouvelles.de_l_annee(2000)[0].taux_cotisation_retraite == pytest.approx(
+        anciennes.de_l_annee(2000)[0].taux_cotisation_retraite)
     tranche_2 = catalogue["arrco_tranche_2_entreprises_nouvelles"]
-    assert tranche_2.creation == 1997 and tranche_2.periode(1996) is None
-    assert tranche_2.periode(1997).points_de == "arrco"
+    assert tranche_2.creation == 1997 and not tranche_2.de_l_annee(1996)
+    assert tranche_2.a_la_date("1997-01-01").points_de == "arrco"
     assert list(affiliations.regimes("salarie_prive_cadre_entreprise_recente", 1990)) == [
         "regime_general", "arrco", "agirc_entreprises_nouvelles"]
     assert list(affiliations.regimes("salarie_prive_non_cadre_entreprise_recente", 1990)) == [

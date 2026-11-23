@@ -34,7 +34,7 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle import Parametres
-from retraite_notionnelle.calendrier import DateMois
+from retraite_notionnelle.calendrier import DateMois, date_d_effet
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
@@ -117,7 +117,7 @@ def _duree_du_modele(simulateur: Simulateur, regime: str, naissance: DateMois,
         affiliation=AFFILIATION[regime], age_debut=22, age_liquidation=age_liquidation,
         niveau_salaire=1.0)
     scenario = simulateur.scenario_actuel
-    periode = simulateur.catalogue[regime].periode(carriere.annee_liquidation)
+    periode = simulateur.catalogue[regime].a_la_date(date_d_effet(carriere))
     ouverture = DateMois.depuis_rang(ouvrir.mois_ouverture_des_droits(scenario, periode, carriere))
     return ouvrir.duree_requise(scenario, periode, carriere)[0], ouverture
 
@@ -178,7 +178,7 @@ def test_generation_par_generation_le_moteur_rend_la_duree_du_texte(simulateur, 
             affiliation=AFFILIATION[regime], age_debut=22, age_liquidation=67.0,
             niveau_salaire=1.0)
         scenario = simulateur.scenario_actuel
-        periode = simulateur.catalogue[regime].periode(carriere.annee_liquidation)
+        periode = simulateur.catalogue[regime].a_la_date(date_d_effet(carriere))
         ouverture = DateMois.depuis_rang(ouvrir.mois_ouverture_des_droits(
             scenario, periode, carriere))
         modele = ouvrir.duree_requise(scenario, periode, carriere)[0]

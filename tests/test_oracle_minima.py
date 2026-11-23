@@ -29,6 +29,7 @@ from pathlib import Path
 import pytest
 
 from facade import Carriere, Simulateur, liquider
+from retraite_notionnelle.calendrier import date_d_effet
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle import pont
@@ -233,13 +234,13 @@ def test_la_minoration_transitoire_est_l_ecart_d_openfisca(temoin, nous, simulat
     assert moi["pension"] > moi["pension_avant_minimum"]
     minoration = pont.constante_du_droit("liquider", "MINORATION_AGE_MINIMUM_GARANTI")[2011]
     assert minoration == 9
-    periode = simulateur.catalogue[profil["regime"]].periode(profil["liquidation"])
     lignes = [AnneeCarriere(annee=annee, revenu=profil["traitement"],
                             affiliation=AFFILIATIONS[profil["regime"]], trimestres_valides=4)
               for annee in range(profil["debut"], profil["liquidation"])]
     carriere = Carriere(annee_naissance=profil["naissance"], sexe="H", lignes=lignes,
                         age_liquidation=float(profil["liquidation"] - profil["naissance"]),
                         jour_naissance=1)
+    periode = simulateur.catalogue[profil["regime"]].a_la_date(date_d_effet(carriere))
     _, annulation, _ = liquider.decote_opposable(
         simulateur.scenario_actuel, periode, carriere, profil["liquidation"])
     age = profil["liquidation"] - profil["naissance"]

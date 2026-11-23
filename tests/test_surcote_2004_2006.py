@@ -17,7 +17,7 @@ from __future__ import annotations
 import pytest
 
 from facade import Simulateur, liquider, ouvrir
-from retraite_notionnelle.calendrier import DateMois
+from retraite_notionnelle.calendrier import DateMois, date_d_effet
 
 
 @pytest.fixture(scope="module")
@@ -67,7 +67,7 @@ def test_la_liquidation_de_2007_date_la_surcote_de_2004_a_2006(simulateur):
         age_liquidation=65 + 11 / 12)
     assert carriere.date_liquidation == DateMois(2007, 4)
     actuel = simulateur.scenario_actuel
-    periode = simulateur.catalogue["regime_general"].periode(2007)
+    periode = simulateur.catalogue["regime_general"].a_la_date(date_d_effet(carriere))
     requis, _ = ouvrir.duree_requise(actuel, periode, carriere)
     total = simulateur.scenario_actuel.calculer(carriere).trimestres_valides
     coefficient, _ = liquider.coefficient_surcote_datee(

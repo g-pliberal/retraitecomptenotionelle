@@ -31,6 +31,7 @@ from pathlib import Path
 import pytest
 
 from facade import Carriere, Simulateur, liquider, ouvrir, releve
+from retraite_notionnelle.calendrier import date_d_effet
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
 
@@ -119,7 +120,7 @@ def _notre_calcul(simulateur: Simulateur, profil: dict) -> dict:
     )
     scenario = simulateur.scenario_actuel
     resultat = scenario.calculer(carriere)
-    periode = simulateur.catalogue[code].periode(profil["liquidation"])
+    periode = simulateur.catalogue[code].a_la_date(date_d_effet(carriere))
     requis, _ = ouvrir.duree_requise(scenario, periode, carriere)
     proratisation, _ = liquider.duree_proratisation(scenario, periode, carriere, requis)
     _, age_annulation, _ = liquider.decote_opposable(

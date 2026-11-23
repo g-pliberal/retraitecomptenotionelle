@@ -15,6 +15,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.donnees.axes import BLOCS
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes, charger_taux_moyens
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -27,7 +28,7 @@ def catalogues() -> tuple[CatalogueRegimes, CatalogueRegimes]:
 
 
 def _taux(catalogue: CatalogueRegimes, code: str, assiette: str, annee: int):
-    return next(p for p in catalogue[code].periodes_actives(annee) if p.assiette == assiette)
+    return next(p for p in catalogue[code].de_l_annee(annee) if p.assiette == assiette)
 
 
 def test_le_simulateur_individuel_garde_le_taux_minimal():
@@ -54,14 +55,16 @@ def test_le_taux_moyen_ne_descend_jamais_sous_le_minimum(catalogues):
     redates = {code for code, _ in charger_taux_moyens(DONNEES)}
     for regime in base:
         if regime.code not in redates:
-            assert moyen[regime.code].periodes == regime.periodes, regime.code
+            for bloc in BLOCS:
+                assert getattr(moyen[regime.code], bloc) == getattr(regime, bloc), (
+                    regime.code, bloc)
             continue
-        for periode in regime.periodes:
-            fin = periode.fin if periode.fin is not None else periode.debut + 10
-            for annee in range(periode.debut, fin + 1):
-                redatee = _taux(moyen, regime.code, periode.assiette, annee)
-                assert redatee.taux_cotisation_retraite >= periode.taux_cotisation_retraite - 1e-12, (
-                    regime.code, periode.assiette, annee)
+        for ligne in regime.cotisation:
+            fin = ligne["au"] if ligne["au"] is not None else ligne["du"] + 10
+            for annee in range(ligne["du"], fin + 1):
+                redatee = _taux(moyen, regime.code, ligne["assiette"], annee)
+                assert redatee.taux_cotisation_retraite >= ligne["taux_cotisation_retraite"] - 1e-12, (
+                    regime.code, ligne["assiette"], annee)
 
 
 def test_les_points_de_2019_se_comptent_au_taux_moyen(catalogues):

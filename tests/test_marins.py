@@ -332,14 +332,14 @@ def test_le_plafond_est_huit_fois_le_traitement_de_l_indice_100_a_la_date_d_effe
     from facade import liquider
 
     moteur = simulateur.scenario_actuel
-    periode = simulateur.catalogue["marins"].periode(annee)
+    periode = simulateur.catalogue["marins"].a_la_date(f"{annee}-{mois:02d}-01")
     plafond = liquider.plafond_du_salaire_de_reference(moteur, periode, annee, mois)
     if attendu is None:
         assert plafond is None
     else:
         assert plafond == pytest.approx(attendu, abs=1e-6)
     # Le régime général n'a pas de tel plafond.
-    general = simulateur.catalogue["regime_general"].periode(annee)
+    general = simulateur.catalogue["regime_general"].a_la_date(f"{annee}-{mois:02d}-01")
     assert liquider.plafond_du_salaire_de_reference(moteur, general, annee, mois) is None
 
 
@@ -516,7 +516,7 @@ def test_sans_l_index_chaque_point_se_recoupe_dans_la_serie_que_le_modele_lit(si
         lu = sum(map(_point, POINTS_DE_1994[legi])) / 2 if annee == 1994 else _point(ecrit)
         assert round(lu, 4) == points[annee], (jour, lu, points[annee])
         plafond = liquider.plafond_du_salaire_de_reference(
-            moteur, simulateur.catalogue["marins"].periode(annee), annee, mois)
+            moteur, simulateur.catalogue["marins"].a_la_date(f"{annee}-{mois:02d}-01"), annee, mois)
         assert plafond == pytest.approx(8 * _indice_au(jour) * points[annee], abs=1e-6), jour
 
 
@@ -537,7 +537,7 @@ def test_en_1994_le_texte_ne_dit_pas_lequel_des_deux_points_fait_le_plafond_et_l
     from facade import liquider
 
     moteur = simulateur.scenario_actuel
-    periode = simulateur.catalogue["marins"].periode(1994)
+    periode = simulateur.catalogue["marins"].a_la_date("1994-01-01")
     janvier, aout = POINTS_DE_1994.values()
     assert janvier[0] == POINT_DE_L_ARTICLE_3["1994-01-01"][0]
     general, derogation = (8 * _indice_au("1994-01-01") * _point(ecrit) for ecrit in janvier)

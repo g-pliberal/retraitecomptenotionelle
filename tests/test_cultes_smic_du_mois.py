@@ -122,7 +122,7 @@ def test_la_base_forfaitaire_des_cultes_suit_le_smic_de_chaque_mois(simulateur):
     for annee, base in BASES.items():
         ligne = next(l for l in carriere.lignes if l.annee == annee)
         assert ligne.fraction_annee == 1.0, annee
-        periode = simulateur.catalogue["cavimac"].periode(annee)
+        periode = simulateur.catalogue["cavimac"].de_l_annee(annee)[0]
         assert periode.smic_du_mois, annee
         assert liquider.assiette_de_reference(
             simulateur.scenario_actuel, periode, ligne_de(carriere, ligne)
@@ -135,7 +135,7 @@ def test_seules_les_bases_forfaitaires_des_cultes_suivent_le_smic_du_mois(simula
     L'Arrco des cultes prélève sur la même assiette forfaitaire que la
     vieillesse (circulaire n° 2025/01) : elle suit le SMIC de chaque mois."""
     catalogue = simulateur.catalogue
-    assert not catalogue["cavimac"].periode(1997).smic_du_mois
-    assert all(catalogue["cavimac"].periode(a).smic_du_mois for a in (1998, 2005, 2026))
-    assert not catalogue["msa_rco"].periode(2007).smic_du_mois
-    assert all(catalogue["arrco_cultes"].periode(a).smic_du_mois for a in (2006, 2019, 2026))
+    assert not catalogue["cavimac"].de_l_annee(1997)[0].smic_du_mois
+    assert all(catalogue["cavimac"].de_l_annee(a)[0].smic_du_mois for a in (1998, 2005, 2026))
+    assert not catalogue["msa_rco"].de_l_annee(2007)[0].smic_du_mois
+    assert all(catalogue["arrco_cultes"].de_l_annee(a)[0].smic_du_mois for a in (2006, 2019, 2026))

@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import pytest
 
+from retraite_notionnelle.calendrier import date_d_effet
 from retraite_notionnelle.types_du_pont.carriere import Metier
 
 from facade import Carriere, Simulateur, ouvrir
@@ -183,7 +184,7 @@ def test_l_emploi_classe_surcote_a_l_age_anticipe_majore(simulateur, statut,
     )
     actuel = simulateur.scenario_actuel
     regime = ("cnracl" if "territorial" in statut else "fonction_publique_etat")
-    periode = simulateur.catalogue[regime].periode(carriere.annee_liquidation)
+    periode = simulateur.catalogue[regime].a_la_date(date_d_effet(carriere))
     assert ouvrir.age_surcote(actuel, periode, carriere) == pytest.approx(age)
 
 
@@ -194,8 +195,7 @@ def test_le_sedentaire_surcote_toujours_a_l_age_legal(simulateur):
                               ("fonctionnaire_etat", 1965)):
         carriere, _, _ = _calculer(simulateur, [Metier(statut, 20.0, 1.0)],
                                    naissance=naissance, mois=6, liquidation=64.0)
-        periode = simulateur.catalogue["fonction_publique_etat"].periode(
-            carriere.annee_liquidation)
+        periode = simulateur.catalogue["fonction_publique_etat"].a_la_date(date_d_effet(carriere))
         assert ouvrir.age_surcote(actuel, periode, carriere) == pytest.approx(
             ouvrir.age_ouverture_commun(actuel, periode, carriere))
     # Un actif qui n'a pas ses dix-sept ans de services classés reste au droit
@@ -204,8 +204,7 @@ def test_le_sedentaire_surcote_toujours_a_l_age_legal(simulateur):
         simulateur, [Metier("fonctionnaire_etat", 20.0, 1.0),
                      Metier("fonctionnaire_etat_actif", 49.0, 1.0)],
         naissance=1969, mois=6, liquidation=64.0)
-    periode = simulateur.catalogue["fonction_publique_etat"].periode(
-        carriere.annee_liquidation)
+    periode = simulateur.catalogue["fonction_publique_etat"].a_la_date(date_d_effet(carriere))
     assert ouvrir.age_surcote(actuel, periode, carriere) == pytest.approx(64.0)
 
 

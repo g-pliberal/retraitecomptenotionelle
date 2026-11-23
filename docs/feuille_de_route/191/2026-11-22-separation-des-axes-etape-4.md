@@ -1,16 +1,16 @@
 # Le paquet porte les quatre blocs d'un régime, et non plus ses périodes
 
-**Reprise, au 22 novembre 2026.** L'étape 4 avance : le paquet porte les
-quatre blocs de chaque régime, que le moteur lit tels quels ; le chargeur
-Python les porte aussi, avec ses lectures à la date et à l'année ; le pont
-désigne des paramètres par les rangs de leurs quatre lignes. Aucun résultat
-n'a bougé. Seuls les tests et l'oracle lisent encore la vue des périodes ;
-le pont n'en garde qu'une trace, l'argument qui nomme la période d'une
-année, que le témoin du droit fige. Reste, une session chacun : les tests
-qui lisent des périodes ; les cliquets recomptés à valeur égale ; la page
-Avantages. Par quoi commencer : les tests, dont la note dit les sites. Les
-données restent gelées. L'oracle de référence est sous
-`architecture/separation-des-axes/oracle/`, dans les fichiers du projet.
+***Reprise, au 23 novembre 2026.** L'étape 4 avance : le paquet, le chargeur
+Python et le pont portent les quatre blocs de chaque régime, et les tests
+les lisent à la date ou à l'année. Aucun résultat n'a bougé. La vue des
+périodes n'a plus pour lecteurs que les tests qui la gardent pendant le gel,
+ceux que le témoin du droit fige, le compte de la page Avantages et deux
+scripts : tous partent ou changent à l'étape 5, et la note les nomme. Reste,
+une session chacun : les cliquets recomptés à valeur égale ; la page
+Avantages, dont le chiffre de 975 périodes est à soumettre au propriétaire.
+Par quoi commencer : les cliquets. Les données restent gelées. L'oracle de
+référence est sous `architecture/separation-des-axes/oracle/`, dans les
+fichiers du projet.
 
 **La demande.** L'étape 4 de la séparation des axes, décidée le 22 novembre
 2026 : le chargeur Python, le paquet, le pont, les tests, les cliquets et la
@@ -165,3 +165,48 @@ appelant ne doit se fonder.
 **Ce qui reste.** Les tests qui lisent des périodes ; les cliquets recomptés
 à valeur égale ; la page Avantages, dont le chiffre de 975 périodes est à
 soumettre au propriétaire.
+
+## Les tests en blocs (quatrième lot, 23 novembre 2026)
+
+**Ce qui est fait.** Cinquante fichiers de tests ne lisent plus la vue des
+périodes, mais les blocs. Un paramètre de liquidation se lit à la date
+(`a_la_date`) : à la date d'effet de la carrière quand le test en a une
+(`calendrier.date_d_effet`), au 1er janvier de l'année qu'il nomme sinon. Un
+paramètre de cotisation se lit à l'année (`de_l_annee`), la première tranche
+ou toutes. Une boucle sur toutes les périodes devient une boucle sur les
+lignes du bloc qui porte les champs qu'elle lit, la structure lue au début de
+chaque ligne quand il le faut. Les essais JavaScript du moteur, des âges, des
+cultes et de la fusion font de même (`aLaDate`, `deLAnnee`). Une seule
+assertion a dû changer de date : la minoration de l'Ircec, que la fiche fait
+valoir depuis le 16 mai 2025, se lit ce jour-là, et non au 1er janvier 2025
+(`test_simulateur.py`). Deux assertions sur la part du salarié, qu'impliquent
+celles qui restent, sont parties avec la propriété qu'elles lisaient
+(`test_donnees.py`).
+
+**Ce qui reste sur la vue, à dessein.** Les tests qui gardent la vue elle-même
+pendant le gel (`test_axes_des_regimes.py`, les dates d'effet de
+`test_coupures_au_mois.py`, `test_jumeaux_au_bit.py`, `tests/js/axes.test.js`) ;
+ceux que le témoin du droit fige, par l'argument qui nomme la période d'une
+année (`test_regle_de_chacun.py`) ou par le barème des confrontations
+(`test_oracle.py`, `scenario_actuel.catalogue.periodes`) ; le compte de la page
+Avantages (`test_web_revues.py`), qui attend la décision sur ses 975
+périodes ; le gabarit de `fusion.test.js`, qui écrit des fiches en périodes.
+Tous partent ou changent à l'étape 5, avec la vue. Côté scripts, deux en
+lisent encore (`calendrier_regimes.py`, `construire_donnees.py`), et
+`verifier_prose.py` en nomme dans les chemins de ses exemples : hors de ce lot.
+
+**Vérifié.** Aucune source ni donnée n'a changé : le paquet, les témoins et
+l'oracle sont ceux du lot précédent. Les 55 fichiers touchés ou visés rendent
+2 940 succès, 44 cas sautés et un échec attendu, comme avant ; la suite rapide
+est verte ; les essais JavaScript changés passent.
+
+**Relu sur Opus, dans un contexte neuf.** La relecture a comparé, régime par
+régime et champ par champ, les valeurs que voient les lignes de chaque bloc
+à celles que voyaient les périodes : aucun écart, aucun champ lu dans le
+mauvais bloc, les boucles couvrent les mêmes cas. La première tranche de
+l'année redonne la cotisation de la période de l'année de 1900 à 2059 ; la
+lecture au 1er janvier ne diffère de la période de l'année qu'aux coupures en
+cours d'année, sur lesquelles aucun test à date fixe ne tombe. Les deux tests
+lus à la date d'effet qui en croisent une, la Banque de France en juin 2007
+et Mayotte en février 2023, lisent la règle de leur date. Aucun défaut ; un
+commentaire récrit.

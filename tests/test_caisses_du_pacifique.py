@@ -209,7 +209,7 @@ def test_wallis_et_futuna_cotise_le_taux_de_la_caisse_moins_les_prestations_fami
     regime = catalogue[WALLIS]
     for annee in range(2009, 2027):
         total, salarie = TAUX_DE_LA_CAISSE[min(annee, 2020)]
-        periode = regime.periode(annee)
+        periode = regime.de_l_annee(annee)[0]
         assert periode.taux_cotisation_retraite == pytest.approx(
             total - PRESTATIONS_FAMILIALES, abs=1e-9), annee
         assert periode.taux_cotisation_salarie == pytest.approx(salarie, abs=1e-5), annee
@@ -219,7 +219,7 @@ def test_wallis_et_futuna_cotise_le_taux_de_la_caisse_moins_les_prestations_fami
 def test_les_taux_que_lisent_l_ieom_et_la_cour_des_comptes_sont_ceux_de_la_fiche(catalogue):
     regime = catalogue[WALLIS]
     for annee, (taux, salarie) in TAUX_DE_RETRAITE_LUS.items():
-        periode = regime.periode(annee)
+        periode = regime.de_l_annee(annee)[0]
         assert periode.taux_cotisation_retraite == pytest.approx(taux, abs=1e-9), annee
         if salarie is not None:
             assert periode.taux_cotisation_salarie == pytest.approx(salarie, abs=1e-5), annee
@@ -229,6 +229,6 @@ def test_avant_2009_la_caisse_locale_cotisait_neuf_pour_cent(catalogue):
     regime = catalogue[WALLIS]
     taux, salarie = TAUX_DE_LA_CAISSE_LOCALE
     for annee in range(regime.creation, 2009):
-        periode = regime.periode(annee)
+        periode = regime.de_l_annee(annee)[0]
         assert periode.taux_cotisation_retraite == pytest.approx(taux, abs=1e-9), annee
         assert periode.taux_cotisation_salarie == pytest.approx(salarie, abs=1e-5), annee

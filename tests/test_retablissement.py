@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import pytest
 
+from retraite_notionnelle.calendrier import date_d_effet
 from retraite_notionnelle.types_du_pont.carriere import Metier
 
 from facade import Carriere, Simulateur, coordonner, liquider
@@ -192,7 +193,7 @@ def test_le_regime_general_porte_le_dernier_traitement(simulateur):
     actuel = simulateur.scenario_actuel
     retablie = coordonner.retablir(actuel, carriere)
     annee_liquidation = carriere.annee_liquidation
-    periode = simulateur.catalogue["regime_general"].periode(annee_liquidation)
+    periode = simulateur.catalogue["regime_general"].a_la_date(date_d_effet(carriere))
     attendus = sorted((
         min(ligne.revenu_retabli,
             simulateur.macro.plafond_securite_sociale(ligne.annee) * ligne.fraction_annee)

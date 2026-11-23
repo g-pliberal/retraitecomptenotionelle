@@ -348,7 +348,7 @@ def test_la_decote_de_la_pension_provisoire_ne_depasse_pas_25_pour_cent(
     a_soixante = facade.liquidee_au(carriere, DateMois(naissance + 60, 2))
     assert "2014-12-18" <= f"{naissance + 60}-02-01" < "2023-09-01"
     for code in progressive.regimes_ouverts(moteur, DateMois(naissance + 60, 2)):
-        periode = simulateur.catalogue[code].periode(naissance + 60)
+        periode = simulateur.catalogue[code].a_la_date(f"{naissance + 60}-02-01")
         if periode is None or not periode.decote_par_trimestre:
             continue
         decote, _, _ = liquider.decote_opposable(moteur, periode, a_soixante, naissance + 60)

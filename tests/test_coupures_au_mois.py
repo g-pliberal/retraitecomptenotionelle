@@ -104,15 +104,15 @@ def test_la_periode_de_1983_cotise_toute_l_annee(simulateur):
     """La coupure ne vise que la liquidation : 1983 cotise au taux de la
     période de 1983, quelle que soit la date d'effet d'une pension."""
     regime = simulateur.catalogue["regime_general"]
-    assert regime.periode(1983).debut == 1983
     mars, avril = (periode_de_liquidation(regime, DateMois(1983, mois)) for mois in (3, 4))
     # Le portage rend les paramètres qu'il lit à la date (`aLaDate`) : la
     # liquidation du jour d'effet, la cotisation de son année.
     assert (mars, avril) == (regime.a_la_date("1983-03-01"), regime.a_la_date("1983-04-01"))
     rangs = regime.rangs
-    assert rangs(mars)[0] == rangs(regime.periode(1979))[0] != rangs(avril)[0]
-    assert rangs(avril)[0] == rangs(regime.periode(1983))[0]
-    assert rangs(mars)[3] == rangs(avril)[3] == rangs(regime.periode(1983))[3]
+    assert rangs(mars)[0] == rangs(regime.a_la_date("1979-01-01"))[0] != rangs(avril)[0]
+    assert regime.liquidation[rangs(avril)[0]]["du"] == "1983-04-01"
+    assert rangs(mars)[3] == rangs(avril)[3]
+    assert regime.cotisation[rangs(avril)[3]]["du"] == 1983
 
 
 # -- la CAVEC ------------------------------------------------------------------

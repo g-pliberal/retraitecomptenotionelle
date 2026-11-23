@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pytest
 
+from retraite_notionnelle.calendrier import date_d_effet
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, Metier
 from retraite_notionnelle.donnees.chargement import (
     charger_cotisation_micro,
@@ -528,7 +529,7 @@ def _revenu_annuel_moyen(simulateur, code, annee_naissance, age_liquidation, lig
          for annee, activite, abattu, part, trimestres in lignes],
         age_liquidation=age_liquidation)
     annee = carriere.annee_liquidation
-    periode = simulateur.catalogue[code].periode(annee)
+    periode = simulateur.catalogue[code].a_la_date(date_d_effet(carriere))
     return carriere, liquider.salaire_de_reference(
         simulateur.scenario_actuel, code, carriere, periode, annee, True, annee_naissance)
 
