@@ -172,19 +172,17 @@ def test_la_pension_du_1er_novembre_2006_garde_la_formule_d_avant_le_decret(simu
 
 # -- les dix renvois, cités au jour de leur texte (note 0009, étape 4) ---------------
 
-import datetime  # noqa: E402
-
 import outils_droit_date as outils  # noqa: E402
 
-#: Chaque renvoi des dix, par la période qui l'ouvre : le texte qui le fait et le
-#: jour depuis lequel il vaut, relus dans l'index LEGI et JORF de la DILA.
+#: Chaque renvoi des dix, par l'année de la ligne qui l'ouvre : le texte qui le
+#: fait et le jour depuis lequel il vaut, relus dans l'index LEGI et JORF de la DILA.
 DIX_RENVOIS = {
     # Code de la sécurité sociale, L. 723-10-1, I, en vigueur au 1er janvier 2004 :
     # « à partir de l'âge prévu au premier alinéa de l'article L. 351-1 ».
     ("cnbf", "age_ouverture_par_generation", 2004): ("LEGIARTI000006744100", "2004-01-01"),
     # Décret n° 2006-1325, article 2, I, publié le 1er novembre 2006 : l'âge
     # des périodes d'avant 1998 « est également abaissé à soixante ans ».
-    ("cavimac", "age_ouverture_par_generation", 2007): ("JORFARTI000001085913", "2006-11-02"),
+    ("cavimac", "age_ouverture_par_generation", 2006): ("JORFARTI000001085913", "2006-11-02"),
     # Loi n° 2003-775, article 66, III, en application le 1er janvier 2004
     # (article 80) ; ses deux décrets pour la CNRACL (art. 65, III) et le FSPOEIE
     # (art. 50, III).
@@ -197,9 +195,9 @@ DIX_RENVOIS = {
     ("crpcen", "age_ouverture_par_generation", 2025): ("LEGIARTI000047910068", "2025-01-01"),
     # Décret n° 73-937, article 3, rédaction du 7 octobre 2012 : « à compter de
     # l'âge prévu par l'article L. 161-17-2 ».
-    ("organic_avant_1973", "age_ouverture_par_generation", 2013):
+    ("organic_avant_1973", "age_ouverture_par_generation", 2012):
         ("LEGIARTI000026474703", "2012-10-07"),
-    ("cancava_avant_1973", "age_ouverture_par_generation", 2013):
+    ("cancava_avant_1973", "age_ouverture_par_generation", 2012):
         ("LEGIARTI000026474703", "2012-10-07"),
     # Règlement annexé au décret n° 2007-262, article 26 a, rédaction du
     # 1er janvier 2025 : « au moins l'âge mentionné au premier alinéa de
@@ -210,32 +208,24 @@ DIX_RENVOIS = {
 
 
 def _series():
-    return {(s["regime"], s["champ"], s["debut"]): s
-            for s in outils.renvois(outils.periodes_des_regimes())}
-
-
-def _premier_jour(periode: dict) -> str:
-    """Le jour depuis lequel la période liquide : le début de `date_effet`, ou
-    le 1er janvier de son année."""
-    bornes = periode.get("date_effet")
-    if bornes and bornes[0] is not None:
-        jour = bornes[0]
-        return jour.isoformat() if isinstance(jour, datetime.date) else str(jour)
-    return f"{periode['debut']:04d}-01-01"
+    """Les renvois, par le régime, le champ et l'année de la ligne qui les
+    ouvre, dans le bloc qui porte leur champ."""
+    return {(s["regime"], s["champ"], int(s["du"][:4])): s
+            for s in outils.renvois(outils.blocs_des_regimes())}
 
 
 @pytest.mark.parametrize("cle", sorted(DIX_RENVOIS), ids=lambda c: f"{c[0]}-{c[2]}")
-def test_chacun_des_dix_renvois_cite_son_texte_au_jour_ou_sa_periode_commence(cle):
+def test_chacun_des_dix_renvois_cite_son_texte_au_jour_ou_sa_ligne_commence(cle):
     """« Chaque renvoi […] prend la date du texte qui la fait, au jour et non à
     l'année, et cite ce texte » (note 0009) : le texte cité est celui que la
-    relecture a lu, et la période qui ouvre le renvoi liquide depuis le jour où
-    il vaut."""
+    relecture a lu, et la ligne de liquidation qui ouvre le renvoi commence le
+    jour où il vaut."""
     serie = _series().get(cle)
     assert serie is not None, f"{cle} : aucun renvoi ne s'ouvre là"
-    cite = (serie["periode"].get("textes_des_renvois") or {}).get(cle[1]) or {}
+    cite = (serie["ligne"].get("textes") or {}).get(cle[1]) or {}
     identifiant, depuis = DIX_RENVOIS[cle]
     assert (cite.get("id"), str(cite.get("depuis"))) == (identifiant, depuis)
-    assert _premier_jour(serie["periode"]) == depuis
+    assert serie["du"] == depuis
 
 
 def test_la_banque_de_france_ne_renvoie_a_l_age_legal_qu_a_compter_de_2025():

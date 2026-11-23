@@ -17,15 +17,17 @@ import yaml
 
 import outils_droit_date as outils
 from retraite_notionnelle.config import RACINE_DONNEES
+from retraite_notionnelle.donnees import regimes
 from retraite_notionnelle.donnees.tables_du_droit import FichesDatees
 from retraite_notionnelle.noyau import carte
 
 LISTE = outils.RACINE / "tests" / "cliquets_du_droit_date" / "constantes.yaml"
 
-#: Les valeurs de repli écrites à côté d'un renvoi, période par période.
-VALEURS_DE_REPLI = 1415
+#: Les valeurs de repli écrites à côté d'un renvoi, ligne de liquidation par
+#: ligne de liquidation.
+VALEURS_DE_REPLI = 367
 #: Les renvois, en séries, qui ne citent pas le texte qui les fait.
-RENVOIS_SANS_TEXTE = 294
+RENVOIS_SANS_TEXTE = 288
 #: Les copies d'avant réforme encore dans le dépôt.
 COPIES_D_AVANT_REFORME = ()
 #: Les versions que le moteur lit, sans leurs deux preuves ni ce qui manque.
@@ -70,30 +72,81 @@ def _baisse_seulement(nombre: int, pose: int, quoi: str) -> None:
 
 # --- Ce que le relevé compte, sur des cas fabriqués ------------------------
 
-def test_un_renvoi_se_compte_en_series_et_garde_sa_valeur_de_repli():
-    """Le même champ qui renvoie à la même fiche de période en période est un
-    renvoi ; il en commence un autre quand il change de fiche, ou reprend
-    après une période qui ne renvoie pas. La valeur de repli se compte à
-    chaque période qui l'écrit à côté de son renvoi."""
-    periodes = [
-        {"debut": 1930, "age_ouverture": 55},
-        {"debut": 2008, "age_ouverture": 60, "age_ouverture_par_generation": "age_legal_par_generation"},
-        {"debut": 2011, "age_ouverture": 60, "age_ouverture_par_generation": "age_legal_par_generation"},
-        {"debut": 2014, "age_ouverture": 62},
-        {"debut": 2016, "age_ouverture_par_generation": "age_legal_par_generation",
-         "bareme_decote": "decote_fonction_publique"},
-        {"debut": 2020, "age_ouverture_par_generation": "age_legal_par_generation",
-         "bareme_decote": "decote_regimes_speciaux"},
+def test_un_renvoi_se_compte_en_series_sur_les_lignes_de_son_bloc():
+    """Le même champ qui renvoie à la même fiche de ligne en ligne de son bloc
+    est un renvoi ; il en commence un autre quand il change de fiche, ou
+    reprend après une ligne qui ne renvoie pas. Un champ de la liquidation se
+    suit sur les lignes de la liquidation, un champ de la cotisation sur
+    celles de la cotisation, dans l'ordre du fichier (séparation des axes,
+    amendement du 22 novembre 2026 à la note 0009). La vue en périodes
+    suivait tous les champs sur les lignes de cotisation : une tranche 2 qui
+    commence avant le renvoi y coupait en deux un renvoi de la liquidation,
+    compté deux fois (l'Ircantec, l'Agirc)."""
+    fiche = {
+        "structure": {"type_calcul": "annuites"},
+        "liquidation": [
+            {"du": "1930-01-01", "au": "2008-01-01", "age_ouverture": 55},
+            {"du": "2008-01-01", "au": "2011-07-01", "age_ouverture": 60,
+             "age_ouverture_par_generation": "age_legal_par_generation"},
+            {"du": "2011-07-01", "au": "2014-01-01", "age_ouverture": 60,
+             "age_ouverture_par_generation": "age_legal_par_generation"},
+            {"du": "2014-01-01", "au": "2016-01-01", "age_ouverture": 62},
+            {"du": "2016-01-01", "au": "2020-01-01",
+             "age_ouverture_par_generation": "age_legal_par_generation",
+             "bareme_decote": "decote_fonction_publique"},
+            {"du": "2020-01-01", "age_ouverture_par_generation": "age_legal_par_generation",
+             "bareme_decote": "decote_regimes_speciaux"},
+        ],
+        # Recopié de ligne en ligne, un renvoi de la cotisation n'en est qu'un.
+        "cotisation": [
+            {"du": "1930-01-01", "au": "2010-01-01", "assiette_plancher": "assiette_minimale"},
+            {"du": "2010-01-01", "assiette_plancher": "assiette_minimale"},
+            {"du": "1990-01-01", "tranche": 2},
+        ],
+    }
+    series = outils.renvois([("fictif", fiche)])
+    assert sorted((s["champ"], s["fiche"], s["du"]) for s in series) == [
+        ("age_ouverture_par_generation", "age_legal_par_generation", "2008-01-01"),
+        ("age_ouverture_par_generation", "age_legal_par_generation", "2016-01-01"),
+        ("assiette_plancher", "assiette_minimale", "1930-01-01"),
+        ("bareme_decote", "decote_fonction_publique", "2016-01-01"),
+        ("bareme_decote", "decote_regimes_speciaux", "2020-01-01"),
     ]
-    series = outils.renvois([("fictif", periodes)])
-    assert sorted((s["champ"], s["fiche"], s["debut"]) for s in series) == [
-        ("age_ouverture_par_generation", "age_legal_par_generation", 2008),
-        ("age_ouverture_par_generation", "age_legal_par_generation", 2016),
-        ("bareme_decote", "decote_fonction_publique", 2016),
-        ("bareme_decote", "decote_regimes_speciaux", 2020),
-    ]
-    assert outils.valeurs_de_repli([("fictif", periodes)]) == [
-        ("fictif", 2008, "age_ouverture"), ("fictif", 2011, "age_ouverture")]
+
+
+def test_une_valeur_de_repli_se_compte_une_fois_par_ligne_de_liquidation():
+    """La valeur de repli se compte à chaque ligne de liquidation qui l'écrit à
+    côté de son renvoi, et non à chaque ligne de cotisation que la vue en
+    périodes lui faisait recopier."""
+    fiche = {
+        "structure": {"type_calcul": "annuites"},
+        "liquidation": [
+            {"du": "1930-01-01", "au": "2008-01-01", "age_ouverture": 55},
+            {"du": "2008-01-01", "au": "2011-07-01", "age_ouverture": 60,
+             "age_ouverture_par_generation": "age_legal_par_generation"},
+            {"du": "2011-07-01", "age_ouverture": 60, "age_taux_plein": 65,
+             "age_ouverture_par_generation": "age_legal_par_generation",
+             "age_taux_plein_par_generation": "age_annulation_decote"},
+        ],
+        "cotisation": [{"du": f"{annee}-01-01", "au": f"{annee + 1}-01-01"}
+                       for annee in range(1930, 2030)],
+    }
+    assert outils.valeurs_de_repli([("fictif", fiche)]) == [
+        ("fictif", "2008-01-01", "age_ouverture"), ("fictif", "2011-07-01", "age_ouverture"),
+        ("fictif", "2011-07-01", "age_taux_plein")]
+
+
+def test_les_cliquets_lisent_les_blocs_du_fichier_et_non_la_vue_en_periodes():
+    """Ce que les cliquets comptent est écrit dans le fichier, en quatre blocs ;
+    la vue en périodes, que le chargeur en refait pendant le gel, part à
+    l'étape 5."""
+    lus = outils.blocs_des_regimes()
+    calcules = [fiche["code"] for _, fiche in regimes.fichiers_de_regimes(RACINE_DONNEES)
+                if fiche["inventaire"].get("couverture") in regimes.COUVERTURES_CALCULEES]
+    assert [code for code, _ in lus] == calcules
+    for code, fiche in lus:
+        assert "periodes" not in fiche, code
+        assert {"structure", "liquidation", "cotisation"} <= set(fiche), code
 
 
 def test_le_releve_prend_les_dates_du_code_et_laisse_les_libelles():
@@ -158,16 +211,19 @@ Minimum.SEUIL_HAUT = 160;
         "TAUX": 1, "AGE_MAJORE": 1, "SEUILS": 1, "PLANCHER": 1, "Minimum.SEUIL_HAUT": 1}
 
 
-def test_un_renvoi_cite_son_texte_a_la_periode_ou_il_commence():
-    """La période qui ouvre un renvoi dit le texte qui le fait, et le jour
-    depuis lequel il vaut (`textes_des_renvois`, schéma des régimes)."""
-    periodes = [
-        {"debut": 2007, "surcote_bareme": "surcote_banque_de_france",
-         "bareme_decote": "decote_banque_de_france",
-         "textes_des_renvois": {
-             "surcote_bareme": {"id": "LEGIARTI000006778516", "depuis": "2007-04-01"}}},
-    ]
-    cites = {s["champ"]: outils.texte_cite(s) for s in outils.renvois([("fictif", periodes)])}
+def test_un_renvoi_cite_son_texte_a_la_ligne_ou_il_commence():
+    """La ligne qui ouvre un renvoi dit le texte qui le fait, et le jour
+    depuis lequel il vaut (`textes`, schéma des régimes)."""
+    fiche = {
+        "structure": {"type_calcul": "annuites"},
+        "liquidation": [
+            {"du": "2007-04-01", "surcote_bareme": "surcote_banque_de_france",
+             "bareme_decote": "decote_banque_de_france",
+             "textes": {"surcote_bareme": {"id": "LEGIARTI000006778516", "depuis": "2007-04-01"}}},
+        ],
+        "cotisation": [{"du": "2007-01-01"}],
+    }
+    cites = {s["champ"]: outils.texte_cite(s) for s in outils.renvois([("fictif", fiche)])}
     assert cites == {"surcote_bareme": "LEGIARTI000006778516", "bareme_decote": None}
 
 
@@ -178,14 +234,14 @@ def test_les_valeurs_de_repli_des_renvois_ne_peuvent_que_baisser():
     (note 0009, « Le fichier de régime garde son droit propre et ses
     renvois ») ; une valeur ne se retire qu'une fois montrée morte (son
     rectificatif du 19 novembre)."""
-    ecrites = outils.valeurs_de_repli(outils.periodes_des_regimes())
+    ecrites = outils.valeurs_de_repli(outils.blocs_des_regimes())
     _baisse_seulement(len(ecrites), VALEURS_DE_REPLI, "valeurs de repli à côté d'un renvoi")
 
 
 def test_les_renvois_sans_texte_cite_ne_peuvent_que_baisser():
     """« Chaque renvoi […] prend la date du texte qui la fait, au jour et non à
     l'année, et cite ce texte. » Un renvoi de plus naît donc cité."""
-    series = outils.renvois(outils.periodes_des_regimes())
+    series = outils.renvois(outils.blocs_des_regimes())
     sans_texte = [s for s in series if outils.texte_cite(s) is None]
     _baisse_seulement(len(sans_texte), RENVOIS_SANS_TEXTE, "renvois sans texte cité")
 

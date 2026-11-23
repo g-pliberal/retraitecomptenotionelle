@@ -4,12 +4,15 @@
 cliquets tiennent la décision », et son rectificatif du 19 novembre 2026. Ce
 module relève ; ``test_cliquets_du_droit_date.py`` compare au nombre posé.
 
-**Les renvois des fichiers de régime.** Un renvoi est un champ de période que
-le schéma marque ``renvoi: true`` (``donnees.regimes.INTERRUPTEURS``) et qui
-nomme une fiche. Il se compte en séries : dans un régime, un même champ qui
-renvoie à la même fiche de période en période n'est qu'un renvoi, qui commence
-à la première. Trois renvois gardent une valeur de repli, écrite dans la même
-période (``REPLIS``).
+**Les renvois des fichiers de régime.** Un renvoi est un champ que le schéma
+marque ``renvoi: true`` (``donnees.regimes.INTERRUPTEURS``) et qui nomme une
+fiche. Il se lit dans le fichier tel qu'il s'écrit, en quatre blocs, sur les
+lignes du bloc qui porte son champ (``donnees.axes.famille``), et non dans la
+vue en périodes que le chargeur en refait pendant le gel. Il se compte en
+séries : dans un régime, un même champ qui renvoie à la même fiche de ligne en
+ligne, dans l'ordre du fichier, n'est qu'un renvoi, qui commence à la
+première. Trois renvois gardent une valeur de repli, écrite dans la même ligne
+de liquidation (``REPLIS``).
 
 **Les constantes datées du moteur.** Dans le moteur hors du site, une
 constante nommée — ``const NOM``, ``static NOM``, ou ``Classe.NOM`` posée après
@@ -36,7 +39,8 @@ import re
 from pathlib import Path
 
 from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.donnees import regimes
+from retraite_notionnelle.donnees import axes, regimes
+from retraite_notionnelle.donnees.chargement import charger_yaml
 
 RACINE = Path(__file__).resolve().parents[1]
 MOTEUR = RACINE / "moteur" / "js"
@@ -53,49 +57,56 @@ REPLIS = {
 }
 
 
-def periodes_des_regimes(racine: Path = RACINE_DONNEES) -> list[tuple[str, list[dict]]]:
-    """Le code de chaque régime et ses périodes, telles que le fichier les
-    écrit, renvois non résolus."""
-    return [(fiche["code"], list(fiche.get("periodes") or []))
-            for _, fiche in regimes.fichiers_de_regimes(racine)]
+def blocs_des_regimes(racine: Path = RACINE_DONNEES) -> list[tuple[str, dict]]:
+    """Le code de chaque régime calculé et son fichier, tel qu'il s'écrit :
+    ses quatre blocs, renvois non résolus."""
+    lus = []
+    for chemin, _ in regimes.fichiers_de_regimes(racine):
+        fiche = charger_yaml(chemin)
+        if "liquidation" in fiche:
+            lus.append((fiche["code"], fiche))
+    return lus
 
 
-def renvois(regimes_lus: list[tuple[str, list[dict]]]) -> list[dict]:
-    """Les renvois, en séries : le régime, le champ, la fiche, l'année où la
-    série commence et sa première période."""
+def _jour(valeur) -> str:
+    return str(valeur)
+
+
+def renvois(regimes_lus: list[tuple[str, dict]]) -> list[dict]:
+    """Les renvois, en séries : le régime, le champ, la fiche, le jour où la
+    série commence et sa première ligne."""
     series = []
-    for code, periodes in regimes_lus:
+    for code, fiche in regimes_lus:
         for champ in regimes.INTERRUPTEURS:
             precedent = None
-            for periode in periodes:
-                cible = periode.get(champ)
+            for ligne in fiche.get(axes.famille(champ)) or ():
+                cible = ligne.get(champ)
                 cible = tuple(cible) if isinstance(cible, list) else cible
                 if cible is not None and cible != precedent:
                     series.append({"regime": code, "champ": champ, "fiche": cible,
-                                   "debut": periode.get("debut"), "periode": periode})
+                                   "du": _jour(ligne["du"]), "ligne": ligne})
                 precedent = cible
     return series
 
 
-def valeurs_de_repli(regimes_lus: list[tuple[str, list[dict]]]) -> list[tuple[str, int, str]]:
+def valeurs_de_repli(regimes_lus: list[tuple[str, dict]]) -> list[tuple[str, str, str]]:
     """Chaque valeur de repli écrite à côté de son renvoi : le régime, le
-    début de la période, le champ qui la porte."""
-    return [(code, periode.get("debut"), repli)
-            for code, periodes in regimes_lus
-            for periode in periodes
+    jour où sa ligne de liquidation commence, le champ qui la porte."""
+    return [(code, _jour(ligne["du"]), repli)
+            for code, fiche in regimes_lus
+            for ligne in fiche["liquidation"]
             for champ, repli in REPLIS.items()
-            if periode.get(champ) is not None and periode.get(repli) is not None]
+            if ligne.get(champ) is not None and ligne.get(repli) is not None]
 
 
 def texte_cite(serie: dict) -> str | None:
     """Le texte que cite un renvoi, ou ``None``.
 
-    La période qui ouvre le renvoi le cite dans ``textes_des_renvois``, par
-    champ : l'identifiant du texte, et le jour depuis lequel le renvoi vaut
-    (``champs_periode``, depuis la surcote de la Banque de France). Les
+    La ligne qui ouvre le renvoi le cite dans ``textes``, par champ :
+    l'identifiant du texte, et le jour depuis lequel le renvoi vaut. Les
     renvois d'avant n'en citent aucun : l'étape de la note qui les date et les
     cite remplit ce champ, ou le refait."""
-    cite = (serie["periode"].get("textes_des_renvois") or {}).get(serie["champ"]) or {}
+    cite = (serie["ligne"].get("textes") or {}).get(serie["champ"]) or {}
     return cite.get("id")
 
 

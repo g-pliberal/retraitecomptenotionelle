@@ -1,16 +1,17 @@
 # Le paquet porte les quatre blocs d'un régime, et non plus ses périodes
 
 ***Reprise, au 23 novembre 2026.** L'étape 4 avance : le paquet, le chargeur
-Python et le pont portent les quatre blocs de chaque régime, et les tests
-les lisent à la date ou à l'année. Aucun résultat n'a bougé. La vue des
-périodes n'a plus pour lecteurs que les tests qui la gardent pendant le gel,
-ceux que le témoin du droit fige, le compte de la page Avantages et deux
-scripts : tous partent ou changent à l'étape 5, et la note les nomme. Reste,
-une session chacun : les cliquets recomptés à valeur égale ; la page
-Avantages, dont le chiffre de 975 périodes est à soumettre au propriétaire.
-Par quoi commencer : les cliquets. Les données restent gelées. L'oracle de
-référence est sous `architecture/separation-des-axes/oracle/`, dans les
-fichiers du projet.
+Python, le pont, les tests et les cliquets lisent les quatre blocs de chaque
+régime. Aucun résultat n'a bougé. Les deux cliquets des renvois comptent
+désormais dans le fichier tel qu'il s'écrit : 367 valeurs de repli, une par
+ligne de liquidation, et 288 renvois sans texte, la vue en périodes en
+comptant six deux fois. La vue n'a plus pour lecteurs que les tests qui la
+gardent pendant le gel, ceux que le témoin du droit fige, le compte de la
+page Avantages et deux scripts : tous partent ou changent à l'étape 5, et la
+note les nomme. Reste une session : la page Avantages, dont le chiffre de
+975 périodes est à soumettre au propriétaire. Les données restent gelées.
+L'oracle de référence est sous `architecture/separation-des-axes/oracle/`,
+dans les fichiers du projet.
 
 **La demande.** L'étape 4 de la séparation des axes, décidée le 22 novembre
 2026 : le chargeur Python, le paquet, le pont, les tests, les cliquets et la
@@ -210,3 +211,47 @@ cours d'année, sur lesquelles aucun test à date fixe ne tombe. Les deux tests
 lus à la date d'effet qui en croisent une, la Banque de France en juin 2007
 et Mayotte en février 2023, lisent la règle de leur date. Aucun défaut ; un
 commentaire récrit.
+
+## Les cliquets en blocs (cinquième lot, 23 novembre 2026)
+
+**Ce qui est fait.** Les deux cliquets que la vue en périodes nourrissait
+(`test_cliquets_du_droit_date.py`) lisent le fichier en quatre blocs
+(`outils_droit_date.blocs_des_regimes`). Un renvoi se suit sur les lignes du
+bloc qui porte son champ (`axes.famille`), dans l'ordre du fichier ; une
+valeur de repli se compte par ligne de liquidation ; le texte cité se lit
+dans les `textes` de la ligne qui ouvre le renvoi. `test_renvois_dates_au_jour.py`
+lit les dix renvois cités de même : la ligne qui ouvre chacun commence le jour
+de son texte, ce qui déplace l'année de trois clés (la Cavimac, 2007 → 2006 ;
+l'Organic et la Cancava d'avant 1973, 2013 → 2012).
+
+**Les valeurs.** `VALEURS_DE_REPLI` passe de 1 415 à 367 : les mêmes
+170 valeurs (régime, champ, valeur), que la vue recopiait sur chaque ligne de
+cotisation ; chacune des 1 415 périodes se rapporte à l'une des 367 lignes, et
+à elle seule. `RENVOIS_SANS_TEXTE` passe de 294 à 288 : la vue suivait tous
+les champs sur les lignes de cotisation, la tranche 1 puis la tranche 2, et
+coupait en deux six renvois de la liquidation, repris à la même année sur la
+tranche 2 (l'Agirc et l'Agirc des entreprises nouvelles, l'âge du taux plein
+de 2011 ; l'Ircantec, la durée requise de 1983, l'âge légal et l'âge du taux
+plein de 2011, la surcote de 2010). Aucun renvoi n'est perdu ni gagné ; les
+13 textes cités sont les mêmes ; les 13 séries de la cotisation, identiques.
+Le classement des renvois sans texte de l'étape 4 de l'action
+(`2026-11-22-etape-4-classement-des-renvois.md`) en comptait 294 : ces six
+doublons y figurent deux fois.
+
+**Vérifié.** Aucune source ni donnée n'a changé : paquet, témoins et oracle
+sont ceux du lot précédent. La suite rapide est verte (6 775 succès).
+
+**Relu sur Opus, dans un contexte neuf.** La relecture a confronté l'ancien
+relevé au nouveau : les 288 sont les 294 moins les six doublons, nommés
+ci-dessus ; les 367 rendent exactement les 1 415 périodes rapportées à leur
+ligne de liquidation ; textes et séries de la cotisation identiques. Elle a
+relevé trois défauts des tests, corrigés : un commentaire faux, une docstring
+qui promettait ce que le cas ne prouvait pas, un nombre de régimes écrit en
+dur. Elle note un risque latent : dans l'ordre du fichier, une ligne de
+tranche 1 sans le renvoi glissée entre des lignes de tranche 2 couperait un
+renvoi de la cotisation (la CNAVPL, l'Agirc) ; aucun ne l'est aujourd'hui.
+
+**Ce qui reste.** La page Avantages, dont le chiffre de 975 périodes est à
+soumettre au propriétaire. Les contrôles Z3 des renvois
+(`scripts/regles_z3/questions.py`, `des_renvois_des_regimes`) lisent encore
+les périodes : ils partent ou changent à l'étape 5, avec la vue.
