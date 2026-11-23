@@ -188,18 +188,18 @@ def _taux_du_regime(simulateur, regime, carriere) -> float:
 ])
 def test_les_artisans_et_les_commercants_gardent_l_ancien_taux_jusqu_au_31_mars_1983(
         simulateur, affiliation, regime):
-    """Le décret n° 73-937, article 2 (LEGIARTI000006765813), rend l'article 70
-    du décret n° 45-179 applicable aux droits d'après 1972 de ces régimes.
+    """Le décret n° 73-937, dès sa rédaction d'origine (Journal officiel du
+    4 octobre 1973, page 10729), applique aux droits d'après 1972 de ces
+    régimes L. 331 du code (article 1er) et l'article 70 du décret n° 45-179
+    (article 2 : « Article 70 (les termes "salaire annuel moyen de base" sont
+    remplacés par les termes "revenu annuel moyen de base") »).
     Jusqu'à l'ordonnance n° 82-270, en vigueur « le 1er avril 1983 » (article 9,
     LEGIARTI000006275868), cet article écrit : « la pension liquidée à l'âge de
     soixante ans est égale à 25 p. 100 du salaire annuel moyen de base », et
     elle « est majorée de 5 p. 100 […] par année postérieure à cet âge »
     (LEGIARTI000006760656) : 35 % à soixante-deux ans. Ensuite : « le "taux
     plein", soit 50 p. 100 », pour 150 trimestres (LEGIARTI000006760657) ; ici
-    160, de vingt à soixante ans. Le dépôt servait 50 % dès le 1er janvier. Si
-    le taux plein n'a valu pour eux que du 1er juillet 1984, question que la
-    fiche `decote_avant_1983` garde ouverte, la pension de mars 1983 relève
-    de l'ancien article dans les deux lectures."""
+    160, de vingt à soixante ans. Le dépôt servait 50 % dès le 1er janvier."""
     mars = _carriere(simulateur, affiliation, 1923, 2, 60.0)
     assert date_d_effet(mars) == "1983-03-01"
     assert _taux_du_regime(simulateur, regime, mars) == pytest.approx(25.0)

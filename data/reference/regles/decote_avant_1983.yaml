@@ -47,27 +47,20 @@ effet: >-
   une date d'avant 1972 que les textes lus ne disent pas ; avant le 9 juin 1951, la
   pension agricole, vingt fois la cotisation annuelle moyenne, ne croissait pas avec
   l'âge, quand le moteur la majore déjà. Pour les artisans et
-  commerçants, le moteur passe à la règle nouvelle le 1er avril 1983, quand les textes lus datent
-  leur taux plein à soixante ans du 1er juillet 1984, et il arrête leur taux au taux
+  commerçants, le moteur passe à la règle nouvelle le 1er avril 1983 pour les droits d'après
+  1972, comme le décret n° 73-937 d'origine le veut, et il arrête leur taux au taux
   plein, faute d'avoir lu que l'ajournement y courait au-delà.
 sources:
   lu_le: 2026-11-12
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    Artisans et commerçants : le décret n° 84-560 (article 12-2 du décret n° 73-937) ouvre
-    le 1er juillet 1984 le taux plein à soixante ans, pour 150 trimestres, aux prestations
-    de l'article L. 663-5, et l'article 12 de la loi n° 84-575 règle, à partir du même
-    jour, le service des pensions artisanales et commerciales prises dès soixante ans ; le
-    moteur ouvre ce taux plein dès le 1er avril 1983 dans les fiches cancava et organic. Lire, pour la
-    part alignée (L. 663-1), l'ancien article L. 663-1, les articles 1 à 4, 6 et 7 de
-    l'ordonnance et l'article 2 du décret n° 73-937 avant le 24 février 1984, que l'index
-    ne porte pas ; si rien n'avance la date, après la phase 8, décaler au 1er juillet 1984
-    la ligne d'avril 1983 de ces deux fiches. La relecture du 23 novembre 2026 lit
-    l'article 2 du décret n° 73-937 comme un renvoi à l'article 70 dans sa rédaction du
-    jour, donc au 1er avril 1983 ; la réponse ministérielle de 1988 dit l'inverse. Gallica s'arrête en 1955 ; la base de la Cnav
-    ne donne de l'ordonnance que son titre et son article 9, et ne porte aucune circulaire
-    Organic ou Cancava de 1983 ou 1984.
+    Artisans et commerçants, droits d'avant 1973 : le décret n° 84-560 (articles 12-2 et
+    13-8 du décret n° 73-937) leur ouvre le 1er juillet 1984 le taux plein à soixante ans,
+    pour 150 trimestres, et arrête les majorations pour ajournement ; les fiches
+    cancava_avant_1973 et organic_avant_1973 n'ont pas de ligne à cette date. La part
+    alignée, elle, est tranchée le 23 novembre 2026 : le 1er avril 1983 (lecture du
+    Journal officiel du 4 octobre 1973).
   - >-
     Lire ce qui reste du droit de 1945 à 1972, que ni les index, ni Gallica, ni la base
     de la Cnav ne portent : l'article L. 331 du code de la sécurité sociale de 1956 à
@@ -246,6 +239,19 @@ sources:
       EQUIVALENTES DANS L'ENSEMBLE DES REGIMES DE BASE. […] APPLICATION A COMPTER DU
       01-07-1984 ». Lu dans l'index JORF du dépôt
     date: 2026-09-27
+  - type: jorf
+    reference: >-
+      décret n° 73-937 du 2 octobre 1973, rédaction d'origine (Journal officiel du 4 octobre
+      1973, page 10729, lu sur le fac-similé) : titre Ier, « Prestations afférentes aux
+      périodes d'assurance postérieures au 31 décembre 1972 » ; article 1er : « Pour
+      l'application aux régimes […] visés à l'article L. 663-1 du code de la sécurité
+      sociale des dispositions des articles dudit code mentionnés audit article, les
+      adaptations suivantes sont apportées aux articles L. 331, L. 339 et L. 342 » ;
+      article 2 : « Article 70 (les termes "salaire annuel moyen de base" sont remplacés
+      par les termes "revenu annuel moyen de base") ». L. 331 et l'article 70 valent donc
+      pour la part alignée dès 1973, et l'ordonnance n° 82-270, qui récrit L. 331, y vaut
+      le 1er avril 1983
+    date: 2026-11-23
   - type: autre
     reference: >-
       Assemblée nationale, question écrite n° 32721, réponse publiée au Journal officiel

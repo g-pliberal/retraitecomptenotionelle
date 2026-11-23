@@ -87,14 +87,13 @@ liquidation:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
     notes: >-
-      AU 1er AVRIL 1983 AU PLUS TÔT, et non au 1er janvier : l'ordonnance
-      n° 82-270, article 9 (LEGIARTI000006275868), entre en vigueur ce
-      jour-là, et l'article 70 du décret n° 45-179, que l'article 2 du
-      décret n° 73-937 rend applicable à ce régime (LEGIARTI000006765813),
-      donne 25 % à soixante ans jusque-là (LEGIARTI000006760656), 50 %
-      ensuite (LEGIARTI000006760657). Reste ouvert, à la fiche
-      `decote_avant_1983` : si le taux plein à soixante ans n'a valu ici que
-      du 1er juillet 1984, cette ligne commence encore quinze mois trop tôt.
+      AU 1er AVRIL 1983, et non au 1er janvier. Le décret n° 73-937, dès
+      sa rédaction d'origine (Journal officiel du 4 octobre 1973, page
+      10729), applique à ce régime L. 331 du code (article 1er) et l'article
+      70 du décret n° 45-179 (article 2). L'ordonnance n° 82-270, qui récrit
+      L. 331, entre en vigueur le 1er avril 1983 (article 9,
+      LEGIARTI000006275868) ; l'article 70 donne 25 % à soixante ans
+      jusque-là (LEGIARTI000006760656), 50 % ensuite (LEGIARTI000006760657).
       1983 : le minimum contributif est créé, et la décote tombe à 1,25 % par
       trimestre. La durée requise reste de 150 trimestres.
       Le minimum relève les seules périodes d'après 1972, sans porter le

@@ -36,16 +36,14 @@ droit d'alors lui donne 25 %, soit, sur ses quarante trimestres d'après
 1972, 789 euros par an au lieu de 1 578. Celui de soixante-deux ans passe
 de 50 % à 35 %. Le calendrier des réformes portait déjà le 1er avril.
 
-**Une question reste ouverte, au propriétaire.** Deux lectures datent le
-taux plein à soixante ans de ces régimes. L'une, celle de la relecture, lit
-l'article 2 du décret n° 73-937 comme un renvoi à l'article 70 tel qu'il
-s'écrit chaque jour : le 1er avril 1983. L'autre s'appuie sur une réponse
-ministérielle de 1988 et sur le décret n° 84-560 : le 1er juillet 1984. La
-fiche `decote_avant_1983` la gardait ouverte depuis septembre ; l'ancien
-article L. 663-1 et l'article 2 d'avant le 24 février 1984, qui la
-trancheraient, ne sont pas dans l'index. La correction publiée vaut dans les
-deux lectures ; les pensions d'avril 1983 à juin 1984 gardent 50 %, comme
-avant.
+**La date est tranchée par le fac-similé.** La fiche `decote_avant_1983`
+gardait une question ouverte depuis septembre : le 1er avril 1983, ou le
+1er juillet 1984, que portent le décret n° 84-560 et une réponse
+ministérielle de 1988 ? Le propriétaire a téléchargé le Journal officiel du
+4 octobre 1973. Le décret n° 73-937 d'origine, page 10729, applique aux
+droits d'après 1972 L. 331 du code (article 1er) et l'article 70 du décret
+n° 45-179 (article 2) : l'ordonnance, qui récrit L. 331, vaut donc pour eux
+le 1er avril 1983. Le 1er juillet 1984 est la date des droits d'avant 1973.
 
 **Relu sur Opus 5.5, dans un contexte neuf.** La relecture confirme la date
 et les valeurs du test, qu'elle a retrouvées dans l'article 70. Elle a
