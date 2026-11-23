@@ -211,6 +211,48 @@ def test_les_artisans_et_les_commercants_gardent_l_ancien_taux_jusqu_au_31_mars_
     assert _taux_du_regime(simulateur, regime, avril) == pytest.approx(50.0)
 
 
+# -- la base des libéraux, le 1er septembre 2023 ----------------------------------
+
+
+def _majoration_pour_enfants(simulateur, mois_de_naissance: int) -> float:
+    """La part de sa pension de base que la base des libéraux ajoute à un père
+    de trois enfants né en 1960, parti à soixante-trois ans. Il relève de la
+    Cipav, seule section où une pension prend effet le premier d'un mois
+    quelconque (R. 643-6)."""
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1960, mois_naissance=mois_de_naissance, jour_naissance=15, sexe="H",
+        nombre_enfants=3,
+        metiers=[Metier(affiliation="profession_liberale", age_debut=25.0, niveau_salaire=1.0)],
+        age_liquidation=63.0, macro=simulateur.macro)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    pension = next(p for p in resultat.pensions_par_regime if p.regime == "cnavpl")
+    majoration = sum(montant for avantage in resultat.avantages_appliques
+                     if avantage.code == "majoration_enfants"
+                     for regime, montant in avantage.par_regime if regime == "cnavpl")
+    return majoration / pension.montant
+
+
+def test_la_base_des_liberaux_majore_pour_trois_enfants_des_le_1er_septembre_2023(simulateur):
+    """L. 643-1-1 du code de la sécurité sociale, rédaction de la loi
+    n° 2023-270, article 21 (LEGIARTI000047453363) : les libéraux bénéficient
+    de L. 351-12, la majoration de 10 % pour trois enfants, et « ces
+    dispositions s'appliquent aux pensions prenant effet à compter du
+    1er septembre 2023 ». La pension du 1er août ne l'a pas, celle du
+    1er septembre l'a. Le dépôt attendait le 1er janvier 2024."""
+    assert _majoration_pour_enfants(simulateur, 7) == 0.0          # effet au 1er août 2023
+    septembre = _majoration_pour_enfants(simulateur, 8)            # effet au 1er septembre 2023
+    assert septembre == pytest.approx(0.10)                        # L. 351-12 : 10 %
+    periode = commun.periode_de_liquidation(
+        simulateur.catalogue["cnavpl"], DateMois(2023, 9))
+    # R. 643-8, rédaction du décret n° 2023-799 (LEGIARTI000047985850) : la
+    # surcote reste de « 0,75 % par trimestre accompli avant le 1er septembre
+    # 2023 », les seuls qu'une pension de l'automne 2023 puisse compter, à un
+    # trimestre près.
+    assert periode.surcote_par_trimestre == pytest.approx(0.0075)
+    assert "majoration_enfants" in periode.avantages_non_contributifs
+    assert "surcote_parentale" in periode.avantages_non_contributifs
+
+
 # -- les dix renvois, cités au jour de leur texte (note 0009, étape 4) ---------------
 
 import outils_droit_date as outils  # noqa: E402

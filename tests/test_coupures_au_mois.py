@@ -200,6 +200,9 @@ def test_les_regimes_qu_un_texte_coupe_au_jour():
                        "organic_avant_1973", "cancava_avant_1973",
                        # ordonnance n° 82-270, en vigueur le 1er avril 1983
                        "organic", "cancava",
+                       # loi n° 2023-270, pensions prenant effet à compter du
+                       # 1er septembre 2023
+                       "cnavpl",
                        # décret n° 2006-1325, en vigueur le 2 novembre 2006
                        "cavimac",
                        # décrets de juin 2008, pour les pensions prenant effet

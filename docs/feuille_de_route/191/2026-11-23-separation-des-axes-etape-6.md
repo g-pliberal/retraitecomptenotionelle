@@ -1,16 +1,15 @@
-# Le passage au jour, premier lot : les artisans et les commerçants au 1er avril 1983
+# Le passage au jour, premier lot : les artisans et les commerçants en 1983, les libéraux en 2023
 
 **Reprise, au 23 novembre 2026.** Les lignes de liquidation des fichiers de
 régime prennent une à une la date de leur texte, au jour. Sur 44 dates
-essayées, deux changent un résultat. La première est corrigée : les artisans
+essayées, deux changent un résultat, et les deux sont corrigées. Les artisans
 et les commerçants passent à la retraite à soixante ans le 1er avril 1983.
-La seconde attend le propriétaire : la base des libéraux doit servir la
-majoration pour trois enfants dès le 1er septembre 2023, mais la ligne qu'il
-faut ajouter porte trois valeurs de repli, et leur compteur ne peut que
-baisser. Sa correction est prête, dans le dossier partagé du projet. Restent
-les dates qui ne changent aucun résultat, à poser par lots, puis les taux de
-cotisation qui changent en cours d'année. Commencer par le tableau de cette
-note, puis par la sonde du dossier partagé.
+La base des libéraux sert la majoration pour trois enfants dès le
+1er septembre 2023. Restent les dates qui ne changent aucun résultat, à
+poser par lots, puis les taux de cotisation qui changent en cours d'année.
+Restent aussi quatre défauts trouvés en chemin et laissés, dont la caisse
+des avocats, qui a le même retard de quatre mois en 2023. Commencer par le
+tableau de cette note, puis par la sonde du dossier partagé du projet.
 
 **La demande.** L'étape 6 de la séparation des axes (note de décision 0009) :
 donner à chaque frontière la date de son texte, au jour. Sur Fable 5.2, au
@@ -51,17 +50,23 @@ relevé que les notes citaient la loi n° 84-2, qui ne porte pas sur le taux
 plein : elles citent désormais l'article 2 et l'article 70. La fiche
 `decote_avant_1983` est mise à jour.
 
-**Préparé, non publié.** La base des libéraux (`cnavpl`) : L. 643-1-1 et le
-I de L. 643-3, dans leur rédaction de la loi n° 2023-270, valent pour « les
+**La base des libéraux, au 1er septembre 2023.** L. 643-1-1 et le I de
+L. 643-3, dans leur rédaction de la loi n° 2023-270, valent pour « les
 pensions prenant effet à compter du 1er septembre 2023 » ; le fichier ne les
-sert que depuis 2024. Un père de trois enfants parti le 1er septembre 2023
-perd la majoration de 10 %. La surcote, elle, reste à 0,75 % pour les
-trimestres d'avant le 1er septembre 2023 (R. 643-8) : il faut donc une ligne
-de plus, de septembre à décembre 2023, et non avancer celle de 2024. Cette
-ligne recopie l'âge d'ouverture, l'âge du taux plein et la durée requise à
-côté de leurs renvois, ce que le chargeur exige et que le cliquet des
-valeurs de repli refuse. Le patch et son test sont dans le dossier partagé,
-`architecture/separation-des-axes/etape-6/`.
+servait que depuis 2024. Un père de trois enfants parti le 1er septembre
+2023 perdait la majoration de 10 % : sur la carrière du test, 821,08 € par
+an sur une pension de base de 8 210,79 €. La surcote, elle, reste à 0,75 %
+pour les trimestres d'avant le 1er septembre 2023 (R. 643-8) : `cnavpl` a
+donc une ligne de plus, de septembre à décembre 2023, au lieu d'une ligne de
+2024 avancée. R. 643-6 dit la majoration acquise aux enfants « accomplis »,
+ce que le fichier lit comme les enfants élevés, à l'égal du régime général.
+Cette ligne recopie l'âge d'ouverture, l'âge du taux plein et la durée
+requise à côté de leurs renvois, ce que le chargeur exige : le compteur des
+valeurs de repli, qui ne devait que baisser, passe de 367 à 370, sur
+décision du propriétaire du 23 novembre 2026. Relue sur Opus 5.5 dans un
+contexte neuf, qui confirme la date et la ligne ; les fiches
+`majoration_enfants_liberaux_avocats` et `cnavpl_majoration_duree_assurance`
+sont mises à jour.
 
 **Lu, sans rien à corriger.** Mayotte en 2003 : le décret n° 2003-589 parle
 des « pensions prenant effet en 2003 » (article 16), le 1er janvier est
@@ -93,3 +98,7 @@ La surcote de la base des libéraux sert 1,25 % à tous les trimestres depuis
 2024, y compris ceux d'avant septembre 2023 : la corriger demande le barème
 daté dans la branche en points du moteur. L'ASV des médecins n'exige pas les
 dix ans d'exercice d'avant le 15 février 1985.
+La caisse des avocats (CNBF, base) a le même retard : sa majoration pour
+trois enfants ne part que de 2024, quand la loi la donne au 1er septembre
+2023. La base des libéraux sert la majoration de durée pour enfant dès le
+1er janvier 2010, alors que le texte vaut au 1er avril 2010.

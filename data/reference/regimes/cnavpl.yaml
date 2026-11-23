@@ -143,7 +143,7 @@ liquidation:
       compter comme la branche en annuités, trimestres cotisés au-delà
       de l'âge légal et de la durée requise.
   - du: 2010-01-01
-    au: 2024-01-01
+    au: 2023-09-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
@@ -205,6 +205,37 @@ liquidation:
       qui n'a cotisé qu'ici perdait jusqu'à 1,25 % de sa pension par
       trimestre que la loi lui donnait. Servie à partir de 2010, dont neuf
       mois sur douze sont couverts.
+  - du: 2023-09-01
+    au: 2024-01-01
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    decote_par_generation: bareme_minoration_regimes_en_points
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0075
+    surcote_points: surcote_regime_general
+    avantages_non_contributifs: [minimum_vieillesse, mda, reversion, majoration_enfants, surcote_parentale]
+    notes: >-
+      DU 1er SEPTEMBRE AU 31 DÉCEMBRE 2023. La loi n° 2023-270 vaut pour
+      « les pensions prenant effet à compter du 1er septembre 2023 » :
+      L. 643-1-1 (article 21, LEGIARTI000047453363) ouvre la majoration de
+      10 % pour trois enfants, et le I de L. 643-3 (article 11,
+      LEGIARTI000047453031) la surcote parentale. La fiche les servait
+      depuis 2024 seulement. LA SURCOTE RESTE ICI À 0,75 % : R. 643-8
+      (LEGIARTI000047985850) ne donne 1,25 % qu'au « trimestre accompli à
+      compter » du 1er septembre 2023, et une pension de l'automne 2023
+      n'en compte qu'un au plus, celui de juillet à septembre si
+      « accompli » veut dire achevé ; il est servi à 0,75 %, approximation
+      déclarée, de 0,5 % de la pension au plus. Hors de la Cipav, R. 643-6
+      (LEGIARTI000047265890) fixe l'effet « au premier jour du trimestre
+      civil qui suit la demande » : la première pension possible est du
+      1er octobre, ce que le moteur, qui liquide au mois, ne dit pas. Le
+      reste de la ligne est celui de la ligne de 2010.
   - du: 2024-01-01
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -235,20 +266,20 @@ liquidation:
       TROIS ENFANTS, DEPUIS 2023. L. 643-1-1, créé par l'article 21 de la
       loi n° 2023-270, étend aux professions libérales L. 351-12, la
       majoration de 10 % pour trois enfants, pour les pensions prenant
-      effet depuis le 1er septembre 2023 : `majoration_enfants` sur les
-      périodes de 2024 et après, à l'année près. La majoration de durée
+      effet depuis le 1er septembre 2023 : `majoration_enfants` dès la
+      ligne du 1er septembre 2023. La majoration de durée
       d'assurance que le même article ouvre (L. 351-4 à L. 351-4-2) l'est
       depuis 2010, voir la période qui commence cette année-là. Lu le 23 septembre 2026 (LEGIARTI000047453363) ; la CAVOM
       l'écrit dans sa formule de la pension.
-      LA SURCOTE PARENTALE, DEPUIS 2024. Le I de L. 643-3 dans sa rédaction
+      LA SURCOTE PARENTALE, DEPUIS SEPTEMBRE 2023. Le I de L. 643-3 dans sa rédaction
       de la loi n° 2023-270 (LEGIARTI000047453031, pensions prenant effet
       depuis le 1er septembre 2023) écrit pour les libéraux la règle de
       L. 351-1-2-1 : l'assuré qui a au moins un trimestre de majoration pour
       enfants et sa durée requise dès l'année qui précède un âge légal
       d'au moins 63 ans voit les trimestres cotisés de cette année majorer
       sa pension comme une surcote. `surcote_parentale`, servie comme la
-      majoration pour trois enfants à partir de 2024, première année
-      pleine ; la CAVAMAC la décrit pour « les générations nées à partir
+      majoration pour trois enfants dès la ligne du 1er septembre
+      2023 ; la CAVAMAC la décrit pour « les générations nées à partir
       du 1er avril 1965 ».
 cotisation:
   - du: 1949-01-01

@@ -24,8 +24,11 @@ from retraite_notionnelle.noyau import carte
 LISTE = outils.RACINE / "tests" / "cliquets_du_droit_date" / "constantes.yaml"
 
 #: Les valeurs de repli écrites à côté d'un renvoi, ligne de liquidation par
-#: ligne de liquidation.
-VALEURS_DE_REPLI = 367
+#: ligne de liquidation. Relevé de 367 à 370 le 23 novembre 2026, sur décision
+#: du propriétaire : la ligne de la base des libéraux du 1er septembre au
+#: 31 décembre 2023 répète les trois valeurs que le chargeur exige de toute
+#: ligne (`docs/feuille_de_route/191/2026-11-23-separation-des-axes-etape-6.md`).
+VALEURS_DE_REPLI = 370
 #: Les renvois, en séries, qui ne citent pas le texte qui les fait.
 RENVOIS_SANS_TEXTE = 288
 #: Les copies d'avant réforme encore dans le dépôt.
