@@ -15,9 +15,9 @@
 # régime calculé n'écrit plus de `periodes` : il range leurs champs en quatre
 # blocs, `structure`, `liquidation` (au jour de la date d'effet),
 # `cotisation` (à l'année) et `servi`, selon la famille de chaque champ
-# (src/retraite_notionnelle/donnees/axes.py). Pendant le gel, le chargeur en
-# refait les périodes que décrit la suite de ce schéma, que le moteur lit
-# encore ; ce schéma se récrit quand la vue part.
+# (src/retraite_notionnelle/donnees/axes.py). Le chargeur et le moteur lisent
+# ces blocs tels quels ; `champs_periode`, plus bas, décrit les champs de
+# leurs lignes.
 #
 # Version 2, depuis la phase 6 de docs/architecture.md : les régimes étaient
 # rangés par familles en cinq fichiers, dont chacun portait une liste
@@ -113,7 +113,10 @@ champs_regime:
   integre_dans: "code du régime absorbant, le cas échéant"
   population:  "description de la population couverte"
   hors_repartition: "true si le régime est en capitalisation (exclu des comptes notionnels)"
-  periodes:    "liste de fiches de paramètres, cf. champs_periode ; un régime que le modèle ne calcule pas n'en a pas"
+  structure:   "le mode de calcul du régime : type_calcul, points_de ; un régime que le modèle ne calcule pas n'a aucun des quatre blocs"
+  liquidation: "lignes datées au jour, cf. champs_periode : ce qui liquide une pension selon sa date d'effet"
+  cotisation:  "lignes datées à l'année, une par tranche, cf. champs_periode : ce qui s'acquiert dans l'année"
+  servi:       "lignes datées au jour, cf. champs_periode : ce qui vaut pour une pension en cours de service ; facultatif"
   inventaire:
     description: >-
       la ligne du régime dans l'inventaire de tous les régimes, calculés ou
@@ -167,18 +170,17 @@ champs_regime:
       raison_hors_champ: "pourquoi le régime ne sera pas modélisé"
 
 champs_periode:
-  debut: "première année d'application (incluse)"
-  fin:   "dernière année d'application (incluse), null si toujours en vigueur"
-  date_effet: >-
-    facultatif : les dates d'effet des pensions que la période liquide,
-    [début, fin), écrites au jour (AAAA-MM-JJ), quand un texte coupe l'année
-    — l'ordonnance du 26 mars 1982 vaut pour les pensions qui prennent effet
+  du: >-
+    premier jour de la ligne (AAAA-MM-JJ), inclus. En liquidation et en servi,
+    le jour de la date d'effet de la pension, quand un texte coupe l'année —
+    l'ordonnance du 26 mars 1982 vaut pour les pensions qui prennent effet
     depuis le 1er avril 1983, un arrêté sans date d'effet propre depuis le
-    lendemain de sa publication. Absent, du 1er janvier de `debut` au 1er
-    janvier qui suit `fin`. Les années bornent toujours l'acquisition ; la
-    liquidation choisit la période à la date d'effet (docs/architecture.md,
-    § 4.6). Chaque borne tombe à moins d'un an de celle des années, et la
-    voisine prend le relais le même jour : le chargeur refuse le reste.
+    lendemain de sa publication. En cotisation, toujours un 1er janvier : les
+    années bornent l'acquisition.
+  au: >-
+    premier jour où la ligne ne vaut plus (exclu), absent si elle est
+    toujours en vigueur. La ligne suivante prend le relais le même jour : le
+    chargeur refuse un trou ou un chevauchement (docs/architecture.md, § 4.6).
 
   type_calcul:
     description: "mode de liquidation en vigueur"

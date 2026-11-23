@@ -1,15 +1,5 @@
 # La vue en périodes est partie : le moteur et le chargeur ne lisent que les quatre blocs
 
-**Reprise, au 23 novembre 2026.** L'étape 5 est finie, et c'est le point
-d'arrêt prévu : le propriétaire confirme que les témoins sont identiques
-avant toute suite. La vue en périodes n'existe plus, ni en JavaScript ni en
-Python : le moteur, le pont, le chargeur, le paquet et les tests lisent les
-quatre blocs de chaque régime. Les témoins de simulation, de pages, des
-servis, des sorties et des valeurs sont identiques ; le témoin du droit a
-une valeur qui bouge, une fiabilité, expliquée dans la note. Restent, hors de
-cette étape : les six doublons du classement des renvois sans texte (294 au
-lieu de 288), et la fin du gel des données, que le propriétaire décide.
-
 **La demande.** L'étape 5 de la séparation des axes (note de décision 0009) :
 retirer l'ancienne vue en périodes, puis s'arrêter pour que le propriétaire
 confirme les témoins. Sur Opus 5.5.
@@ -58,6 +48,19 @@ que la vue masquait en la lisant dès janvier ; `test_regle_de_chacun.py` le
 déclare. Le tableau de bord compte 946 renvois au lieu de 2 581 : il compte
 les lignes, et non plus les périodes, qui répétaient un même renvoi.
 
-**Ce qui reste.** Le point d'arrêt : la confirmation des témoins par le
-propriétaire. Puis, hors de cette étape, les six doublons du classement des
+**Relu sur Fable 5.2, dans un contexte neuf.** La relecture a comparé
+l'avant et l'après sur les 80 régimes : paquet, blocs, lectures à la date et
+à l'année, en Python et en JavaScript, au taux de la fiche et au taux moyen,
+identiques ; une seule valeur du témoin du droit bouge, celle de mars 1983.
+Elle a relevé quatre défauts mineurs, corrigés le même jour après la
+validation des témoins par le propriétaire. Le chargeur refuse de nouveau un
+bloc `servi` écrit qui ne couvre pas toute la liquidation, ce que la vue
+refusait et que `verifier_les_blocs` avait perdu ; son test le dit. Le
+contrôle de la carte n'admet `du` que pour un régime dont une ligne de
+liquidation commence hors d'un 1er janvier, comme `date_effet` avant lui. Le
+test de la sonde `partout` dit le refus qu'il attend. Le schéma des fichiers
+de régime décrit les quatre blocs, `PeriodeRegime.couvre`, sans appelant,
+part, et deux commentaires de tests sont remis à jour.
+
+**Ce qui reste.** Hors de cette étape : les six doublons du classement des
 renvois sans texte, et la fin du gel des données.

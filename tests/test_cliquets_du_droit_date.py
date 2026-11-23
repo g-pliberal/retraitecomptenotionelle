@@ -138,8 +138,7 @@ def test_une_valeur_de_repli_se_compte_une_fois_par_ligne_de_liquidation():
 
 def test_les_cliquets_lisent_les_blocs_du_fichier_et_non_la_vue_en_periodes():
     """Ce que les cliquets comptent est écrit dans le fichier, en quatre blocs ;
-    la vue en périodes, que le chargeur en refait pendant le gel, part à
-    l'étape 5."""
+    la vue en périodes est partie à l'étape 5."""
     lus = outils.blocs_des_regimes()
     calcules = [fiche["code"] for _, fiche in regimes.fichiers_de_regimes(RACINE_DONNEES)
                 if fiche["inventaire"].get("couverture") in regimes.COUVERTURES_CALCULEES]

@@ -99,6 +99,12 @@ def _fiche(**blocs):
     # Deux lignes servies ouvertes ensemble.
     ({"servi": [{"du": J(2000, 1, 1), "valeur_point_euros": 1.0},
                 {"du": J(2010, 1, 1), "valeur_point_euros": 2.0}]}, "se chevauchent"),
+    # Un servi écrit qui commence après la liquidation, ou finit avant elle :
+    # une pension de 2000, ou de 2012, n'aurait aucune ligne servie.
+    ({"servi": [{"du": J(2005, 1, 1), "valeur_point_euros": 1.0}]},
+     "aucune ligne de servi"),
+    ({"servi": [{"du": J(2000, 1, 1), "au": J(2010, 1, 1), "valeur_point_euros": 1.0}]},
+     "aucune ligne de servi"),
     # Une cotisation au jour, que le chargeur n'admet pas avant le passage au jour.
     ({"cotisation": [{"du": J(2000, 7, 1)}]}, "1er janvier"),
     # Deux lignes de la même tranche la même année.

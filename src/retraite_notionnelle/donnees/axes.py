@@ -135,8 +135,9 @@ def verifier_les_blocs(fiche: dict) -> None:
     """Refuse un fichier de régime dont les blocs ne tiennent pas : un champ
     hors de son bloc, une ligne sans ``du``, deux lignes au jour qui se
     chevauchent ou laissent un trou, une tranche de cotisation couverte deux
-    fois, une année cotisée sans règle de liquidation, ou des ``periodes``,
-    qu'un fichier n'écrit plus."""
+    fois, une année cotisée sans règle de liquidation, un servi écrit qui ne
+    couvre pas toute la liquidation, ou des ``periodes``, qu'un fichier
+    n'écrit plus."""
     code = fiche.get("code")
     if "periodes" in fiche:
         raise ValueError(f"{code} : un fichier en quatre blocs ne porte plus de `periodes`")
@@ -155,6 +156,17 @@ def verifier_les_blocs(fiche: dict) -> None:
                    and (_au(l) is None or _au(l) > dt.date(annee, 1, 1)) for l in liquidation):
             raise ValueError(f"{code} : aucune ligne de liquidation en {annee}, où "
                              f"commence la cotisation du {ligne['du']}")
+    # Un servi écrit couvre toute la liquidation : une pension qui prend effet
+    # un jour sans ligne servie n'aurait rien à assembler.
+    servi = list(fiche.get("servi") or ())
+    if servi:
+        if _jour(servi[0]["du"]) > _jour(liquidation[0]["du"]):
+            raise ValueError(f"{code} : aucune ligne de servi au {liquidation[0]['du']}, "
+                             "où commence la liquidation")
+        fin, terme = _au(servi[-1]), _au(liquidation[-1])
+        if fin is not None and (terme is None or fin < terme):
+            raise ValueError(f"{code} : aucune ligne de servi au {servi[-1]['au']}, "
+                             "que la liquidation couvre encore")
 
 
 def en_vigueur_au_jour(lignes: Sequence[Mapping], jour: str) -> Mapping | None:

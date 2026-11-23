@@ -7,8 +7,7 @@ module relève ; ``test_cliquets_du_droit_date.py`` compare au nombre posé.
 **Les renvois des fichiers de régime.** Un renvoi est un champ que le schéma
 marque ``renvoi: true`` (``donnees.regimes.INTERRUPTEURS``) et qui nomme une
 fiche. Il se lit dans le fichier tel qu'il s'écrit, en quatre blocs, sur les
-lignes du bloc qui porte son champ (``donnees.axes.famille``), et non dans la
-vue en périodes que le chargeur en refait pendant le gel. Il se compte en
+lignes du bloc qui porte son champ (``donnees.axes.famille``). Il se compte en
 séries : dans un régime, un même champ qui renvoie à la même fiche de ligne en
 ligne, dans l'ordre du fichier, n'est qu'un renvoi, qui commence à la
 première. Trois renvois gardent une valeur de repli, écrite dans la même ligne

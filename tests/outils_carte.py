@@ -150,7 +150,13 @@ def _ecarts_des_regimes(fiche: dict, regimes: list[str], nommes: set[str]) -> li
         donnee = lire_fiche_de_regime(chemin)
         lignes = [*donnee.get("liquidation", []), *donnee.get("cotisation", []),
                   *(donnee.get("servi") or [])]
-        champs |= {cle for ligne in [donnee.get("structure") or {}, *lignes] for cle in ligne}
+        champs |= {cle for ligne in [donnee.get("structure") or {}, *lignes] for cle in ligne
+                   if cle not in ("du", "au", "notes", "textes", "tranche")}
+        # `du` se nomme quand la fiche date une règle au jour : une ligne de
+        # liquidation du régime commence hors d'un 1er janvier.
+        if any((ligne["du"].month, ligne["du"].day) != (1, 1)
+               for ligne in donnee.get("liquidation", [])):
+            champs.add("du")
     sortie += [f"{nom}, parametres : aucune ligne de {', '.join(regimes)} ne porte {cle}"
                for cle in sorted(nommes - champs)]
     return sortie

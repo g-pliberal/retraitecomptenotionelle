@@ -840,9 +840,8 @@ def test_partout_refuse_une_valeur_qui_ne_l_est_plus():
     ) == 2367.48
     fiches = ("data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml"
               " + data/reference/regimes/unirs.yaml")
-    for champ in ("plafond_majoration_enfants", "du"):
-        with pytest.raises(ValueError):
-            verifier_prose.sonde_partout(f"{fiches}:servi.*.{champ}")
+    with pytest.raises(ValueError, match="valeurs différentes"):
+        verifier_prose.sonde_partout(f"{fiches}:servi.*.plafond_majoration_enfants")
 
 
 def test_une_sonde_peut_traverser_un_cran_d_entrees():

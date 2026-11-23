@@ -1062,9 +1062,6 @@ class PeriodeRegime:
             return revenu * (1.0 - part_primes)
         return revenu
 
-    def couvre(self, annee: int) -> bool:
-        return self.debut <= annee and (self.fin is None or annee <= self.fin)
-
     def bornes_assiette_en_pass(self) -> tuple[float, float | None]:
         return BORNES_ASSIETTE.get(self.assiette, (0.0, None))
 
