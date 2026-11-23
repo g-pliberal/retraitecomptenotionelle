@@ -4101,6 +4101,15 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
         || ouvrir.droitMilitaire(moteur, periode, carriere) !== null) {
       return 1.0;
     }
+    if (periode.surcote_bareme) {
+      // Barème DATÉ : chaque trimestre civil de surcote au taux de sa date,
+      // depuis le trimestre qui suit l'âge légal, comme la branche en
+      // annuités (la CNAVPL, R. 643-8 : 0,75 % avant le 1er septembre 2023,
+      // 1,25 % ensuite).
+      return coefficientSurcoteDatee(
+        moteur, periode, carriere, trimestres, requis, supplementaires, ageOuverture,
+      )[0];
+    }
     supplementaires = Math.min(
       supplementaires,
       trimestresCotisesApres(carriere, ageOuverture, anneeLiquidation),

@@ -27,6 +27,15 @@
 # accompli à compter du 1er juillet 2010 » — le barème de la CNBF l'imprime
 # chaque année dans les mêmes termes.
 #
+# Base des libéraux (`cnavpl`, article R. 643-8 du code de la sécurité
+# sociale, rédaction du décret n° 2023-799, LEGIARTI000047985850) : « 0,75 %
+# par trimestre accompli avant le 1er septembre 2023 et [...] 1,25 % par
+# trimestre accompli à compter de la même date ». Le trimestre civil de
+# juillet à septembre 2023, que la date coupe, est à 0,75 % : le texte ne le
+# dit pas, l'exemple chiffré de la CARMF (septembre 2023) et le guide 2024 de
+# la CNAVPL le comptent ainsi ; fiabilité moyenne pour lui seul, que la
+# branche en points du moteur ne remonte pas encore au résultat.
+#
 # Colonnes : `debut` et `fin` sont des années décimales du premier mois du
 # trimestre (2008.917 = trimestre commençant en décembre 2008, c'est-à-dire
 # tout trimestre civil de 2008) ; `rang_minimum` est le rang du trimestre
@@ -41,3 +50,6 @@ fonction_publique,2004,2008.917,1,0,0.0075,20,,haute
 fonction_publique,2009,2100,1,0,0.0125,,,haute
 cnbf,2004,2010.25,1,0,0.0075,,,haute
 cnbf,2010.5,2100,1,0,0.0125,,,haute
+cnavpl,2004,2023.25,1,0,0.0075,,,haute
+cnavpl,2023.5,2023.5,1,0,0.0075,,,moyenne
+cnavpl,2023.75,2100,1,0,0.0125,,,haute

@@ -3654,8 +3654,12 @@ def test_la_surcote_parentale_du_liberal_entre_dans_le_coefficient_de_sa_surcote
     le 1er septembre 2023 : un seul coefficient, sur la pension d'avant la
     surcote, comme au régime général. Le moteur majorait la pension surcotée.
 
-    La libérale née le 1er janvier 1969, partie à 66 ans : huit trimestres de
-    surcote de 64 à 66 ans, et les quatre de l'année d'avant.
+    La libérale née le 1er janvier 1969, partie à 66 ans : sept trimestres de
+    surcote, d'avril 2033 à décembre 2034, et les quatre de l'année d'avant.
+    Depuis le 23 novembre 2026, la base des libéraux date ses trimestres comme
+    le régime général (fiche `cnavpl_surcote`) : la période court du trimestre
+    civil qui suit celui de l'âge légal, atteint le 1er janvier 2033, et non
+    de l'année entière des 64 ans.
     """
     resultat = simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
         annee_naissance=1969, mois_naissance=1, jour_naissance=1, sexe="F",
@@ -3664,10 +3668,10 @@ def test_la_surcote_parentale_du_liberal_entre_dans_le_coefficient_de_sa_surcote
     pension = next(p for p in resultat.pensions_par_regime if p.regime == "cnavpl")
     parentale = next(a for a in resultat.avantages_appliques
                      if a.code == "surcote_parentale")
-    assert "coefficient de majoration 1.1000" in pension.detail
+    assert "coefficient de majoration 1.0875" in pension.detail
     assert "4 trimestres" in parentale.detail
-    avant_surcote = (pension.montant - parentale.montant) / (1 + 8 * 0.0125)
-    assert pension.montant == pytest.approx(avant_surcote * (1 + 12 * 0.0125))
+    avant_surcote = (pension.montant - parentale.montant) / (1 + 7 * 0.0125)
+    assert pension.montant == pytest.approx(avant_surcote * (1 + 11 * 0.0125))
 
 
 def test_les_deux_moteurs_servent_la_meme_surcote_parentale():

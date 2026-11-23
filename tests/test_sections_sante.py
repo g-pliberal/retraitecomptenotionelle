@@ -1457,7 +1457,11 @@ def test_l_exemption_de_la_carmf_retire_300_euros_a_la_medecin_de_76_ans(
     assert 24_855.19 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
         300.22, abs=0.005)
     assert pensions["asv_conventionnes"]["montant"] == pytest.approx(21_998.15, abs=0.005)
-    assert pensions["cnavpl"]["montant"] == pytest.approx(18_281.12, abs=0.005)
+    # La base date ses vingt-trois trimestres de surcote (R. 643-8, depuis le
+    # 23 novembre 2026) : huit, d'octobre 2021 à septembre 2023, à 0,75 %, et
+    # quinze à 1,25 %, × 1,2475 et non plus × 1,2875 : 18 281,12 × 1,2475 /
+    # 1,2875 = 17 713,16 €.
+    assert pensions["cnavpl"]["montant"] == pytest.approx(17_713.16, abs=0.005)
 
 
 def test_le_compte_ne_porte_pas_la_cotisation_que_la_carmf_exempte_passe_75_ans():

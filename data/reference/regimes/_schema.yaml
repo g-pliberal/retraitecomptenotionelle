@@ -811,14 +811,14 @@ champs_periode:
       l'âge légal, ou le mois qui suit la durée requise ;
       `regime_general` lit ses taux dans les versions de la fiche
       `surcote_regime_general`, à la date d'effet de la pension ;
-      `fonction_publique` et `cnbf`, dans `legislation/surcote_baremes.csv`.
+      `fonction_publique`, `cnbf` et `cnavpl`, dans `legislation/surcote_baremes.csv`.
       `banque_de_france` :
       les trimestres entiers depuis l'âge, au mois près, aux taux et dans la
       limite que porte la version de la fiche à la date d'effet. `null` : le
       taux plat `surcote_par_trimestre` de la période, appliqué à tous les
       trimestres.
     renvoi: true
-    valeurs: ["regime_general", "fonction_publique", "cnbf", "banque_de_france"]
+    valeurs: ["regime_general", "fonction_publique", "cnbf", "cnavpl", "banque_de_france"]
     defaut: null
 
   abattement_points:

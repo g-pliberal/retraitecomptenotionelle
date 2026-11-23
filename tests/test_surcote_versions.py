@@ -55,7 +55,7 @@ def test_le_bareme_date_n_a_plus_de_ligne_du_regime_general():
     with BAREME.open(encoding="utf-8") as flux:
         lignes = list(csv.DictReader(l for l in flux if not l.lstrip().startswith("#")))
     assert [l for l in lignes if l["bareme"] == "regime_general"] == []
-    assert {l["bareme"] for l in lignes} == {"fonction_publique", "cnbf"}
+    assert {l["bareme"] for l in lignes} == {"fonction_publique", "cnbf", "cnavpl"}
 
 
 def _trimestres(annee, mois, nombre, apres_65=False):

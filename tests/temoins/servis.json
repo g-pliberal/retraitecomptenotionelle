@@ -92,7 +92,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 29886.649298493903,
+    "pension_annuelle": 29807.512699312647,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -108,8 +108,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "19,424.79 points × valeur de service 0.5432 € × coefficient de majoration 1.2175",
-      "montant": 12846.507933757079,
+      "detail": "19,424.79 points × valeur de service 0.5432 € × coefficient de majoration 1.2100",
+      "montant": 12767.371334575824,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -154,7 +154,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 79726.51991652092,
+    "pension_annuelle": 79503.88446302716,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -164,8 +164,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "22,105.00 points × valeur de service 0.671448 € × coefficient de majoration 1.2250",
-      "montant": 18181.895368656253,
+      "detail": "22,105.00 points × valeur de service 0.671448 € × coefficient de majoration 1.2100",
+      "montant": 17959.2599151625,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -1088,7 +1088,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 42578.67132170796,
+    "pension_annuelle": 41501.81170573367,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -1104,8 +1104,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "20,398.26 points × valeur de service 0.6399 € × coefficient de majoration 1.2000",
-      "montant": 15663.412595989581,
+      "detail": "20,398.26 points × valeur de service 0.6399 € × coefficient de majoration 1.1175",
+      "montant": 14586.552980015296,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -1334,7 +1334,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « cnavpl »",
-      "montant": 1276.2806177612802,
+      "montant": 733.8613552127354,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -1342,17 +1342,17 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime",
-      "montant": 1499.6297258695085,
+      "montant": 1445.3877996146539,
       "par_regime": [
        [
         "cnavpl",
-        1499.6297258695085
+        1445.3877996146539
        ]
       ],
       "par_regime_sans_anticipation": [
        [
         "cnavpl",
-        1499.6297258695085
+        1445.3877996146539
        ]
       ]
      }
@@ -1360,7 +1360,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 48674.638027565845,
+    "pension_annuelle": 48077.97683876244,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -1370,8 +1370,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "19,514.99 points × valeur de service 0.654 € × coefficient de majoration 1.1750",
-      "montant": 14996.297258695084,
+      "detail": "19,514.99 points × valeur de service 0.654 € × coefficient de majoration 1.1325",
+      "montant": 14453.877996146537,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -1417,7 +1417,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31530.44722135177,
+    "pension_annuelle": 31449.759004144646,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -1433,8 +1433,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "19,122.70 points × valeur de service 0.5626 € × coefficient de majoration 1.1800",
-      "montant": 12694.946173921402,
+      "detail": "19,122.70 points × valeur de service 0.5626 € × coefficient de majoration 1.1725",
+      "montant": 12614.257956714277,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -1536,7 +1536,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « cnavpl »",
-      "montant": 676.9193988765801,
+      "montant": 601.7061323347407,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -1562,7 +1562,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 27042.552586166996,
+    "pension_annuelle": 26967.339319625156,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -1572,8 +1572,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "18,079.03 points × valeur de service 0.5547 € × coefficient de majoration 1.1800",
-      "montant": 11833.553935916503,
+      "detail": "18,079.03 points × valeur de service 0.5547 € × coefficient de majoration 1.1725",
+      "montant": 11758.340669374664,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -3146,7 +3146,7 @@
      },
      {
       "detail": "21,329.62 points × valeur de service 0.5731 € × coefficient de majoration 1.2625",
-      "montant": 15432.806183180006,
+      "montant": 15432.80618318001,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -3303,7 +3303,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « cnavpl »",
-      "montant": 654.2266468210546,
+      "montant": 581.534797174274,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -3329,7 +3329,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 25947.1091820744,
+    "pension_annuelle": 25874.41733242762,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -3339,8 +3339,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "17,842.87 points × valeur de service 0.5432 € × coefficient de majoration 1.1650",
-      "montant": 11291.467311800432,
+      "detail": "17,842.87 points × valeur de service 0.5432 € × coefficient de majoration 1.1575",
+      "montant": 11218.77546215365,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -4546,7 +4546,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 17098.02118125651,
+    "pension_annuelle": 16946.05477435066,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -4562,8 +4562,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "17,861.59 points × valeur de service 0.5672 € × coefficient de majoration 1.0225",
-      "montant": 10359.043404082115,
+      "detail": "17,861.59 points × valeur de service 0.5672 € × coefficient de majoration 1.0075",
+      "montant": 10207.076997176266,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -4969,7 +4969,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 56603.29127545179,
+    "pension_annuelle": 56469.10923759005,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -4985,8 +4985,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "20,333.69 points × valeur de service 0.6599 € × coefficient de majoration 1.1500",
-      "montant": 15430.934354099983,
+      "detail": "20,333.69 points × valeur de service 0.6599 € × coefficient de majoration 1.1400",
+      "montant": 15296.752316238246,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -5870,7 +5870,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 55725.388608283116,
+    "pension_annuelle": 55513.41184796711,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -5880,8 +5880,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "21,046.72 points × valeur de service 0.671448 € × coefficient de majoration 1.2250",
-      "montant": 17311.43542580689,
+      "detail": "21,046.72 points × valeur de service 0.671448 € × coefficient de majoration 1.2100",
+      "montant": 17099.458665490885,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -5926,7 +5926,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 18411.841310167216,
+    "pension_annuelle": 18253.695659144403,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -5942,8 +5942,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "18,529.07 points × valeur de service 0.569 € × coefficient de majoration 1.0450",
-      "montant": 11017.480354589441,
+      "detail": "18,529.07 points × valeur de service 0.569 € × coefficient de majoration 1.0300",
+      "montant": 10859.334703566628,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -6271,12 +6271,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 36956.37888295796,
+    "pension_annuelle": 36149.07337036963,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "20,573.53 points × valeur de service 0.654 € × coefficient de majoration 1.2250",
-      "montant": 16482.487548678248,
+      "detail": "20,573.53 points × valeur de service 0.654 € × coefficient de majoration 1.1650",
+      "montant": 15675.182036089924,
       "regime": "cnavpl",
       "type_calcul": "points"
      },
@@ -6328,7 +6328,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « cnavpl »",
-      "montant": 1461.081605700485,
+      "montant": 1168.8652845603938,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -6336,7 +6336,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime",
-      "montant": 4915.301133885214,
+      "montant": 4886.0795017712035,
       "par_regime": [
        [
         "cipav_complementaire",
@@ -6344,7 +6344,7 @@
        ],
        [
         "cnavpl",
-        1526.0185659538383
+        1496.7969338398286
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -6354,7 +6354,7 @@
        ],
        [
         "cnavpl",
-        1526.0185659538383
+        1496.7969338398286
        ]
       ]
      }
@@ -6362,7 +6362,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 54068.31247273734,
+    "pension_annuelle": 53746.87451948324,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -6372,8 +6372,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "19,680.85 points × valeur de service 0.6599 € × coefficient de majoration 1.1750",
-      "montant": 15260.185659538382,
+      "detail": "19,680.85 points × valeur de service 0.6599 € × coefficient de majoration 1.1525",
+      "montant": 14967.969338398285,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -7639,7 +7639,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 24978.427874770212,
+    "pension_annuelle": 24908.38610541499,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -7655,8 +7655,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "17,890.62 points × valeur de service 0.522 € × coefficient de majoration 1.1200",
-      "montant": 10459.570890379226,
+      "detail": "17,890.62 points × valeur de service 0.522 € × coefficient de majoration 1.1125",
+      "montant": 10389.529121024007,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -8086,7 +8086,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « cnavpl »",
-      "montant": 1279.364427799308,
+      "montant": 735.6345459846052,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -8094,7 +8094,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime",
-      "montant": 4749.460426389734,
+      "montant": 4695.087438208263,
       "par_regime": [
        [
         "cavec_complementaire",
@@ -8102,7 +8102,7 @@
        ],
        [
         "cnavpl",
-        1503.2532026641893
+        1448.8802144827187
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -8112,7 +8112,7 @@
        ],
        [
         "cnavpl",
-        1503.2532026641893
+        1448.8802144827187
        ]
       ]
      }
@@ -8120,7 +8120,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 52244.064690287065,
+    "pension_annuelle": 51645.96182029089,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -8130,8 +8130,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "19,562.15 points × valeur de service 0.654 € × coefficient de majoration 1.1750",
-      "montant": 15032.532026641893,
+      "detail": "19,562.15 points × valeur de service 0.654 € × coefficient de majoration 1.1325",
+      "montant": 14488.802144827187,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -8472,7 +8472,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 28459.514620028123,
+    "pension_annuelle": 27972.501315135512,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -8482,8 +8482,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "18,118.05 points × valeur de service 0.512 € × coefficient de majoration 1.1425",
-      "montant": 10598.337158853472,
+      "detail": "18,118.05 points × valeur de service 0.512 € × coefficient de majoration 1.0900",
+      "montant": 10111.323853960861,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -8528,7 +8528,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 56036.047689566316,
+    "pension_annuelle": 55509.39258655307,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -8544,8 +8544,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "20,132.08 points × valeur de service 0.654 € × coefficient de majoration 1.1625",
-      "montant": 15305.91393132257,
+      "detail": "20,132.08 points × valeur de service 0.654 € × coefficient de majoration 1.1225",
+      "montant": 14779.25882830932,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -10164,7 +10164,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 64834.24103194201,
+    "pension_annuelle": 64266.28387809933,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -10180,8 +10180,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "21,146.72 points × valeur de service 0.671448 € × coefficient de majoration 1.2875",
-      "montant": 18281.120889311067,
+      "detail": "21,146.72 points × valeur de service 0.671448 € × coefficient de majoration 1.2475",
+      "montant": 17713.163735468395,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -11007,7 +11007,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 33201.38986982107,
+    "pension_annuelle": 33118.712095067436,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -11023,8 +11023,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "19,594.21 points × valeur de service 0.5626 € × coefficient de majoration 1.2100",
-      "montant": 13338.680993586671,
+      "detail": "19,594.21 points × valeur de service 0.5626 € × coefficient de majoration 1.2025",
+      "montant": 13256.003218833037,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -11167,7 +11167,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 23272.699452311306,
+    "pension_annuelle": 23206.75714023815,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -11183,8 +11183,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "17,172.48 points × valeur de service 0.512 € × coefficient de majoration 1.0675",
-      "montant": 9385.789085079188,
+      "detail": "17,172.48 points × valeur de service 0.512 € × coefficient de majoration 1.0600",
+      "montant": 9319.846773006035,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -11418,7 +11418,7 @@
     ],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 57188.74423505629,
+    "pension_annuelle": 57053.939831904616,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -11428,8 +11428,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "20,428.00 points × valeur de service 0.6599 € × coefficient de majoration 1.1625",
-      "montant": 15671.01186638283,
+      "detail": "20,428.00 points × valeur de service 0.6599 € × coefficient de majoration 1.1525",
+      "montant": 15536.20746323115,
       "regime": "cnavpl",
       "type_calcul": "points"
      },
@@ -11536,7 +11536,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 64073.952760265325,
+    "pension_annuelle": 63652.01358438333,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -11552,8 +11552,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "20,946.72 points × valeur de service 0.671448 € × coefficient de majoration 1.2625",
-      "montant": 17756.606985034396,
+      "detail": "20,946.72 points × valeur de service 0.671448 € × coefficient de majoration 1.2325",
+      "montant": 17334.667809152394,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -12235,7 +12235,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 24328.198160499232,
+    "pension_annuelle": 24259.72239114401,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -12251,8 +12251,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "17,490.62 points × valeur de service 0.522 € × coefficient de majoration 1.0900",
-      "montant": 9951.811812958354,
+      "detail": "17,490.62 points × valeur de service 0.522 € × coefficient de majoration 1.0825",
+      "montant": 9883.336043603134,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -12498,7 +12498,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 26417.354572954777,
+    "pension_annuelle": 26344.634170199828,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -12514,8 +12514,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "17,234.36 points × valeur de service 0.5626 € × coefficient de majoration 1.0600",
-      "montant": 10277.816922699845,
+      "detail": "17,234.36 points × valeur de service 0.5626 € × coefficient de majoration 1.0525",
+      "montant": 10205.096519944895,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -13102,7 +13102,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 42832.70994722344,
+    "pension_annuelle": 43123.167460606564,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -13118,8 +13118,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "21,418.99 points × valeur de service 0.6027 € × coefficient de majoration 1.2100",
-      "montant": 15620.159608603419,
+      "detail": "21,418.99 points × valeur de service 0.6027 € × coefficient de majoration 1.2325",
+      "montant": 15910.617121986543,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -14315,7 +14315,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 52689.19207498965,
+    "pension_annuelle": 50490.44071587389,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -14331,8 +14331,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "22,531.71 points × valeur de service 0.6399 € × coefficient de majoration 1.4625",
-      "montant": 21086.385984962726,
+      "detail": "22,531.71 points × valeur de service 0.6399 € × coefficient de majoration 1.3100",
+      "montant": 18887.63462584696,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -15190,7 +15190,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 52426.45901963521,
+    "pension_annuelle": 50240.73083556154,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -15206,8 +15206,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "22,398.26 points × valeur de service 0.6399 € × coefficient de majoration 1.4500",
-      "montant": 20782.333553487413,
+      "detail": "22,398.26 points × valeur de service 0.6399 € × coefficient de majoration 1.2975",
+      "montant": 18596.605369413744,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -15785,7 +15785,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 60089.25049419431,
+    "pension_annuelle": 60089.25049419432,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -15802,7 +15802,7 @@
      },
      {
       "detail": "21,229.62 points × valeur de service 0.5731 € × coefficient de majoration 1.2550",
-      "montant": 15269.202096448244,
+      "montant": 15269.202096448247,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -17308,7 +17308,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 35645.65842186504,
+    "pension_annuelle": 35152.41042186504,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -17318,8 +17318,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "18,350.00 points × valeur de service 0.512 € × coefficient de majoration 1.1425",
-      "montant": 10734.016000000001,
+      "detail": "18,350.00 points × valeur de service 0.512 € × coefficient de majoration 1.0900",
+      "montant": 10240.768000000002,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -17475,7 +17475,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 57033.65038509878,
+    "pension_annuelle": 55758.15500874077,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -17491,8 +17491,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "22,629.66 points × valeur de service 0.683199 € × coefficient de majoration 1.4000",
-      "montant": 21644.770023045105,
+      "detail": "22,629.66 points × valeur de service 0.683199 € × coefficient de majoration 1.3175",
+      "montant": 20369.274646687096,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -17937,7 +17937,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 51521.44099363484,
+    "pension_annuelle": 49458.84218915014,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -17953,8 +17953,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "22,132.08 points × valeur de service 0.654 € × coefficient de majoration 1.4000",
-      "montant": 20264.12860546374,
+      "detail": "22,132.08 points × valeur de service 0.654 € × coefficient de majoration 1.2575",
+      "montant": 18201.529800979042,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -18946,7 +18946,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 62843.03676424771,
+    "pension_annuelle": 62634.0815210567,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -18962,8 +18962,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "20,746.72 points × valeur de service 0.671448 € × coefficient de majoration 1.2250",
-      "montant": 17064.67819393189,
+      "detail": "20,746.72 points × valeur de service 0.671448 € × coefficient de majoration 1.2100",
+      "montant": 16855.722950740885,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -19453,7 +19453,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 50772.15228336389,
+    "pension_annuelle": 48683.24523274372,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -19469,8 +19469,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "22,131.71 points × valeur de service 0.6399 € × coefficient de majoration 1.4125",
-      "montant": 20003.94040000674,
+      "detail": "22,131.71 points × valeur de service 0.6399 € × coefficient de majoration 1.2650",
+      "montant": 17915.03334938657,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -19698,7 +19698,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 55016.879790608764,
+    "pension_annuelle": 54185.48844278745,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -19708,8 +19708,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "20,997.91 points × valeur de service 0.6599 € × coefficient de majoration 1.2625",
-      "montant": 17493.859610406835,
+      "detail": "20,997.91 points × valeur de service 0.6599 € × coefficient de majoration 1.2025",
+      "montant": 16662.468262585524,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -19755,7 +19755,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 42516.94183451296,
+    "pension_annuelle": 42806.191865222274,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -19771,8 +19771,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "21,329.94 points × valeur de service 0.6027 € × coefficient de majoration 1.2100",
-      "montant": 15555.223873700797,
+      "detail": "21,329.94 points × valeur de service 0.6027 € × coefficient de majoration 1.2325",
+      "montant": 15844.473904410113,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -21884,7 +21884,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 23551.189062289763,
+    "pension_annuelle": 23482.71329293454,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -21900,8 +21900,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "17,490.62 points × valeur de service 0.522 € × coefficient de majoration 1.0900",
-      "montant": 9951.811812958354,
+      "detail": "17,490.62 points × valeur de service 0.522 € × coefficient de majoration 1.0825",
+      "montant": 9883.336043603134,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -22064,7 +22064,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 59374.11474686375,
+    "pension_annuelle": 55327.21506127795,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -22080,8 +22080,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "23,865.17 points × valeur de service 0.6399 € × coefficient de majoration 1.7000",
-      "montant": 25961.243266022124,
+      "detail": "23,865.17 points × valeur de service 0.6399 € × coefficient de majoration 1.4350",
+      "montant": 21914.343580436325,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -22738,7 +22738,7 @@
      },
      {
       "detail": "19,761.59 points × valeur de service 0.5672 € × coefficient de majoration 1.2025",
-      "montant": 13478.550486952316,
+      "montant": 13478.550486952317,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -22970,7 +22970,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 18961.679567667245,
+    "pension_annuelle": 18801.888246319162,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -22986,8 +22986,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "18,662.85 points × valeur de service 0.5708 € × coefficient de majoration 1.0450",
-      "montant": 11132.128720582967,
+      "detail": "18,662.85 points × valeur de service 0.5708 € × coefficient de majoration 1.0300",
+      "montant": 10972.337399234886,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -23747,7 +23747,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 76517.30579706459,
+    "pension_annuelle": 75644.9707890646,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -23757,8 +23757,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "22,032.00 points × valeur de service 0.6599 € × coefficient de majoration 1.2625",
-      "montant": 18355.38246,
+      "detail": "22,032.00 points × valeur de service 0.6599 € × coefficient de majoration 1.2025",
+      "montant": 17483.047452000003,
       "regime": "cnavpl",
       "type_calcul": "points"
      }
@@ -24052,12 +24052,12 @@
     ],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31388.480962945097,
+    "pension_annuelle": 31248.151199325686,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "20,899.57 points × valeur de service 0.671448 € × coefficient de majoration 1.2000",
-      "montant": 16839.5716343293,
+      "detail": "20,899.57 points × valeur de service 0.671448 € × coefficient de majoration 1.1900",
+      "montant": 16699.241870709888,
       "regime": "cnavpl",
       "type_calcul": "points"
      },
@@ -24299,7 +24299,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 18331.03127829324,
+    "pension_annuelle": 18174.523922030305,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -24315,8 +24315,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "18,395.32 points × valeur de service 0.5672 € × coefficient de majoration 1.0525",
-      "montant": 10981.59949778273,
+      "detail": "18,395.32 points × valeur de service 0.5672 € × coefficient de majoration 1.0375",
+      "montant": 10825.092141519794,
       "regime": "cnavpl",
       "type_calcul": "points"
      }

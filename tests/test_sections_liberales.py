@@ -1868,3 +1868,46 @@ def test_la_cipav_sert_les_points_acquis_a_la_valeur_de_service(simulateur):
     resultat = simulateur.scenario_actuel.calculer(carriere)
     pension = {p.regime: p for p in resultat.pensions_par_regime}["cipav_complementaire"]
     assert pension.montant == pytest.approx((40 + 40 + 36) * 2.89, abs=0.01), pension.detail
+
+
+#: Né en décembre 1960, libéral depuis ses vingt ans : l'âge légal de sa
+#: génération, 62 ans, en décembre 2022, la durée requise atteinte la même
+#: année ; la surcote court du 1er janvier 2023. (âge de départ, coefficient
+#: posé à la main depuis R. 643-8, « 0,75 % par trimestre accompli avant le
+#: 1er septembre 2023 et […] 1,25 % par trimestre accompli à compter de la même
+#: date », LEGIARTI000047985850.)
+SURCOTE_DES_LIBERAUX_EN_2023 = {
+    # Pension du 1er janvier 2023 : aucun trimestre accompli après l'âge.
+    62.0: None,
+    # Du 1er octobre 2023 : trois trimestres, de janvier à septembre.
+    62.75: "1.0225",
+    # Du 1er janvier 2024 : les trois premiers trimestres de 2023 à 0,75 %, le
+    # quatrième à 1,25 %, l'exemple de la CARMF (« Soit pour 2023 : 3 x 0,75 %
+    # + 1 x 1,25 % = 3,50 % », diapositive 6, septembre 2023).
+    63.0: "1.0350",
+    # Du 1er janvier 2025 : huit trimestres, 3 × 0,75 % + 5 × 1,25 %.
+    64.0: "1.0850",
+}
+
+
+@pytest.mark.parametrize("liquidation,coefficient", sorted(SURCOTE_DES_LIBERAUX_EN_2023.items()))
+def test_la_surcote_des_liberaux_garde_0_75_aux_trimestres_d_avant_septembre_2023(
+        simulateur, liquidation, coefficient):
+    """La base des libéraux servait 1,25 % à tous les trimestres de surcote
+    des pensions de 2024, et comptait l'année entière des 62 ans : 1,1125 au
+    lieu de 1,085 pour huit trimestres de 2023 et 2024. Le trimestre de
+    juillet à septembre 2023, que la date du texte coupe, est à 0,75 % : c'est
+    le compte de la CARMF et du guide 2024 de la CNAVPL (« 1,25% par
+    trimestre civil supplémentaire travaillé à partir du 1er septembre
+    2023 »), aucune circulaire ne le disant en toutes lettres."""
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1960, mois_naissance=12, sexe="H",
+        metiers=[Metier(affiliation="profession_liberale", age_debut=20.0,
+                        niveau_salaire=1.5)],
+        age_liquidation=liquidation, macro=simulateur.macro)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    base = {p.regime: p for p in resultat.pensions_par_regime}["cnavpl"]
+    if coefficient is None:
+        assert "majoration" not in base.detail, base.detail
+    else:
+        assert base.detail.endswith(f"coefficient de majoration {coefficient}"), base.detail

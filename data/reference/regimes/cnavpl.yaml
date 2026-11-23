@@ -107,7 +107,10 @@ liquidation:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     surcote_points: surcote_regime_general
+    surcote_bareme: cnavpl_surcote
     avantages_non_contributifs: [minimum_vieillesse, reversion]
+    textes:
+      surcote_bareme: {id: LEGIARTI000006751834, depuis: "2004-01-01"}
     notes: >-
       Réforme du 21 août 2003 : régime de base unique en points,
       proportionnel au revenu, sur DEUX TRANCHES — d'où deux fiches par
@@ -141,7 +144,8 @@ liquidation:
       branche en points du moteur ne lisait pas ce champ, et la fiche
       l'écrivait pour rien ; `surcote_points: regime_general` la fait
       compter comme la branche en annuités, trimestres cotisés au-delà
-      de l'âge légal et de la durée requise.
+      de l'âge légal et de la durée requise, et `surcote_bareme:
+      cnavpl` les date trimestre civil par trimestre civil.
   - du: 2010-04-01
     au: 2023-09-01
     age_ouverture: 62
@@ -156,6 +160,7 @@ liquidation:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     surcote_points: surcote_regime_general
+    surcote_bareme: cnavpl_surcote
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion]
     notes: >-
       AU 1er AVRIL 2010, et non au 1er janvier : L. 643-1-1, créé par
@@ -194,7 +199,8 @@ liquidation:
       branche en points du moteur ne lisait pas ce champ, et la fiche
       l'écrivait pour rien ; `surcote_points: regime_general` la fait
       compter comme la branche en annuités, trimestres cotisés au-delà
-      de l'âge légal et de la durée requise.
+      de l'âge légal et de la durée requise, et `surcote_bareme:
+      cnavpl` les date trimestre civil par trimestre civil.
       LES TRIMESTRES POUR ENFANTS, DEPUIS 2010. L. 643-1-1, créé par la loi
       de financement pour 2010 « pour les pensions de retraite prenant effet
       à compter du 1er avril 2010 » (LEGIARTI000021537910), rend aux
@@ -223,6 +229,7 @@ liquidation:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     surcote_points: surcote_regime_general
+    surcote_bareme: cnavpl_surcote
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion, majoration_enfants, surcote_parentale]
     notes: >-
       DU 1er SEPTEMBRE AU 31 DÉCEMBRE 2023. La loi n° 2023-270 vaut pour
@@ -234,8 +241,9 @@ liquidation:
       (LEGIARTI000047985850) ne donne 1,25 % qu'au « trimestre accompli à
       compter » du 1er septembre 2023, et une pension de l'automne 2023
       n'en compte qu'un au plus, celui de juillet à septembre si
-      « accompli » veut dire achevé ; il est servi à 0,75 %, approximation
-      déclarée, de 0,5 % de la pension au plus. Hors de la Cipav, R. 643-6
+      « accompli » veut dire achevé ; il est servi à 0,75 %, comme la
+      CARMF et le guide 2024 de la CNAVPL le comptent (fiche
+      `cnavpl_surcote`). Hors de la Cipav, R. 643-6
       (LEGIARTI000047265890) fixe l'effet « au premier jour du trimestre
       civil qui suit la demande » : la première pension possible est du
       1er octobre, ce que le moteur, qui liquide au mois, ne dit pas. Le
@@ -253,6 +261,7 @@ liquidation:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_regime_general
+    surcote_bareme: cnavpl_surcote
     avantages_non_contributifs: [minimum_vieillesse, mda, reversion, majoration_enfants, surcote_parentale]
     notes: >-
       De 2015 à 2024 : première tranche de 0 à 1 plafond, 525 points au
@@ -262,11 +271,12 @@ liquidation:
       LA SURCOTE PASSE À 1,25 % : R. 643-8 dans sa rédaction du décret
       n° 2023-799 du 21 août 2023 (LEGIARTI000047985850), « 0,75 % par
       trimestre accompli avant le 1er septembre 2023 et à 1,25 % par
-      trimestre accompli à compter de la même date ». La fiche
-      l'applique aux liquidations à partir de 2024, première année
-      pleine ; les trimestres d'avant septembre 2023 y sont donc servis
-      à 1,25 % au lieu de 0,75 %, même approximation que la fiche du
-      régime général en 2009.
+      trimestre accompli à compter de la même date ». Depuis le
+      23 novembre 2026, `surcote_bareme: cnavpl` donne à chaque trimestre
+      civil le taux de sa date (fiche `cnavpl_surcote`) : les trimestres
+      d'avant septembre 2023, que la fiche servait à 1,25 %, gardent
+      0,75 %, celui de juillet à septembre 2023 compris, à la façon de
+      la CARMF et du guide 2024 de la CNAVPL.
       TROIS ENFANTS, DEPUIS 2023. L. 643-1-1, créé par l'article 21 de la
       loi n° 2023-270, étend aux professions libérales L. 351-12, la
       majoration de 10 % pour trois enfants, pour les pensions prenant
@@ -515,11 +525,12 @@ cotisation:
       LA SURCOTE PASSE À 1,25 % : R. 643-8 dans sa rédaction du décret
       n° 2023-799 du 21 août 2023 (LEGIARTI000047985850), « 0,75 % par
       trimestre accompli avant le 1er septembre 2023 et à 1,25 % par
-      trimestre accompli à compter de la même date ». La fiche
-      l'applique aux liquidations à partir de 2024, première année
-      pleine ; les trimestres d'avant septembre 2023 y sont donc servis
-      à 1,25 % au lieu de 0,75 %, même approximation que la fiche du
-      régime général en 2009.
+      trimestre accompli à compter de la même date ». Depuis le
+      23 novembre 2026, `surcote_bareme: cnavpl` donne à chaque trimestre
+      civil le taux de sa date (fiche `cnavpl_surcote`) : les trimestres
+      d'avant septembre 2023, que la fiche servait à 1,25 %, gardent
+      0,75 %, celui de juillet à septembre 2023 compris, à la façon de
+      la CARMF et du guide 2024 de la CNAVPL.
   - du: 2015-01-01
     au: 2024-01-01
     tranche: 2
@@ -554,8 +565,9 @@ cotisation:
       LA SURCOTE PASSE À 1,25 % : R. 643-8 dans sa rédaction du décret
       n° 2023-799 du 21 août 2023 (LEGIARTI000047985850), « 0,75 % par
       trimestre accompli avant le 1er septembre 2023 et à 1,25 % par
-      trimestre accompli à compter de la même date ». La fiche
-      l'applique aux liquidations à partir de 2024, première année
-      pleine ; les trimestres d'avant septembre 2023 y sont donc servis
-      à 1,25 % au lieu de 0,75 %, même approximation que la fiche du
-      régime général en 2009.
+      trimestre accompli à compter de la même date ». Depuis le
+      23 novembre 2026, `surcote_bareme: cnavpl` donne à chaque trimestre
+      civil le taux de sa date (fiche `cnavpl_surcote`) : les trimestres
+      d'avant septembre 2023, que la fiche servait à 1,25 %, gardent
+      0,75 %, celui de juillet à septembre 2023 compris, à la façon de
+      la CARMF et du guide 2024 de la CNAVPL.

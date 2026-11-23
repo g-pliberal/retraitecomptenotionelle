@@ -1,0 +1,125 @@
+schema_version: 1
+id: cnavpl_surcote
+intitule: >-
+  Régime de base des professions libérales : la pension est majorée de 0,75 % par
+  trimestre cotisé accompli depuis le 1er janvier 2004 et avant le 1er septembre 2023,
+  de 1,25 % par trimestre accompli depuis, après l'âge de L. 351-1 et au-delà de la
+  durée requise ; chaque trimestre civil au taux de sa date.
+regimes: [cnavpl]
+etat: conforme
+effet: >-
+  La fiche servait le taux de l'année du départ à tous les trimestres de surcote,
+  1,25 % depuis 2024, et comptait l'année entière de l'âge légal. Un libéral né en
+  décembre 1960, parti le 1er janvier 2025 avec huit trimestres de surcote de 2023 et
+  2024, recevait 11,25 % au lieu de 3 × 0,75 % + 5 × 1,25 % = 8,5 %. Depuis le
+  23 novembre 2026, `surcote_bareme: cnavpl`, trois lignes de
+  `legislation/surcote_baremes.csv` et le compte en trimestres civils de la branche
+  en annuités ; tenu par tests/test_sections_liberales.py.
+sources:
+  lu_le: 2026-11-23
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Le trimestre civil de juillet à septembre 2023, que la date du 1er septembre coupe,
+    est servi à 0,75 % (fiabilité moyenne au barème, non remontée au résultat) : R. 643-8 ne le dit pas ; l'exemple de la
+    CARMF et le guide 2024 de la CNAVPL le comptent ainsi. Une instruction de la CNAVPL
+    sur le décret n° 2023-799, ou une notification de pension de 2024, trancherait.
+  - >-
+    D. 643-3 compte les trimestres à l'année, sans les placer dans l'année : un libéral
+    qui en valide moins de quatre voit les siens placés aux premiers trimestres civils,
+    comme au régime général.
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 643-8 CSS, versions du 1er janvier 2004 (LEGIARTI000006751834) et du
+      1er septembre 2023 (LEGIARTI000047985850) : « 0,75 % par trimestre accompli avant
+      le 1er septembre 2023 et à 1,25 % par trimestre accompli à compter de la même
+      date » ; décret n° 2023-799, article 7, II (JORFARTI000047984368), pensions
+      prenant effet depuis le 1er septembre 2023. Index LEGI à jour au 23 novembre 2026.
+    date: 2026-11-23
+  - type: autre
+    reference: >-
+      CARMF, « La réforme des retraites », diapositives de septembre 2023, diapositive
+      6 : « Soit pour 2023 : 3 x 0,75 % + 1 x 1,25 % = 3,50 % ».
+    url: https://www.carmf.fr/focus/slides/2023/reforme-retraite-2023.pdf
+    date: 2026-11-23
+  - type: autre
+    reference: >-
+      CNAVPL, guide de l'assurance vieillesse des professions libérales, édition 2024,
+      page 31 : 0,75 % « jusqu'au 31 août 2023 et 1,25% par trimestre civil
+      supplémentaire travaillé à partir du 1er septembre 2023 ».
+    url: https://www.cnavpl.fr/wp-content/uploads/2024/03/Guide-2024.pdf
+    date: 2026-11-23
+versions:
+- id: loi_de_2003
+  statut: lue
+  textes:
+  - id: LEGIARTI000006751834
+    article: R. 643-8 CSS, rédaction du décret n° 2004-460
+    en_vigueur: 2004-01-01
+    lu_le: 2026-11-23
+    citation: >-
+      « au titre des périodes d'activité ayant donné lieu à cotisations à la charge de
+      l'assuré accomplies à compter du 1er janvier 2004 après l'âge prévu au premier
+      alinéa de l'article L. 351-1 et au-delà de la limite mentionnée au deuxième alinéa
+      du même article. Cette majoration est égale à 0,75 % par trimestre. »
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2023-09-01]
+  contenu:
+    droit: >-
+      0,75 % par trimestre civil cotisé accompli depuis le 1er janvier 2004 après l'âge
+      légal et au-delà de la durée requise ; lignes `cnavpl` de
+      `legislation/surcote_baremes.csv`.
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 23 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne porte la base des libéraux avec
+    une surcote
+- id: decret_de_2023
+  statut: lue
+  textes:
+  - id: LEGIARTI000047985850
+    article: R. 643-8 CSS, rédaction du décret n° 2023-799
+    en_vigueur: 2023-09-01
+    lu_le: 2026-11-23
+    citation: >-
+      « Cette majoration est égale à 0,75 % par trimestre accompli avant le 1er septembre
+      2023 et à 1,25 % par trimestre accompli à compter de la même date. »
+  - id: JORFARTI000047984368
+    article: décret n° 2023-799 du 21 août 2023, article 7, II
+    en_vigueur: 2023-09-01
+    lu_le: 2026-11-23
+    citation: >-
+      « Les dispositions des articles 2 à 6 sont applicables aux pensions prenant effet
+      à compter du 1er septembre 2023. »
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      0,75 % par trimestre civil accompli avant le 1er septembre 2023, celui de juillet
+      à septembre 2023 compris (le texte ne dit rien du trimestre que la date coupe ; la
+      CARMF et le guide 2024 de la CNAVPL le comptent ainsi), 1,25 % depuis celui
+      d'octobre 2023 ; lignes `cnavpl` de `legislation/surcote_baremes.csv`.
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 23 novembre 2026 : aucun exemple officiel au dépôt, ni circulaire de la CNAVPL.
+    L'exemple chiffré d'une section, la CARMF (diapositives de septembre 2023, « Soit
+    pour 2023 : 3 x 0,75 % + 1 x 1,25 % = 3,50 % »), sans carrière ni date de pension,
+    est rejoué par tests/test_sections_liberales.py
+reformes:
+- cnavpl_surcote_2023
+code:
+  interrupteurs:
+    surcote_bareme: cnavpl
+  moteur: >-
+    `surcote_bareme: cnavpl` : la branche en points (`surcote_points: regime_general`)
+    date chaque trimestre civil de surcote depuis celui qui suit l'âge légal ou le mois
+    qui suit la durée requise, et lui donne le taux de sa date : 0,75 % jusqu'au
+    trimestre de juillet 2023 compris, 1,25 % depuis celui d'octobre 2023 (R. 643-8).
+  javascript: >-
+    moteur/js/droit/liquider.js : surcotePoints, coefficientSurcoteDatee ;
+    moteur/js/regimes.js : SurcoteBaremes
+  parametres: >-
+    regimes/cnavpl.yaml : surcote_par_trimestre, surcote_points, surcote_bareme ;
+    legislation/surcote_baremes.csv : cnavpl
+  tests: [tests/test_sections_liberales.py, tests/temoins/simulations.json]

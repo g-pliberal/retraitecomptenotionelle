@@ -43,8 +43,10 @@ sources:
     rédactions suivantes. Pratique de la caisse à trouver (pensions de 2004 à 2006).
   - >-
     La CNAVPL (R. 643-8) et la MSA des non-salariés (D. 732-42 du code rural) ont leur
-    propre texte, que les versions ne couvrent pas : leur surcote reste le taux plat de
-    la période (`surcote_points: regime_general`). D. 732-42, dans sa rédaction du
+    propre texte, que les versions ne couvrent pas. La CNAVPL date ses trimestres par
+    son barème (fiche `cnavpl_surcote`, depuis le 23 novembre 2026) ; la MSA des
+    non-salariés garde le taux plat de la période (`surcote_points: regime_general`),
+    sur les trimestres cotisés des années de l'âge légal et suivantes. D. 732-42, dans sa rédaction du
     décret n° 2006-1611, article 2, compte le taux de 1 % « au-delà de cent
     soixante-quatre trimestres » pour les nés avant 1949 partis avant 2009.
   lectures:

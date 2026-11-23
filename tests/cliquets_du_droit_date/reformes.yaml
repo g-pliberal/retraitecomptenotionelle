@@ -18,7 +18,7 @@
 # guider la lecture, ce que la fiche a : aucune version (la migration de la
 # note 0009 la découpera), ou les débuts de ses versions la même année.
 
-cliquet_a_faire: 87
+cliquet_a_faire: 86
 
 couples:
   "age_ouverture_ieg_actifs / lfss_2026_suspension": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
@@ -89,7 +89,6 @@ couples:
   "regimes_speciaux_et_non_salaries / cavec_report_2026": {classe: a_faire, commentaire: "fiche sans version"}
   "regimes_speciaux_et_non_salaries / cese_2023": {classe: a_faire, commentaire: "fiche sans version"}
   "regimes_speciaux_et_non_salaries / clr_2023": {classe: a_faire, commentaire: "fiche sans version"}
-  "regimes_speciaux_et_non_salaries / cnavpl_surcote_2023": {classe: a_faire, commentaire: "fiche sans version"}
   "regimes_speciaux_et_non_salaries / cprn_report_2024": {classe: a_faire, commentaire: "fiche sans version"}
   "regimes_speciaux_et_non_salaries / mayotte_2024": {classe: a_faire, commentaire: "fiche sans version"}
   "regimes_speciaux_et_non_salaries / mayotte_2026": {classe: a_faire, commentaire: "fiche sans version"}
