@@ -1287,7 +1287,7 @@
    "<th class=\"\" scope=\"row\">déclaré, pas encore calculé</th>",
    "<td class=\"nombre\">4</td>",
    "<td class=\"texte\">",
-   "Une fiche de régime les déclare, et le scénario 1 ne les sert pas à tous. La réversion est de ceux-là : 975 périodes du catalogue l'annoncent, et le modèle ne la liquide que pour le conjoint qu'on lui déclare, pas pour tous les ménages. Son coût est donc LU dans l'enquête de la DREES auprès des caisses, et c'est le chiffre le plus sûr de cette page.",
+   "Une fiche de régime les déclare, et le scénario 1 ne les sert pas à tous. La réversion est de ceux-là : 78 régimes sur 80 l'annoncent, et le modèle ne la liquide que pour le conjoint qu'on lui déclare, pas pour tous les ménages. Son coût est donc LU dans l'enquête de la DREES auprès des caisses, et c'est le chiffre le plus sûr de cette page.",
    "</td>",
    "</tr>",
    "<tr><th class=\"\" scope=\"row\">pas encore calculé</th><td class=\"nombre\">14</td><td class=\"texte\">Ni déclarés ni servis : les bonifications de service, l'allocation veuvage. Un écart au droit positif, que le dépôt nomme plutôt que de l'estimer.</td></tr>",
