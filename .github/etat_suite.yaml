@@ -1,15 +1,17 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: ba74a9ba451cf27a6fbb8fe329db2c9c738eeea2
-date: 2026-11-23T00:46:52Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/45086623157
+etat: rouge
+sources: 5d8b5f095962fa644c891f55dc551f5b93228d84
+date: 2026-11-23T01:04:25Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/45089387283
+echecs:
+  - "FAILED tests/test_ecrans.py::test_aucune_page_ne_se_decale_en_se_chargeant - AssertionError: 1 chargements décalent :"
 presomptions: vert
 durees:
-  fabrique: 720
-  suite: 768
-  tranche_1: 423
-  tranche_2: 553
-  tranche_3: 768
-  tranche_4: 332
-  garde: 160
+  fabrique: 368
+  suite: 546
+  tranche_1: 352
+  tranche_2: 309
+  tranche_3: 407
+  tranche_4: 546
+  garde: 186
