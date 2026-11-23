@@ -137,6 +137,7 @@ import { dirname, join } from "node:path";
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 
+import { enVigueurAuJour, premierJanvier } from "../../moteur/js/axes.js";
 import { DateMois, enMois, origineDesAges } from "../../moteur/js/calendrier.js";
 import {
   AnneeCarriere, Carriere, ancrageSalaireMoyen, prolongerReleve, salaireMoyenAnnuel,
@@ -1109,11 +1110,12 @@ const FONCTIONS_DU_DROIT = {
     moteur.calculer(carriere, ...drapeaux)),
   // L'étage d'un régime : la base, le régime intégré, la complémentaire…
   "scenario_actuel.catalogue.etage": (moteur, code) => moteur.catalogue.obtenir(code).etage,
-  // Ce que les confrontations lisent des périodes d'un régime pour rejouer
-  // ses cotisations (`periodes_des_donnees` de `pont.py`).
-  "scenario_actuel.catalogue.periodes": (moteur, code) => moteur.catalogue.obtenir(code).periodes
-    .map(({ debut, fin, assiette, taux_cotisation_retraite, part_salariale }) => ({
-      debut, fin, assiette, taux_cotisation_retraite, part_salariale,
+  // Ce que les confrontations lisent des lignes de cotisation d'un régime
+  // pour rejouer ses cotisations (`periodes_des_donnees` de `pont.py`) : une
+  // par période de la vue ancienne, pendant le gel, sous ses années.
+  "scenario_actuel.catalogue.periodes": (moteur, code) => moteur.catalogue.obtenir(code)
+    .cotisation.map(({ du, au, assiette, taux_cotisation_retraite, part_salariale }) => ({
+      debut: du, fin: au, assiette, taux_cotisation_retraite, part_salariale,
     })),
   "scenario_actuel.macro.plafond_securite_sociale":
     (moteur, annee) => moteur.macro.plafond_securite_sociale.valeur(annee),
@@ -1190,7 +1192,7 @@ const FONCTIONS_DES_SONDES = {
   // celle qui s'applique à l'ensemble des rémunérations, cotisation
   // déplafonnée comprise.
   "fusion.taux_total.tranche_1": (simulateur, code, annee) => {
-    const actives = simulateur.catalogue.obtenir(code).periodesActives(annee);
+    const actives = simulateur.catalogue.obtenir(code).deLAnnee(annee);
     if (actives.length === 0) {
       throw new Error(`« ${code} » n'a pas de période active en ${annee}`);
     }
@@ -1549,7 +1551,7 @@ function argumentDuDroit(simulateur, carrieres, argument) {
   }
   if (Object.hasOwn(argument, "periode")) {
     const [code, annee] = argument.periode;
-    return simulateur.catalogue.obtenir(code).periode(annee);
+    return parametresDeLaVue(simulateur.catalogue.obtenir(code), annee);
   }
   if (Object.hasOwn(argument, "carriere")) {
     return carrieres[argument.carriere];
@@ -2106,14 +2108,13 @@ const ENTREES_DE_LA_FACADE = {
       ? null : new DateMois(liquideeLe.annee, liquideeLe.mois))),
   "carriere.avec_lignes": (carriere, porteuse) => carriereEnDonnees(
     carriere.avecLignes(porteuse.lignes)),
-  // La période qui liquide la pension, par son rang parmi celles du régime :
-  // la première qui liquide le jour dont le moteur lit les paramètres. Le
-  // Python lit encore des périodes, jusqu'au retrait de la vue ancienne.
+  // Les paramètres qui liquident la pension, ceux que le moteur lit à la
+  // date (`periodeDeLiquidation` de `droit/commun.js`), par les rangs de
+  // leurs quatre lignes (`rangsDesLignes`), dont le Python les assemble.
   "commun.periode_de_liquidation": (simulateur, code, annee, mois) => {
     const regime = simulateur.catalogue.obtenir(code);
-    const jour = commun.jourDeLiquidation(regime, new DateMois(annee, mois));
-    const rang = regime.periodes.findIndex((periode) => periode.liquide(jour));
-    return rang < 0 ? null : rang;
+    const parametres = commun.periodeDeLiquidation(regime, new DateMois(annee, mois));
+    return parametres === null ? null : rangsDesLignes(regime, parametres);
   },
   // « Faire vivre », sur le scénario 1 que le portage refait de la carrière.
   "revalorisation.faire_vivre": (simulateur, carriere, annee) => telQuel(faireVivre(
@@ -2281,16 +2282,55 @@ LECTURES.facade = facade;
 // Les tables du moteur, par la façade : un bloc à part (action 161).
 
 /**
+ * Les paramètres que la période de la vue ancienne couvrant `annee` portait,
+ * assemblés des blocs sans la vue : la première ligne de cotisation de
+ * l'année, avec la liquidation, la structure et la ligne servie en vigueur au
+ * premier jour de sa date d'effet (`periodesDesAxes` d'`axes.js`). C'est ce
+ * que l'argument `Periode` du droit a toujours nommé, que le témoin du droit
+ * tient ; la lecture à l'année (`deLAnnee`) prend la liquidation du
+ * 1er janvier, qui en diffère en quelques années (le régime général en 1983).
+ * Elle part à l'étape 5, avec les dates d'effet de la vue. `null` quand
+ * aucune ligne ne cotise cette année-là.
+ */
+function parametresDeLaVue(regime, annee) {
+  const rang = regime.cotisation.findIndex((ligne) => (
+    ligne.du <= annee && (ligne.au === null || annee <= ligne.au)));
+  if (rang < 0) return null;
+  const cotisation = regime.cotisation[rang];
+  const jour = regime.datesDEffet[String(rang)]?.[0] ?? premierJanvier(cotisation.du);
+  return regime._assembler(enVigueurAuJour(regime.liquidation, jour),
+    enVigueurAuJour(regime.structure, jour), enVigueurAuJour(regime.servi, jour), cotisation);
+}
+
+/**
+ * Les blocs d'un régime dans l'ordre où le pont désigne des paramètres
+ * assemblés par les rangs de leurs lignes : celui de `Regime._assembler`.
+ */
+const BLOCS_DES_RANGS = ["liquidation", "structure", "servi", "cotisation"];
+
+/**
+ * Les rangs, dans leurs blocs, des quatre lignes dont ces paramètres sont
+ * assemblés (`Regime._assembler`), `null` pour une ligne absente : le Python,
+ * dont les blocs ont les mêmes lignes, les assemble de même
+ * (`Regime.par_rangs` de `donnees/regimes.py`).
+ */
+function rangsDesLignes(regime, parametres) {
+  return parametres.lignes.map((ligne, rang) => (
+    ligne === null ? null : regime[BLOCS_DES_RANGS[rang]].indexOf(ligne)));
+}
+
+/**
  * Un argument d'une méthode de table ou d'une règle du droit que la façade
  * sert (`_argument_de_la_facade` de `pont.py`). Six passent par leur
  * marque : les séries du simulateur, `{"@": "series"}` ; son régime unique,
  * `{"@": "regime_fusionne"}`, à un constructeur seulement ; un régime du
- * catalogue, `{"@": "regime", code}` ; une période du
- * catalogue, `{"@": "periode", regime, rang, debut}`, celle de ce rang parmi
- * les périodes du régime, dont l'année de début est vérifiée ; une date au
+ * catalogue, `{"@": "regime", code}` ; des paramètres d'un régime du
+ * catalogue, `{"@": "parametres", regime, liquidation, structure, servi,
+ * cotisation}`, assemblés des lignes de ces rangs dans ses blocs
+ * (`BLOCS_DES_RANGS`) ; une date au
  * mois, `{"@": "date_mois", annee, mois}`, une vraie `DateMois` ; une table,
  * `{"@": "table", entrees}`, une `Map` de ces entrées, leurs clés sous leur
- * type (`TABLES_DES_REGLES` de `pont.py`). Une période
+ * type (`TABLES_DES_REGLES` de `pont.py`). Une ligne
  * que le catalogue ne tient pas arrête la demande, au lieu de passer pour un
  * refus du moteur.
  */
@@ -2316,12 +2356,14 @@ function argumentDeLaFacade(porteur, valeur) {
       porteur instanceof Simulateur ? porteur.scenarioActuel : porteur, valeur.neutralisations);
   }
   if (marque === "regime") return catalogue.obtenir(valeur.code);
-  if (marque === "periode") {
-    const periode = catalogue.obtenir(valeur.regime).periodes[valeur.rang];
-    if (periode === undefined || periode.debut !== valeur.debut) {
-      throw new TypeError(`période que le catalogue ne tient pas : ${JSON.stringify(valeur)}`);
+  if (marque === "parametres") {
+    const regime = catalogue.obtenir(valeur.regime);
+    const lignes = BLOCS_DES_RANGS.map((bloc) => (
+      valeur[bloc] === null ? null : regime[bloc][valeur[bloc]]));
+    if (lignes.includes(undefined)) {
+      throw new TypeError(`ligne que le catalogue ne tient pas : ${JSON.stringify(valeur)}`);
     }
-    return periode;
+    return regime._assembler(...lignes);
   }
   return valeur;
 }

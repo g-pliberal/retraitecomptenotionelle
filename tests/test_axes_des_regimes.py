@@ -273,3 +273,54 @@ def test_un_assemblage_sans_liquidation_ou_sans_cotisation_est_refuse(catalogue)
         replace(de_2007, date_effet=("2008-01-01", None)),))
     with pytest.raises(ValueError, match="aucune ligne de liquidation"):
         sans_liquidation.de_l_annee(2007)
+
+
+def _en_donnees(valeur):
+    """Une valeur telle que le paquet l'écrit en JSON : tuples en listes."""
+    import json
+    return json.loads(json.dumps(valeur, sort_keys=True, default=str))
+
+
+def test_les_blocs_du_chargeur_sont_ceux_du_paquet(catalogue):
+    """Le pont désigne des paramètres par les rangs de leurs quatre lignes, que
+    le Python et le portage lisent chacun dans ses blocs : ils doivent avoir les
+    mêmes lignes, dans le même ordre, aux mêmes bornes, régime par régime
+    (le paquet tait un champ à sa valeur par défaut)."""
+    import json
+    from retraite_notionnelle.config import RACINE_PROJET
+    paquet = json.loads((RACINE_PROJET / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    fiches = {fiche["code"]: fiche for fiche in paquet["regimes"]}
+    assert set(fiches) == {regime.code for regime in catalogue}
+    for regime in catalogue:
+        for bloc in ("structure", "liquidation", "cotisation", "servi"):
+            lignes = _en_donnees(getattr(regime, bloc))
+            ecrites = fiches[regime.code][bloc]
+            assert [(l["du"], l["au"]) for l in lignes] == [(l["du"], l["au"]) for l in ecrites], (
+                regime.code, bloc)
+            # Le paquet tait un champ à sa valeur par défaut, que le moteur pose,
+            # et écrit à sa façon un champ composé : les champs simples suffisent
+            # à reconnaître les lignes.
+            for ligne, ecrite in zip(lignes, ecrites):
+                simples = {champ: valeur for champ, valeur in ecrite.items()
+                           if valeur is None or type(valeur) in (str, int, float, bool)}
+                assert {champ: ligne.get(champ) for champ in simples} == simples, (
+                    regime.code, bloc)
+
+
+def test_des_parametres_se_designent_par_les_rangs_de_leurs_quatre_lignes(catalogue):
+    """Une période de la vue se refait des lignes en vigueur au premier jour de
+    sa date d'effet, et de sa ligne de cotisation ; des paramètres lus à la
+    date, des lignes dont on les a assemblés. Les rangs les redonnent."""
+    for regime in catalogue:
+        for periode in regime.periodes:
+            rangs = regime.rangs(periode)
+            assert len(rangs) == 4 and rangs[3] == regime.periodes.index(periode)
+            assert regime.par_rangs(rangs) == periode, (regime.code, periode.debut)
+        for annee in range(1900, 2071, 7):
+            lus = regime.a_la_date(f"{annee:04d}-07-01")
+            if lus is not None:
+                assert regime.par_rangs(regime.rangs(lus)) is lus, (regime.code, annee)
+    banque = catalogue["banque_de_france"]
+    avant, apres = banque.a_la_date("2007-03-31"), banque.a_la_date("2007-04-01")
+    assert banque.rangs(avant)[0] == 0 and banque.rangs(apres)[0] == 1
+    assert banque.rangs(avant)[3] == banque.rangs(apres)[3]

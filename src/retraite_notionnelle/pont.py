@@ -1242,9 +1242,10 @@ class ContexteDuMoteur:
 
 @dataclasses.dataclass(frozen=True)
 class Periode:
-    """La période d'un régime à une année, ``catalogue[code].periode(annee)``,
-    en argument d'un appel du droit (:func:`droit`) : le portage y met la
-    sienne."""
+    """Les paramètres d'un régime à une année, en argument d'un appel du droit
+    (:func:`droit`) : le portage y met ceux que portait la période de la vue
+    ancienne couvrant l'année, qu'il assemble de ses blocs
+    (``parametresDeLaVue`` de ``pont.mjs``) ; jusqu'à l'étape 5, où la vue part."""
 
     code: str
     annee: int
@@ -2721,8 +2722,8 @@ LECTURES_DE_LA_FACADE = {
     "droit.etapes": etape_de_la_liquidation_des_donnees,
     "revalorisation.faire_vivre": lambda lu: _contenu_lu("revalorisation", lu, "Revalorisee"),
     "revalorisation.actuel_aujourd_hui": lambda lu: actuel_aujourd_hui_des_donnees(lu),
-    "commun.periode_de_liquidation": lambda rang: lu_strictement(
-        int | None, rang, "periode_de_liquidation"),
+    "commun.periode_de_liquidation": lambda rangs: lu_strictement(
+        tuple[int | None, ...] | None, rangs, "periode_de_liquidation"),
     "revalorisation.majorer_les_petites_pensions": lambda lu: majorations_des_donnees(lu),
     "completer.verser_en_capital": lambda lu: {
         "fiabilite": lu_strictement(Fiabilite | None, lu["fiabilite"], "verser_en_capital"),
@@ -2962,16 +2963,20 @@ REGIME_FUSIONNE = _RegimeFusionne()
 
 
 @dataclasses.dataclass(frozen=True)
-class PeriodeDuCatalogue:
-    """Une période d'un régime du catalogue, en argument d'une méthode de
-    table : celle de ce rang parmi les périodes du régime, que le portage
-    prend dans son catalogue, et l'année où elle commence, qu'il vérifie.
-    :class:`Periode` ne nomme que la première période d'une année, quand un
-    régime en tient plusieurs à la fois — une par tranche."""
+class ParametresDuCatalogue:
+    """Des paramètres d'un régime du catalogue, en argument d'une méthode de
+    table ou d'une règle de la façade : ceux que le portage assemble des
+    lignes de ces rangs dans ses blocs (``argumentDeLaFacade`` de
+    ``pont.mjs``), qui sont celles du chargeur (``Regime.rangs`` de
+    ``donnees/regimes.py``) ; ``None`` pour une ligne absente.
+    :class:`Periode` ne nomme que la première tranche d'une année, quand un
+    régime en tient plusieurs à la fois."""
 
     regime: str
-    rang: int
-    debut: int
+    liquidation: int | None
+    structure: int | None
+    servi: int | None
+    cotisation: int | None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -2989,8 +2994,8 @@ def table_du_moteur(table: str, methode: str, type_rendu, *arguments, parametres
     scénario 1, sous les noms du Python (``"reversions"``, ``"minimum"``),
     appelée par le portage sur la sienne, sous ``parametres`` : ses arguments
     comme ceux d'un appel du droit (:func:`droit`) — une carrière, une valeur
-    —, :data:`SERIES`, ou une période du catalogue
-    (:class:`PeriodeDuCatalogue`). Ce qu'elle
+    —, :data:`SERIES`, ou des paramètres du catalogue
+    (:class:`ParametresDuCatalogue`). Ce qu'elle
     rend revient sous ``type_rendu``, que la méthode du jumeau annonce, lu
     strictement. Une méthode que :data:`TABLES_DE_LA_FACADE` ne déclare pas est
     refusée avant node ; ce que le portage refuse lève l'erreur que le Python
@@ -3105,8 +3110,8 @@ def _argument_de_la_facade(argument, carrieres: list) -> dict:
                            "trimestres_par_regime": list(argument.trimestres_par_regime.items())}}
     if argument is REGIME_FUSIONNE:
         return {"valeur": {"@": "regime_fusionne"}}
-    if isinstance(argument, PeriodeDuCatalogue):
-        return {"valeur": {"@": "periode", **dataclasses.asdict(argument)}}
+    if isinstance(argument, ParametresDuCatalogue):
+        return {"valeur": {"@": "parametres", **dataclasses.asdict(argument)}}
     if isinstance(argument, RegimeDuCatalogue):
         return {"valeur": {"@": "regime", "code": argument.code}}
     if isinstance(argument, DateMois):
@@ -3332,7 +3337,7 @@ def regle_du_droit(module: str, regle: str, type_rendu, *arguments, parametres=N
     noms du Python (``"ouvrir"``, ``"duree_requise"``), appelée par le portage,
     sous ``parametres`` : ses arguments dans l'ordre du jumeau, comme ceux
     d'une méthode de table (:func:`table_du_moteur`) — :data:`MOTEUR`, une
-    carrière, une période du catalogue (:class:`PeriodeDuCatalogue`), une
+    carrière, des paramètres du catalogue (:class:`ParametresDuCatalogue`), une
     ``DateMois``, une valeur. Ce qu'elle rend revient sous ``type_rendu``, que
     la règle du jumeau annonce, lu strictement. Une règle que
     :data:`REGLES_DE_LA_FACADE` ne déclare pas est refusée avant node ; ce que

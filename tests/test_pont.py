@@ -2436,3 +2436,17 @@ def test_les_scripts_ne_lisent_plus_le_salaire_moyen_au_moteur_python():
         importes = {alias.name for noeud in ast.walk(arbre)
                     if isinstance(noeud, ast.ImportFrom) for alias in noeud.names}
         assert "salaire_moyen_annuel" not in importes, nom
+
+
+def test_le_pont_ne_lit_plus_la_vue_des_periodes():
+    """Le pont désigne des paramètres par les rangs de leurs quatre lignes, et
+    lit les blocs à la date et à l'année (note de décision 0009, étape 4) :
+    plus aucune lecture de la vue des périodes, qui part à l'étape 5. Les
+    entrées gardent leur nom, que le témoin du droit tient."""
+    source = (RACINE_PROJET / "src" / "retraite_notionnelle" / "pont.mjs").read_text(
+        encoding="utf-8")
+    lectures = re.findall(
+        r'(?<!droits)\.periodes\b(?!")|\.periode\(|periodesActives|periodeALEffet', source)
+    assert lectures == []
+    assert not hasattr(pont, "PeriodeDuCatalogue")
+

@@ -1299,6 +1299,34 @@ class Regime:
             self._assembles[rangs] = assemble
         return assemble
 
+    def rangs(self, parametres: PeriodeRegime) -> tuple[int | None, ...]:
+        """Les rangs, dans leurs blocs, des quatre lignes dont ces paramètres
+        sont faits — liquidation, structure, servi, cotisation —, ``None`` pour
+        une ligne absente : par eux, le pont les désigne au portage, dont les
+        blocs ont les mêmes lignes. Des paramètres assemblés
+        (:meth:`a_la_date`, :meth:`de_l_annee`) donnent ceux de leurs lignes ;
+        une période de la vue, sa ligne de cotisation et les lignes en vigueur
+        au premier jour de sa date d'effet, dont elle est refaite
+        (``periodesDesAxes`` de ``axes.js``)."""
+        for rangs, assemble in self._assembles.items():
+            if assemble is parametres:
+                return rangs
+        rang = next((rang for rang, p in enumerate(self.periodes) if p is parametres), None)
+        if rang is None:
+            raise ValueError(f"{self.code} : paramètres qui ne sont pas de ce régime")
+        jour = parametres.effet[0]
+        return tuple(None if ligne is None else next(
+            r for r, l in enumerate(lignes) if l is ligne)
+            for ligne, lignes in ((en_vigueur_au_jour(lignes, jour), lignes) for lignes in (
+                self.liquidation, self.structure, self.servi))) + (rang,)
+
+    def par_rangs(self, rangs) -> PeriodeRegime:
+        """Les paramètres assemblés des lignes de ces rangs (:meth:`rangs`)."""
+        liquidation, structure, servi, cotisation = (
+            None if rang is None else lignes[rang] for rang, lignes in zip(rangs, (
+                self.liquidation, self.structure, self.servi, self.cotisation)))
+        return self._assembler(liquidation, structure, servi, cotisation)
+
     def a_la_date(self, jour: str) -> PeriodeRegime | None:
         """Les paramètres qui liquident une pension prenant effet ce jour
         (AAAA-MM-JJ) : la ligne de liquidation, la structure et la ligne servie

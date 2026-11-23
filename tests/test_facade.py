@@ -1616,7 +1616,8 @@ def test_les_regles_des_minima_agricoles_se_demandent_au_portage(simulateur):
     assert plans == exploitant.plans and plans.points > 0
     regime = simulateur.catalogue[exploitant.regime]
     periode = commun.periode_de_liquidation(regime, chef.date_liquidation)
-    assert periode in regime.periodes and periode.couvre(2002)
+    effet = chef.date_liquidation
+    assert periode is regime.a_la_date(f"{effet.annee:04d}-{effet.mois:02d}-01")
     assert liquider.valeur_point_fiche(moteur, periode, 2002) > 0
     parti_en_2019 = Carriere.depuis_parcours(
         annee_naissance=1955, sexe="H", jour_naissance=15,

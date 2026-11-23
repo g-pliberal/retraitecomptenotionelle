@@ -1,15 +1,15 @@
 # Le paquet porte les quatre blocs d'un régime, et non plus ses périodes
 
 **Reprise, au 22 novembre 2026.** L'étape 4 avance : le paquet porte les
-quatre blocs de chaque régime, que le moteur lit tels quels, et le chargeur
-Python les porte aussi, avec ses lectures à la date et à l'année. Aucun
-résultat n'a bougé. Les lecteurs Python d'une période passent par ces
-lectures ; seuls le pont, les tests et l'oracle lisent encore la vue des
-périodes, que le chargeur et le moteur refont des blocs. Reste, une session
-chacun : le pont, qui passe une période par son rang ; les tests qui lisent
-des périodes ; les cliquets recomptés à valeur égale ; la page Avantages.
-Par quoi commencer : le pont, dont la note dit les quatre sites. Les données
-restent gelées. L'oracle de référence est sous
+quatre blocs de chaque régime, que le moteur lit tels quels ; le chargeur
+Python les porte aussi, avec ses lectures à la date et à l'année ; le pont
+désigne des paramètres par les rangs de leurs quatre lignes. Aucun résultat
+n'a bougé. Seuls les tests et l'oracle lisent encore la vue des périodes ;
+le pont n'en garde qu'une trace, l'argument qui nomme la période d'une
+année, que le témoin du droit fige. Reste, une session chacun : les tests
+qui lisent des périodes ; les cliquets recomptés à valeur égale ; la page
+Avantages. Par quoi commencer : les tests, dont la note dit les sites. Les
+données restent gelées. L'oracle de référence est sous
 `architecture/separation-des-axes/oracle/`, dans les fichiers du projet.
 
 **La demande.** L'étape 4 de la séparation des axes, décidée le 22 novembre
@@ -112,3 +112,56 @@ transmettre des paramètres assemblés par les rangs de leurs quatre lignes :
 les blocs du chargeur ont, dans les 80 régimes, les mêmes lignes, aux mêmes
 bornes, que ceux du paquet ; un test le gardera. Viennent ensuite les tests, les
 cliquets et la page Avantages, comme au premier lot.
+
+## Le pont en blocs (troisième lot, 22 novembre 2026)
+
+**Ce qui est fait.** Le pont ne lit plus la vue des périodes du moteur
+(`tests/test_pont.py` le garde). Des paramètres d'un régime, en argument
+d'une règle ou d'une table de la façade, passent par les rangs de leurs
+quatre lignes (`pont.ParametresDuCatalogue`, marque `parametres`), que
+`Regime.rangs` relève en Python — ceux d'un assemblage lu à la date ou à
+l'année, ou, pour une période de la vue, sa ligne de cotisation et les
+lignes en vigueur au premier jour de sa date d'effet — et que le moteur
+assemble (`_assembler`). `commun.periode_de_liquidation` rend les rangs de
+ce que le moteur lit à la date (`periodeDeLiquidation`), que le Python
+assemble (`Regime.par_rangs`) : ce sont désormais les paramètres du moteur,
+et non la période de la vue qui liquide le jour, qui n'en différait que par
+des champs de cotisation (65 dates de 12 régimes, de 1900 à 2070). Deux
+assertions sur la vue le suivent (`test_coupures_au_mois.py`,
+`test_facade.py`). Le barème des confrontations lit les lignes de
+cotisation, et la fusion, la lecture à l'année.
+
+**Ce qui reste de la vue au pont.** L'argument `pont.Periode(code, annee)` du
+droit nomme la période de la vue qui couvre l'année, que le témoin du droit
+fige ; la lecture à l'année en diffère par sa liquidation, prise au
+1er janvier, dans 13 couples régime-année (le régime général et les salariés
+agricoles en 1983, la Banque de France en 2007, Mayotte en 2023…) : deux
+preuves de la durée requise de 1983 bougeraient. Le pont la refait des blocs
+(`parametresDeLaVue`), avec les dates d'effet des périodes, que le régime du
+moteur garde à cette seule fin (`datesDEffet`). À l'étape 5, quand la vue
+part, ces appels (`test_oracle.py`, `test_justesse.py` par ses preuves,
+`test_cnav_exposes.py`, `test_regle_de_chacun.py`,
+`test_taux_plein_a_soixante_cinq_ans.py`, `test_exploitants_agricoles_1986.py`)
+devront dire leur date d'effet, et le témoin du droit se refaire.
+
+**Vérifié.** L'oracle est identique à celui de la fin de l'étape 3 ; les six
+familles de témoins, refaites, sont identiques ; la suite rapide et les
+confrontations légères sont vertes. `test_axes_des_regimes.py` dit que les
+blocs du chargeur ont, régime par régime, les mêmes lignes aux mêmes bornes
+que ceux du paquet, et que les rangs de chaque période de la vue, et de
+paramètres lus à la date, les redonnent.
+
+**Relu sur Opus, dans un contexte neuf.** La relecture a confronté, sur les
+80 régimes, au taux de la fiche, au taux moyen et après chaque retrait d'un
+avantage : la période refaite des blocs à celle de la vue, année par année
+de 1900 à 2070 ; l'assemblage par les rangs à la période de l'ancienne
+marque, et à la lecture à la date ou à l'année, au même objet près ; le
+barème de cotisation et le taux de la fusion à leurs anciennes valeurs.
+Aucun écart, et aucune règle du moteur ne lit les bornes de paramètres
+reçus. Elle note un piège : ce que `commun.periode_de_liquidation` rend en
+Python garde les années de sa ligne de cotisation, sur lesquelles aucun
+appelant ne doit se fonder.
+
+**Ce qui reste.** Les tests qui lisent des périodes ; les cliquets recomptés
+à valeur égale ; la page Avantages, dont le chiffre de 975 périodes est à
+soumettre au propriétaire.

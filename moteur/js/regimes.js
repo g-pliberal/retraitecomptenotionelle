@@ -3096,6 +3096,12 @@ export class Regime {
     // qu'elle — et certaines règles ont besoin de savoir de quel régime elle
     // vient. Le répéter dans le paquet coûtait cent trente kilo-octets.
     this.periodes = vue.map((p) => new PeriodeRegime({ ...p, regime: fiche.code }));
+    // Les dates d'effet que déclaraient les périodes, au rang de leur ligne de
+    // cotisation : le pont en refait, pendant le gel, la période d'une année
+    // (`parametresDeLaVue` de `pont.mjs`). Elles partent à l'étape 5, avec la vue.
+    this.datesDEffet = Object.freeze(periodes === undefined ? { ...(dates ?? {}) }
+      : Object.fromEntries(periodes.flatMap((p, rang) => (
+        p.date_effet === null || p.date_effet === undefined ? [] : [[String(rang), p.date_effet]]))));
     this._poserLesAxes(periodes === undefined
       ? { structure, liquidation, cotisation, servi } : null);
   }

@@ -244,10 +244,11 @@ def _demander_la_table(simulateur: Simulateur, table: str, methode: str, rendu, 
 
 def _argument_de_table(simulateur: Simulateur, valeur):
     """Un argument d'une méthode de table tel que le pont le transmet : les
-    séries du simulateur par leur marque ; une période de son catalogue par
-    son rang dans son régime ; une date en texte, comme le portage la tient ;
-    une autre valeur telle quelle. Une période qui n'est pas de son catalogue,
-    que le test aurait faite ou retouchée, ne lui parviendrait pas."""
+    séries du simulateur par leur marque ; des paramètres de son catalogue
+    par les rangs de leurs quatre lignes ; une date en texte, comme le portage
+    la tient ; une autre valeur telle quelle. Des paramètres qui ne sont pas de
+    son catalogue, que le test aurait faits ou retouchés, ne lui
+    parviendraient pas."""
     if valeur is simulateur._donnees.macro:
         return pont.SERIES
     if isinstance(valeur, RegimeFusionne):
@@ -264,16 +265,18 @@ def _argument_de_table(simulateur: Simulateur, valeur):
 
 
 def _periode_du_catalogue(simulateur: Simulateur, periode: PeriodeRegime):
-    """Une période du catalogue du simulateur telle que le pont la transmet :
-    par son rang dans son régime."""
-    periodes = (simulateur._donnees.catalogue[periode.regime].periodes
-                if periode.regime in simulateur._donnees.catalogue else ())
-    rang = next((rang for rang, connue in enumerate(periodes) if connue is periode), None)
-    if rang is None:
+    """Des paramètres du catalogue du simulateur — une période de la vue, ou
+    ce qu'une lecture à la date ou à l'année assemble — tels que le pont les
+    transmet : par les rangs de leurs quatre lignes (``Regime.rangs``), que
+    le portage assemble de ses blocs, qui ont les mêmes."""
+    catalogue = simulateur._donnees.catalogue
+    try:
+        rangs = catalogue[periode.regime].rangs(periode)
+    except (KeyError, ValueError):
         raise NonTransmissible(
             f"période du régime {periode.regime} passée en argument qui n'est pas du "
-            "catalogue du simulateur de la façade : le portage ne la verrait pas")
-    return pont.PeriodeDuCatalogue(periode.regime, rang, periode.debut)
+            "catalogue du simulateur de la façade : le portage ne la verrait pas") from None
+    return pont.ParametresDuCatalogue(periode.regime, *rangs)
 
 
 class ScenarioActuel(_Ferme):
@@ -1428,9 +1431,9 @@ class _Commun(Regles):
                 f"{entree} : un régime qui n'est pas du catalogue d'un simulateur de la façade "
                 "(simulateur.catalogue), ou une date qui n'est pas une DateMois — le portage "
                 "ne les verrait pas")
-        rang = _demander(entree, simulateur.parametres, pont.SIMULATEUR, regime.code,
-                         date.annee, date.mois)
-        return None if rang is None else regime.periodes[rang]
+        rangs = _demander(entree, simulateur.parametres, pont.SIMULATEUR, regime.code,
+                          date.annee, date.mois)
+        return None if rangs is None else regime.par_rangs(rangs)
 
 
 #: ``droit.commun``, ``droit.completer``, ``droit.liquider`` et
