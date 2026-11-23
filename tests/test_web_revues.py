@@ -2727,14 +2727,19 @@ EN_LETTRES = {"un": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5, "six": 6,
 def test_droits_non_cotises_comptent_ce_que_leurs_phrases_disent(page, contexte):
     """Deux nombres de la page s'écrivaient à la main, et avaient vieilli. La
     réversion, que « 756 périodes du catalogue » annonçaient, l'est par 945,
-    que la page comptait sans écrire son compte. La courbe des dispositifs « ne
+    que la page comptait sans écrire son compte ; depuis que le paquet porte les
+    blocs d'un régime et non plus ses périodes, elle compte des régimes (« 78
+    régimes sur 80 », décision du propriétaire du 23 novembre 2026). La courbe des dispositifs « ne
     redescend que trois fois », quand elle baisse deux fois : trois dispositifs
     se sont éteints, l'un l'année où un autre naissait (action 173, étape 9)."""
     texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", page("/avantages"))))
-    periodes = sum(
-        1 for regime in contexte.simulateur().catalogue for periode in regime.periodes
-        if "reversion" in (periode.avantages_non_contributifs or ()))
-    assert f"La réversion est de ceux-là : {periodes} périodes du catalogue" in texte
+    catalogue = contexte.simulateur().catalogue
+    regimes = sum(
+        1 for regime in catalogue
+        if any("reversion" in (ligne.get("avantages_non_contributifs") or ())
+               for ligne in regime.liquidation))
+    assert (f"La réversion est de ceux-là : {regimes} régimes sur {len(catalogue)} "
+            "l'annoncent") in texte
 
     eteints = [avantage for avantage in contexte.inventaire_avantages().avantages
                if avantage.famille != "ecarts_structurels" and avantage.fin is not None]

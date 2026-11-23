@@ -10784,17 +10784,13 @@ function avantagesDetailEtats(contexte) {
       + "dans les comptes de la protection sociale : "
       + integreesLues.map((a) => echapper(a.libelle.charAt(0).toLowerCase()
         + a.libelle.slice(1))).join(", ") + ". ";
-  // Combien de périodes du catalogue déclarent la réversion : le chiffre est
-  // COMPTÉ et non écrit, pour qu'une fiche ajoutée le déplace. La page le
-  // comptait, et écrivait 756 à la main quand le catalogue en portait 945.
-  let declarations = 0;
-  for (const regime of contexte.simulateur().catalogue) {
-    for (const periode of regime.periodes) {
-      if ((periode.avantages_non_contributifs || []).includes("reversion")) {
-        declarations += 1;
-      }
-    }
-  }
+  // Combien de régimes du catalogue déclarent la réversion, dans l'une au
+  // moins de leurs lignes de liquidation : le chiffre est COMPTÉ et non écrit,
+  // pour qu'une fiche ajoutée le déplace. Il comptait des périodes, que le
+  // paquet ne porte plus (action 191, séparation des axes, étape 4).
+  const catalogue = [...contexte.simulateur().catalogue];
+  const declarations = catalogue.filter((regime) => regime.liquidation.some(
+    (ligne) => (ligne.avantages_non_contributifs || []).includes("reversion"))).length;
   const lignes = [
     [LIBELLES_ETATS.chiffre, String(inventaire.compte("chiffre")),
       "La cascade du scénario 1 en isole le montant en euros. La somme de "
@@ -10808,7 +10804,7 @@ function avantagesDetailEtats(contexte) {
       + "derniers ne sont pas des dispositifs, et se lisent ailleurs."],
     [LIBELLES_ETATS.declare, String(inventaire.compte("declare")),
       "Une fiche de régime les déclare, et le scénario 1 ne les sert pas à "
-      + `tous. La réversion est de ceux-là : ${declarations} périodes du catalogue `
+      + `tous. La réversion est de ceux-là : ${declarations} régimes sur ${catalogue.length} `
       + "l'annoncent, et le modèle ne la liquide que pour le conjoint qu'on lui "
       + "déclare, pas pour tous les ménages. Son coût est donc LU dans "
       + "l'enquête de la DREES auprès des caisses, et c'est le chiffre le plus "

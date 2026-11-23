@@ -1,17 +1,17 @@
 # Le paquet porte les quatre blocs d'un régime, et non plus ses périodes
 
-***Reprise, au 23 novembre 2026.** L'étape 4 avance : le paquet, le chargeur
-Python, le pont, les tests et les cliquets lisent les quatre blocs de chaque
-régime. Aucun résultat n'a bougé. Les deux cliquets des renvois comptent
-désormais dans le fichier tel qu'il s'écrit : 367 valeurs de repli, une par
-ligne de liquidation, et 288 renvois sans texte, la vue en périodes en
-comptant six deux fois. La vue n'a plus pour lecteurs que les tests qui la
-gardent pendant le gel, ceux que le témoin du droit fige, le compte de la
-page Avantages et deux scripts : tous partent ou changent à l'étape 5, et la
-note les nomme. Reste une session : la page Avantages, dont le chiffre de
-975 périodes est à soumettre au propriétaire. Les données restent gelées.
-L'oracle de référence est sous `architecture/separation-des-axes/oracle/`,
-dans les fichiers du projet.
+**Reprise, au 23 novembre 2026.** L'étape 4 est finie : le paquet, le
+chargeur Python, le pont, les tests, les cliquets et la page Avantages lisent
+les quatre blocs de chaque régime, et aucun résultat n'a bougé. La page
+Avantages compte désormais les régimes qui annoncent la réversion, 78 sur 80,
+au lieu de 975 périodes (décision du propriétaire du 23 novembre). La vue en
+périodes n'a plus pour lecteurs que les tests qui la gardent pendant le gel,
+ceux que le témoin du droit fige, deux scripts et les contrôles Z3 des
+renvois, que la note nomme : tous partent ou changent à l'étape 5, la
+suivante, avant le point d'arrêt prévu. Le classement des renvois sans texte
+compte encore six doublons (294 au lieu de 288), à corriger dans sa note.
+Les données restent gelées. L'oracle de référence est sous
+`architecture/separation-des-axes/oracle/`, dans les fichiers du projet.
 
 **La demande.** L'étape 4 de la séparation des axes, décidée le 22 novembre
 2026 : le chargeur Python, le paquet, le pont, les tests, les cliquets et la
@@ -255,3 +255,28 @@ renvoi de la cotisation (la CNAVPL, l'Agirc) ; aucun ne l'est aujourd'hui.
 soumettre au propriétaire. Les contrôles Z3 des renvois
 (`scripts/regles_z3/questions.py`, `des_renvois_des_regimes`) lisent encore
 les périodes : ils partent ou changent à l'étape 5, avec la vue.
+
+## La page Avantages (dernier lot, 23 novembre 2026)
+
+**La décision.** Le propriétaire a choisi, le 23 novembre, que le chiffre qui
+annonce la réversion compte des régimes, et non des périodes que le paquet ne
+porte plus, ni les 318 lignes de liquidation : « 78 régimes sur 80
+l'annoncent », compté par la page et non écrit.
+
+**Ce qui est fait.** `avantagesDetailEtats` (`moteur/js/pages.js`) compte les
+régimes dont une ligne de liquidation au moins déclare `reversion`, sur le
+nombre de régimes du catalogue ; le test de `test_web_revues.py` refait le
+compte de son côté, et l'a vu rouge avant le code. La page Caisses ne lisait
+déjà aucune période : ses chiffres viennent des fichiers du COR
+(`caisses_du_site.py`), et l'inventaire des régimes ne prend du catalogue que
+le code et la fiabilité. La page Avantages n'en lisait qu'à cet endroit.
+`docs/avantages_non_contributifs.md` parle encore de « 756 périodes », dans une
+section de récit, gelée à sa date : laissée telle quelle.
+
+**Vérifié.** La page toute faite `avantages/index.html` est refaite
+(`construire_pages.py`) ; la suite rapide et les tests du site passent, hors
+le témoin des pages (`tests/temoins/pages.json`), que GitHub refait : seule
+la page Avantages y change, par cette phrase.
+
+**Ce qui reste.** L'étape 5 : retirer la vue en périodes et ses derniers
+lecteurs, nommés plus haut. Puis le point d'arrêt prévu.
