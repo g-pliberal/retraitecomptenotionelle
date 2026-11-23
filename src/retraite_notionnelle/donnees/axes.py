@@ -1,4 +1,4 @@
-"""Les deux axes du fichier de régime, et la vue ancienne qu'on en fabrique.
+"""Les deux axes du fichier de régime.
 
 Note de décision 0009, amendement du 22 novembre 2026. Un fichier de régime
 range ses paramètres en quatre blocs, un par famille de champ :
@@ -12,19 +12,14 @@ range ses paramètres en quatre blocs, un par famille de champ :
 
 Chaque ligne est complète : elle ne s'hérite pas de la précédente. Ses
 ``textes`` sont ceux des renvois qu'elle ouvre, ses ``notes`` la commentent.
-
-PENDANT LE GEL (étapes 2 à 5 de l'amendement), le moteur lit encore des
-périodes, qui portaient les quatre familles ensemble. :func:`vue_ancienne` les
-refait : une période par ligne de cotisation, dans l'ordre du fichier, avec
-la liquidation, le servi et la structure en vigueur à sa date d'effet. Elle
-part avec la vue, à l'étape 5.
+La vue en périodes, qui portait les quatre familles ensemble, est partie à
+l'étape 5 de l'amendement.
 """
 
 from __future__ import annotations
 
 import datetime as dt
-import json
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Mapping, Sequence
 
 #: Les quatre blocs, dans l'ordre où le fichier les écrit.
 BLOCS = ("structure", "liquidation", "cotisation", "servi")
@@ -71,7 +66,7 @@ COMMENTAIRES = ("textes", "notes")
 
 
 def famille(champ: str) -> str:
-    """Le bloc d'un champ de période : tout ce qui n'est ni de la structure,
+    """Le bloc d'un champ de paramètres : tout ce qui n'est ni de la structure,
     ni servi, ni de la cotisation est de la liquidation."""
     if champ in STRUCTURE:
         return "structure"
@@ -90,18 +85,6 @@ def _jour(valeur) -> dt.date:
 
 def _au(ligne: dict) -> dt.date | None:
     return None if ligne.get("au") is None else _jour(ligne["au"])
-
-
-def _premier_janvier(annee: int) -> dt.date:
-    return dt.date(annee, 1, 1)
-
-
-def _en_vigueur(lignes: list[dict], jour: dt.date) -> dict | None:
-    for ligne in lignes:
-        au = _au(ligne)
-        if _jour(ligne["du"]) <= jour and (au is None or jour < au):
-            return ligne
-    return None
 
 
 def _verifier(code: str, bloc: str, lignes: list[dict]) -> None:
@@ -148,189 +131,30 @@ def _verifier(code: str, bloc: str, lignes: list[dict]) -> None:
                                      f"`cotisation` couvrent ensemble le {apres['du']}")
 
 
-def _bornes_au_jour(fiche: dict, cotisation: list[dict]) -> dict[int, dt.date]:
-    """Les dates d'effet qui ne tombent pas un 1er janvier, rendues à l'année
-    où la période ancienne les ouvrait.
-
-    Une période ancienne liquidait les pensions de ses années, sauf à déclarer
-    ``date_effet`` : une borne au jour, à moins d'un an du 1er janvier de son
-    année. Chaque borne au jour d'une ligne de liquidation, de servi ou du
-    barème du point est celle d'une période : elle va à la frontière d'années
-    la plus proche dont le 1er janvier n'est pas déjà une borne."""
-    bornes: set[dt.date] = set()
-    for bloc in ("liquidation", "servi"):
-        for ligne in fiche.get(bloc) or ():
-            bornes.add(_jour(ligne["du"]))
-            if _au(ligne) is not None:
-                bornes.add(_au(ligne))
-    points_de = fiche["structure"].get("points_de")
-    if isinstance(points_de, list):
-        bornes |= {_jour(x["du"]) for x in points_de}
-    frontieres = sorted({_jour(l["du"]).year for l in cotisation}
-                        | {_au(l).year for l in cotisation if _au(l) is not None})
-    attribuees: dict[int, dt.date] = {}
-    for jour in sorted(bornes):
-        if (jour.month, jour.day) == (1, 1) and jour.year in frontieres:
-            continue
-        candidates = sorted(
-            (abs((jour - _premier_janvier(a)).days), a) for a in frontieres
-            if _premier_janvier(a - 1) < jour < _premier_janvier(a + 1)
-            and _premier_janvier(a) not in bornes and a not in attribuees)
-        if not candidates:
-            raise ValueError(f"{fiche.get('code')} : la borne du {jour} ne tombe à moins "
-                             "d'un an d'aucune frontière d'années de la cotisation")
-        if len(candidates) > 1 and candidates[0][0] == candidates[1][0]:
-            raise ValueError(f"{fiche.get('code')} : la borne du {jour} est à égale "
-                             "distance de deux frontières d'années")
-        attribuees[candidates[0][1]] = jour
-    return attribuees
-
-
-def vue_ancienne(fiche: dict) -> dict:
-    """La fiche en périodes, telle que le moteur la lit pendant le gel.
-
-    Une période par ligne de cotisation, dans l'ordre du fichier : ses années
-    sont celles de la ligne ; sa date d'effet, celle que les bornes au jour
-    lui rendent (:func:`_bornes_au_jour`), déclarée seulement quand elle
-    diffère de ses années ; ses champs, ceux de sa ligne de cotisation et des
-    lignes de liquidation et de servi en vigueur au premier jour de sa date
-    d'effet. Sa note est celle de sa ligne de cotisation, sinon celle de la
-    ligne de liquidation, puis de servi, qui commence ce jour-là, pour la
-    première période qui commence ce jour-là."""
+def verifier_les_blocs(fiche: dict) -> None:
+    """Refuse un fichier de régime dont les blocs ne tiennent pas : un champ
+    hors de son bloc, une ligne sans ``du``, deux lignes au jour qui se
+    chevauchent ou laissent un trou, une tranche de cotisation couverte deux
+    fois, une année cotisée sans règle de liquidation, ou des ``periodes``,
+    qu'un fichier n'écrit plus."""
     code = fiche.get("code")
     if "periodes" in fiche:
         raise ValueError(f"{code} : un fichier en quatre blocs ne porte plus de `periodes`")
     structure = fiche["structure"]
-    liquidation = list(fiche["liquidation"])
-    cotisation = list(fiche["cotisation"])
-    servi = list(fiche.get("servi") or ())
     if set(structure) - STRUCTURE:
         raise ValueError(f"{code} : `structure` ne porte que {sorted(STRUCTURE)}, "
                          f"pas {sorted(set(structure) - STRUCTURE)}")
-    for bloc, lignes in (("liquidation", liquidation), ("cotisation", cotisation),
-                         ("servi", servi)):
-        _verifier(code, bloc, lignes)
-    au_jour = _bornes_au_jour(fiche, cotisation)
-    points_de = structure.get("points_de")
-
-    periodes: list[dict] = []
-    debuts_vus: set[dt.date] = set()
-    for ligne in cotisation:
-        debut = _jour(ligne["du"]).year
-        fin = None if _au(ligne) is None else _au(ligne).year - 1
-        effet_debut = au_jour.get(debut, _premier_janvier(debut))
-        effet_fin = None if fin is None else au_jour.get(fin + 1, _premier_janvier(fin + 1))
-        periode: dict = {"debut": debut, "fin": fin}
-        if (effet_debut, effet_fin) != (_premier_janvier(debut),
-                                        None if fin is None else _premier_janvier(fin + 1)):
-            periode["date_effet"] = [effet_debut, effet_fin]
-        periode["type_calcul"] = structure["type_calcul"]
-        if isinstance(points_de, list):
-            emprunts = [x for x in points_de if _jour(x["du"]) <= effet_debut]
-            if not emprunts:
-                raise ValueError(f"{code} : `points_de` ne dit rien au {effet_debut}")
-            periode["points_de"] = emprunts[-1]["regime"]
-        elif points_de is not None:
-            periode["points_de"] = points_de
-        textes: dict = {}
-        en_vigueur = [_en_vigueur(liquidation, effet_debut)]
-        if servi:
-            en_vigueur.append(_en_vigueur(servi, effet_debut))
-        for bloc, autre in zip(("liquidation", "servi"), en_vigueur):
-            if autre is None:
-                raise ValueError(f"{code} : aucune ligne de {bloc} au {effet_debut}, où "
-                                 f"commence la cotisation du {ligne['du']}")
-        for autre in en_vigueur + [ligne]:
-            periode.update({c: v for c, v in autre.items()
-                            if c not in BORNES + COMMENTAIRES + ("tranche",)})
-            textes.update(autre.get("textes", {}))
-        if textes:
-            periode["textes_des_renvois"] = textes
-        premiere = effet_debut not in debuts_vus
-        debuts_vus.add(effet_debut)
-        if "notes" in ligne:
-            periode["notes"] = ligne["notes"]
-        elif premiere:
-            for lignes in (liquidation, servi):
-                ouvre = next((l for l in lignes if _jour(l["du"]) == effet_debut), None)
-                if ouvre is not None and "notes" in ouvre:
-                    periode["notes"] = ouvre["notes"]
-                    break
-        periodes.append(periode)
-
-    vue = {c: v for c, v in fiche.items() if c not in BLOCS}
-    vue["periodes"] = periodes
-    return vue
-
-
-# -- Les blocs refaits des périodes, pendant le gel ---------------------------
-
-#: Ce qu'une période porte en plus de ses champs : son régime, ses bornes, sa note.
-HORS_DES_BLOCS = frozenset({"regime", "debut", "fin", "date_effet", "notes"})
-
-
-def _cle_json(champs: Mapping) -> str:
-    return json.dumps(sorted(champs.items()), default=repr)
-
-
-def _effet(periode: Mapping) -> tuple[str, str | None]:
-    """Les dates d'effet qu'une période liquide, ``[début, fin)`` en AAAA-MM-JJ :
-    celles qu'elle déclare, sinon ses années (``PeriodeRegime.effet``)."""
-    if periode.get("date_effet") is not None:
-        return tuple(periode["date_effet"])
-    return (f"{periode['debut']:04d}-01-01",
-            None if periode["fin"] is None else f"{periode['fin'] + 1:04d}-01-01")
-
-
-def blocs_des_periodes(periodes: Sequence[Mapping],
-                       cle: Callable[[Mapping], object] = _cle_json) -> dict[str, list[dict]]:
-    """Les quatre blocs d'un régime, refaits des périodes de la vue ancienne,
-    comme le moteur les refaisait (``axesDesPeriodes``, ``moteur/js/axes.js``).
-
-    La cotisation garde une ligne par période, dans leur ordre, bornée à ses
-    années (``au`` inclus) ; la liquidation, la structure et le servi, des
-    lignes au jour ``[du, au)`` en AAAA-MM-JJ, chaque intervalle entre deux
-    bornes d'effet prenant la première période qui le liquide, deux intervalles
-    contigus aux mêmes champs fondus (``cle`` dit quand deux lignes ont les
-    mêmes champs). Un intervalle qu'aucune période ne liquide n'a pas de ligne.
-    PENDANT LE GEL seulement : le chargeur et la fabrique du paquet lisent
-    encore les périodes de :func:`vue_ancienne` ; elle part avec elle."""
-
-    def champs(periode: Mapping, bloc: str) -> dict:
-        return {c: v for c, v in periode.items()
-                if c not in HORS_DES_BLOCS and famille(c) == bloc}
-
-    effets = [_effet(p) for p in periodes]
-    bornes = sorted({b for effet in effets for b in effet if b is not None})
-
-    def au_jour(bloc: str) -> list[dict]:
-        lignes: list[dict] = []
-        precedente = None
-        for rang, du in enumerate(bornes):
-            au = bornes[rang + 1] if rang + 1 < len(bornes) else None
-            periode = next((p for p, (debut, fin) in zip(periodes, effets)
-                            if debut <= du and (fin is None or du < fin)), None)
-            if periode is None:
-                precedente = None
-                continue
-            siens = champs(periode, bloc)
-            empreinte = cle(siens)
-            if precedente is not None and precedente[0] == empreinte \
-                    and precedente[1]["au"] == du:
-                precedente[1]["au"] = au
-                continue
-            ligne = {"du": du, "au": au, **siens}
-            lignes.append(ligne)
-            precedente = (empreinte, ligne)
-        return lignes
-
-    return {
-        "structure": au_jour("structure"),
-        "liquidation": au_jour("liquidation"),
-        "servi": au_jour("servi"),
-        "cotisation": [{"du": p["debut"], "au": p["fin"], **champs(p, "cotisation")}
-                       for p in periodes],
-    }
+    for bloc in ("liquidation", "cotisation", "servi"):
+        _verifier(code, bloc, list(fiche.get(bloc) or ()))
+    # Chaque année cotisée trouve une règle de liquidation dans sa première
+    # année : une liquidation qui commence plus tard en laisserait sans.
+    liquidation = fiche["liquidation"]
+    for ligne in fiche["cotisation"]:
+        annee = _jour(ligne["du"]).year
+        if not any(_jour(l["du"]) < dt.date(annee + 1, 1, 1)
+                   and (_au(l) is None or _au(l) > dt.date(annee, 1, 1)) for l in liquidation):
+            raise ValueError(f"{code} : aucune ligne de liquidation en {annee}, où "
+                             f"commence la cotisation du {ligne['du']}")
 
 
 def en_vigueur_au_jour(lignes: Sequence[Mapping], jour: str) -> Mapping | None:

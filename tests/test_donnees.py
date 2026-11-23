@@ -1237,7 +1237,7 @@ def test_un_fichier_par_regime_nomme_de_son_code(catalogue):
     rangs = [fiche["rang"] for _, fiche in fiches]
     assert rangs == sorted(set(rangs))
     assert [fiche["code"] for _, fiche in fiches] == [r.code for r in catalogue]
-    assert all("rang" not in fiche for _, fiche in tous if "periodes" not in fiche)
+    assert all("rang" not in fiche for _, fiche in tous if "liquidation" not in fiche)
 
 
 def test_l_inventaire_est_la_vue_des_fichiers_de_regimes():
@@ -1273,8 +1273,8 @@ def test_le_chargeur_refuse_une_ligne_d_inventaire_qui_ment(tmp_path):
     assert [c.stem for c, _ in fichiers_de_regimes(tmp_path)] == ["avts", "ortf"]
     ortf = yaml.safe_load((source / "ortf.yaml").read_text(encoding="utf-8"))
     for rang, (ecart, message) in enumerate((
-        ({"periodes": []}, "porte des périodes"),
-        ({"inventaire": {**ortf["inventaire"], "couverture": "partiel"}}, "sans période"),
+        ({"liquidation": []}, "porte des blocs de paramètres"),
+        ({"inventaire": {**ortf["inventaire"], "couverture": "partiel"}}, "sans bloc de liquidation"),
         ({"inventaire": {**ortf["inventaire"], "manques": "x"}}, "champs inconnus"),
     )):
         chemin = dossier / "ortf.yaml"
@@ -1382,7 +1382,7 @@ def test_chaque_statut_a_sa_famille_dans_le_menu():
 def test_toute_annee_routee_trouve_une_periode_de_regime(catalogue):
     """Un statut ne peut pas router vers un régime qui ne tourne pas encore.
 
-    `Compte.taux_effectif` parcourt `regime.periodes_actives(annee)` : quand ce
+    `Compte.taux_effectif` parcourt les lignes de cotisation de l'année : quand ce
     parcours est vide, la boucle n'ajoute rien et l'année ne porte AUCUNE
     cotisation au compte notionnel — sans exception, sans avertissement, sans
     trace dans le journal. Trois routages faisaient exactement cela : l'artisan
@@ -4275,26 +4275,27 @@ def test_chaque_interrupteur_renvoie_a_une_fiche_qui_le_declare():
     qui décrit la règle, et c'est elle qui déclare ce que le moteur lit
     (docs/architecture.md, phase 6). Le chargeur le refuse autrement ; ce test
     le dit fichier par fichier, et dit aussi qu'aucune fiche ne déclare un
-    interrupteur que nulle période ne lui demande."""
+    interrupteur que nulle ligne ne lui demande."""
     from retraite_notionnelle.donnees.regimes import (
         INTERRUPTEURS, fiches_de_regimes, interrupteurs_de_la_fiche)
 
     demandes: dict[str, set[str]] = {}
     for chemin, fiche in fiches_de_regimes(RACINE_DONNEES):
-        for periode in fiche["periodes"]:
+        lignes = [*fiche["liquidation"], *fiche["cotisation"], *fiche.get("servi", [])]
+        for ligne in lignes:
             for champ in INTERRUPTEURS:
-                renvoi = periode.get(champ)
+                renvoi = ligne.get(champ)
                 if renvoi is None:
                     continue
-                assert isinstance(renvoi, str), (chemin.name, periode["debut"], champ)
+                assert isinstance(renvoi, str), (chemin.name, ligne["du"], champ)
                 assert champ in interrupteurs_de_la_fiche(RACINE_DONNEES, renvoi), (
-                    chemin.name, periode["debut"], champ, renvoi)
+                    chemin.name, ligne["du"], champ, renvoi)
                 demandes.setdefault(renvoi, set()).add(champ)
     for chemin in sorted((RACINE_DONNEES / "reference" / "regles").glob("*.yaml")):
         declares = set(interrupteurs_de_la_fiche(RACINE_DONNEES, chemin.stem))
         assert declares <= set(INTERRUPTEURS), (chemin.stem, declares - set(INTERRUPTEURS))
         assert declares == demandes.get(chemin.stem, set()), (
-            f"{chemin.stem} déclare {sorted(declares)}, les périodes lui demandent "
+            f"{chemin.stem} déclare {sorted(declares)}, les lignes lui demandent "
             f"{sorted(demandes.get(chemin.stem, set()))}")
 
 
@@ -4336,8 +4337,8 @@ def test_le_chargeur_refuse_un_interrupteur_qui_ne_renvoie_pas(tmp_path):
     for renvoi, message in ((True, "et non à la valeur"),
                             ("nexiste_pas", "qui n'existe pas"),
                             ("salaire_annuel_moyen", "ne déclare pas")):
-        fausse = {**regime, "periodes": [{**p, "decote_par_generation": renvoi}
-                                         for p in regime["periodes"]]}
+        fausse = {**regime, "liquidation": [{**l, "decote_par_generation": renvoi}
+                                            for l in regime["liquidation"]]}
         (dossier / "avts.yaml").write_text(yaml.safe_dump(fausse, allow_unicode=True),
                                            encoding="utf-8")
         with pytest.raises(ValueError, match=message):

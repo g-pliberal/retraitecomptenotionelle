@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pytest
 from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
+from outils_fiches import periodes_ecrites
 
 RACINE = Path(__file__).resolve().parents[1]
 REGIMES = RACINE / "data" / "reference" / "regimes"
@@ -190,7 +191,7 @@ def test_les_assurances_sociales_de_1930_cotisent_ce_que_la_cnav_publie():
     fiche garde pour dater le début des carrières."""
 
     fiche = lire_fiche_de_regime(REGIMES / "assurances_sociales.yaml")
-    (periode,) = fiche["periodes"]
+    (periode,) = periodes_ecrites(fiche)
     assert (periode["debut"], periode["fin"]) == (1930, 1945)
     for annee in (*range(1931, 1936), *range(1937, 1945)):
         _, salarie, employeur = _au_1er_janvier(ASSURANCES_SOCIALES, annee)
@@ -211,7 +212,7 @@ def _fiche(code: str) -> dict:
 def _taux_de_la_fiche(code: str, annee: int) -> dict[str, float]:
     """Le taux de chaque assiette de la fiche, l'année donnée."""
     return {periode["assiette"]: periode["taux_cotisation_retraite"]
-            for periode in _fiche(code)["periodes"]
+            for periode in periodes_ecrites(_fiche(code))
             if periode["debut"] <= annee <= (periode.get("fin") or 9999)}
 
 
@@ -348,7 +349,7 @@ def test_les_taux_des_regimes_complementaires_des_independants_sont_ceux_de_la_c
         fiche = _taux_de_la_fiche("rci", annee)
         assert (fiche["plafonnee"], fiche["tranche_1_4_pass"]) == pytest.approx(
             (premiere / 100, seconde / 100)), annee
-    (premiere,) = [p for p in _fiche("rci")["periodes"]
+    (premiere,) = [p for p in periodes_ecrites(_fiche("rci"))
                    if p["debut"] == 2013 and p["assiette"] == "plafonnee"]
     assert premiere["borne_haute_par_annee"] == PLAFOND_RCI_JUSQU_EN_2024
 
@@ -750,7 +751,7 @@ def test_un_point_de_retraite_du_commercant_vaut_un_vingtieme_du_plafond():
     publie de 1973 à 2026 est ce vingtième, celui du plafond du 1er janvier —
     les années de deux plafonds, de 1982 à 1996, le plafond de juillet n'ouvre
     pas de point de plus."""
-    (periode,) = [p for p in _fiche("organic_avant_1973")["periodes"] if p["debut"] == 1949]
+    (periode,) = [p for p in periodes_ecrites(_fiche("organic_avant_1973")) if p["debut"] == 1949]
     assert periode["points_maximum"] == 20 and periode["assiette"] == "plafonnee"
     for annee, base in BASE_POINTS_COMMERCANTS_EN_FRANCS.items():
         assert _au_1er_janvier(PLAFOND, annee)[1] / periode["points_maximum"] == base, annee
@@ -1429,7 +1430,7 @@ def test_l_independant_des_dom_cotise_aux_taux_et_aux_assiettes_de_la_metropole(
     le double ouvre les droits, soit l'assiette de la série, sauf en 2012, où
     elle garde les heures du Smic, un écart que la limite déclare."""
     rsi, general = _taux_annuels("rsi"), _taux_annuels("regime_general")
-    (premiere,) = [p for p in _fiche("rci")["periodes"]
+    (premiere,) = [p for p in periodes_ecrites(_fiche("rci"))
                    if p["debut"] == 2013 and p["assiette"] == "plafonnee"]
     for annee, (sous_plafond, au_dela, *complementaire) in {**TAUX_DOM_AVANT_2020,
                                                            **TAUX_DOM}.items():

@@ -37,6 +37,7 @@ from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
 from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 from facade import Simulateur
+from outils_fiches import periodes_ecrites
 
 SALAIRE, COMPLEMENTAIRE = "cultes_salaire_annuel_moyen", "cultes_retraite_complementaire"
 LOT = (SALAIRE, COMPLEMENTAIRE)
@@ -106,7 +107,7 @@ def _annees_entieres(debut: date | None, fin: date | None) -> range:
 
 @functools.cache
 def _periodes_du_regime(code: str) -> tuple[dict, ...]:
-    return tuple(lire_fiche_de_regime(REFERENCE / "regimes" / f"{code}.yaml")["periodes"])
+    return tuple(periodes_ecrites(lire_fiche_de_regime(REFERENCE / "regimes" / f"{code}.yaml")))
 
 
 def _periodes(code: str, annee: int) -> list[dict]:

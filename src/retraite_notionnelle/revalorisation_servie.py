@@ -58,7 +58,7 @@ REGIMES_FONCTION_PUBLIQUE = frozenset({
 
 
 def _derniere_annee(regime) -> int:
-    annees = [p.fin if p.fin is not None else 9999 for p in regime.periodes]
+    annees = [l["au"] if l["au"] is not None else 9999 for l in regime.cotisation]
     return min(max(annees), 2100) if annees else 2100
 
 
@@ -189,8 +189,8 @@ class RevalorisationServie:
         if self._publiees is None:
             baremes = set(self._catalogue.codes)
             for code in self._catalogue.codes:
-                baremes.update(periode.points_de for periode in self._catalogue[code].periodes
-                               if periode.points_de)
+                baremes.update(ligne["points_de"] for ligne in self._catalogue[code].structure
+                               if ligne["points_de"])
             self._publiees = {}
         else:
             baremes = set()

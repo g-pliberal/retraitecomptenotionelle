@@ -76,7 +76,7 @@ from pathlib import Path
 
 import pytest
 
-from outils_pont import droit_et_fige
+from outils_pont import droit_et_fige, periode_a_l_effet
 from retraite_notionnelle import pont
 from retraite_notionnelle.calendrier import DateMois
 
@@ -2123,7 +2123,7 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
         # La durée du régime général à la date d'effet, que l'assuré puisse
         # ou non partir ce jour-là (fiche duree_requise_par_generation).
         return _rendu(droit, "ouvrir.duree_requise", pont.MOTEUR,
-                      pont.Periode("regime_general", carriere.annee_liquidation),
+                      periode_a_l_effet("regime_general", carriere),
                       carriere)[0]
     if cle == "date_age_legal":
         atteint = carriere.date_naissance.plus_mois(_rendu(
@@ -2226,7 +2226,7 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
         if reduit:
             return int(reduit.group(1))
         return _rendu(droit, "liquider.nombre_d_annees_retenues", pont.MOTEUR,
-                      pont.Periode("regime_general", carriere.annee_liquidation), carriere,
+                      periode_a_l_effet("regime_general", carriere), carriere,
                       carriere.annee_naissance)
     if cle == "salaire_annuel_moyen":
         # Le salaire annuel moyen du régime général, en euros : celui que la
@@ -2234,7 +2234,7 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
         # La mère y vient avec ses enfants, qui réduisent le nombre d'années
         # depuis septembre 2026 (fiche ``sam_parents_24_23``).
         return _rendu(droit, "liquider.salaire_de_reference", pont.MOTEUR, "regime_general",
-                      carriere, pont.Periode("regime_general", carriere.annee_liquidation),
+                      carriere, periode_a_l_effet("regime_general", carriere),
                       carriere.annee_liquidation, True, carriere.annee_naissance, True, None,
                       carriere.nombre_enfants if carriere.sexe == "F" else 0)
     if cle in ("indemnites_de_maternite_au_compte", "salaire_retenu_avec_les_indemnites"):
@@ -2242,13 +2242,13 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
         # forfaitaire de chaque année, et le salaire de l'année retenu avec lui
         # (fiche ``sam_indemnites_de_maternite``).
         au_compte = _rendu(droit, "liquider.maternite_au_compte", pont.MOTEUR, "regime_general",
-                           carriere, pont.Periode("regime_general", carriere.annee_liquidation),
+                           carriere, periode_a_l_effet("regime_general", carriere),
                            carriere.annee_liquidation)
         rang = 1 if cle == "indemnites_de_maternite_au_compte" else 2
         return {int(ligne[0]): ligne[rang] for ligne in au_compte}
     if cle == "pension_base_sur_sam":
         sam = _rendu(droit, "liquider.salaire_de_reference", pont.MOTEUR, "regime_general",
-                     carriere, pont.Periode("regime_general", carriere.annee_liquidation),
+                     carriere, periode_a_l_effet("regime_general", carriere),
                      carriere.annee_liquidation, True, carriere.annee_naissance)
         base = next(p["montant"] for p in resultat["pensions_par_regime"]
                     if p["regime"] == "regime_general")

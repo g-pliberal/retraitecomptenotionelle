@@ -117,7 +117,7 @@ traitement, et sur la prime que la loi y assujettit — l'indemnité de sujétio
 spéciales du policier, la prime spéciale de sujétion de l'aide-soignant,
 l'indemnité de feu du sapeur-pompier —, avec leurs retenues supplémentaires ;
 elle prélève sur les autres primes et sur l'indemnité la cotisation de la RAFP,
-<!--chiffre:valeur(data/reference/regimes/rafp.yaml:periodes.debut=2011.taux_cotisation_retraite*100)-->10<!--/--> % partagés par moitié avec l'employeur, dans la limite de <!--chiffre:valeur(data/reference/regimes/rafp.yaml:periodes.debut=2011.plafond_primes_traitement*100)-->20<!--/--> % du traitement,
+<!--chiffre:valeur(data/reference/regimes/rafp.yaml:cotisation.du=2011-01-01.taux_cotisation_retraite*100)-->10<!--/--> % partagés par moitié avec l'employeur, dans la limite de <!--chiffre:valeur(data/reference/regimes/rafp.yaml:cotisation.du=2011-01-01.plafond_primes_traitement*100)-->20<!--/--> % du traitement,
 sous les deux systèmes : une réforme de la répartition ne l'atteint pas. Restent
 dehors la GIPA et les jours de compte épargne-temps, que la RAFP prend sans
 plafond, et l'indemnité exacte de chacun : la fiche la tire du décret et de la
@@ -139,7 +139,7 @@ exonérations : le net affiché en bas de barème est un plafond. Ses cotisation
 de retraite sont celles de son barème : au régime général depuis 2018,
 l'artisan et le commerçant versent <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=2026&mesure=taux_plafonne_non_salarie)-->17,15<!--/--> %
 sous le plafond et <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=2026&mesure=taux_deplafonne_non_salarie)-->0,72<!--/--> % sur la totalité
-(D. 633-3), et non les <!--chiffre:valeur(data/reference/regimes/regime_general.yaml:periodes.debut=2023.taux_cotisation_retraite*100)-->15,45<!--/--> %
+(D. 633-3), et non les <!--chiffre:valeur(data/reference/regimes/regime_general.yaml:cotisation.du=2023-01-01.taux_cotisation_retraite*100)-->15,45<!--/--> %
 et <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=2026&mesure=taux_deplafonne)-->2,51<!--/--> % du salarié et de son employeur ; le compte notionnel porte
 ce qu'il a versé, comme la fiche de paie le prélève. Sa complémentaire
 s'arrêtait de 2013 à 2024 au plafond propre du RCI, <!--chiffre:illustration()-->42 946<!--/--> € en 2024, et

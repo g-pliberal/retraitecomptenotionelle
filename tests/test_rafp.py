@@ -143,8 +143,8 @@ def test_chaque_periode_du_regime_porte_les_taux_que_le_decret_ecrit():
     """La limite de 20 % du traitement indiciaire brut (décret n° 2004-569,
     article 2), le taux de 10 % (article 3) et sa moitié à l'agent (loi
     n° 2003-775, article 76, III), que la fiche `rafp_assiette_plafond` lit
-    version par version depuis le 1er janvier 2005 : la période du régime de
-    chaque année que la version couvre les porte."""
+    version par version depuis le 1er janvier 2005 : les lignes du régime de
+    chaque année que la version couvre les portent."""
     from datetime import timedelta
 
     import yaml
@@ -160,8 +160,11 @@ def test_chaque_periode_du_regime_porte_les_taux_que_le_decret_ecrit():
             continue
         debut, fin = version["bornes"]["revenu.annee"]
         for annee in range(debut.year, (fin - timedelta(days=1)).year + 1 if fin else 2051):
-            periode = next(p for p in regime["periodes"]
-                           if p["debut"] <= annee and (p["fin"] is None or annee <= p["fin"]))
+            periode = {}
+            for bloc in ("liquidation", "cotisation"):
+                periode.update(next(
+                    l for l in regime[bloc] if l["du"].year <= annee
+                    and (l.get("au") is None or annee < l["au"].year)))
             assert {cle: periode.get(cle) for cle in parametres} == parametres, (version["id"], annee)
             lus.append((version["id"], annee))
     assert lus, "la fiche ne lit aucun taux dans le décret"

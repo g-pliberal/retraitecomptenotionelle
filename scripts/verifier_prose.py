@@ -311,9 +311,9 @@ def sonde_distinctes(argument: str) -> float:
 def sonde_partout(argument: str) -> float:
     """La valeur qu'un champ porte dans toutes les entrées qu'on désigne.
 
-    ``regimes.*.periodes.*.plafond_majoration_enfants`` : le plafond de la
-    majoration familiale de l'Agirc-Arrco est écrit dans chaque période de
-    chaque fiche, et la prose l'annonce une fois. La sonde refuse dès que deux
+    ``regimes/agirc_arrco.yaml:servi.*.plafond_majoration_enfants`` : le
+    plafond de la majoration familiale de l'Agirc-Arrco est écrit dans chaque
+    ligne servie de chaque fiche, et la prose l'annonce une fois. La sonde refuse dès que deux
     entrées ne portent pas la même valeur — c'est tout son intérêt : une prose
     qui annonce un nombre unique ment dès qu'il cesse de l'être.
     """
@@ -396,7 +396,7 @@ def _charge(argument: str):
     """``fichier:clé.sous_clé`` ; le fichier peut être un YAML ou un JSON.
 
     Un cran ``champ=valeur`` choisit, dans une liste, l'entrée qui le porte :
-    ``regimes.code=regime_general.periodes.debut=2023.part_salariale``.
+    ``regimes/regime_general.yaml:cotisation.du=2023-01-01.part_salariale``.
 
     Le fichier peut aussi être un motif, ou plusieurs joints par « + »
     (:func:`_fichiers`) : la clé se lit alors dans chacun, et la sonde réunit
@@ -441,20 +441,8 @@ def _analyse(chemin: str):
     if cle not in _ANALYSES:
         texte = fichier.read_text(encoding="utf-8")
         _ANALYSES[cle] = json.loads(texte) if chemin.endswith(".json") \
-            else _avec_la_vue(yaml.load(texte, Loader=_LECTEUR))
+            else yaml.load(texte, Loader=_LECTEUR)
     return _ANALYSES[cle]
-
-
-def _avec_la_vue(donnees):
-    """Un fichier de régime écrit en quatre blocs porte en plus, pendant le
-    gel, les périodes que le chargeur en refait : une ancre peut lire
-    ``periodes.*.champ`` comme ``liquidation.*.champ`` (note de décision
-    0009, amendement du 22 novembre 2026)."""
-    if isinstance(donnees, dict) and "liquidation" in donnees and "cotisation" in donnees:
-        from retraite_notionnelle.donnees.axes import vue_ancienne
-
-        return {**donnees, "periodes": vue_ancienne(donnees)["periodes"]}
-    return donnees
 
 
 def sonde_entrees(argument: str) -> float:

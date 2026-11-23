@@ -602,6 +602,6 @@ code:
     surcote_du_trimestre_civil_suivant, surcote_palier_age,
     surcote_par_trimestre_apres_palier, surcote_age_maximum ;
     regimes/carmf_complementaire.yaml : age_taux_plein, effet_au_trimestre_civil,
-    date_effet, avantages_non_contributifs ;
-    regimes/asv_conventionnes.yaml : date_effet, avantages_non_contributifs
+    du, avantages_non_contributifs ;
+    regimes/asv_conventionnes.yaml : du, avantages_non_contributifs
   tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

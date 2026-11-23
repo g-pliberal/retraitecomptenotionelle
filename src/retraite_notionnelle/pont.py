@@ -1242,13 +1242,13 @@ class ContexteDuMoteur:
 
 @dataclasses.dataclass(frozen=True)
 class Periode:
-    """Les paramètres d'un régime à une année, en argument d'un appel du droit
-    (:func:`droit`) : le portage y met ceux que portait la période de la vue
-    ancienne couvrant l'année, qu'il assemble de ses blocs
-    (``parametresDeLaVue`` de ``pont.mjs``) ; jusqu'à l'étape 5, où la vue part."""
+    """Les paramètres qui liquident une pension d'un régime prenant effet un
+    jour, en argument d'un appel du droit (:func:`droit`) : ceux que le
+    portage assemble de ses blocs à cette date (``Regime.aLaDate``). ``jour``
+    s'écrit AAAA-MM-JJ, ou en année seule, pour son 1er janvier."""
 
     code: str
-    annee: int
+    jour: int | str
 
 
 def carriere_relue(donnees: dict) -> dict:
@@ -1530,7 +1530,7 @@ def _argument_du_droit(argument, carrieres: list) -> dict:
         return {"carriere_simple": _en_donnees(argument.options),
                 **({} if argument.depart is None else {"depart": argument.depart})}
     if isinstance(argument, Periode):
-        return {"periode": [argument.code, argument.annee]}
+        return {"periode": [argument.code, argument.jour]}
     if isinstance(argument, DureesDuReleve):
         return {"durees_du_releve": _argument_du_droit(argument.carriere, carrieres)["carriere"]}
     if isinstance(argument, DroitsDuReleve):

@@ -78,5 +78,5 @@ code:
   parametres: >-
     regimes/ircec_raap.yaml, regimes/ircec_raap_taux_amenage.yaml,
     regimes/ircec_racd.yaml, regimes/ircec_racl.yaml : age_taux_plein,
-    duree_requise_trimestres, decote_par_trimestre, date_effet
+    duree_requise_trimestres, decote_par_trimestre, du
   tests: [tests/test_simulateur.py, tests/test_coupures_au_mois.py]

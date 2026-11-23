@@ -446,7 +446,7 @@ code:
   parametres: >-
     legislation/assiette_avpf.csv : date_effet, assiette_mensuelle ;
     legislation/periodes_non_travaillees.csv : avpf ; regimes/msa_salaries.yaml,
-    regimes/regime_general.yaml : avantages_non_contributifs, date_effet ;
+    regimes/regime_general.yaml : avantages_non_contributifs, du ;
     contenu.parametres de chaque version : existe, hommes
   tests:
   - tests/test_liquidation.py

@@ -1131,13 +1131,14 @@ def part_pensions_sous(**reglages: str) -> float:
 
 
 def fiche_regime(**reglages: str) -> float:
-    """Un champ des périodes d'une fiche de régime, telle qu'elle est écrite.
+    """Un champ des lignes d'une fiche de régime, telle qu'elle est écrite, dans
+    le bloc qui le porte (note de décision 0009).
 
     ``regime=regime_general&champ=part_salariale`` ;
-    ``de`` et ``a`` bornent l'année de DÉBUT des périodes retenues (``a``
+    ``de`` et ``a`` bornent l'année de DÉBUT des lignes retenues (``a``
     vaut ``de`` si on l'omet), tout autre réglage filtre sur un champ de la
-    période (``assiette=tranche_b``). ``stat=min`` ou ``stat=max`` quand
-    plusieurs périodes répondent, sinon elles doivent toutes s'accorder.
+    ligne (``assiette=tranche_b``). ``stat=min`` ou ``stat=max`` quand
+    plusieurs lignes répondent, sinon elles doivent toutes s'accorder.
     Un champ dont le nom commence par ``part`` ou ``taux`` se lit en %.
 
     La fiche ÉCRITE, et non le catalogue chargé : le régime général y reçoit
@@ -1146,6 +1147,7 @@ def fiche_regime(**reglages: str) -> float:
     code ; avant la phase 6, la sonde demandait aussi le fichier (``fichier=``)
     où le régime était rangé.
     """
+    from retraite_notionnelle.donnees.axes import famille
     from retraite_notionnelle.donnees.regimes import fiche_de_regime
 
     speciaux = {"regime", "champ", "de", "a", "stat"}
@@ -1157,11 +1159,11 @@ def fiche_regime(**reglages: str) -> float:
     a = int(reglages.get("a", reglages.get("de", 9999)))
     filtres = {c: v for c, v in reglages.items() if c not in speciaux}
     champ = reglages["champ"]
-    valeurs = [float(p[champ]) for p in regime.get("periodes", [])
-               if de <= int(p["debut"]) <= a and p.get(champ) is not None
-               and all(str(p.get(c)) == v for c, v in filtres.items())]
+    valeurs = [float(l[champ]) for l in regime.get(famille(champ)) or []
+               if de <= l["du"].year <= a and l.get(champ) is not None
+               and all(str(l.get(c)) == v for c, v in filtres.items())]
     if not valeurs:
-        raise ValueError(f"aucune période de {reglages['regime']} ne répond")
+        raise ValueError(f"aucune ligne de {reglages['regime']} ne répond")
     stat = reglages.get("stat")
     if stat == "min":
         valeur = min(valeurs)

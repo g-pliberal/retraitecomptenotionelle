@@ -500,7 +500,7 @@ code:
   parametres: >-
     contenu.parametres de chaque version : taux_a_trois_enfants ;
     regimes/cavamac_complementaire.yaml, regimes/cavec_complementaire.yaml,
-    regimes/cipav_complementaire.yaml : avantages_non_contributifs, date_effet
+    regimes/cipav_complementaire.yaml : avantages_non_contributifs, du
   tests:
   - tests/test_coupures_au_mois.py
   - >-

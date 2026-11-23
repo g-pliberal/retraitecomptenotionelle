@@ -3,7 +3,7 @@ import { anneesRevolues } from "./chronologie.js";
 import { Fiabilite, fiabiliteDepuisTexte } from "./serie.js";
 import { applicable } from "./versions.js";
 import {
-  axesDesPeriodes, enVigueurAuJour, periodesDesAxes, premierJanvier, tranchesDeLAnnee,
+  enVigueurAuJour, premierJanvier, tranchesDeLAnnee,
 } from "./axes.js";
 
 /**
@@ -2883,33 +2883,14 @@ function complement(part) {
   return part ? part / (1.0 - part) : 0.0;
 }
 
-/** Jeu de paramètres d'un régime sur une plage d'années. */
+/**
+ * Les paramètres d'un régime qu'une lecture assemble de ses lignes
+ * (`Regime.aLaDate`, `Regime.deLAnnee`) : une ligne de liquidation, la
+ * structure, une ligne servie et une ligne de cotisation.
+ */
 export class PeriodeRegime {
   constructor(fiche) {
     Object.assign(this, fiche);
-  }
-
-  couvre(annee) {
-    return this.debut <= annee && (this.fin === null || annee <= this.fin);
-  }
-
-  /**
-   * Les dates d'effet que la période liquide, [début, fin) en AAAA-MM-JJ :
-   * celles qu'elle déclare (`date_effet`, quand un texte coupe l'année),
-   * sinon ses années. Voir regimes.py.
-   */
-  get effet() {
-    if (this.date_effet !== null && this.date_effet !== undefined) {
-      return this.date_effet;
-    }
-    return [`${String(this.debut).padStart(4, "0")}-01-01`,
-      this.fin === null ? null : `${String(this.fin + 1).padStart(4, "0")}-01-01`];
-  }
-
-  /** La période liquide-t-elle une pension qui prend effet ce jour (AAAA-MM-JJ) ? */
-  liquide(jour) {
-    const [debut, fin] = this.effet;
-    return debut <= jour && (fin === null || jour < fin);
   }
 
   /** Part du taux que l'assuré supporte lui-même. */
@@ -3078,46 +3059,21 @@ export class PeriodeRegime {
 }
 
 export class Regime {
-  /**
-   * Le régime d'une fiche du paquet, qui porte les quatre blocs ; ou, PENDANT
-   * LE GEL, d'une fiche en périodes — celles que le taux moyen redate, que
-   * `sansDeclaration` retouche, que les tests écrivent —, dont `axes.js`
-   * refait les blocs.
-   */
+  /** Le régime d'une fiche du paquet, qui porte ses quatre blocs (`axes.js`). */
   constructor(fiche) {
-    const { periodes, structure, liquidation, cotisation, servi, dates_d_effet: dates,
-      ...reste } = fiche;
+    const { structure, liquidation, cotisation, servi, ...reste } = fiche;
     Object.assign(this, reste);
-    const vue = periodes ?? periodesDesAxes(
-      { structure, liquidation, cotisation, servi }, dates ?? {});
-    // Le code du régime est ESTAMPILLÉ sur chaque période, comme le fait le
-    // chargeur Python, plutôt que porté par le paquet : une période circule
-    // seule dans le moteur — `ageOuverture(periode, carriere)` ne reçoit
-    // qu'elle — et certaines règles ont besoin de savoir de quel régime elle
-    // vient. Le répéter dans le paquet coûtait cent trente kilo-octets.
-    this.periodes = vue.map((p) => new PeriodeRegime({ ...p, regime: fiche.code }));
-    // Les dates d'effet que déclaraient les périodes, au rang de leur ligne de
-    // cotisation : le pont en refait, pendant le gel, la période d'une année
-    // (`parametresDeLaVue` de `pont.mjs`). Elles partent à l'étape 5, avec la vue.
-    this.datesDEffet = Object.freeze(periodes === undefined ? { ...(dates ?? {}) }
-      : Object.fromEntries(periodes.flatMap((p, rang) => (
-        p.date_effet === null || p.date_effet === undefined ? [] : [[String(rang), p.date_effet]]))));
-    this._poserLesAxes(periodes === undefined
-      ? { structure, liquidation, cotisation, servi } : null);
+    this._poserLesAxes({ structure, liquidation, cotisation, servi });
   }
 
   /**
-   * Les quatre blocs du régime (`axes.js`) : ceux du paquet, lignes gelées,
-   * ou, à défaut, ceux que la vue des périodes redonne ; et la mémoire des
-   * paramètres qu'on en assemble.
+   * Les quatre blocs du régime, lignes gelées, et la mémoire des paramètres
+   * qu'on en assemble.
    */
-  _poserLesAxes(blocs = null) {
-    const axes = blocs === null ? axesDesPeriodes(this.periodes) : Object.fromEntries(
-      Object.entries(blocs).map(([bloc, lignes]) => [bloc, lignes.map((l) => Object.freeze(l))]));
-    this.structure = axes.structure;
-    this.liquidation = axes.liquidation;
-    this.servi = axes.servi;
-    this.cotisation = axes.cotisation;
+  _poserLesAxes(blocs) {
+    for (const [bloc, lignes] of Object.entries(blocs)) {
+      this[bloc] = lignes.map((l) => (Object.isFrozen(l) ? l : Object.freeze(l)));
+    }
     this._assembles = new Map();
   }
 
@@ -3177,27 +3133,6 @@ export class Regime {
       .map((cotisation) => this._assembler(liquidation, structure, servi, cotisation));
   }
 
-  /**
-   * Paramètres applicables une année donnée. Quand plusieurs périodes couvrent
-   * la même année — cas des régimes à tranches — la première est retournée.
-   */
-  periode(annee) {
-    return this.periodes.find((p) => p.couvre(annee)) || null;
-  }
-
-  periodesActives(annee) {
-    return this.periodes.filter((p) => p.couvre(annee));
-  }
-
-  /**
-   * Paramètres qui liquident une pension prenant effet ce jour (AAAA-MM-JJ) :
-   * la première période dont les dates d'effet le comprennent. Sans date
-   * d'effet déclarée, c'est la période de l'année.
-   */
-  periodeALEffet(jour) {
-    return this.periodes.find((p) => p.liquide(jour)) || null;
-  }
-
   /** Le régime accepte-t-il de nouveaux affiliés cette année-là ? */
   ouvert(annee) {
     if (annee < this.creation) {
@@ -3234,57 +3169,35 @@ function memesChamps(a, b) {
   return cles.length === Object.keys(b).length && cles.every((cle) => a[cle] === b[cle]);
 }
 
-const _jan = (annee) => `${String(annee).padStart(4, "0")}-01-01`;
-
 /**
- * La période réduite aux années [`debut`, `fin`], ces champs changés : ses
- * dates d'effet suivent, la borne au jour gardée au bout de la période où
- * elle est écrite. Voir donnees/regimes.py, morceau_d_annees.
- */
-export function morceauDAnnees(periode, debut, fin, champs) {
-  if (periode.date_effet === null || periode.date_effet === undefined) {
-    return { ...periode, debut, fin, ...champs };
-  }
-  const [premiere, derniere] = periode.date_effet;
-  const effet = [debut === periode.debut ? premiere : _jan(debut),
-    fin === periode.fin ? derniere : _jan(fin + 1)];
-  const annees = [_jan(debut), fin === null ? null : _jan(fin + 1)];
-  const morceau = { ...periode, debut, fin, ...champs };
-  if (effet[0] === annees[0] && effet[1] === annees[1]) {
-    delete morceau.date_effet;
-  } else {
-    morceau.date_effet = effet;
-  }
-  return morceau;
-}
-
-/**
- * Les périodes de l'Agirc-Arrco au taux MOYEN des entreprises, et non au taux
- * minimal de leur fiche : la convention de la page Coût, sous
+ * Les lignes de cotisation de l'Agirc-Arrco au taux MOYEN des entreprises, et
+ * non au taux minimal de leur fiche : la convention de la page Coût, sous
  * `conventions_cor`. Le taux de cotisation devient le taux moyen multiplié par
  * le taux d'appel de l'année ; depuis 2019, le taux de calcul des points
- * devient le taux moyen. Voir donnees/regimes.py, dater_les_taux_moyens.
+ * devient le taux moyen. Une ligne se coupe aux années où ces taux changent.
+ * Voir donnees/regimes.py, dater_les_taux_moyens.
  */
-export function daterLesTauxMoyens(code, periodes, moyens, appels) {
+export function daterLesTauxMoyens(code, fiche, moyens, appels) {
   const resultat = [];
-  for (const periode of periodes) {
-    const serie = moyens[`${code}|${periode.assiette}`];
+  for (const ligne of fiche.cotisation) {
+    const serie = moyens[`${code}|${ligne.assiette}`];
     if (!serie) {
-      resultat.push(periode);
+      resultat.push(ligne);
       continue;
     }
-    const appelDuBareme = appels.get(periode.points_de || code) ?? {};
+    const structure = enVigueurAuJour(fiche.structure, premierJanvier(ligne.du));
+    const appelDuBareme = appels.get(structure?.points_de || code) ?? {};
     const derniere = Math.max(...Object.keys(serie).map(Number));
-    const fin = periode.fin === null ? Math.max(periode.debut, derniere) : periode.fin;
+    const fin = ligne.au === null ? Math.max(ligne.du, derniere) : ligne.au;
     const tranches = [];
-    for (let annee = periode.debut; annee <= fin; annee += 1) {
+    for (let annee = ligne.du; annee <= fin; annee += 1) {
       const moyen = enVigueur(serie, annee);
       let champs = {};
-      if (moyen !== null && periode.taux_calcul_points) {
+      if (moyen !== null && ligne.taux_calcul_points) {
         champs = {
           taux_calcul_points: moyen,
-          taux_cotisation_retraite: moyen * periode.taux_cotisation_retraite
-            / periode.taux_calcul_points,
+          taux_cotisation_retraite: moyen * ligne.taux_cotisation_retraite
+            / ligne.taux_calcul_points,
         };
       } else if (moyen !== null) {
         const appel = enVigueur(appelDuBareme, annee);
@@ -3297,13 +3210,36 @@ export function daterLesTauxMoyens(code, periodes, moyens, appels) {
         tranches.push([annee, annee, champs]);
       }
     }
-    tranches.forEach(([debut, finTranche, champs], rang) => {
-      const derniereTranche = rang === tranches.length - 1;
-      resultat.push(morceauDAnnees(
-        periode, debut, derniereTranche ? periode.fin : finTranche, champs));
+    tranches.forEach(([du, au, champs], rang) => {
+      resultat.push({ ...ligne, du, au: rang === tranches.length - 1 ? ligne.au : au, ...champs });
     });
   }
   return resultat;
+}
+
+/**
+ * Les lignes au jour, deux lignes contiguës aux mêmes champs fondues en une :
+ * ce que deviennent les lignes de liquidation quand une déclaration en part.
+ */
+function fondreLesLignes(lignes) {
+  const fondues = [];
+  for (const ligne of lignes) {
+    const precedente = fondues.at(-1);
+    if (precedente !== undefined && precedente.au === ligne.du
+      && memesLignes(precedente, ligne)) {
+      fondues[fondues.length - 1] = { ...precedente, au: ligne.au };
+    } else {
+      fondues.push(ligne);
+    }
+  }
+  return fondues;
+}
+
+function memesLignes(a, b) {
+  const cles = Object.keys(a).filter((c) => c !== "du" && c !== "au");
+  return cles.length === Object.keys(b).filter((c) => c !== "du" && c !== "au").length
+    && cles.every((c) => Object.hasOwn(b, c)
+      && JSON.stringify(a[c]) === JSON.stringify(b[c]));
 }
 
 export class CatalogueRegimes {
@@ -3330,8 +3266,7 @@ export class CatalogueRegimes {
     this._regimes = new Map();
     for (const fiche of paquet.regimes) {
       this._regimes.set(fiche.code, new Regime(redates.has(fiche.code)
-        ? { ...fiche, periodes: daterLesTauxMoyens(fiche.code, fiche.periodes
-          ?? periodesDesAxes(fiche, fiche.dates_d_effet ?? {}), moyens, appels) }
+        ? { ...fiche, cotisation: daterLesTauxMoyens(fiche.code, fiche, moyens, appels) }
         : fiche));
     }
     if (this._regimes.size === 0) {
@@ -3355,25 +3290,26 @@ export class CatalogueRegimes {
   }
 
   /**
-   * Le même catalogue, aucune période ne déclarant plus `code` parmi ses
-   * avantages non contributifs : le moteur les lit période par période, et
-   * le régime cesse de servir l'avantage sans qu'aucun code change. Voir
+   * Le même catalogue, aucune ligne de liquidation ne déclarant plus `code`
+   * parmi ses avantages non contributifs : le moteur les lit à la date
+   * d'effet, et le régime cesse de servir l'avantage sans qu'aucun code
+   * change ; deux lignes contiguës devenues égales se fondent. Voir
    * `_catalogue_sans` d'`avantages.py`.
    */
   sansDeclaration(code) {
     const copie = Object.assign(Object.create(CatalogueRegimes.prototype), this);
     copie._regimes = new Map([...this._regimes].map(([nom, regime]) => {
-      const sans = Object.assign(Object.create(Regime.prototype), regime, {
-        periodes: regime.periodes.map((periode) => (
-          periode.avantages_non_contributifs.includes(code)
-            ? new PeriodeRegime({
-              ...periode,
-              avantages_non_contributifs: periode.avantages_non_contributifs
-                .filter((declare) => declare !== code),
-            })
-            : periode)),
+      const sans = Object.assign(Object.create(Regime.prototype), regime);
+      sans._poserLesAxes({
+        structure: regime.structure,
+        liquidation: fondreLesLignes(regime.liquidation.map((ligne) => (
+          (ligne.avantages_non_contributifs ?? []).includes(code)
+            ? { ...ligne, avantages_non_contributifs: ligne.avantages_non_contributifs
+              .filter((declare) => declare !== code) }
+            : ligne))),
+        servi: regime.servi,
+        cotisation: regime.cotisation,
       });
-      sans._poserLesAxes();
       return [nom, sans];
     }));
     return copie;

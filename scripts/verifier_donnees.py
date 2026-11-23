@@ -67,8 +67,8 @@ FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml",
 
 
 def _fiche_regime(code: str) -> dict:
-    """La fiche d'un régime telle qu'elle est écrite, en périodes (la vue
-    que le chargeur refait de ses quatre blocs) : un fichier par régime."""
+    """La fiche d'un régime telle qu'elle est écrite, en quatre blocs : un
+    fichier par régime."""
     from retraite_notionnelle.donnees.regimes import fiche_de_regime
 
     return fiche_de_regime(REFERENCE.parent, code)
@@ -77,7 +77,7 @@ def _fiche_regime(code: str) -> dict:
 def _fiches_regimes() -> list[dict]:
     """Les fiches écrites des régimes que le modèle calcule, dans l'ordre du
     catalogue (leur rang) ; les régimes qu'il ne calcule pas n'ont que leur
-    ligne d'inventaire, sans période."""
+    ligne d'inventaire, sans ligne de liquidation."""
     from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
     fiches = [
@@ -85,7 +85,19 @@ def _fiches_regimes() -> list[dict]:
         for chemin in sorted((REFERENCE / "regimes").glob("*.yaml"))
         if not chemin.name.startswith("_") and chemin.name not in FICHIERS_HORS_REGIMES
     ]
-    return sorted((f for f in fiches if "periodes" in f), key=lambda fiche: fiche["rang"])
+    return sorted((f for f in fiches if "liquidation" in f), key=lambda fiche: fiche["rang"])
+
+
+def _lignes_de_cotisation(fiche: dict) -> list[dict]:
+    """Les lignes de cotisation d'une fiche écrite, chacune avec ses années :
+    ``debut``, la première, ``fin``, la dernière (``None`` si elle reste
+    ouverte) — une ligne court de son ``du`` à la veille de son ``au``."""
+    lignes = []
+    for ligne in fiche.get("cotisation", []):
+        au = ligne.get("au")
+        lignes.append({**ligne, "debut": int(str(ligne["du"])[:4]),
+                       "fin": None if au is None else int(str(au)[:4]) - 1})
+    return lignes
 
 #: Première année du fichier des espérances de vie : avant elle, aucune série
 #: du dépôt n'en a besoin.
@@ -12348,7 +12360,7 @@ def controle_part_salariale() -> list[str]:
     for fiche in _fiches_regimes():
         attendue = (fiche["famille"] in FAMILLES_AVEC_EMPLOYEUR
                     or fiche["code"] in REGIMES_SALARIES_HORS_FAMILLE)
-        for periode in fiche.get("periodes", []):
+        for periode in _lignes_de_cotisation(fiche):
             borne = f"{fiche['code']} {periode['debut']}-{periode.get('fin')}"
             part = periode.get("part_salariale")
             if periode.get("perimetre_taux") == "agent_seul":
@@ -12567,7 +12579,7 @@ def controle_vraisemblance_cotisations() -> list[str]:
 
     messages, anomalies = [], []
     comparees = 0
-    for periode in regime["periodes"]:
+    for periode in _lignes_de_cotisation(regime):
         debut = max(int(periode["debut"]), min(couverture))
         fin = min(int(periode["fin"] or max(couverture)), max(couverture))
         annees = [a for a in range(debut, fin + 1) if a in couverture]
@@ -12670,10 +12682,10 @@ def controle_vraisemblance_cotisations() -> list[str]:
             continue
         code_serie = regime["code"]
         if code_serie not in par_regime:
-            code_serie = next(
-                (p.get("points_de") for p in regime["periodes"] if p.get("points_de")),
-                code_serie,
-            )
+            points_de = regime["structure"].get("points_de")
+            if isinstance(points_de, list):
+                points_de = next((c["regime"] for c in points_de if c.get("regime")), None)
+            code_serie = points_de or code_serie
         if regime["code"].endswith("_entreprises_nouvelles"):
             annuel = variantes.get(code_serie, {}).get("entreprises_nouvelles")
             parts_regime = parts_variantes.get(code_serie, {}).get(
@@ -12686,7 +12698,7 @@ def controle_vraisemblance_cotisations() -> list[str]:
         if not annuel:
             continue
         couverture = {int(a) for a in annuel}
-        for periode in regime["periodes"]:
+        for periode in _lignes_de_cotisation(regime):
             tranche = tranches.get(periode.get("assiette"))
             if tranche is None:
                 continue
@@ -12755,7 +12767,7 @@ def controle_vraisemblance_cotisations() -> list[str]:
         if not all(tables):
             continue
         couverture = set.intersection(*({int(a) for a in t} for t in tables))
-        for periode in regime["periodes"]:
+        for periode in _lignes_de_cotisation(regime):
             if periode.get("assiette") != assiette:
                 continue
             debut = max(int(periode["debut"]), min(couverture))

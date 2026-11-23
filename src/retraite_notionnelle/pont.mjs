@@ -137,7 +137,7 @@ import { dirname, join } from "node:path";
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 
-import { enVigueurAuJour, premierJanvier } from "../../moteur/js/axes.js";
+import { premierJanvier } from "../../moteur/js/axes.js";
 import { DateMois, enMois, origineDesAges } from "../../moteur/js/calendrier.js";
 import {
   AnneeCarriere, Carriere, ancrageSalaireMoyen, prolongerReleve, salaireMoyenAnnuel,
@@ -1111,8 +1111,8 @@ const FONCTIONS_DU_DROIT = {
   // L'étage d'un régime : la base, le régime intégré, la complémentaire…
   "scenario_actuel.catalogue.etage": (moteur, code) => moteur.catalogue.obtenir(code).etage,
   // Ce que les confrontations lisent des lignes de cotisation d'un régime
-  // pour rejouer ses cotisations (`periodes_des_donnees` de `pont.py`) : une
-  // par période de la vue ancienne, pendant le gel, sous ses années.
+  // pour rejouer ses cotisations (`periodes_des_donnees` de `pont.py`), sous
+  // leurs années.
   "scenario_actuel.catalogue.periodes": (moteur, code) => moteur.catalogue.obtenir(code)
     .cotisation.map(({ du, au, assiette, taux_cotisation_retraite, part_salariale }) => ({
       debut: du, fin: au, assiette, taux_cotisation_retraite, part_salariale,
@@ -1550,8 +1550,9 @@ function argumentDuDroit(simulateur, carrieres, argument) {
       argument.neutralise), argument.prets ?? []), argument.bareme_aspa ?? null);
   }
   if (Object.hasOwn(argument, "periode")) {
-    const [code, annee] = argument.periode;
-    return parametresDeLaVue(simulateur.catalogue.obtenir(code), annee);
+    const [code, jour] = argument.periode;
+    return simulateur.catalogue.obtenir(code).aLaDate(
+      typeof jour === "number" ? premierJanvier(jour) : jour);
   }
   if (Object.hasOwn(argument, "carriere")) {
     return carrieres[argument.carriere];
@@ -2280,27 +2281,6 @@ function facade({ parametres, carrieres, entree, arguments: valeurs }) {
 LECTURES.facade = facade;
 
 // Les tables du moteur, par la façade : un bloc à part (action 161).
-
-/**
- * Les paramètres que la période de la vue ancienne couvrant `annee` portait,
- * assemblés des blocs sans la vue : la première ligne de cotisation de
- * l'année, avec la liquidation, la structure et la ligne servie en vigueur au
- * premier jour de sa date d'effet (`periodesDesAxes` d'`axes.js`). C'est ce
- * que l'argument `Periode` du droit a toujours nommé, que le témoin du droit
- * tient ; la lecture à l'année (`deLAnnee`) prend la liquidation du
- * 1er janvier, qui en diffère en quelques années (le régime général en 1983).
- * Elle part à l'étape 5, avec les dates d'effet de la vue. `null` quand
- * aucune ligne ne cotise cette année-là.
- */
-function parametresDeLaVue(regime, annee) {
-  const rang = regime.cotisation.findIndex((ligne) => (
-    ligne.du <= annee && (ligne.au === null || annee <= ligne.au)));
-  if (rang < 0) return null;
-  const cotisation = regime.cotisation[rang];
-  const jour = regime.datesDEffet[String(rang)]?.[0] ?? premierJanvier(cotisation.du);
-  return regime._assembler(enVigueurAuJour(regime.liquidation, jour),
-    enVigueurAuJour(regime.structure, jour), enVigueurAuJour(regime.servi, jour), cotisation);
-}
 
 /**
  * Les blocs d'un régime dans l'ordre où le pont désigne des paramètres

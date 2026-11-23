@@ -836,13 +836,13 @@ def test_partout_refuse_une_valeur_qui_ne_l_est_plus():
     seul, 2 367,48 €, dans toutes les fiches, jusqu'au 16 octobre 2026, où
     celles d'avant 2019 ont pris le leur, 1 000 € (action 153, étape 2)."""
     assert verifier_prose.sonde_partout(
-        "data/reference/regimes/agirc_arrco.yaml:periodes.*.plafond_majoration_enfants"
+        "data/reference/regimes/agirc_arrco.yaml:servi.*.plafond_majoration_enfants"
     ) == 2367.48
     fiches = ("data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml"
               " + data/reference/regimes/unirs.yaml")
-    for champ in ("plafond_majoration_enfants", "debut"):
+    for champ in ("plafond_majoration_enfants", "du"):
         with pytest.raises(ValueError):
-            verifier_prose.sonde_partout(f"{fiches}:periodes.*.{champ}")
+            verifier_prose.sonde_partout(f"{fiches}:servi.*.{champ}")
 
 
 def test_une_sonde_peut_traverser_un_cran_d_entrees():

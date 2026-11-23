@@ -162,14 +162,26 @@ def _annees_de_service(version: dict) -> range:
 
 
 @functools.cache
-def _periodes_du_regime(code: str) -> tuple[dict, ...]:
-    return tuple(lire_fiche_de_regime(REFERENCE / "regimes" / f"{code}.yaml")["periodes"])
+def _fiche_du_regime(code: str) -> dict:
+    return lire_fiche_de_regime(REFERENCE / "regimes" / f"{code}.yaml")
+
+
+def _touche(ligne: dict, annee: int) -> bool:
+    """La ligne, de son ``du`` à la veille de son ``au``, touche l'année."""
+    au = ligne.get("au")
+    return ligne["du"].year <= annee and (au is None or annee < au.year
+                                          or (annee == au.year and au.month + au.day > 2))
 
 
 def _periodes(code: str, annee: int) -> list[dict]:
-    """Les périodes du régime qui couvrent l'année ; rien hors d'elles."""
-    return [p for p in _periodes_du_regime(code)
-            if p["debut"] <= annee and (p["fin"] is None or annee <= p["fin"])]
+    """Ce que les lignes du régime écrivent pour l'année, telles qu'écrites :
+    une combinaison par ligne de chaque bloc qui la touche ; rien hors
+    d'elles."""
+    fiche = _fiche_du_regime(code)
+    return [{**fiche["structure"], **servi, **liquidation, **cotisation}
+            for liquidation in fiche["liquidation"] if _touche(liquidation, annee)
+            for servi in (fiche.get("servi") or [{}]) if not servi or _touche(servi, annee)
+            for cotisation in fiche["cotisation"] if _touche(cotisation, annee)]
 
 
 @functools.cache

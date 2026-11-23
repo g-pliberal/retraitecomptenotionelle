@@ -40,7 +40,8 @@ GENERATIONS = range(1920, 2006)
 AGES_DE_DEPART = range(50, 71)
 
 #: (régime, paramètre) : premières et dernières années de départ où la règle
-#: d'une génération peut basculer, et le texte qui le veut.
+#: d'une génération peut basculer, et le texte qui le veut ; plusieurs plages
+#: quand le texte en veut plusieurs.
 A_L_ANNEE_D_EFFET = {
     ("cafat_nouvelle_caledonie", "age"): (2023, 2026, (
         "délibération n° 458 du 8 janvier 2009, articles 1er à 4, rédaction de la "
@@ -74,10 +75,15 @@ A_L_ANNEE_D_EFFET = {
         "décret n° 2003-589, article 9 : 64 trimestres pour les pensions prenant "
         "effet en 2003, quatre de plus chaque année jusqu'en 2017 ; la génération "
         "depuis 2018 (décret n° 2016-1246)")),
-    ("cps_saint_pierre_et_miquelon", "duree"): (1987, 1998, (
+    ("cps_saint_pierre_et_miquelon", "duree"): ((1987, 1998, (
         "décret n° 89-110, article 9 : la durée se lit à la date d'entrée en "
         "jouissance, 108 trimestres en 1987, puis 110 et quatre de plus par année "
-        "civile jusqu'à 150")),
+        "civile jusqu'à 150")), (2017, 2017, (
+        "ordonnance n° 2015-896, art. 4, 3° : la durée à la génération vaut pour "
+        "les pensions prenant effet à compter du 1er juillet 2016, et le décret "
+        "n° 89-110 sert encore, à 150 trimestres, celles de janvier à juin : le "
+        "départ de février 2016 garde l'ancienne durée, celui de février 2017 "
+        "prend celle de sa génération"))),
     ("crpnpac", "duree"): (2012, 2012, (
         "R. 426-11 du code de l'aviation civile, rédaction du décret "
         "n° 2011-1500 : trente annuités pour le taux plein des pensions prenant "
@@ -218,6 +224,7 @@ def releve():
                 carriere = pont.CarriereSimple(options, depart=age_depart)
                 # Né en janvier, parti au mois qui suit son anniversaire.
                 annee = generation + age_depart
+                jour = f"{annee:04d}-02-01"
                 codes = {code for p in periodes_du_statut
                          if p["debut"] <= annee <= (p.get("fin") or 9999)
                          for code in p["regimes"]}
@@ -225,7 +232,7 @@ def releve():
                     if code not in simulateur.catalogue:
                         continue
                     regime = simulateur.catalogue[code]
-                    periode = regime.periode(annee)
+                    periode = regime.a_la_date(jour)
                     if periode is None:
                         if regime.creation <= annee <= (regime.extinction or 9999):
                             lacunes.append((statut, code, generation, age_depart))
@@ -233,7 +240,7 @@ def releve():
                     cle = f"{code}|{statut}|{generation}|{age_depart}"
                     departs[cle] = (code, statut, generation, age_depart, annee)
                     appels[cle + "|age"] = ("ouvrir.age_ouverture", pont.MOTEUR,
-                                            pont.Periode(code, annee), carriere)
+                                            pont.Periode(code, jour), carriere)
                     # La durée d'une période qui liquide chaque annuité au
                     # taux de son année n'est que le dénominateur de ses
                     # annuités, qui pèsent chacune la durée de leur période
@@ -242,7 +249,7 @@ def releve():
                     # durée de l'année de liquidation ne décide de rien.
                     if not periode.annuites_au_taux_de_leur_annee:
                         appels[cle + "|duree"] = ("ouvrir.duree_requise", pont.MOTEUR,
-                                                  pont.Periode(code, annee), carriere)
+                                                  pont.Periode(code, jour), carriere)
     lus, echecs = pont.droit(appels)
     assert not echecs, list(echecs.items())[:5]
     lu = defaultdict(list)
@@ -278,10 +285,12 @@ def test_une_generation_garde_sa_regle_quelle_que_soit_l_annee_de_son_depart(rel
         if cle not in declares:
             hors[cle] = sorted(par_assure.items())[:3]
             continue
-        premiere, derniere, _ = declares[cle]
+        # Une plage, ou plusieurs quand le texte en veut plusieurs.
+        plages = declares[cle] if isinstance(declares[cle][0], tuple) else (declares[cle],)
         annees = sorted({a for bascules in par_assure.values() for a in bascules})
-        if annees[0] < premiere or annees[-1] > derniere:
-            hors[cle] = (premiere, derniere, annees)
+        if any(not any(premiere <= a <= derniere for premiere, derniere, _ in plages)
+               for a in annees):
+            hors[cle] = ([plage[:2] for plage in plages], annees)
     assert not hors, (
         "L'âge d'ouverture ou la durée requise d'une génération change avec "
         "l'année de son départ, sans que le texte du régime soit déclaré le "

@@ -25,20 +25,38 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
 import { CritereTaux, REGLE_FUSION_DEFAUT, fusionner } from "../../moteur/js/fusion.js";
+import { famille } from "../../moteur/js/axes.js";
 import { CatalogueRegimes } from "../../moteur/js/regimes.js";
 import { Fiabilite } from "../../moteur/js/serie.js";
 
+/** Les paramètres d'un régime depuis 2000, tous blocs mêlés, que `regime` range. */
 const periode = (champs) => ({
-  debut: 2000, fin: null, assiette: "plafonnee", age_ouverture: 62.0, age_taux_plein: 67.0,
+  assiette: "plafonnee", age_ouverture: 62.0, age_taux_plein: 67.0,
   duree_requise_trimestres: null, salaire_reference: "sans_objet",
   taux_cotisation_retraite: 0.0, taux_cotisation_deplafonnee: 0.0, part_salariale: 0.0,
   part_salariale_deplafonnee: 0.0, avantages_non_contributifs: [], ...champs,
 });
 
-const regime = (code, famille, champs, ...periodes) => ({
-  code, famille, creation: 1950, fermeture: null, extinction: null, hors_repartition: false,
-  fiabilite: Fiabilite.CERTIFIEE, periodes, ...champs,
-});
+/** Les champs d'un bloc, sur ses bornes. */
+const ligne = (bloc, champs, bornes) => ({ ...bornes, ...Object.fromEntries(
+  Object.entries(champs).filter(([champ]) => famille(champ) === bloc)) });
+
+/**
+ * La fiche d'un régime en quatre blocs, depuis 2000 : une ligne de cotisation
+ * par tranche, dans l'ordre ; la liquidation, la structure et le servi de la
+ * première.
+ */
+const regime = (code, famille_, champs, ...tranches) => {
+  const auJour = { du: "2000-01-01", au: null };
+  return {
+    code, famille: famille_, creation: 1950, fermeture: null, extinction: null,
+    hors_repartition: false, fiabilite: Fiabilite.CERTIFIEE, ...champs,
+    structure: [ligne("structure", tranches[0], auJour)],
+    liquidation: [ligne("liquidation", tranches[0], auJour)],
+    servi: [ligne("servi", tranches[0], auJour)],
+    cotisation: tranches.map((t) => ligne("cotisation", t, { du: 2000, au: null })),
+  };
+};
 
 /** La tranche 1 de la complémentaire : 8 % en tout, dont 40 % au salarié. */
 const TRANCHE_1 = periode({

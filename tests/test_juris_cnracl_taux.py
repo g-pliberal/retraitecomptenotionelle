@@ -29,6 +29,7 @@ from pathlib import Path
 
 import pytest
 from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
+from outils_fiches import periodes_ecrites
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -88,7 +89,7 @@ def _au_premier_janvier(champ: int) -> dict[int, float]:
 def retenues_fiche() -> dict[int, float]:
     fiche = lire_fiche_de_regime(RACINE / "data" / "reference" / "regimes" / "cnracl.yaml")
     serie = {}
-    for periode in fiche["periodes"]:
+    for periode in periodes_ecrites(fiche):
         fin = periode["fin"] or DERNIERE
         for annee in range(max(periode["debut"], PREMIERE), min(fin, DERNIERE) + 1):
             serie[annee] = periode["taux_cotisation_retraite"]

@@ -265,14 +265,21 @@ def de_la_pension(M: Modele) -> list[Propriete]:
 
 
 # ------------------------------------------- les renvois des régimes, au jour
-def _effet(periode) -> tuple:
-    """Les jours que la période liquide, comme `Periode.effet` du moteur :
-    `date_effet`, sinon ses années ; en entiers AAAAMMJJ, la fin exclue."""
-    bornes = periode.get("date_effet")
-    if bornes:
-        return tuple(entier_du_jour(b) for b in bornes)
-    fin = periode.get("fin")
-    return periode["debut"] * 10000 + 101, None if fin is None else (fin + 1) * 10000 + 101
+def _effet(ligne) -> tuple:
+    """Les jours qu'une ligne d'un fichier de régime couvre, ``[du, au)``, en
+    entiers AAAAMMJJ : au jour pour la liquidation et le servi, au 1er janvier
+    pour la cotisation, la fin exclue."""
+    return entier_du_jour(ligne["du"]), entier_du_jour(ligne.get("au"))
+
+
+def _suites_de_lignes(fiche) -> list[list[dict]]:
+    """Les suites de lignes d'un fichier de régime dont une seule vaut chaque
+    jour : la liquidation, le servi, et chaque tranche de la cotisation."""
+    suites = [list(fiche.get(bloc) or ()) for bloc in ("liquidation", "servi")]
+    tranches: dict[int, list[dict]] = {}
+    for ligne in fiche.get("cotisation") or ():
+        tranches.setdefault(ligne.get("tranche", 1), []).append(ligne)
+    return [suite for suite in suites + list(tranches.values()) if suite]
 
 
 def _jour_valide(x):
@@ -283,15 +290,17 @@ def _jour_valide(x):
 
 
 def des_renvois_des_regimes(racine, regimes_lus=None) -> list[Propriete]:
-    """Chaque renvoi d'un régime qui cite son texte (`textes_des_renvois`, note
-    0009, étape 4) vaut au jour cité : la période qui l'ouvre liquide depuis ce
-    jour, celle d'avant jusqu'à la veille, et une seule période liquide chaque
-    jour, de la période d'avant à la fin du renvoi. Lu dans les fichiers de
-    régime, comme les cliquets (`tests/outils_droit_date.py`)."""
+    """Chaque renvoi d'un régime qui cite son texte (``textes``, note 0009,
+    étape 4) vaut au jour cité : la ligne qui l'ouvre vaut depuis ce jour,
+    celle d'avant jusqu'à la veille, et une seule ligne vaut chaque jour, de
+    la ligne d'avant à la fin du renvoi. Lu dans les fichiers de régime, comme
+    les cliquets (`tests/outils_droit_date.py`), une suite de lignes à la fois
+    (:func:`_suites_de_lignes`) ; ``regimes_lus`` donne des (code, lignes)."""
     if regimes_lus is None:
         from retraite_notionnelle.donnees import regimes as _regimes
-        regimes_lus = [(f["code"], list(f.get("periodes") or []))
-                       for _, f in _regimes.fichiers_de_regimes(Path(racine) / "data")]
+        regimes_lus = [(f["code"], suite)
+                       for _, f in _regimes.fichiers_de_regimes(Path(racine) / "data")
+                       for suite in _suites_de_lignes(f)]
     jour = z3.Int("jour")
     props = []
     for code, periodes in regimes_lus:
@@ -299,7 +308,7 @@ def des_renvois_des_regimes(racine, regimes_lus=None) -> list[Propriete]:
         dans_p = [z3.And(*([a <= jour] if a else []), *([jour < b] if b else [])) for a, b in effets]
         compte = z3.Sum([z3.If(x, 1, 0) for x in dans_p])
         for i, periode in enumerate(periodes):
-            for champ, cite in sorted((periode.get("textes_des_renvois") or {}).items()):
+            for champ, cite in sorted((periode.get("textes") or {}).items()):
                 cible = periode.get(champ)
                 if cible is None or (i and periodes[i - 1].get(champ) == cible):
                     continue
@@ -314,14 +323,14 @@ def des_renvois_des_regimes(racine, regimes_lus=None) -> list[Propriete]:
                 props.append(Propriete(
                     f"renvoi.{code}.{champ}",
                     f"{code} : le renvoi `{champ}` vaut depuis le {cite['depuis']} ({cite['id']}), "
-                    "une seule période chaque jour",
+                    "une seule ligne chaque jour",
                     [debut <= jour, *([jour < fin] if fin else [jour <= 99991231]), _jour_valide(jour),
                      z3.Or(porte != (jour >= depuis), compte != 1)],
                     {"date_effet": (jour, "jour")},
                     lambda mod, porte=porte, compte=compte, depuis=depuis: (
                         f"pension du {jour_lu(val(mod, jour))} : "
                         f"{'renvoi' if z3.is_true(mod.eval(porte, model_completion=True)) else 'sans renvoi'}"
-                        f" (cité depuis le {jour_lu(depuis)}), {val(mod, compte)} période(s)")))
+                        f" (cité depuis le {jour_lu(depuis)}), {val(mod, compte)} ligne(s)")))
     return props
 
 

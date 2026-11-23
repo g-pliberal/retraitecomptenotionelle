@@ -100,16 +100,6 @@ class Nommes(dict):
     portage, qui n'a que des arguments positionnels."""
 
 
-class EnTable(Nommes):
-    """Des arguments nommés que le portage reçoit en une seule table, comme
-    les champs changés de ``morceauDAnnees``."""
-
-
-class Objet(str):
-    """À la place d'un argument : l'objet de ce nom (:func:`_python`), de
-    chaque côté — une période passée à ``morceau_d_annees``."""
-
-
 #: La classe Python de chaque genre d'objet bâti sur ``data/`` seul, et le
 #: module du portage où sa classe, du même nom, se bâtit sur le paquet.
 CLASSES = {
@@ -159,9 +149,11 @@ def _python(nom: str):
     if genre in ("regime", "regime_moyen"):
         from retraite_notionnelle.donnees.regimes import CatalogueRegimes
         return _catalogue_python(genre == "regime_moyen")[detail]
-    if genre == "periode":
+    if genre == "tranche":
         code, _, rang = detail.rpartition("/")
-        return _objet_python(f"regime:{code}").periodes[int(rang)]
+        regime = _objet_python(f"regime:{code}")
+        annee, tranche, jour = _tranche(regime.cotisation, regime.liquidation, int(rang))
+        return regime.de_l_annee(annee, jour)[tranche]
     if genre == "employeurs":
         from retraite_notionnelle.donnees.regimes import ContributionsEmployeurPubliques
         return ContributionsEmployeurPubliques(DATA)
@@ -227,9 +219,11 @@ def _javascript(nom: str):
         return site_js.module("macro").DonneesMacro(_paquet(), detail or None)
     if genre in ("regime", "regime_moyen"):
         return _catalogue_javascript(genre == "regime_moyen").obtenir(detail)
-    if genre == "periode":
+    if genre == "tranche":
         code, _, rang = detail.rpartition("/")
-        return _periodes_javascript(code)[int(rang)]
+        regime = _objet_javascript(f"regime:{code}")
+        annee, tranche, jour = _tranche(regime.cotisation, regime.liquidation, int(rang))
+        return regime.deLAnnee(annee, jour)[tranche]
     if genre == "employeurs":
         return site_js.module("regimes").ContributionsEmployeurPubliques(_paquet())
     if genre == "historiques":
@@ -301,9 +295,16 @@ def _catalogue_javascript(taux_moyens: bool):
     return site_js.module("regimes").CatalogueRegimes(_paquet(), {"tauxMoyens": taux_moyens})
 
 
-@lru_cache(maxsize=None)
-def _periodes_javascript(code: str):
-    return _objet_javascript(f"regime:{code}").periodes
+def _tranche(cotisation, liquidation, rang: int) -> tuple[int, int, str]:
+    """La ligne de cotisation de ce rang, en paramètres de sa première année :
+    l'année, son rang parmi les tranches de l'année, et le jour où lire la
+    liquidation, le 1er janvier ou l'ouverture de la liquidation si elle est
+    plus tardive."""
+    ligne = cotisation[rang]
+    annee = ligne["du"]
+    tranches = [l for l in cotisation
+                if l["du"] <= annee and (l["au"] is None or annee <= l["au"])]
+    return annee, tranches.index(ligne), max(f"{annee:04d}-01-01", liquidation[0]["du"])
 
 
 @lru_cache(maxsize=1)
@@ -385,26 +386,12 @@ def _contribution(valeur, cote: str):
     return [valeur[0], valeur[1], valeur[2], len(valeur) > 3 and valeur[3]]
 
 
-#: Ce qu'on compare d'une période de régime : qui elle est, ses années et
-#: son mode de calcul. Le paquet n'écrit pas les champs restés à leur
-#: défaut, que le portage lit par ``??`` : la grille s'en tient aux champs
-#: que chaque période porte des deux côtés.
-CHAMPS_DE_LA_PERIODE = ("regime", "debut", "fin", "type_calcul", "age_ouverture",
-                        "age_taux_plein", "taux_cotisation_retraite", "part_salariale",
-                        "assiette", "effet")
-
 #: Ce qu'on compare des paramètres qu'un régime lit à une date ou à une année :
-#: ceux d'une période, hors de ses années, qu'ils n'ont pas au portage.
-CHAMPS_DES_AXES = tuple(c for c in CHAMPS_DE_LA_PERIODE if c not in ("debut", "fin", "effet"))
-
-
-def _morceau(valeur, cote: str):
-    """Un morceau de période : une période en Python, la fiche dont le portage
-    la bâtira, sans ``date_effet`` quand ses dates sont celles de ses années."""
-    champs = tuple(c for c in CHAMPS_DE_LA_PERIODE if c != "effet")
-    lu = _champs(valeur, champs)
-    lu["date_effet"] = getattr(valeur, "date_effet", None)
-    return lu
+#: qui ils sont et leur mode de calcul. Le paquet n'écrit pas les champs restés
+#: à leur défaut, que le portage lit par ``??`` : la grille s'en tient aux
+#: champs que chaque ligne porte des deux côtés.
+CHAMPS_DES_AXES = ("regime", "type_calcul", "age_ouverture", "age_taux_plein",
+                   "taux_cotisation_retraite", "part_salariale", "assiette")
 
 
 def _scenarios_du_bilan() -> list[str]:
@@ -528,8 +515,8 @@ def _grilles() -> dict[tuple[str, str], Grille]:
     codes = tuple(_catalogue_python(False)._regimes)
     regimes = tuple(f"regime:{code}" for code in codes) + tuple(
         f"regime_moyen:{code}" for code in codes)
-    periodes = tuple(f"periode:{code}/{rang}" for code in codes
-                     for rang in range(len(_catalogue_python(False)[code].periodes)))
+    tranches = tuple(f"tranche:{code}/{rang}" for code in codes
+                     for rang in range(len(_catalogue_python(False)[code].cotisation)))
     annees_des_regimes = tuple((annee,) for annee in (
         *range(1850, 2101, 5), 1945, 1946, 1972, 1983, 1993, 2003, 2004, 2012, 2019, 2023, 2026))
     series_historiques = tuple(f"historiques:{groupe}/{serie}"
@@ -747,23 +734,8 @@ def _grilles() -> dict[tuple[str, str], Grille]:
                 2012, 2015, 2019, 2023, 2026)
             for mois, jour in ((1, 1), (4, 1), (7, 1), (10, 3), (12, 31))),
             champs=CHAMPS_DES_AXES),
-        (REGIMES, "couvre"): Grille(periodes, tuple((annee,) for annee in (
-            1800, 1900, 1945, 1946, 1972, 1983, 1993, 2003, 2004, 2019, 2026, 2100))),
-        (REGIMES, "effet"): Grille(periodes),
-        (REGIMES, "taux_cotisation_salarie"): Grille(periodes),
-        (REGIMES, "bornes_assiette_en_pass"): Grille(periodes, ((),)),
-        (REGIMES, "morceau_d_annees"): Grille(("module:regimes",), tuple(
-            (Objet(periode), debut, fin, EnTable(champs))
-            # Des périodes datées au jour, et d'autres à l'année.
-            for periode, morceaux in (
-                ("periode:regime_general/16", ((1979, 1980), (1981, 1982), (1979, 1982))),
-                ("periode:regime_general/17", ((1983, 1983),)),
-                ("periode:cps_saint_pierre_et_miquelon/19", ((2017, 2019), (2020, 2022))),
-                ("periode:cps_saint_pierre_et_miquelon/22", ((2026, 2030), (2027, None))),
-                ("periode:cnracl/0", ((1945, 1960), (1961, 1983))))
-            for debut, fin in morceaux
-            for champs in ({}, {"taux_cotisation_retraite": 0.1})),
-            lire=_morceau),
+        (REGIMES, "taux_cotisation_salarie"): Grille(tranches),
+        (REGIMES, "bornes_assiette_en_pass"): Grille(tranches, ((),)),
         (REGIMES, "taux"): Grille(("employeurs",), tuple(
             (regime, annee, militaire)
             for regime in ("cnracl", "fonction_publique_etat", "ieg", "sncf", "inconnu")
@@ -974,20 +946,14 @@ def _sans(valeur, sauf: tuple[str, ...]):
 def _appeler(appeler, arguments: tuple, source, cote: str):
     """Un appel de la grille : :data:`SOURCE` remplacée, :class:`Nommes`
     passés par leur nom en Python, à leur rang au portage."""
-    def objet(nom):
-        return (_objet_python if cote == "python" else _objet_javascript)(nom)
-
     positionnels = [source if a is SOURCE else
                     (DATA / a if cote == "python" else _paquet()) if isinstance(a, SousRacine) else
-                    objet(a) if isinstance(a, Objet) else
                     dt.date.fromisoformat(a) if isinstance(a, Jour) and cote == "python" else
                     str(a) if isinstance(a, Jour) else a
                     for a in arguments if not isinstance(a, Nommes)]
     nommes = next((a for a in arguments if isinstance(a, Nommes)), Nommes())
     if cote == "python":
         return appeler(*positionnels, **nommes)
-    if isinstance(nommes, EnTable):
-        return appeler(*positionnels, dict(nommes))
     return appeler(*positionnels, *nommes.values())
 
 

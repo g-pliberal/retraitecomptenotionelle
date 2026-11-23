@@ -39,6 +39,7 @@ from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 from facade import Simulateur, ouvrir
+from outils_fiches import periodes_ecrites
 
 #: Le calendrier de 2008, au mois où les conditions sont réunies : « 151
 #: trimestres pour les personnes remplissant les conditions [...] entre le
@@ -243,8 +244,8 @@ def test_qui_part_avant_soixante_ans_doit_la_duree_de_qui_les_atteint(
     if ouverture.rang < DateMois(2025, 1).rang:
         table = TABLE_2014 if regime == "crpcen" else TABLE_2014_BANQUE_DE_FRANCE
         assert _escalier(table, lue) == droit
-    periodes = lire_fiche_de_regime(
-        RACINE_DONNEES / "reference" / "regimes" / f"{regime}.yaml")["periodes"]
+    periodes = periodes_ecrites(lire_fiche_de_regime(
+        RACINE_DONNEES / "reference" / "regimes" / f"{regime}.yaml"))
     periode = next(p for p in periodes if p["debut"] <= ouverture.annee
                    and (p["fin"] is None or ouverture.annee <= p["fin"]))
     tables = simulateur.scenario_actuel.durees_requises_regimes

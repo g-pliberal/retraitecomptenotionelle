@@ -297,11 +297,8 @@ src/retraite_notionnelle/donnees/regimes.py:
     _assembler: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_se_confronte_par_son_appelant}
     _en_vigueur: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_se_confronte_par_son_appelant}
     bornes_assiette_en_pass: {lecteur: scripts/solde_fusion.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
-    couvre: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     de_l_annee: {lecteur: scripts/solde_fusion.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     dater_les_taux_moyens: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_se_confronte_par_son_appelant}
-    effet: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
-    morceau_d_annees: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     taux: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     taux_cotisation_salarie: {lecteur: scripts/solde_fusion.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
@@ -317,13 +314,9 @@ src/retraite_notionnelle/donnees/regimes.py:
     - couverture
     - forfait
     - grille
-    - liquide
     - montants
     - ouvert
     - part_du_revenu
-    - periode
-    - periode_a_l_effet
-    - periodes_actives
     - points_garantis
     - prise_en_charge
     - regimes

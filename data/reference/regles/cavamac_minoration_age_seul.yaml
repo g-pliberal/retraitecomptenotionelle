@@ -729,5 +729,5 @@ code:
     age_sans_coefficient_de_l_inapte, categories_sans_coefficient,
     carriere_longue_minoree_de, carriere_longue_minoree_depuis_l_age ;
     regimes/cavamac_complementaire.yaml : surcote_par_trimestre, surcote_pas_trimestres,
-    surcote_trimestres_maximum, surcote_trimestres_cotises, date_effet
+    surcote_trimestres_maximum, surcote_trimestres_cotises, du
   tests: [tests/test_sections_liberales.py]

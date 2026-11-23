@@ -2162,7 +2162,7 @@ code:
     surcote_trimestres_maximum, surcote_pas_trimestres, surcote_palier_age,
     surcote_par_trimestre_apres_palier, surcote_trimestres_cotises,
     surcote_depuis_l_age_legal, surcote_du_trimestre_civil_suivant,
-    surcote_premieres_annees, date_effet, age_table,
+    surcote_premieres_annees, du, age_table,
     age_taux_plein ;
     legislation/ages_regimes.csv : age_surcote_maximum ;
     contenu.parametres de chaque version : surcote_par_trimestre, surcote_pas_trimestres,

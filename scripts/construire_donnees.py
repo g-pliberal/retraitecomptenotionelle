@@ -133,7 +133,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 49
+VERSION = 50
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -755,24 +755,30 @@ def _populations() -> dict:
     }
 
 
-def _blocs_du_paquet(periodes: list[dict]) -> dict:
-    """Les quatre blocs d'un régime, que le paquet porte au moteur à la place
-    des périodes (note 0009, amendement du 22 novembre 2026, étape 4).
+def _blocs_du_paquet(regime) -> dict:
+    """Les quatre blocs d'un régime, que le paquet porte au moteur (note 0009,
+    amendement du 22 novembre 2026) : les lignes du chargeur, chacune écrite
+    comme le paquet écrit ses champs (:func:`_champs_du_paquet`), dans son
+    bloc seul. Les champs d'une ligne se lisent sur des paramètres assemblés
+    d'elle et de la première ligne de chaque autre bloc, que le filtre du bloc
+    écarte ensuite."""
+    from retraite_notionnelle.donnees.axes import famille
+    from retraite_notionnelle.donnees.regimes import PeriodeRegime
 
-    PENDANT LE GEL, le chargeur refait encore les périodes de la vue
-    ancienne : les blocs s'en refont, comme le chargeur refait les siens
-    (:func:`~retraite_notionnelle.donnees.axes.blocs_des_periodes`), des
-    périodes telles que le paquet les écrit. ``dates_d_effet`` garde, au rang
-    de sa ligne de cotisation, la date d'effet qu'une période déclarait : le
-    moteur en refait la vue des périodes du pont et des tests, qui part à
-    l'étape 5 avec elle."""
-    from retraite_notionnelle.donnees.axes import blocs_des_periodes
-
-    return {
-        **blocs_des_periodes(periodes),
-        "dates_d_effet": {str(rang): list(p["date_effet"]) for rang, p in enumerate(periodes)
-                          if p.get("date_effet") is not None},
-    }
+    temoins = {bloc: getattr(regime, bloc)[0]
+               for bloc in ("liquidation", "structure", "servi", "cotisation")}
+    blocs = {}
+    for bloc, temoin in temoins.items():
+        lignes = []
+        for ligne in getattr(regime, bloc):
+            champs = {}
+            for autre in (*(t for b, t in temoins.items() if b != bloc), ligne):
+                champs.update({c: v for c, v in autre.items() if c not in ("du", "au")})
+            parametres = PeriodeRegime(regime=regime.code, debut=0, fin=None, **champs)
+            lignes.append({"du": ligne["du"], "au": ligne["au"], **{
+                c: v for c, v in _champs_du_paquet(parametres).items() if famille(c) == bloc}})
+        blocs[bloc] = lignes
+    return {bloc: blocs[bloc] for bloc in ("structure", "liquidation", "servi", "cotisation")}
 
 
 def _regimes() -> list[dict]:
@@ -797,170 +803,166 @@ def _regimes() -> list[dict]:
             "population": regime.population,
             "hors_repartition": regime.hors_repartition,
             "duree_reprise_par": list(regime.duree_reprise_par) or None,
-            **_blocs_du_paquet([
-                {
-                    "debut": p.debut,
-                    "fin": p.fin,
-                    "type_calcul": p.type_calcul,
-                    "age_ouverture": p.age_ouverture,
-                    "age_taux_plein": p.age_taux_plein,
-                    "duree_requise_trimestres": p.duree_requise_trimestres,
-                    "duree_requise_par_generation": p.duree_requise_par_generation,
-                    "duree_requise_table": list(p.duree_requise_table),
-                    "duree_requise_calendrier": p.duree_requise_calendrier,
-                    "age_surcote_regimes_speciaux": p.age_surcote_regimes_speciaux,
-                    "duree_proratisation_par_generation":
-                        p.duree_proratisation_par_generation,
-                    "duree_proratisation_trimestres": p.duree_proratisation_trimestres,
-                    "age_ouverture_par_generation": p.age_ouverture_par_generation,
-                    "taux_plein": p.taux_plein,
-                    "taux_maximum_bonifie": p.taux_maximum_bonifie,
-                    "salaire_reference": p.salaire_reference,
-                    "assiette": p.assiette,
-                    "taux_cotisation_retraite": p.taux_cotisation_retraite,
-                    "taux_cotisation_deplafonnee": p.taux_cotisation_deplafonnee,
-                    "part_salariale_deplafonnee": p.part_salariale_deplafonnee,
-                    "perimetre_taux": p.perimetre_taux,
-                    "part_salariale": p.part_salariale,
-                    "age_taux_plein_par_generation": p.age_taux_plein_par_generation,
-                    "age_table": p.age_table,
-                    "decote_par_generation": p.decote_par_generation,
-                    "salaire_reference_par_generation": p.salaire_reference_par_generation,
-                    "decote_par_trimestre": p.decote_par_trimestre,
-                    "bareme_decote": p.bareme_decote,
-                    "duree_maximum_avant_age": p.duree_maximum_avant_age,
-                    "duree_maximum_avant_age_trimestres":
-                        p.duree_maximum_avant_age_trimestres,
-                    "decote_annulee_par_la_duree": p.decote_annulee_par_la_duree,
-                    "decote_par_la_duree_seule": p.decote_par_la_duree_seule,
-                    "decote_trimestres_maximum": p.decote_trimestres_maximum,
-                    "surcote_par_trimestre": p.surcote_par_trimestre,
-                    "surcote_bareme": p.surcote_bareme,
-                    "abattement_points": p.abattement_points,
-                    "surcote_points": p.surcote_points,
-                    "surcote_age_debut": p.surcote_age_debut,
-                    "surcote_age_maximum": p.surcote_age_maximum,
-                    "surcote_trimestres_maximum": p.surcote_trimestres_maximum,
-                    "surcote_pas_trimestres": p.surcote_pas_trimestres,
-                    "surcote_palier_age": p.surcote_palier_age,
-                    "surcote_par_trimestre_apres_palier":
-                        p.surcote_par_trimestre_apres_palier,
-                    "surcote_affiliation_minimale_trimestres":
-                        p.surcote_affiliation_minimale_trimestres,
-                    "plafond_majoration_enfants": p.plafond_majoration_enfants,
-                    "plafond_majoration_annee": p.plafond_majoration_annee,
-                    "plafond_majoration_regime": p.plafond_majoration_regime,
-                    "points_maximum": p.points_maximum,
-                    "points_minimum_annuels": p.points_minimum_annuels,
-                    "points_par_trimestre_valide": p.points_par_trimestre_valide,
-                    "points_ajustement_par_forfait": p.points_ajustement_par_forfait,
-                    "points_ajustement_maximum": p.points_ajustement_maximum,
-                    "taux_calcul_points": p.taux_calcul_points,
-                    "ecretement_salaire_reference": (
-                        None if p.ecretement_salaire_reference is None
-                        else list(p.ecretement_salaire_reference)),
-                    "plafond_en_traitements_de_l_indice_100":
-                        p.plafond_en_traitements_de_l_indice_100,
-                    "part_au_dela_du_plafond": p.part_au_dela_du_plafond,
-                    "capital_seuil_points": p.capital_seuil_points,
-                    "bareme_points": p.bareme_points,
-                    "points_de": p.points_de,
-                    "valeur_point_euros": p.valeur_point_euros,
-                    "valeur_point_annee": p.valeur_point_annee,
-                    "bareme_trimestre": p.bareme_trimestre,
-                    "trimestres_maximum": p.trimestres_maximum,
-                    "trimestres_maximum_leve_avant_age": (
-                        p.trimestres_maximum_leve_avant_age),
-                    "borne_basse_euros": p.borne_basse_euros,
-                    "borne_haute_euros": p.borne_haute_euros,
-                    "pension_forfaitaire_annuelle": p.pension_forfaitaire_annuelle,
-                    "pension_forfaitaire_annee": p.pension_forfaitaire_annee,
-                    "assiette_repere_smic": p.assiette_repere_smic,
-                    "assiette_plancher": p.assiette_plancher,
-                    "assiette_forfaitaire": p.assiette_forfaitaire,
-                    "smic_du_mois": p.smic_du_mois,
-                    "assiette_minimale_pass": p.assiette_minimale_pass,
-                    "cotisation_par_classes": p.cotisation_par_classes,
-                    "assiette_grille": p.assiette_grille,
-                    "assiette_facteur_revenu": p.assiette_facteur_revenu,
-                    "cotisation_forfaitaire_euros": p.cotisation_forfaitaire_euros,
-                    "cotisation_forfaitaire_annee": p.cotisation_forfaitaire_annee,
-                    "avantages_non_contributifs": list(p.avantages_non_contributifs),
-                    "notes": p.notes,
-                    # Deux périodes le posent, celles de 2025 des IEG et de la
-                    # CRPCEN : absent, le moteur JavaScript le lit faux.
-                    **({"age_taux_plein_a_l_ouverture": True}
-                       if p.age_taux_plein_a_l_ouverture else {}),
-                    # Les périodes de la caisse du CESE le posent : absent, le
-                    # moteur JavaScript liquide toutes les annuités au taux de
-                    # la période de liquidation.
-                    **({"annuites_au_taux_de_leur_annee": True}
-                       if p.annuites_au_taux_de_leur_annee else {}),
-                    # Ce qui pèse leurs annuités, sur les mêmes périodes.
-                    **({"duree_requise_des_annuites": p.duree_requise_des_annuites}
-                       if p.duree_requise_des_annuites is not None else {}),
-                    # Six périodes le posent, de 1972 à 1974 au régime
-                    # général et aux salariés agricoles : absent, le moteur
-                    # JavaScript le lit nul.
-                    **({"trimestres_retenus_maximum": p.trimestres_retenus_maximum}
-                       if p.trimestres_retenus_maximum is not None else {}),
-                    # Les périodes du RCO des artisans jusqu'en 2008 le posent :
-                    # absent, le moteur JavaScript lit le revenu de l'année.
-                    **({"assiette_annee_de_revenu": dict(p.assiette_annee_de_revenu)}
-                       if p.assiette_annee_de_revenu else {}),
-                    # Celles du RCO des artisans jusqu'en 2011 : absent, aucun
-                    # forfait de début d'exercice.
-                    **({"assiette_de_debut": {statut: list(diviseurs) for statut, diviseurs
-                                              in p.assiette_de_debut}}
-                       if p.assiette_de_debut else {}),
-                    # Celles du NRCO des commerçants de 2004 à 2008 : absent,
-                    # aucun forfait en bases mensuelles.
-                    **({"assiette_de_debut_en_bases_mensuelles": {
-                           statut: list(multiples) for statut, multiples
-                           in p.assiette_de_debut_en_bases_mensuelles}}
-                       if p.assiette_de_debut_en_bases_mensuelles else {}),
-                    # La période de la CARMF de 2026, celles de la CARCDSF
-                    # depuis 2012 : absente, aucune dispense de début
-                    # d'exercice ; sans `avant_l_age`, aucune condition d'âge ;
-                    # sans `part`, toute la cotisation.
-                    **({"dispense_de_debut": {
-                           cle: valeur for cle, valeur in zip(
-                               ("annees", "avant_l_age", "depuis", "part"),
-                               p.dispense_de_debut) if valeur is not None}}
-                       if p.dispense_de_debut else {}),
-                    # La période de la CARMF de 2026 : absente, aucune
-                    # exemption passé un âge.
-                    **({"exemption_passe_l_age": dict(zip(
-                           ("age", "depuis"), p.exemption_passe_l_age))}
-                       if p.exemption_passe_l_age else {}),
-                    # La fiche datée du salaire annuel moyen, aux seules
-                    # périodes qui y renvoient : absente, la moyenne annuelle.
-                    **({"regles_du_salaire_annuel_moyen": p.regles_du_salaire_annuel_moyen}
-                       if p.regles_du_salaire_annuel_moyen else {}),
-                    # Les dates d'effet que la période liquide, au jour, aux
-                    # seules périodes qu'un texte coupe : absentes, ses années.
-                    **({"date_effet": list(p.date_effet)} if p.date_effet is not None else {}),
-                    **_regles_d_avant_1983(p),
-                    **_duree_majoree(p),
-                    **_minimum_borne(p),
-                    **_points_abattus(p),
-                    **_points_au_prorata(p),
-                    **_bareme_anticipation(p),
-                    **_non_salaries_2026(p),
-                    **_fractions_des_cultes(p),
-                    **_regles_des_marins(p),
-                    **_regles_des_sections(p),
-                    **_plafond_des_primes(p),
-                    **_points_gratuits(p),
-                    **_points_invalidite(p),
-                    **_bornes_par_annee(p),
-                    **_taux_des_non_salaries(p),
-                    **_assurance_maladie(p),
-                }
-                for p in regime.periodes
-            ]),
+            **_blocs_du_paquet(regime),
         })
     return fiches
+
+
+def _champs_du_paquet(p) -> dict:
+    """Les champs de paramètres de régime tels que le paquet les écrit."""
+    return {
+                "type_calcul": p.type_calcul,
+                "age_ouverture": p.age_ouverture,
+                "age_taux_plein": p.age_taux_plein,
+                "duree_requise_trimestres": p.duree_requise_trimestres,
+                "duree_requise_par_generation": p.duree_requise_par_generation,
+                "duree_requise_table": list(p.duree_requise_table),
+                "duree_requise_calendrier": p.duree_requise_calendrier,
+                "age_surcote_regimes_speciaux": p.age_surcote_regimes_speciaux,
+                "duree_proratisation_par_generation":
+                    p.duree_proratisation_par_generation,
+                "duree_proratisation_trimestres": p.duree_proratisation_trimestres,
+                "age_ouverture_par_generation": p.age_ouverture_par_generation,
+                "taux_plein": p.taux_plein,
+                "taux_maximum_bonifie": p.taux_maximum_bonifie,
+                "salaire_reference": p.salaire_reference,
+                "assiette": p.assiette,
+                "taux_cotisation_retraite": p.taux_cotisation_retraite,
+                "taux_cotisation_deplafonnee": p.taux_cotisation_deplafonnee,
+                "part_salariale_deplafonnee": p.part_salariale_deplafonnee,
+                "perimetre_taux": p.perimetre_taux,
+                "part_salariale": p.part_salariale,
+                "age_taux_plein_par_generation": p.age_taux_plein_par_generation,
+                "age_table": p.age_table,
+                "decote_par_generation": p.decote_par_generation,
+                "salaire_reference_par_generation": p.salaire_reference_par_generation,
+                "decote_par_trimestre": p.decote_par_trimestre,
+                "bareme_decote": p.bareme_decote,
+                "duree_maximum_avant_age": p.duree_maximum_avant_age,
+                "duree_maximum_avant_age_trimestres":
+                    p.duree_maximum_avant_age_trimestres,
+                "decote_annulee_par_la_duree": p.decote_annulee_par_la_duree,
+                "decote_par_la_duree_seule": p.decote_par_la_duree_seule,
+                "decote_trimestres_maximum": p.decote_trimestres_maximum,
+                "surcote_par_trimestre": p.surcote_par_trimestre,
+                "surcote_bareme": p.surcote_bareme,
+                "abattement_points": p.abattement_points,
+                "surcote_points": p.surcote_points,
+                "surcote_age_debut": p.surcote_age_debut,
+                "surcote_age_maximum": p.surcote_age_maximum,
+                "surcote_trimestres_maximum": p.surcote_trimestres_maximum,
+                "surcote_pas_trimestres": p.surcote_pas_trimestres,
+                "surcote_palier_age": p.surcote_palier_age,
+                "surcote_par_trimestre_apres_palier":
+                    p.surcote_par_trimestre_apres_palier,
+                "surcote_affiliation_minimale_trimestres":
+                    p.surcote_affiliation_minimale_trimestres,
+                "plafond_majoration_enfants": p.plafond_majoration_enfants,
+                "plafond_majoration_annee": p.plafond_majoration_annee,
+                "plafond_majoration_regime": p.plafond_majoration_regime,
+                "points_maximum": p.points_maximum,
+                "points_minimum_annuels": p.points_minimum_annuels,
+                "points_par_trimestre_valide": p.points_par_trimestre_valide,
+                "points_ajustement_par_forfait": p.points_ajustement_par_forfait,
+                "points_ajustement_maximum": p.points_ajustement_maximum,
+                "taux_calcul_points": p.taux_calcul_points,
+                "ecretement_salaire_reference": (
+                    None if p.ecretement_salaire_reference is None
+                    else list(p.ecretement_salaire_reference)),
+                "plafond_en_traitements_de_l_indice_100":
+                    p.plafond_en_traitements_de_l_indice_100,
+                "part_au_dela_du_plafond": p.part_au_dela_du_plafond,
+                "capital_seuil_points": p.capital_seuil_points,
+                "bareme_points": p.bareme_points,
+                "points_de": p.points_de,
+                "valeur_point_euros": p.valeur_point_euros,
+                "valeur_point_annee": p.valeur_point_annee,
+                "bareme_trimestre": p.bareme_trimestre,
+                "trimestres_maximum": p.trimestres_maximum,
+                "trimestres_maximum_leve_avant_age": (
+                    p.trimestres_maximum_leve_avant_age),
+                "borne_basse_euros": p.borne_basse_euros,
+                "borne_haute_euros": p.borne_haute_euros,
+                "pension_forfaitaire_annuelle": p.pension_forfaitaire_annuelle,
+                "pension_forfaitaire_annee": p.pension_forfaitaire_annee,
+                "assiette_repere_smic": p.assiette_repere_smic,
+                "assiette_plancher": p.assiette_plancher,
+                "assiette_forfaitaire": p.assiette_forfaitaire,
+                "smic_du_mois": p.smic_du_mois,
+                "assiette_minimale_pass": p.assiette_minimale_pass,
+                "cotisation_par_classes": p.cotisation_par_classes,
+                "assiette_grille": p.assiette_grille,
+                "assiette_facteur_revenu": p.assiette_facteur_revenu,
+                "cotisation_forfaitaire_euros": p.cotisation_forfaitaire_euros,
+                "cotisation_forfaitaire_annee": p.cotisation_forfaitaire_annee,
+                "avantages_non_contributifs": list(p.avantages_non_contributifs),
+                # Deux périodes le posent, celles de 2025 des IEG et de la
+                # CRPCEN : absent, le moteur JavaScript le lit faux.
+                **({"age_taux_plein_a_l_ouverture": True}
+                   if p.age_taux_plein_a_l_ouverture else {}),
+                # Les périodes de la caisse du CESE le posent : absent, le
+                # moteur JavaScript liquide toutes les annuités au taux de
+                # la période de liquidation.
+                **({"annuites_au_taux_de_leur_annee": True}
+                   if p.annuites_au_taux_de_leur_annee else {}),
+                # Ce qui pèse leurs annuités, sur les mêmes périodes.
+                **({"duree_requise_des_annuites": p.duree_requise_des_annuites}
+                   if p.duree_requise_des_annuites is not None else {}),
+                # Six périodes le posent, de 1972 à 1974 au régime
+                # général et aux salariés agricoles : absent, le moteur
+                # JavaScript le lit nul.
+                **({"trimestres_retenus_maximum": p.trimestres_retenus_maximum}
+                   if p.trimestres_retenus_maximum is not None else {}),
+                # Les périodes du RCO des artisans jusqu'en 2008 le posent :
+                # absent, le moteur JavaScript lit le revenu de l'année.
+                **({"assiette_annee_de_revenu": dict(p.assiette_annee_de_revenu)}
+                   if p.assiette_annee_de_revenu else {}),
+                # Celles du RCO des artisans jusqu'en 2011 : absent, aucun
+                # forfait de début d'exercice.
+                **({"assiette_de_debut": {statut: list(diviseurs) for statut, diviseurs
+                                          in p.assiette_de_debut}}
+                   if p.assiette_de_debut else {}),
+                # Celles du NRCO des commerçants de 2004 à 2008 : absent,
+                # aucun forfait en bases mensuelles.
+                **({"assiette_de_debut_en_bases_mensuelles": {
+                       statut: list(multiples) for statut, multiples
+                       in p.assiette_de_debut_en_bases_mensuelles}}
+                   if p.assiette_de_debut_en_bases_mensuelles else {}),
+                # La période de la CARMF de 2026, celles de la CARCDSF
+                # depuis 2012 : absente, aucune dispense de début
+                # d'exercice ; sans `avant_l_age`, aucune condition d'âge ;
+                # sans `part`, toute la cotisation.
+                **({"dispense_de_debut": {
+                       cle: valeur for cle, valeur in zip(
+                           ("annees", "avant_l_age", "depuis", "part"),
+                           p.dispense_de_debut) if valeur is not None}}
+                   if p.dispense_de_debut else {}),
+                # La période de la CARMF de 2026 : absente, aucune
+                # exemption passé un âge.
+                **({"exemption_passe_l_age": dict(zip(
+                       ("age", "depuis"), p.exemption_passe_l_age))}
+                   if p.exemption_passe_l_age else {}),
+                # La fiche datée du salaire annuel moyen, aux seules
+                # périodes qui y renvoient : absente, la moyenne annuelle.
+                **({"regles_du_salaire_annuel_moyen": p.regles_du_salaire_annuel_moyen}
+                   if p.regles_du_salaire_annuel_moyen else {}),
+                **_regles_d_avant_1983(p),
+                **_duree_majoree(p),
+                **_minimum_borne(p),
+                **_points_abattus(p),
+                **_points_au_prorata(p),
+                **_bareme_anticipation(p),
+                **_non_salaries_2026(p),
+                **_fractions_des_cultes(p),
+                **_regles_des_marins(p),
+                **_regles_des_sections(p),
+                **_plafond_des_primes(p),
+                **_points_gratuits(p),
+                **_points_invalidite(p),
+                **_bornes_par_annee(p),
+                **_taux_des_non_salaries(p),
+                **_assurance_maladie(p),
+    }
 
 
 def _regles_des_marins(p) -> dict:

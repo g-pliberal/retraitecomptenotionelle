@@ -32,11 +32,12 @@ import pytest
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
 from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
+from outils_fiches import periodes_ecrites
 
 LOT = ("marins_ouverture_cinquante_ans", "marins_bonification_enfants",
        "marins_salaire_de_reference")
 REFERENCE = RACINE_DONNEES / "reference"
-PERIODES = lire_fiche_de_regime(REFERENCE / "regimes" / "marins.yaml")["periodes"]
+PERIODES = periodes_ecrites(lire_fiche_de_regime(REFERENCE / "regimes" / "marins.yaml"))
 #: La première année de la fiche de régime, et la dernière que les
 #: confrontations parcourent.
 DEBUT, HORIZON = 1930, 2050

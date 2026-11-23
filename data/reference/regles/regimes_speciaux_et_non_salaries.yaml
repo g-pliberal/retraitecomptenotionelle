@@ -62,10 +62,10 @@ reformes:
 - mayotte_2026
 code:
   moteur: >-
-    Chaque réforme de la fiche (`reformes`) est coupée dans les périodes des fiches de
+    Chaque réforme de la fiche (`reformes`) est coupée dans les lignes des fiches de
     régime à sa date d'effet, ou absorbée par une table par génération :
-    `Regime.periode` sert à chaque année, et `periode_de_liquidation` à chaque date
-    d'effet (`Regime.periode_a_l_effet`), la période qui la porte ;
+    `Regime.de_l_annee` sert à chaque année, et `periode_de_liquidation` à chaque date
+    d'effet (`Regime.a_la_date`), les lignes qui la portent ;
     `reformes_non_portees` dit toute réforme du calendrier (`charger_reformes`) qu'une
     fiche ne coupe, n'absorbe ni ne déclare non appliquée. L'avenant 17 de
     l'Agirc-Arrco ne change rien : le modèle ne porte pas les coefficients de
@@ -76,7 +76,7 @@ code:
     CESE (`entres_depuis`), et la saisie du portage refuse le statut fermé, qu'elle
     renvoie à celui qui le relève (`Affiliations.fermeture_entrants`, `statutFerme`).
   javascript: >-
-    moteur/js/regimes.js : Regime.periode, Regime.periodeALEffet, Affiliations.regimes,
+    moteur/js/regimes.js : Regime.aLaDate, Affiliations.regimes,
     Affiliations._periode, Affiliations.fermetureEntrants ; moteur/js/droit/commun.js :
     periodeDeLiquidation ; moteur/js/contexte.js : statutFerme
   parametres: >-

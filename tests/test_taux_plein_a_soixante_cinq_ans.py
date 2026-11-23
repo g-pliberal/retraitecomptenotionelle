@@ -190,13 +190,13 @@ def test_la_fiche_date_l_age_du_parent_de_trois_enfants():
 def test_l_age_du_taux_plein_du_parent_de_trois_enfants():
     """L'âge d'annulation de la décote au régime général :
     le portage le rend, le témoin du droit le garde (``droit_et_fige``)."""
-    from outils_pont import droit_et_fige
+    from outils_pont import droit_et_fige, periode_a_l_effet
 
     appels, attendus = {}, {}
     for cle, (champs, age) in CAS.items():
         carriere = _carriere(cle, **champs)
         appels[cle] = ("liquider.decote_opposable", pont.MOTEUR,
-                       pont.Periode("regime_general", carriere.annee_liquidation),
+                       periode_a_l_effet("regime_general", carriere),
                        carriere, carriere.annee_liquidation)
         attendus[cle] = age
     lus, refus = droit_et_fige(appels)
@@ -228,7 +228,7 @@ def test_les_regimes_alignes_suivent():
     régimes obligatoires de retraite auxquels s'appliquent les dispositions de
     l'article L. 351-8 »). Les complémentaires que le modèle ne sert pas encore :
     ``ENCORE_A_L_AGE_DE_LA_GENERATION``."""
-    from outils_pont import droit_et_fige
+    from outils_pont import droit_et_fige, periode_a_l_effet
 
     carriere = _carriere("interrompue trois ans", sans=(1980, 1981, 1982))
     annee = carriere.annee_liquidation
@@ -364,7 +364,7 @@ def test_la_pension_des_cultes_de_bout_en_bout():
     garde la décote."""
     import re
 
-    from outils_pont import droit_et_fige
+    from outils_pont import droit_et_fige, periode_a_l_effet
 
     cultes = (*range(1980, 1988), *range(2005, 2018))
     appels = {cle: ("scenario_actuel.calculer", pont.MOTEUR, _ministre_du_culte(
@@ -405,7 +405,7 @@ def test_les_annees_cultuelles_d_avant_1979_ne_sont_pas_cotisees():
     d'avril 1981, juin 1984 et juin 1986 : 1979 et 1980, 8 trimestres cotisés ;
     1981 à 1983, aucun ; 8 cotisés d'activité avant, l'activité cultuelle
     comptée comme l'emploi (``NON_TRANCHE_CULTES``) : 65 ans, aux deux régimes."""
-    from outils_pont import droit_et_fige
+    from outils_pont import droit_et_fige, periode_a_l_effet
 
     cas = {
         "enfant de 1980": (_ministre_du_culte(
@@ -416,7 +416,7 @@ def test_les_annees_cultuelles_d_avant_1979_ne_sont_pas_cotisees():
             cultes=(*range(1973, 1981), *range(2000, 2018))), DEROGATION),
     }
     appels = {f"{cle}|{regime}": ("liquider.decote_opposable", pont.MOTEUR,
-                                  pont.Periode(regime, carriere.annee_liquidation),
+                                  periode_a_l_effet(regime, carriere),
                                   carriere, carriere.annee_liquidation)
               for cle, (carriere, _) in cas.items() for regime in ("cavimac", "regime_general")}
     lus, refus = droit_et_fige(appels)
@@ -518,7 +518,7 @@ def test_ailleurs_le_moteur_lit_encore_l_age_de_la_generation():
     """L'âge d'où se comptent la décote ou le coefficient, que le portage rend
     (``droit_et_fige``) : celui de la génération, là où le droit dit
     soixante-cinq ans — un écart déclaré, en attendant le calcul."""
-    from outils_pont import droit_et_fige
+    from outils_pont import droit_et_fige, periode_a_l_effet
 
     carriere = _carriere("interrompue trois ans", sans=(1980, 1981, 1982))
     annee = carriere.annee_liquidation
@@ -836,13 +836,13 @@ CAS_FONCTIONNAIRES = {
 def test_l_age_d_annulation_du_fonctionnaire_parent_de_trois_enfants():
     """L'âge d'annulation de la décote de la fonctionnaire de l'État, , que le
     portage rend (``droit_et_fige``)."""
-    from outils_pont import droit_et_fige
+    from outils_pont import droit_et_fige, periode_a_l_effet
 
     appels, attendus = {}, {}
     for cle, (champs, age) in CAS_FONCTIONNAIRES.items():
         carriere = _fonctionnaire(cle, **champs)
         appels[cle] = ("liquider.decote_opposable", pont.MOTEUR,
-                       pont.Periode("fonction_publique_etat", carriere.annee_liquidation),
+                       periode_a_l_effet("fonction_publique_etat", carriere),
                        carriere, carriere.annee_liquidation)
         attendus[cle] = age
     lus, refus = droit_et_fige(appels)
@@ -862,7 +862,7 @@ def test_la_cnracl_et_les_ouvriers_de_l_etat_suivent():
     """Le même âge à la CNRACL et aux ouvriers de l'État ; l'emploi classé en
     catégorie active, dont la limite d'âge n'était pas de soixante-cinq ans,
     garde le sien, celui du parent de deux enfants."""
-    from outils_pont import droit_et_fige
+    from outils_pont import droit_et_fige, periode_a_l_effet
 
     appels = {}
     for regime, statut in REGIMES_DES_FONCTIONNAIRES.items():
@@ -873,7 +873,7 @@ def test_la_cnracl_et_les_ouvriers_de_l_etat_suivent():
                                       conges=_trois_ans())
             appels[f"{regime}, {enfants}"] = (
                 "liquider.decote_opposable", pont.MOTEUR,
-                pont.Periode(regime, carriere.annee_liquidation), carriere,
+                periode_a_l_effet(regime, carriere), carriere,
                 carriere.annee_liquidation)
     for enfants, naissances in ((3, ("1978-04", "1980-06", "1982-06")),
                                 (2, ("1978-04", "1980-06"))):
@@ -883,7 +883,7 @@ def test_la_cnracl_et_les_ouvriers_de_l_etat_suivent():
                                   conges=_trois_ans())
         appels[f"active, {enfants}"] = (
             "liquider.decote_opposable", pont.MOTEUR,
-            pont.Periode("cnracl", carriere.annee_liquidation), carriere,
+            periode_a_l_effet("cnracl", carriere), carriere,
             carriere.annee_liquidation)
     lus, refus = droit_et_fige(appels)
     assert refus == {}, refus

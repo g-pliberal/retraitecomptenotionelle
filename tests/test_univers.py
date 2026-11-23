@@ -27,6 +27,7 @@ from retraite_notionnelle.config import (
 )
 from retraite_notionnelle.noyau import carte, univers
 from retraite_notionnelle.noyau import calcul_notionnel as moteur
+from outils_fiches import periodes_ecrites
 
 RACINE = Path(__file__).resolve().parents[1]
 REFERENCE = RACINE_DONNEES / "reference"
@@ -187,7 +188,7 @@ def test_le_compte_garde_les_regles_de_cotisation_qu_il_applique():
     source = (RACINE / "moteur" / "js" / "compte.js").read_text(encoding="utf-8")
     assert all(re.search(rf"\b{champ}\b", source) for champ in lus)
     designees = {periode[champ] for _, donnee in fichiers_de_regimes(RACINE_DONNEES)
-                 for periode in donnee.get("periodes") or () for champ in lus
+                 for periode in (periodes_ecrites(donnee) if "liquidation" in donnee else ()) for champ in lus
                  if periode.get(champ)}
     couche = univers.Couche.lue(univers.couches()["comptes_notionnels"])
     gardees = {o.fiche for o in couche.operations if o.operation == "garder"}

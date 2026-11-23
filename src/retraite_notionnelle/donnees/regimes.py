@@ -5,13 +5,13 @@ from __future__ import annotations
 import csv
 import math
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field, fields, replace
 from functools import cached_property
 from pathlib import Path
 
 from ..somme import somme_ordonnee
-from .axes import (blocs_des_periodes, en_vigueur_au_jour, tranches_de_l_annee,
-                   vue_ancienne)
+from .axes import en_vigueur_au_jour, famille, tranches_de_l_annee, verifier_les_blocs
 from .chargement import Fiabilite, au_mois, charger_yaml, une_fois_par_instantane
 
 #: Familles de régimes reconnues.
@@ -221,44 +221,6 @@ def _bornes_par_annee(fiche: dict | None) -> tuple[tuple[int, float], ...]:
                         for annee, euros in (fiche or {}).items()))
 
 
-def _dates_d_effet(bornes, debut_periode: int, fin_periode: int | None,
-                   lieu: str) -> tuple[str, str | None] | None:
-    """Les dates d'effet qu'une période déclare, ``[début, fin]`` écrites au
-    jour, en AAAA-MM-JJ ; ``None`` sans déclaration. Une fin nulle laisse la
-    période liquider sans borne, comme la dernière d'un régime vivant.
-
-    Elles coupent l'année d'un texte, et ne déplacent pas la période : chaque
-    borne tombe à moins d'un an de celle de ses années, au plus tôt dans
-    l'année qui précède, au plus tard dans celle qui suit, et la période
-    liquide toujours une part de sa première et de sa dernière année. C'est
-    ce qui laisse :func:`morceau_d_annees` découper ses années sans perdre
-    un jour."""
-    if bornes is None:
-        return None
-    if not isinstance(bornes, (list, tuple)) or len(bornes) != 2 or bornes[0] is None:
-        raise ValueError(f"{lieu} : `date_effet` s'écrit [début, fin], au jour, "
-                         f"et non {bornes!r}")
-    # Le YAML lit un jour écrit AAAA-MM-JJ comme une date.
-    debut, fin = (None if jour is None else
-                  jour.isoformat() if hasattr(jour, "isoformat") else str(jour)
-                  for jour in bornes)
-    for jour in (debut, fin):
-        if jour is not None and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", jour):
-            raise ValueError(f"{lieu} : `date_effet` porte {jour!r}, qui n'est pas "
-                             "une date AAAA-MM-JJ")
-    if fin is not None and fin <= debut:
-        raise ValueError(f"{lieu} : `date_effet` finit le {fin}, avant son début, "
-                         f"le {debut}")
-    if not f"{debut_periode - 1:04d}-01-01" < debut < f"{debut_periode + 1:04d}-01-01":
-        raise ValueError(f"{lieu} : `date_effet` commence le {debut}, à plus d'un an "
-                         f"de la première année de la période, {debut_periode}")
-    if (fin is None) != (fin_periode is None) or (fin is not None and not (
-            f"{fin_periode:04d}-01-01" < fin <= f"{fin_periode + 2:04d}-01-01")):
-        raise ValueError(f"{lieu} : `date_effet` finit le {fin}, à plus d'un an de "
-                         f"la dernière année de la période, {fin_periode}")
-    return debut, fin
-
-
 def _effet_au_trimestre_civil(bornes, lieu: str) -> tuple[str, str | None] | None:
     """Les dates présumées qu'une période reporte au trimestre civil, [début,
     fin) au jour, en AAAA-MM-JJ ; ``None`` sans déclaration."""
@@ -289,7 +251,10 @@ def _complement(part: float) -> float:
 
 @dataclass(frozen=True)
 class PeriodeRegime:
-    """Jeu de paramètres d'un régime sur une plage d'années."""
+    """Les paramètres d'un régime qu'une lecture assemble de ses quatre blocs
+    (:meth:`Regime.a_la_date`, :meth:`Regime.de_l_annee`) : une ligne de
+    liquidation, la structure, une ligne servie et une ligne de cotisation,
+    dont ``debut`` et ``fin`` sont les années."""
 
     #: Code du régime dont cette période vient. Une période circule seule dans
     #: le moteur — `ouvrir.age_ouverture(moteur, periode, carriere)` ne reçoit
@@ -930,15 +895,6 @@ class PeriodeRegime:
     #: nomme, la borne que donne ``assiette``.
     borne_basse_par_annee: tuple[tuple[int, float], ...] = ()
     borne_haute_par_annee: tuple[tuple[int, float], ...] = ()
-    #: LES DATES D'EFFET QUE LA PÉRIODE LIQUIDE, au jour, quand un texte
-    #: coupe l'année : [début, fin) sur ``liquidation.date_effet``, en
-    #: AAAA-MM-JJ, comme les bornes d'une version (docs/architecture.md,
-    #: § 4.1 et 4.6). L'ordonnance du 26 mars 1982 change la liquidation des
-    #: pensions qui prennent effet depuis le 1er avril 1983, et non celle de
-    #: toute l'année ; l'acquisition, elle, garde les années de la période.
-    #: ``None`` : du 1er janvier de ``debut`` au 1er janvier qui suit ``fin``
-    #: (:attr:`effet`).
-    date_effet: tuple[str, str | None] | None = None
     #: LA PENSION QUI PREND EFFET AU TRIMESTRE CIVIL : les dates présumées —
     #: le premier du mois qui suit la demande —, [début, fin) en AAAA-MM-JJ,
     #: que le texte du régime reporte « au premier jour du trimestre civil qui
@@ -1015,7 +971,6 @@ class PeriodeRegime:
     #: II) : les années civiles d'après celle de l'anniversaire. ``None`` :
     #: aucune exemption. Voir ``acquerir.exemption_passe_l_age``.
     exemption_passe_l_age: tuple[int, int] | None = None
-    notes: str = ""
 
     def prise_en_charge(self, forfait: float, proportionnelle: float) -> float:
         """Ce que l'assurance maladie verse en plus de ce que paie le
@@ -1042,22 +997,6 @@ class PeriodeRegime:
             if self.taux_cotisation_deplafonnee_non_salarie is not None:
                 deplafonne = self.taux_cotisation_deplafonnee_non_salarie
         return plafonne, deplafonne
-
-    @property
-    def effet(self) -> tuple[str, str | None]:
-        """Les dates d'effet que la période liquide, [début, fin) en
-        AAAA-MM-JJ : celles qu'elle déclare, sinon ses années."""
-        if self.date_effet is not None:
-            return self.date_effet
-        return (f"{self.debut:04d}-01-01",
-                None if self.fin is None else f"{self.fin + 1:04d}-01-01")
-
-    def liquide(self, jour: str) -> bool:
-        """La période liquide-t-elle une pension qui prend effet ce jour
-        (AAAA-MM-JJ) ? Deux dates ainsi écrites se comparent comme deux
-        textes."""
-        debut, fin = self.effet
-        return debut <= jour and (fin is None or jour < fin)
 
     @property
     def taux_cotisation_salarie(self) -> float:
@@ -1198,73 +1137,26 @@ class Regime:
     integre_dans: str | None
     population: str
     hors_repartition: bool
-    periodes: tuple[PeriodeRegime, ...] = field(default_factory=tuple)
+    #: Les quatre blocs du fichier de régime (note de décision 0009,
+    #: amendement du 22 novembre 2026), chaque ligne lue champ par champ
+    #: (:func:`_lire_ligne`) : la structure, la liquidation et le servi au
+    #: jour, ``du`` et ``au`` en AAAA-MM-JJ, ``[du, au)`` ; la cotisation à
+    #: l'année, ``du`` et ``au`` des années incluses, deux lignes de la même
+    #: année étant deux tranches. ``moteur/js/regimes.js`` les lit du paquet.
+    structure: tuple[dict, ...] = ()
+    liquidation: tuple[dict, ...] = ()
+    cotisation: tuple[dict, ...] = ()
+    servi: tuple[dict, ...] = ()
     #: Les régimes qui comptent ses trimestres à leur propre durée, celle qui
     #: proratise leur pension : le régime général et celui des salariés
     #: agricoles, pour les assurances sociales de 1930 à 1944 (R. 351-9).
     duree_reprise_par: tuple[str, ...] = ()
 
-    def periode(self, annee: int) -> PeriodeRegime | None:
-        """Paramètres applicables une année donnée.
-
-        Quand plusieurs périodes couvrent la même année — cas des régimes à
-        tranches, où deux fiches coexistent pour la tranche 1 et la tranche 2 —
-        la première est retournée ; utiliser :meth:`periodes_actives` pour les
-        obtenir toutes.
-        """
-        for p in self.periodes:
-            if p.couvre(annee):
-                return p
-        return None
-
-    def periodes_actives(self, annee: int) -> tuple[PeriodeRegime, ...]:
-        return tuple(p for p in self.periodes if p.couvre(annee))
-
-    def periode_a_l_effet(self, jour: str) -> PeriodeRegime | None:
-        """Paramètres qui liquident une pension prenant effet ce jour
-        (AAAA-MM-JJ) : la première période dont les dates d'effet le
-        comprennent (:attr:`PeriodeRegime.effet`). Sans date d'effet
-        déclarée, c'est la période de l'année, :meth:`periode`."""
-        for p in self.periodes:
-            if p.liquide(jour):
-                return p
-        return None
-
-    # -- Les quatre blocs, et leurs lectures à la date et à l'année ----------
+    # -- Les lectures à la date et à l'année -----------------------------------
     #
     # Note de décision 0009, amendement du 22 novembre 2026 ; ``Regime`` de
     # ``moteur/js/regimes.js``, dont ``a_la_date`` et ``de_l_annee`` sont les
-    # jumeaux. PENDANT LE GEL, les blocs se refont des périodes
-    # (:func:`~.axes.blocs_des_periodes`) ; à l'étape 5, la vue part, et les
-    # périodes avec elle.
-
-    @cached_property
-    def _blocs(self) -> dict[str, tuple[dict, ...]]:
-        lignes = [{f.name: getattr(p, f.name) for f in fields(p)} for p in self.periodes]
-        blocs = blocs_des_periodes(lignes, cle=lambda champs: repr(sorted(
-            champs.items(), key=lambda paire: paire[0])))
-        return {bloc: tuple(siennes) for bloc, siennes in blocs.items()}
-
-    @property
-    def structure(self) -> tuple[dict, ...]:
-        """Ce qui décrit le régime, en lignes au jour ``[du, au)``."""
-        return self._blocs["structure"]
-
-    @property
-    def liquidation(self) -> tuple[dict, ...]:
-        """Les règles choisies à la date d'effet de la pension, au jour."""
-        return self._blocs["liquidation"]
-
-    @property
-    def cotisation(self) -> tuple[dict, ...]:
-        """Les paramètres de l'année où le droit s'acquiert, ``du`` et ``au``
-        des années incluses ; deux lignes de la même année, deux tranches."""
-        return self._blocs["cotisation"]
-
-    @property
-    def servi(self) -> tuple[dict, ...]:
-        """Les montants que le service revalorise, au jour."""
-        return self._blocs["servi"]
+    # jumeaux.
 
     @cached_property
     def _assembles(self) -> dict[tuple, PeriodeRegime]:
@@ -1272,15 +1164,13 @@ class Regime:
 
     def _assembler(self, liquidation, structure, servi, cotisation) -> PeriodeRegime:
         """Les paramètres d'une ligne de liquidation, de la structure, d'une
-        ligne servie et d'une ligne de cotisation : la période de la ligne de
-        cotisation, dont les champs de liquidation, de structure et du servi
-        sont ceux des trois autres lignes. Une même combinaison rend le même
-        objet. Ses ``debut``, ``fin`` et ``date_effet`` restent ceux de la
-        période : son ``effet`` n'est pas celui de sa ligne de liquidation, et
-        aucun lecteur ne doit s'y fier. Le moteur assemble sans la ligne qui
-        manque, et ses champs y manquent ; une période Python les porte tous :
-        sans ligne de liquidation ou de cotisation, le chargeur refuse."""
-        for bloc, ligne in (("liquidation", liquidation), ("cotisation", cotisation)):
+        ligne servie et d'une ligne de cotisation, dont ``debut`` et ``fin``
+        sont les années de la ligne de cotisation. Une même combinaison rend le
+        même objet. Le moteur assemble sans la ligne qui manque, et ses champs
+        y manquent ; des paramètres Python les portent tous : sans l'une des
+        quatre lignes, le chargeur refuse."""
+        for bloc, ligne in (("liquidation", liquidation), ("structure", structure),
+                            ("servi", servi), ("cotisation", cotisation)):
             if ligne is None:
                 raise ValueError(f"{self.code} : aucune ligne de {bloc} à assembler")
         rangs = tuple(None if ligne is None else next(
@@ -1290,12 +1180,11 @@ class Regime:
                                   (cotisation, self.cotisation)))
         assemble = self._assembles.get(rangs)
         if assemble is None:
-            base = self.periodes[rangs[3]]
             champs = {}
-            for ligne in (liquidation, structure, servi):
-                if ligne is not None:
-                    champs.update({c: v for c, v in ligne.items() if c not in ("du", "au")})
-            assemble = replace(base, **champs)
+            for ligne in (liquidation, structure, servi, cotisation):
+                champs.update({c: v for c, v in ligne.items() if c not in ("du", "au")})
+            assemble = PeriodeRegime(regime=self.code, debut=cotisation["du"],
+                                     fin=cotisation["au"], **champs)
             self._assembles[rangs] = assemble
         return assemble
 
@@ -1304,21 +1193,11 @@ class Regime:
         sont faits — liquidation, structure, servi, cotisation —, ``None`` pour
         une ligne absente : par eux, le pont les désigne au portage, dont les
         blocs ont les mêmes lignes. Des paramètres assemblés
-        (:meth:`a_la_date`, :meth:`de_l_annee`) donnent ceux de leurs lignes ;
-        une période de la vue, sa ligne de cotisation et les lignes en vigueur
-        au premier jour de sa date d'effet, dont elle est refaite
-        (``periodesDesAxes`` de ``axes.js``)."""
+        (:meth:`a_la_date`, :meth:`de_l_annee`) donnent ceux de leurs lignes."""
         for rangs, assemble in self._assembles.items():
             if assemble is parametres:
                 return rangs
-        rang = next((rang for rang, p in enumerate(self.periodes) if p is parametres), None)
-        if rang is None:
-            raise ValueError(f"{self.code} : paramètres qui ne sont pas de ce régime")
-        jour = parametres.effet[0]
-        return tuple(None if ligne is None else next(
-            r for r, l in enumerate(lignes) if l is ligne)
-            for ligne, lignes in ((en_vigueur_au_jour(lignes, jour), lignes) for lignes in (
-                self.liquidation, self.structure, self.servi))) + (rang,)
+        raise ValueError(f"{self.code} : paramètres qui ne sont pas de ce régime")
 
     def par_rangs(self, rangs) -> PeriodeRegime:
         """Les paramètres assemblés des lignes de ces rangs (:meth:`rangs`)."""
@@ -1961,30 +1840,17 @@ def charger_taux_annuels(racine: Path) -> dict[str, dict[int, dict[str, float]]]
     return table
 
 
-def morceau_d_annees(periode: PeriodeRegime, debut: int, fin: int | None,
-                     **champs) -> PeriodeRegime:
-    """La période réduite aux années [``debut``, ``fin``], ces champs changés.
-
-    Ses dates d'effet suivent : la part de celles de la période qui tombe dans
-    ces années, la borne au jour gardée au bout de la période où elle est
-    écrite (:attr:`PeriodeRegime.effet`). Le premier morceau des années
-    1983-1993 du régime général liquide depuis le 1er avril 1983, les
-    suivants depuis le 1er janvier de leur première année.
-    """
-    if periode.date_effet is None:
-        return replace(periode, debut=debut, fin=fin, **champs)
-    premiere, derniere = periode.effet
-    effet = (premiere if debut == periode.debut else f"{debut:04d}-01-01",
-             derniere if fin == periode.fin else f"{fin + 1:04d}-01-01")
-    annees = (f"{debut:04d}-01-01", None if fin is None else f"{fin + 1:04d}-01-01")
-    return replace(periode, debut=debut, fin=fin,
-                   date_effet=None if effet == annees else effet, **champs)
+def _morceau(ligne: dict, debut: int, fin: int | None, champs: dict) -> dict:
+    """La ligne de cotisation réduite aux années [``debut``, ``fin``], ces
+    champs changés."""
+    return {**ligne, "du": debut, "au": fin, **champs}
 
 
-def dater_les_taux(periodes: tuple[PeriodeRegime, ...],
+def dater_les_taux(cotisation: tuple[dict, ...],
                    annuels: dict[int, dict[str, float]],
-                   ) -> tuple[PeriodeRegime, ...]:
-    """Découpe les périodes ``plafonnee`` d'un régime selon ses taux annuels.
+                   ) -> tuple[dict, ...]:
+    """Découpe les lignes de cotisation ``plafonnee`` d'un régime selon ses
+    taux annuels.
 
     Une fiche porte un taux par PÉRIODE LÉGISLATIVE — huit périodes de 1945 à
     aujourd'hui pour le régime général, et un taux moyen dans chacune, écrit
@@ -1993,34 +1859,31 @@ def dater_les_taux(periodes: tuple[PeriodeRegime, ...],
     compte notionnel : la moyenne 1972-1982 prêtait à 1972 les 12,9 % de 1979,
     quand il cotisait 8,75 %.
 
-    Chaque période dont l'assiette est ``plafonnee`` — celle que la table
+    Chaque ligne dont l'assiette est ``plafonnee`` — celle que la table
     décrit — est donc réécrite année par année : le taux, sa part salariale,
     la cotisation déplafonnée et sa part sont ceux de la table quand elle a
     l'année, ceux de la fiche sinon ; les années consécutives identiques sont
-    refondues en une période, et la dernière garde la borne de la fiche — une
-    période ouverte reste ouverte, au dernier taux connu. Tout le reste de la
-    période — âges, durées, barème de liquidation — est recopié tel quel : la
-    liquidation ne change pas, seule la cotisation se date.
+    refondues en une ligne, et la dernière garde la borne de la fiche — une
+    ligne ouverte reste ouverte, au dernier taux connu. Le reste de la ligne
+    est recopié tel quel, et la liquidation ne change pas.
     """
     if not annuels:
-        return periodes
+        return cotisation
     derniere_annee = max(annuels)
-    resultat: list[PeriodeRegime] = []
-    for periode in periodes:
-        if periode.assiette != "plafonnee" or periode.perimetre_taux == "agent_seul":
-            resultat.append(periode)
+    resultat: list[dict] = []
+    for ligne in cotisation:
+        if ligne["assiette"] != "plafonnee" or ligne["perimetre_taux"] == "agent_seul":
+            resultat.append(ligne)
             continue
-        fin = derniere_annee if periode.fin is None else min(periode.fin, derniere_annee)
-        annees = [a for a in range(periode.debut, fin + 1) if a in annuels]
+        fin = derniere_annee if ligne["au"] is None else min(ligne["au"], derniere_annee)
+        annees = [a for a in range(ligne["du"], fin + 1) if a in annuels]
         if not annees:
-            resultat.append(periode)
+            resultat.append(ligne)
             continue
-        # Les valeurs de chaque année de la période, table puis fiche.
+        # Les valeurs de chaque année de la ligne, table puis fiche.
         valeurs = []
-        for annee in range(periode.debut, fin + 1):
-            champs = {
-                champ: getattr(periode, champ) for champ in _MESURES_TAUX_ANNUELS.values()
-            }
+        for annee in range(ligne["du"], fin + 1):
+            champs = {champ: ligne[champ] for champ in _MESURES_TAUX_ANNUELS.values()}
             champs.update(annuels.get(annee, {}))
             valeurs.append((annee, champs))
         # Refonte des années consécutives identiques.
@@ -2032,8 +1895,8 @@ def dater_les_taux(periodes: tuple[PeriodeRegime, ...],
                 tranches.append((annee, annee, champs))
         for rang, (debut, fin_tranche, champs) in enumerate(tranches):
             derniere = rang == len(tranches) - 1
-            resultat.append(morceau_d_annees(
-                periode, debut, periode.fin if derniere else fin_tranche, **champs))
+            resultat.append(_morceau(ligne, debut, ligne["au"] if derniere else fin_tranche,
+                                     champs))
     return tuple(resultat)
 
 
@@ -2071,18 +1934,18 @@ def _en_vigueur(bareme: dict[int, float], annee: int) -> float | None:
     return bareme[max(anterieures)] if anterieures else None
 
 
-def dater_les_taux_moyens(code: str, periodes: tuple[PeriodeRegime, ...],
+def dater_les_taux_moyens(code: str, regime: Regime,
                           moyens: dict[tuple[str, str], dict[int, float]],
                           appels: dict[str, dict[int, float]],
-                          ) -> tuple[PeriodeRegime, ...]:
-    """Les périodes de l'Agirc-Arrco au taux MOYEN des entreprises.
+                          ) -> tuple[dict, ...]:
+    """Les lignes de cotisation de l'Agirc-Arrco au taux MOYEN des entreprises.
 
     Une fiche porte le taux contractuel MINIMAL de l'accord — 4 % sur la
     tranche 1 de l'Arrco jusqu'en 1995, 8 % sur la tranche B de l'Agirc
     jusqu'en 1993 —, quand les entreprises cotisaient presque toutes au-dessus
     et que leurs salariés acquéraient des points à leur taux. Les cas types du
     COR cotisent au taux moyen ; la page Coût, sous ses conventions
-    (``Parametres.conventions_cor``), aussi : chaque période dont l'assiette a
+    (``Parametres.conventions_cor``), aussi : chaque ligne dont l'assiette a
     une série dans ``taux_moyens_agirc_arrco.csv`` est réécrite année par
     année, le taux de cotisation devenant le taux moyen multiplié par le taux
     d'appel de l'année, et, depuis 2019, le taux de calcul des points devenant
@@ -2091,22 +1954,23 @@ def dater_les_taux_moyens(code: str, periodes: tuple[PeriodeRegime, ...],
     série garde la fiche ; les années identiques se refondent, et la dernière
     garde la borne de la fiche, comme :func:`dater_les_taux`.
     """
-    resultat: list[PeriodeRegime] = []
-    for periode in periodes:
-        serie = moyens.get((code, periode.assiette))
+    resultat: list[dict] = []
+    for ligne in regime.cotisation:
+        serie = moyens.get((code, ligne["assiette"]))
         if not serie:
-            resultat.append(periode)
+            resultat.append(ligne)
             continue
-        appel_du_bareme = appels.get(periode.points_de or code, {})
-        fin = max(periode.debut, max(serie)) if periode.fin is None else periode.fin
+        structure = en_vigueur_au_jour(regime.structure, f"{ligne['du']:04d}-01-01")
+        appel_du_bareme = appels.get((structure or {}).get("points_de") or code, {})
+        fin = max(ligne["du"], max(serie)) if ligne["au"] is None else ligne["au"]
         tranches: list[tuple[int, int, dict[str, float]]] = []
-        for annee in range(periode.debut, fin + 1):
+        for annee in range(ligne["du"], fin + 1):
             moyen = _en_vigueur(serie, annee)
             champs: dict[str, float] = {}
-            if moyen is not None and periode.taux_calcul_points:
+            if moyen is not None and ligne["taux_calcul_points"]:
                 champs = {"taux_calcul_points": moyen,
-                          "taux_cotisation_retraite": moyen * periode.taux_cotisation_retraite
-                          / periode.taux_calcul_points}
+                          "taux_cotisation_retraite": moyen * ligne["taux_cotisation_retraite"]
+                          / ligne["taux_calcul_points"]}
             elif moyen is not None:
                 appel = _en_vigueur(appel_du_bareme, annee)
                 champs = {"taux_cotisation_retraite": moyen * (1.0 if appel is None else appel)}
@@ -2116,8 +1980,8 @@ def dater_les_taux_moyens(code: str, periodes: tuple[PeriodeRegime, ...],
                 tranches.append((annee, annee, champs))
         for rang, (debut, fin_tranche, champs) in enumerate(tranches):
             derniere = rang == len(tranches) - 1
-            resultat.append(morceau_d_annees(
-                periode, debut, periode.fin if derniere else fin_tranche, **champs))
+            resultat.append(_morceau(ligne, debut, ligne["au"] if derniere else fin_tranche,
+                                     champs))
     return tuple(resultat)
 
 
@@ -2248,10 +2112,11 @@ def fichiers_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
             raise ValueError(
                 f"{chemin.name} : champs inconnus dans `inventaire` : {sorted(inconnus)}")
         calcule = ligne.get("couverture") in COUVERTURES_CALCULEES
-        if calcule != ("periodes" in fiche):
+        if calcule != ("liquidation" in fiche):
             raise ValueError(
                 f"{chemin.name} : un régime {ligne.get('couverture')!r} "
-                + ("porte des périodes" if not calcule else "sans période")
+                + ("porte des blocs de paramètres" if not calcule
+                   else "sans bloc de liquidation")
             )
         fichiers.append((chemin, fiche))
     return tuple(fichiers)
@@ -2266,12 +2131,12 @@ def fiches_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
     les cinq fichiers d'avant la phase 6 (docs/architecture.md, § 11)
     chargeaient leurs régimes, de dix en dix.
 
-    La fiche ÉCRITE, avant que :func:`dater_les_taux` ne découpe ses périodes :
-    c'est ce que lisent les contrôles qui confrontent un taux saisi à sa
-    source.
+    La fiche ÉCRITE, en quatre blocs, avant que :func:`dater_les_taux` ne
+    découpe sa cotisation : c'est ce que lisent les contrôles qui confrontent
+    un taux saisi à sa source.
     """
     fiches = [(chemin, fiche) for chemin, fiche in fichiers_de_regimes(racine)
-              if "periodes" in fiche]
+              if "liquidation" in fiche]
     rangs: dict[int, str] = {}
     for chemin, fiche in fiches:
         if type(fiche.get("rang")) is not int:
@@ -2286,25 +2151,521 @@ def fiches_de_regimes(racine: Path) -> tuple[tuple[Path, dict], ...]:
 
 
 def lire_fiche_de_regime(chemin: Path) -> dict:
-    """Un fichier de régime, ses périodes refaites depuis ses quatre blocs.
-
-    Le fichier s'écrit en quatre blocs, un par axe (note de décision 0009,
-    amendement du 22 novembre 2026) ; pendant le gel, ses lecteurs prennent
-    encore des périodes, que :func:`axes.vue_ancienne` fabrique. Un fichier
-    sans bloc de liquidation — un régime que le modèle ne calcule pas — se
-    lit tel quel."""
-    fiche = charger_yaml(chemin)
-    if "liquidation" in fiche:
-        return vue_ancienne(fiche)
-    return fiche
+    """Un fichier de régime, tel qu'il s'écrit : en quatre blocs, un par axe
+    (note de décision 0009, amendement du 22 novembre 2026), pour un régime
+    que le modèle calcule ; sa seule ligne d'inventaire sinon."""
+    return charger_yaml(chemin)
 
 
 def fiche_de_regime(racine: Path, code: str) -> dict:
-    """La fiche écrite d'un régime, par son code, en périodes."""
+    """La fiche écrite d'un régime, par son code, en quatre blocs."""
     chemin = racine / "reference" / "regimes" / f"{code}.yaml"
     if code.startswith("_") or chemin.name in FICHIERS_HORS_REGIMES or not chemin.exists():
         raise KeyError(f"aucun fichier de régime pour {code!r}")
     return lire_fiche_de_regime(chemin)
+
+
+#: La lecture de chaque champ d'une ligne d'un fichier de régime, ``lieu``
+#: nommant la ligne dans les messages : la valeur écrite, mise à son type, ou
+#: son défaut quand la ligne ne l'écrit pas. Chaque champ ne lit que lui-même,
+#: et chaque ligne porte tous les champs de son bloc (:func:`axes.famille`).
+_LECTURES: dict[str, Callable[[dict, str], object]] = {
+    "type_calcul": lambda p, lieu: p["type_calcul"],
+    # Au mois : la CRPCEN écrit 65,33 pour 65 ans et 4 mois.
+    "age_ouverture": lambda p, lieu: au_mois(float(p["age_ouverture"])),
+    "age_taux_plein": lambda p, lieu: au_mois(float(p["age_taux_plein"])),
+    "duree_requise_trimestres": lambda p, lieu: (
+        None if p.get("duree_requise_trimestres") is None
+        else int(p["duree_requise_trimestres"])
+    ),
+    "duree_requise_par_generation": lambda p, lieu: bool(
+        p.get("duree_requise_par_generation", False)
+    ),
+    "duree_requise_table": lambda p, lieu: (
+        (p["duree_requise_table"],)
+        if isinstance(p.get("duree_requise_table"), str)
+        else tuple(p.get("duree_requise_table") or ())
+    ),
+    "duree_requise_calendrier": lambda p, lieu: p.get("duree_requise_calendrier"),
+    "age_surcote_regimes_speciaux": lambda p, lieu: bool(
+        p.get("age_surcote_regimes_speciaux", False)
+    ),
+    "age_ouverture_par_generation": lambda p, lieu: bool(
+        p.get("age_ouverture_par_generation", False)
+    ),
+    "age_taux_plein_par_generation": lambda p, lieu: bool(
+        p.get("age_taux_plein_par_generation", False)
+    ),
+    "annuites_au_taux_de_leur_annee": lambda p, lieu: bool(
+        p.get("annuites_au_taux_de_leur_annee", False)),
+    "duree_requise_des_annuites": lambda p, lieu: (
+        None if p.get("duree_requise_des_annuites") is None
+        else int(p["duree_requise_des_annuites"])),
+    "age_taux_plein_a_l_ouverture": lambda p, lieu: bool(
+        p.get("age_taux_plein_a_l_ouverture", False)
+    ),
+    "age_table": lambda p, lieu: p.get("age_table"),
+    "decote_par_generation": lambda p, lieu: bool(p.get("decote_par_generation", False)),
+    "duree_proratisation_par_generation": lambda p, lieu: bool(
+        p.get("duree_proratisation_par_generation", False)
+    ),
+    "duree_proratisation_trimestres": lambda p, lieu: p.get("duree_proratisation_trimestres"),
+    "salaire_reference_par_generation": lambda p, lieu: (
+        p.get("salaire_reference_par_generation") or False
+    ),
+    "regles_du_salaire_annuel_moyen": lambda p, lieu: p.get("regles_du_salaire_annuel_moyen"),
+    "duree_maximum_avant_age": lambda p, lieu: (
+        None if p.get("duree_maximum_avant_age") is None
+        else float(p["duree_maximum_avant_age"])
+    ),
+    "duree_maximum_avant_age_trimestres": lambda p, lieu: (
+        None if p.get("duree_maximum_avant_age_trimestres") is None
+        else int(p["duree_maximum_avant_age_trimestres"])
+    ),
+    "duree_maximum_levee_age": lambda p, lieu: (
+        None if p.get("duree_maximum_levee_age") is None
+        else float(p["duree_maximum_levee_age"])
+    ),
+    "duree_maximum_levee_trimestres": lambda p, lieu: (
+        None if p.get("duree_maximum_levee_trimestres") is None
+        else int(p["duree_maximum_levee_trimestres"])
+    ),
+    "trimestres_retenus_maximum": lambda p, lieu: (
+        None if p.get("trimestres_retenus_maximum") is None
+        else int(p["trimestres_retenus_maximum"])
+    ),
+    "age_ouverture_services": lambda p, lieu: (
+        None if p.get("age_ouverture_services") is None
+        else float(p["age_ouverture_services"])
+    ),
+    "services_ouverture_annees": lambda p, lieu: (
+        None if p.get("services_ouverture_annees") is None
+        else float(p["services_ouverture_annees"])
+    ),
+    "pension_speciale_services_annees": lambda p, lieu: (
+        None if p.get("pension_speciale_services_annees") is None
+        else float(p["pension_speciale_services_annees"])
+    ),
+    "pension_speciale_age_sans_autre_pension": lambda p, lieu: (
+        None if p.get("pension_speciale_age_sans_autre_pension") is None
+        else float(p["pension_speciale_age_sans_autre_pension"])
+    ),
+    "taux_plein": lambda p, lieu: None if p.get("taux_plein") is None else float(p["taux_plein"]),
+    "taux_maximum_bonifie": lambda p, lieu: (
+        None if p.get("taux_maximum_bonifie") is None
+        else float(p["taux_maximum_bonifie"])
+    ),
+    "salaire_reference": lambda p, lieu: p.get("salaire_reference", "sans_objet"),
+    "assiette": lambda p, lieu: p.get("assiette", "deplafonnee"),
+    "taux_cotisation_retraite": lambda p, lieu: float(p["taux_cotisation_retraite"]),
+    "perimetre_taux": lambda p, lieu: p.get("perimetre_taux", "total"),
+    "part_salariale": lambda p, lieu: float(p.get("part_salariale", 1.0)),
+    "taux_cotisation_deplafonnee": lambda p, lieu: float(
+        p.get("taux_cotisation_deplafonnee", 0.0)
+    ),
+    "part_salariale_deplafonnee": lambda p, lieu: float(
+        p.get("part_salariale_deplafonnee", 0.0)
+    ),
+    "decote_par_trimestre": lambda p, lieu: (
+        None if p.get("decote_par_trimestre") is None
+        else float(p["decote_par_trimestre"])
+    ),
+    "bareme_decote": lambda p, lieu: p.get("bareme_decote", "regime_aligne"),
+    "decote_annulee_par_la_duree": lambda p, lieu: bool(
+        p.get("decote_annulee_par_la_duree", True)
+    ),
+    "majoration_d_ajournement": lambda p, lieu: bool(
+        p.get("majoration_d_ajournement", False)
+    ),
+    "ajournement_par_annee_d_assurance": lambda p, lieu: bool(
+        p.get("ajournement_par_annee_d_assurance", False)
+    ),
+    "duree_majoree_apres_taux_plein": lambda p, lieu: bool(
+        p.get("duree_majoree_apres_taux_plein", False)
+    ),
+    "duree_majoree_tous_regimes": lambda p, lieu: bool(
+        p.get("duree_majoree_tous_regimes", False)
+    ),
+    "duree_majoree_bornee_avec": lambda p, lieu: tuple(
+        p.get("duree_majoree_bornee_avec") or ()
+    ),
+    "pension_bornee_au_minimum_avec": lambda p, lieu: tuple(
+        p.get("pension_bornee_au_minimum_avec") or ()
+    ),
+    "pension_bornee_au_minimum_entier_avec": lambda p, lieu: tuple(
+        p.get("pension_bornee_au_minimum_entier_avec") or ()
+    ),
+    "age_taux_plein_femmes": lambda p, lieu: (
+        None if p.get("age_taux_plein_femmes") is None
+        else float(p["age_taux_plein_femmes"])
+    ),
+    "duree_taux_plein_femmes_trimestres": lambda p, lieu: (
+        None if p.get("duree_taux_plein_femmes_trimestres") is None
+        else int(p["duree_taux_plein_femmes_trimestres"])
+    ),
+    "duree_taux_plein_femmes_regimes": lambda p, lieu: tuple(
+        p.get("duree_taux_plein_femmes_regimes") or ()
+    ),
+    "decote_par_la_duree_seule": lambda p, lieu: bool(
+        p.get("decote_par_la_duree_seule", False)
+    ),
+    "decote_trimestres_maximum": lambda p, lieu: (
+        None if "decote_trimestres_maximum" in p
+        and p["decote_trimestres_maximum"] is None
+        else int(p.get("decote_trimestres_maximum", 20))
+    ),
+    "decote_palier_age": lambda p, lieu: (
+        None if p.get("decote_palier_age") is None
+        else float(p["decote_palier_age"])
+    ),
+    "decote_par_trimestre_apres_palier": lambda p, lieu: (
+        None if p.get("decote_par_trimestre_apres_palier") is None
+        else float(p["decote_par_trimestre_apres_palier"])
+    ),
+    "taux_plein_anticipe_par_enfant_annees": lambda p, lieu: (
+        None if p.get("taux_plein_anticipe_par_enfant_annees") is None
+        else float(p["taux_plein_anticipe_par_enfant_annees"])
+    ),
+    "taux_plein_anticipe_maximum_annees": lambda p, lieu: (
+        None if p.get("taux_plein_anticipe_maximum_annees") is None
+        else float(p["taux_plein_anticipe_maximum_annees"])
+    ),
+    "surcote_par_trimestre": lambda p, lieu: (
+        None if p.get("surcote_par_trimestre") is None
+        else float(p["surcote_par_trimestre"])
+    ),
+    "surcote_bareme": lambda p, lieu: p.get("surcote_bareme"),
+    "abattement_points": lambda p, lieu: p.get("abattement_points", "decote_du_regime_de_base"),
+    "bareme_anticipation": lambda p, lieu: p.get("bareme_anticipation"),
+    "points_abattus_a_l_age": lambda p, lieu: bool(p.get("points_abattus_a_l_age", False)),
+    "surcote_points": lambda p, lieu: p.get("surcote_points", "aucune"),
+    "surcote_age_debut": lambda p, lieu: (
+        None if p.get("surcote_age_debut") is None
+        else float(p["surcote_age_debut"])
+    ),
+    "surcote_age_maximum": lambda p, lieu: (
+        None if p.get("surcote_age_maximum") is None
+        else float(p["surcote_age_maximum"])
+    ),
+    "surcote_trimestres_maximum": lambda p, lieu: (
+        None if p.get("surcote_trimestres_maximum") is None
+        else int(p["surcote_trimestres_maximum"])
+    ),
+    "surcote_pas_trimestres": lambda p, lieu: int(p.get("surcote_pas_trimestres") or 1),
+    "surcote_palier_age": lambda p, lieu: (
+        None if p.get("surcote_palier_age") is None
+        else float(p["surcote_palier_age"])
+    ),
+    "surcote_par_trimestre_apres_palier": lambda p, lieu: (
+        None if p.get("surcote_par_trimestre_apres_palier") is None
+        else float(p["surcote_par_trimestre_apres_palier"])
+    ),
+    "surcote_affiliation_minimale_trimestres": lambda p, lieu: (
+        None if p.get("surcote_affiliation_minimale_trimestres") is None
+        else int(p["surcote_affiliation_minimale_trimestres"])
+    ),
+    "surcote_premieres_annees": lambda p, lieu: (
+        None if p.get("surcote_premieres_annees") is None
+        else int(p["surcote_premieres_annees"])
+    ),
+    "exercice_minimum_annees": lambda p, lieu: (
+        None if p.get("exercice_minimum_annees") is None
+        else int(p["exercice_minimum_annees"])
+    ),
+    "surcote_trimestres_cotises": lambda p, lieu: bool(p.get("surcote_trimestres_cotises", False)),
+    "surcote_depuis_la_duree": lambda p, lieu: bool(p.get("surcote_depuis_la_duree", False)),
+    "surcote_age_legal_de_la_base_jusqu_a_la_generation": lambda p, lieu: (
+        None
+        if p.get("surcote_age_legal_de_la_base_jusqu_a_la_generation") is None
+        else int(p["surcote_age_legal_de_la_base_jusqu_a_la_generation"])
+    ),
+    "surcote_depuis_l_age_legal": lambda p, lieu: bool(
+        p.get("surcote_depuis_l_age_legal", False)),
+    "surcote_trimestres_civils_d_exercice": lambda p, lieu: bool(
+        p.get("surcote_trimestres_civils_d_exercice", False)),
+    "surcote_par_trimestre_depuis": lambda p, lieu: (
+        None if p.get("surcote_par_trimestre_depuis") is None
+        else int(p["surcote_par_trimestre_depuis"])
+    ),
+    "surcote_par_trimestre_d_avant": lambda p, lieu: (
+        None if p.get("surcote_par_trimestre_d_avant") is None
+        else float(p["surcote_par_trimestre_d_avant"])
+    ),
+    "surcote_du_trimestre_civil_suivant": lambda p, lieu: bool(
+        p.get("surcote_du_trimestre_civil_suivant", False)),
+    "plafond_majoration_enfants": lambda p, lieu: (
+        None if p.get("plafond_majoration_enfants") is None
+        else float(p["plafond_majoration_enfants"])
+    ),
+    "taux_majoration_enfants": lambda p, lieu: (
+        None if p.get("taux_majoration_enfants") is None
+        else tuple(float(t) for t in p["taux_majoration_enfants"])
+    ),
+    "plafond_majoration_annee": lambda p, lieu: (
+        None if p.get("plafond_majoration_annee") is None
+        else int(p["plafond_majoration_annee"])
+    ),
+    "plafond_majoration_regime": lambda p, lieu: p.get("plafond_majoration_regime"),
+    "points_maximum": lambda p, lieu: (
+        None if p.get("points_maximum") is None
+        else float(p["points_maximum"])
+    ),
+    "points_au_prorata_des_cotisations": lambda p, lieu: bool(
+        p.get("points_au_prorata_des_cotisations", False)),
+    "borne_basse_euros": lambda p, lieu: (
+        None if p.get("borne_basse_euros") is None
+        else float(p["borne_basse_euros"])
+    ),
+    "borne_haute_euros": lambda p, lieu: (
+        None if p.get("borne_haute_euros") is None
+        else float(p["borne_haute_euros"])
+    ),
+    "borne_basse_par_annee": lambda p, lieu: _bornes_par_annee(p.get("borne_basse_par_annee")),
+    "borne_haute_par_annee": lambda p, lieu: _bornes_par_annee(p.get("borne_haute_par_annee")),
+    "pension_forfaitaire_annuelle": lambda p, lieu: (
+        None if p.get("pension_forfaitaire_annuelle") is None
+        else float(p["pension_forfaitaire_annuelle"])
+    ),
+    "pension_forfaitaire_annee": lambda p, lieu: (
+        None if p.get("pension_forfaitaire_annee") is None
+        else int(p["pension_forfaitaire_annee"])
+    ),
+    "points_minimum_annuels": lambda p, lieu: (
+        None if p.get("points_minimum_annuels") is None
+        else float(p["points_minimum_annuels"])
+    ),
+    "capital_seuil_points": lambda p, lieu: (
+        None if p.get("capital_seuil_points") is None
+        else float(p["capital_seuil_points"])
+    ),
+    "points_ajustement_par_forfait": lambda p, lieu: (
+        None if p.get("points_ajustement_par_forfait") is None
+        else float(p["points_ajustement_par_forfait"])
+    ),
+    "points_ajustement_maximum": lambda p, lieu: (
+        None if p.get("points_ajustement_maximum") is None
+        else float(p["points_ajustement_maximum"])
+    ),
+    "part_assurance_maladie_forfait": lambda p, lieu: float(
+        p.get("part_assurance_maladie_forfait") or 0.0),
+    "part_assurance_maladie_taux": lambda p, lieu: float(
+        p.get("part_assurance_maladie_taux") or 0.0),
+    "points_ajustement_au_plafond": lambda p, lieu: (
+        None if p.get("points_ajustement_au_plafond") is None
+        else float(p["points_ajustement_au_plafond"])
+    ),
+    "assiette_annee_de_revenu": lambda p, lieu: tuple(sorted(
+        (str(statut), int(decalage)) for statut, decalage
+        in (p.get("assiette_annee_de_revenu") or {}).items())),
+    "assiette_de_debut": lambda p, lieu: tuple(sorted(
+        (str(statut), tuple(int(d) for d in diviseurs)) for statut, diviseurs
+        in (p.get("assiette_de_debut") or {}).items())),
+    "assiette_de_debut_en_bases_mensuelles": lambda p, lieu: tuple(sorted(
+        (str(statut), tuple(int(m) for m in multiples)) for statut, multiples
+        in (p.get("assiette_de_debut_en_bases_mensuelles") or {}).items())),
+    "dispense_de_debut": lambda p, lieu: (
+        None if p.get("dispense_de_debut") is None
+        else (int(p["dispense_de_debut"]["annees"]),
+              None if p["dispense_de_debut"].get("avant_l_age") is None
+              else float(p["dispense_de_debut"]["avant_l_age"]),
+              int(p["dispense_de_debut"]["depuis"]),
+              p["dispense_de_debut"].get("part"))
+    ),
+    "exemption_passe_l_age": lambda p, lieu: (
+        None if p.get("exemption_passe_l_age") is None
+        else (int(p["exemption_passe_l_age"]["age"]),
+              int(p["exemption_passe_l_age"]["depuis"]))
+    ),
+    "points_par_trimestre_valide": lambda p, lieu: (
+        None if p.get("points_par_trimestre_valide") is None
+        else float(p["points_par_trimestre_valide"])
+    ),
+    "taux_calcul_points": lambda p, lieu: (
+        None if p.get("taux_calcul_points") is None
+        else float(p["taux_calcul_points"])
+    ),
+    "ecretement_salaire_reference": lambda p, lieu: (
+        None if p.get("ecretement_salaire_reference") is None
+        else tuple(float(x) for x in p["ecretement_salaire_reference"])
+    ),
+    "plafond_en_traitements_de_l_indice_100": lambda p, lieu: (
+        None if p.get("plafond_en_traitements_de_l_indice_100") is None
+        else float(p["plafond_en_traitements_de_l_indice_100"])
+    ),
+    "part_au_dela_du_plafond": lambda p, lieu: (
+        None if p.get("part_au_dela_du_plafond") is None
+        else float(p["part_au_dela_du_plafond"])
+    ),
+    "bareme_points": lambda p, lieu: p.get("bareme_points"),
+    "meilleures_annees_non_salaries": lambda p, lieu: bool(
+        p.get("meilleures_annees_non_salaries", False)
+    ),
+    "calcul_provisoire_non_salaries": lambda p, lieu: bool(
+        p.get("calcul_provisoire_non_salaries", False)
+    ),
+    "fractions_des_cultes": lambda p, lieu: bool(p.get("fractions_des_cultes", False)),
+    "age_sans_coefficient_de_l_inapte": lambda p, lieu: (
+        p.get("age_sans_coefficient_de_l_inapte")
+        if p.get("age_sans_coefficient_de_l_inapte") in (
+            None, "age_legal_par_generation")
+        else float(p["age_sans_coefficient_de_l_inapte"])
+    ),
+    "categories_sans_coefficient": lambda p, lieu: (
+        None if p.get("categories_sans_coefficient") is None
+        else tuple(p["categories_sans_coefficient"])
+    ),
+    "carriere_longue_minoree_jusqu_au_palier": lambda p, lieu: bool(
+        p.get("carriere_longue_minoree_jusqu_au_palier", False)
+    ),
+    "fermee_a_la_carriere_longue": lambda p, lieu: bool(
+        p.get("fermee_a_la_carriere_longue", False)
+    ),
+    "carriere_longue_minoree_de": lambda p, lieu: (
+        None if p.get("carriere_longue_minoree_de") is None
+        else float(p["carriere_longue_minoree_de"])
+    ),
+    "carriere_longue_minoree_depuis_l_age": lambda p, lieu: (
+        None if p.get("carriere_longue_minoree_depuis_l_age") is None
+        else float(p["carriere_longue_minoree_depuis_l_age"])
+    ),
+    "age_ouverture_de_l_inapte": lambda p, lieu: (
+        None if p.get("age_ouverture_de_l_inapte") is None
+        else float(p["age_ouverture_de_l_inapte"])
+    ),
+    "points_de": lambda p, lieu: p.get("points_de"),
+    "valeur_point_euros": lambda p, lieu: (
+        None if p.get("valeur_point_euros") is None
+        else float(p["valeur_point_euros"])
+    ),
+    "valeur_point_annee": lambda p, lieu: (
+        None if p.get("valeur_point_annee") is None
+        else int(p["valeur_point_annee"])
+    ),
+    "bareme_trimestre": lambda p, lieu: p.get("bareme_trimestre"),
+    "trimestres_maximum": lambda p, lieu: (
+        None if p.get("trimestres_maximum") is None
+        else int(p["trimestres_maximum"])
+    ),
+    "trimestres_maximum_leve_avant_age": lambda p, lieu: (
+        None if p.get("trimestres_maximum_leve_avant_age") is None
+        else float(p["trimestres_maximum_leve_avant_age"])
+    ),
+    "assiette_repere_smic": lambda p, lieu: (
+        None if p.get("assiette_repere_smic") is None
+        else float(p["assiette_repere_smic"])
+    ),
+    "assiette_plancher": lambda p, lieu: bool(p.get("assiette_plancher", False)),
+    "assiette_forfaitaire": lambda p, lieu: bool(p.get("assiette_forfaitaire", False)),
+    "smic_du_mois": lambda p, lieu: bool(p.get("smic_du_mois", False)),
+    "assiette_minimale_pass": lambda p, lieu: (
+        None if p.get("assiette_minimale_pass") is None
+        else float(p["assiette_minimale_pass"])
+    ),
+    "plafond_primes_traitement": lambda p, lieu: (
+        None if p.get("plafond_primes_traitement") is None
+        else float(p["plafond_primes_traitement"])
+    ),
+    "cotisation_par_classes": lambda p, lieu: bool(
+        p.get("cotisation_par_classes", False)
+    ),
+    "assiette_grille": lambda p, lieu: p.get("assiette_grille"),
+    "assiette_facteur_revenu": lambda p, lieu: (
+        None if p.get("assiette_facteur_revenu") is None
+        else float(p["assiette_facteur_revenu"])
+    ),
+    "cotisation_forfaitaire_euros": lambda p, lieu: (
+        None if p.get("cotisation_forfaitaire_euros") is None
+        else float(p["cotisation_forfaitaire_euros"])
+    ),
+    "cotisation_forfaitaire_annee": lambda p, lieu: (
+        None if p.get("cotisation_forfaitaire_annee") is None
+        else int(p["cotisation_forfaitaire_annee"])
+    ),
+    "avantages_non_contributifs": lambda p, lieu: tuple(p.get("avantages_non_contributifs") or ()),
+    # Les taux propres du non-salarié : aucun fichier ne les écrit, et
+    # :func:`dater_les_taux` les date depuis `taux_cotisation_annuels.csv`.
+    "taux_cotisation_non_salarie": lambda p, lieu: p.get("taux_cotisation_non_salarie"),
+    "taux_cotisation_deplafonnee_non_salarie": lambda p, lieu: p.get(
+        "taux_cotisation_deplafonnee_non_salarie"),
+    "points_gratuits": lambda p, lieu: _points_gratuits(p.get("points_gratuits")),
+    "points_invalidite": lambda p, lieu: _points_invalidite(p.get("points_invalidite")),
+    "effet_au_trimestre_civil": lambda p, lieu: _effet_au_trimestre_civil(
+        p.get("effet_au_trimestre_civil"),
+        lieu),
+}
+
+
+def _jour_ecrit(valeur) -> str:
+    """Un jour du fichier, que le YAML lit en date, en AAAA-MM-JJ."""
+    return valeur.isoformat() if hasattr(valeur, "isoformat") else str(valeur)
+
+
+def _lire_ligne(bloc: str, ecrite: dict, lieu: str) -> dict:
+    """Les champs d'un bloc qu'une ligne écrite porte, chacun lu à son type
+    (:data:`_LECTURES`), ceux qu'elle n'écrit pas à leur défaut."""
+    return {champ: lire(ecrite, lieu) for champ, lire in _LECTURES.items()
+            if famille(champ) == bloc}
+
+
+def _fondre(lignes: list[dict]) -> tuple[dict, ...]:
+    """Les lignes au jour, deux lignes contiguës aux mêmes champs fondues en
+    une : deux lignes écrites qui ne diffèrent que par leurs textes ou leurs
+    notes n'en font qu'une."""
+    fondues: list[dict] = []
+    for ligne in lignes:
+        champs = repr(sorted((c, v) for c, v in ligne.items() if c not in ("du", "au")))
+        if fondues and fondues[-1][0] == champs and fondues[-1][1]["au"] == ligne["du"]:
+            fondues[-1][1]["au"] = ligne["au"]
+        else:
+            fondues.append((champs, dict(ligne)))
+    return tuple(ligne for _, ligne in fondues)
+
+
+def _blocs_de_la_fiche(fiche: dict, chemin: Path, racine: Path,
+                       renvois: dict[str, dict]) -> dict[str, tuple[dict, ...]]:
+    """Les quatre blocs d'un fichier de régime, chaque ligne lue champ par
+    champ (:func:`_lire_ligne`), ses renvois résolus
+    (:func:`resoudre_les_renvois`).
+
+    La liquidation et le servi gardent leurs lignes au jour ; un régime sans
+    servi écrit en a une, à ses défauts, sur toute sa liquidation. La
+    structure s'écrit une fois, ``points_de`` pouvant changer à des dates
+    (``[{du, regime}, …]``) : elle se lit en lignes au jour sur la
+    liquidation. La cotisation garde ses années, ``au`` inclus."""
+    code = fiche["code"]
+    verifier_les_blocs(fiche)
+
+    def lue(bloc: str, ecrite: dict) -> dict:
+        lieu = f"{chemin.name}, {bloc} du {ecrite.get('du')}"
+        return _lire_ligne(bloc, resoudre_les_renvois(ecrite, racine, lieu, renvois), lieu)
+
+    liquidation = [{"du": _jour_ecrit(l["du"]),
+                    "au": None if l.get("au") is None else _jour_ecrit(l["au"]),
+                    **lue("liquidation", l)} for l in fiche["liquidation"]]
+    debut, fin = liquidation[0]["du"], liquidation[-1]["au"]
+    servi = [{"du": _jour_ecrit(l["du"]),
+              "au": None if l.get("au") is None else _jour_ecrit(l["au"]),
+              **lue("servi", l)} for l in fiche.get("servi") or ()] or [
+        {"du": debut, "au": fin, **lue("servi", {})}]
+    ecrite = fiche["structure"]
+    points_de = ecrite.get("points_de")
+    if isinstance(points_de, list):
+        coupures = [(max(_jour_ecrit(x["du"]), debut), x["regime"]) for x in points_de]
+        coupures = [(du, regime) for rang, (du, regime) in enumerate(coupures)
+                    if rang + 1 == len(coupures) or coupures[rang + 1][0] > debut]
+        if coupures[0][0] != debut:
+            raise ValueError(f"{code} : `points_de` ne dit rien au {debut}")
+    else:
+        coupures = [(debut, points_de)]
+    structure = [{"du": du, "au": coupures[rang + 1][0] if rang + 1 < len(coupures) else fin,
+                  **lue("structure", {"type_calcul": ecrite["type_calcul"],
+                                      "points_de": regime})}
+                 for rang, (du, regime) in enumerate(coupures)]
+    cotisation = [{"du": int(_jour_ecrit(l["du"])[:4]),
+                   "au": None if l.get("au") is None else int(_jour_ecrit(l["au"])[:4]) - 1,
+                   **lue("cotisation", l)} for l in fiche["cotisation"]]
+    return {"structure": _fondre(structure), "liquidation": _fondre(liquidation),
+            "servi": _fondre(servi), "cotisation": tuple(cotisation)}
 
 
 class CatalogueRegimes:
@@ -2332,8 +2693,8 @@ class CatalogueRegimes:
         for chemin, fiche in fiches_de_regimes(racine):
             regime = self._construire(fiche, chemin, racine, renvois)
             if regime.code in self.taux_annuels:
-                regime = replace(regime, periodes=dater_les_taux(
-                    regime.periodes, self.taux_annuels[regime.code]))
+                regime = replace(regime, cotisation=dater_les_taux(
+                    regime.cotisation, self.taux_annuels[regime.code]))
             self._regimes[regime.code] = regime
         if not self._regimes:
             raise ValueError(f"aucun régime chargé depuis {dossier}")
@@ -2354,8 +2715,8 @@ class CatalogueRegimes:
             appels = charger_taux_appel(racine)
             for code in sorted({code for code, _ in moyens}):
                 self._regimes[code] = replace(
-                    self._regimes[code], periodes=dater_les_taux_moyens(
-                        code, self._regimes[code].periodes, moyens, appels))
+                    self._regimes[code], cotisation=dater_les_taux_moyens(
+                        code, self._regimes[code], moyens, appels))
 
     @staticmethod
     def _construire(fiche: dict, chemin: Path, racine: Path,
@@ -2371,440 +2732,7 @@ class CatalogueRegimes:
             raise ValueError(
                 f"{chemin.name} / {fiche['code']} : étage inconnu {fiche.get('etage')!r}"
             )
-        periodes = tuple(
-            PeriodeRegime(
-                regime=fiche["code"],
-                debut=int(p["debut"]),
-                fin=None if p.get("fin") is None else int(p["fin"]),
-                type_calcul=p["type_calcul"],
-                # Au mois : la CRPCEN écrit 65,33 pour 65 ans et 4 mois.
-                age_ouverture=au_mois(float(p["age_ouverture"])),
-                age_taux_plein=au_mois(float(p["age_taux_plein"])),
-                duree_requise_trimestres=(
-                    None if p.get("duree_requise_trimestres") is None
-                    else int(p["duree_requise_trimestres"])
-                ),
-                duree_requise_par_generation=bool(
-                    p.get("duree_requise_par_generation", False)
-                ),
-                duree_requise_table=(
-                    (p["duree_requise_table"],)
-                    if isinstance(p.get("duree_requise_table"), str)
-                    else tuple(p.get("duree_requise_table") or ())
-                ),
-                duree_requise_calendrier=p.get("duree_requise_calendrier"),
-                age_surcote_regimes_speciaux=bool(
-                    p.get("age_surcote_regimes_speciaux", False)
-                ),
-                age_ouverture_par_generation=bool(
-                    p.get("age_ouverture_par_generation", False)
-                ),
-                age_taux_plein_par_generation=bool(
-                    p.get("age_taux_plein_par_generation", False)
-                ),
-                annuites_au_taux_de_leur_annee=bool(
-                    p.get("annuites_au_taux_de_leur_annee", False)),
-                duree_requise_des_annuites=(
-                    None if p.get("duree_requise_des_annuites") is None
-                    else int(p["duree_requise_des_annuites"])),
-                age_taux_plein_a_l_ouverture=bool(
-                    p.get("age_taux_plein_a_l_ouverture", False)
-                ),
-                age_table=p.get("age_table"),
-                decote_par_generation=bool(p.get("decote_par_generation", False)),
-                duree_proratisation_par_generation=bool(
-                    p.get("duree_proratisation_par_generation", False)
-                ),
-                duree_proratisation_trimestres=p.get("duree_proratisation_trimestres"),
-                salaire_reference_par_generation=(
-                    p.get("salaire_reference_par_generation") or False
-                ),
-                regles_du_salaire_annuel_moyen=p.get("regles_du_salaire_annuel_moyen"),
-                duree_maximum_avant_age=(
-                    None if p.get("duree_maximum_avant_age") is None
-                    else float(p["duree_maximum_avant_age"])
-                ),
-                duree_maximum_avant_age_trimestres=(
-                    None if p.get("duree_maximum_avant_age_trimestres") is None
-                    else int(p["duree_maximum_avant_age_trimestres"])
-                ),
-                duree_maximum_levee_age=(
-                    None if p.get("duree_maximum_levee_age") is None
-                    else float(p["duree_maximum_levee_age"])
-                ),
-                duree_maximum_levee_trimestres=(
-                    None if p.get("duree_maximum_levee_trimestres") is None
-                    else int(p["duree_maximum_levee_trimestres"])
-                ),
-                trimestres_retenus_maximum=(
-                    None if p.get("trimestres_retenus_maximum") is None
-                    else int(p["trimestres_retenus_maximum"])
-                ),
-                age_ouverture_services=(
-                    None if p.get("age_ouverture_services") is None
-                    else float(p["age_ouverture_services"])
-                ),
-                services_ouverture_annees=(
-                    None if p.get("services_ouverture_annees") is None
-                    else float(p["services_ouverture_annees"])
-                ),
-                pension_speciale_services_annees=(
-                    None if p.get("pension_speciale_services_annees") is None
-                    else float(p["pension_speciale_services_annees"])
-                ),
-                pension_speciale_age_sans_autre_pension=(
-                    None if p.get("pension_speciale_age_sans_autre_pension") is None
-                    else float(p["pension_speciale_age_sans_autre_pension"])
-                ),
-                taux_plein=None if p.get("taux_plein") is None else float(p["taux_plein"]),
-                taux_maximum_bonifie=(
-                    None if p.get("taux_maximum_bonifie") is None
-                    else float(p["taux_maximum_bonifie"])
-                ),
-                salaire_reference=p.get("salaire_reference", "sans_objet"),
-                assiette=p.get("assiette", "deplafonnee"),
-                taux_cotisation_retraite=float(p["taux_cotisation_retraite"]),
-                perimetre_taux=p.get("perimetre_taux", "total"),
-                part_salariale=float(p.get("part_salariale", 1.0)),
-                taux_cotisation_deplafonnee=float(
-                    p.get("taux_cotisation_deplafonnee", 0.0)
-                ),
-                part_salariale_deplafonnee=float(
-                    p.get("part_salariale_deplafonnee", 0.0)
-                ),
-                decote_par_trimestre=(
-                    None if p.get("decote_par_trimestre") is None
-                    else float(p["decote_par_trimestre"])
-                ),
-                bareme_decote=p.get("bareme_decote", "regime_aligne"),
-                decote_annulee_par_la_duree=bool(
-                    p.get("decote_annulee_par_la_duree", True)
-                ),
-                majoration_d_ajournement=bool(
-                    p.get("majoration_d_ajournement", False)
-                ),
-                ajournement_par_annee_d_assurance=bool(
-                    p.get("ajournement_par_annee_d_assurance", False)
-                ),
-                duree_majoree_apres_taux_plein=bool(
-                    p.get("duree_majoree_apres_taux_plein", False)
-                ),
-                duree_majoree_tous_regimes=bool(
-                    p.get("duree_majoree_tous_regimes", False)
-                ),
-                duree_majoree_bornee_avec=tuple(
-                    p.get("duree_majoree_bornee_avec") or ()
-                ),
-                pension_bornee_au_minimum_avec=tuple(
-                    p.get("pension_bornee_au_minimum_avec") or ()
-                ),
-                pension_bornee_au_minimum_entier_avec=tuple(
-                    p.get("pension_bornee_au_minimum_entier_avec") or ()
-                ),
-                age_taux_plein_femmes=(
-                    None if p.get("age_taux_plein_femmes") is None
-                    else float(p["age_taux_plein_femmes"])
-                ),
-                duree_taux_plein_femmes_trimestres=(
-                    None if p.get("duree_taux_plein_femmes_trimestres") is None
-                    else int(p["duree_taux_plein_femmes_trimestres"])
-                ),
-                duree_taux_plein_femmes_regimes=tuple(
-                    p.get("duree_taux_plein_femmes_regimes") or ()
-                ),
-                decote_par_la_duree_seule=bool(
-                    p.get("decote_par_la_duree_seule", False)
-                ),
-                decote_trimestres_maximum=(
-                    None if "decote_trimestres_maximum" in p
-                    and p["decote_trimestres_maximum"] is None
-                    else int(p.get("decote_trimestres_maximum", 20))
-                ),
-                decote_palier_age=(
-                    None if p.get("decote_palier_age") is None
-                    else float(p["decote_palier_age"])
-                ),
-                decote_par_trimestre_apres_palier=(
-                    None if p.get("decote_par_trimestre_apres_palier") is None
-                    else float(p["decote_par_trimestre_apres_palier"])
-                ),
-                taux_plein_anticipe_par_enfant_annees=(
-                    None if p.get("taux_plein_anticipe_par_enfant_annees") is None
-                    else float(p["taux_plein_anticipe_par_enfant_annees"])
-                ),
-                taux_plein_anticipe_maximum_annees=(
-                    None if p.get("taux_plein_anticipe_maximum_annees") is None
-                    else float(p["taux_plein_anticipe_maximum_annees"])
-                ),
-                surcote_par_trimestre=(
-                    None if p.get("surcote_par_trimestre") is None
-                    else float(p["surcote_par_trimestre"])
-                ),
-                surcote_bareme=p.get("surcote_bareme"),
-                abattement_points=p.get("abattement_points", "decote_du_regime_de_base"),
-                bareme_anticipation=p.get("bareme_anticipation"),
-                points_abattus_a_l_age=bool(p.get("points_abattus_a_l_age", False)),
-                surcote_points=p.get("surcote_points", "aucune"),
-                surcote_age_debut=(
-                    None if p.get("surcote_age_debut") is None
-                    else float(p["surcote_age_debut"])
-                ),
-                surcote_age_maximum=(
-                    None if p.get("surcote_age_maximum") is None
-                    else float(p["surcote_age_maximum"])
-                ),
-                surcote_trimestres_maximum=(
-                    None if p.get("surcote_trimestres_maximum") is None
-                    else int(p["surcote_trimestres_maximum"])
-                ),
-                surcote_pas_trimestres=int(p.get("surcote_pas_trimestres") or 1),
-                surcote_palier_age=(
-                    None if p.get("surcote_palier_age") is None
-                    else float(p["surcote_palier_age"])
-                ),
-                surcote_par_trimestre_apres_palier=(
-                    None if p.get("surcote_par_trimestre_apres_palier") is None
-                    else float(p["surcote_par_trimestre_apres_palier"])
-                ),
-                surcote_affiliation_minimale_trimestres=(
-                    None if p.get("surcote_affiliation_minimale_trimestres") is None
-                    else int(p["surcote_affiliation_minimale_trimestres"])
-                ),
-                surcote_premieres_annees=(
-                    None if p.get("surcote_premieres_annees") is None
-                    else int(p["surcote_premieres_annees"])
-                ),
-                exercice_minimum_annees=(
-                    None if p.get("exercice_minimum_annees") is None
-                    else int(p["exercice_minimum_annees"])
-                ),
-                surcote_trimestres_cotises=bool(p.get("surcote_trimestres_cotises", False)),
-                surcote_depuis_la_duree=bool(p.get("surcote_depuis_la_duree", False)),
-                surcote_age_legal_de_la_base_jusqu_a_la_generation=(
-                    None
-                    if p.get("surcote_age_legal_de_la_base_jusqu_a_la_generation") is None
-                    else int(p["surcote_age_legal_de_la_base_jusqu_a_la_generation"])
-                ),
-                surcote_depuis_l_age_legal=bool(
-                    p.get("surcote_depuis_l_age_legal", False)),
-                surcote_trimestres_civils_d_exercice=bool(
-                    p.get("surcote_trimestres_civils_d_exercice", False)),
-                surcote_par_trimestre_depuis=(
-                    None if p.get("surcote_par_trimestre_depuis") is None
-                    else int(p["surcote_par_trimestre_depuis"])
-                ),
-                surcote_par_trimestre_d_avant=(
-                    None if p.get("surcote_par_trimestre_d_avant") is None
-                    else float(p["surcote_par_trimestre_d_avant"])
-                ),
-                surcote_du_trimestre_civil_suivant=bool(
-                    p.get("surcote_du_trimestre_civil_suivant", False)),
-                plafond_majoration_enfants=(
-                    None if p.get("plafond_majoration_enfants") is None
-                    else float(p["plafond_majoration_enfants"])
-                ),
-                taux_majoration_enfants=(
-                    None if p.get("taux_majoration_enfants") is None
-                    else tuple(float(t) for t in p["taux_majoration_enfants"])
-                ),
-                plafond_majoration_annee=(
-                    None if p.get("plafond_majoration_annee") is None
-                    else int(p["plafond_majoration_annee"])
-                ),
-                plafond_majoration_regime=p.get("plafond_majoration_regime"),
-                points_maximum=(
-                    None if p.get("points_maximum") is None
-                    else float(p["points_maximum"])
-                ),
-                points_au_prorata_des_cotisations=bool(
-                    p.get("points_au_prorata_des_cotisations", False)),
-                borne_basse_euros=(
-                    None if p.get("borne_basse_euros") is None
-                    else float(p["borne_basse_euros"])
-                ),
-                borne_haute_euros=(
-                    None if p.get("borne_haute_euros") is None
-                    else float(p["borne_haute_euros"])
-                ),
-                borne_basse_par_annee=_bornes_par_annee(p.get("borne_basse_par_annee")),
-                borne_haute_par_annee=_bornes_par_annee(p.get("borne_haute_par_annee")),
-                pension_forfaitaire_annuelle=(
-                    None if p.get("pension_forfaitaire_annuelle") is None
-                    else float(p["pension_forfaitaire_annuelle"])
-                ),
-                pension_forfaitaire_annee=(
-                    None if p.get("pension_forfaitaire_annee") is None
-                    else int(p["pension_forfaitaire_annee"])
-                ),
-                points_minimum_annuels=(
-                    None if p.get("points_minimum_annuels") is None
-                    else float(p["points_minimum_annuels"])
-                ),
-                capital_seuil_points=(
-                    None if p.get("capital_seuil_points") is None
-                    else float(p["capital_seuil_points"])
-                ),
-                points_ajustement_par_forfait=(
-                    None if p.get("points_ajustement_par_forfait") is None
-                    else float(p["points_ajustement_par_forfait"])
-                ),
-                points_ajustement_maximum=(
-                    None if p.get("points_ajustement_maximum") is None
-                    else float(p["points_ajustement_maximum"])
-                ),
-                part_assurance_maladie_forfait=float(
-                    p.get("part_assurance_maladie_forfait") or 0.0),
-                part_assurance_maladie_taux=float(
-                    p.get("part_assurance_maladie_taux") or 0.0),
-                points_ajustement_au_plafond=(
-                    None if p.get("points_ajustement_au_plafond") is None
-                    else float(p["points_ajustement_au_plafond"])
-                ),
-                assiette_annee_de_revenu=tuple(sorted(
-                    (str(statut), int(decalage)) for statut, decalage
-                    in (p.get("assiette_annee_de_revenu") or {}).items())),
-                assiette_de_debut=tuple(sorted(
-                    (str(statut), tuple(int(d) for d in diviseurs)) for statut, diviseurs
-                    in (p.get("assiette_de_debut") or {}).items())),
-                assiette_de_debut_en_bases_mensuelles=tuple(sorted(
-                    (str(statut), tuple(int(m) for m in multiples)) for statut, multiples
-                    in (p.get("assiette_de_debut_en_bases_mensuelles") or {}).items())),
-                dispense_de_debut=(
-                    None if p.get("dispense_de_debut") is None
-                    else (int(p["dispense_de_debut"]["annees"]),
-                          None if p["dispense_de_debut"].get("avant_l_age") is None
-                          else float(p["dispense_de_debut"]["avant_l_age"]),
-                          int(p["dispense_de_debut"]["depuis"]),
-                          p["dispense_de_debut"].get("part"))
-                ),
-                exemption_passe_l_age=(
-                    None if p.get("exemption_passe_l_age") is None
-                    else (int(p["exemption_passe_l_age"]["age"]),
-                          int(p["exemption_passe_l_age"]["depuis"]))
-                ),
-                points_par_trimestre_valide=(
-                    None if p.get("points_par_trimestre_valide") is None
-                    else float(p["points_par_trimestre_valide"])
-                ),
-                taux_calcul_points=(
-                    None if p.get("taux_calcul_points") is None
-                    else float(p["taux_calcul_points"])
-                ),
-                ecretement_salaire_reference=(
-                    None if p.get("ecretement_salaire_reference") is None
-                    else tuple(float(x) for x in p["ecretement_salaire_reference"])
-                ),
-                plafond_en_traitements_de_l_indice_100=(
-                    None if p.get("plafond_en_traitements_de_l_indice_100") is None
-                    else float(p["plafond_en_traitements_de_l_indice_100"])
-                ),
-                part_au_dela_du_plafond=(
-                    None if p.get("part_au_dela_du_plafond") is None
-                    else float(p["part_au_dela_du_plafond"])
-                ),
-                bareme_points=p.get("bareme_points"),
-                meilleures_annees_non_salaries=bool(
-                    p.get("meilleures_annees_non_salaries", False)
-                ),
-                calcul_provisoire_non_salaries=bool(
-                    p.get("calcul_provisoire_non_salaries", False)
-                ),
-                fractions_des_cultes=bool(p.get("fractions_des_cultes", False)),
-                age_sans_coefficient_de_l_inapte=(
-                    p.get("age_sans_coefficient_de_l_inapte")
-                    if p.get("age_sans_coefficient_de_l_inapte") in (
-                        None, "age_legal_par_generation")
-                    else float(p["age_sans_coefficient_de_l_inapte"])
-                ),
-                categories_sans_coefficient=(
-                    None if p.get("categories_sans_coefficient") is None
-                    else tuple(p["categories_sans_coefficient"])
-                ),
-                carriere_longue_minoree_jusqu_au_palier=bool(
-                    p.get("carriere_longue_minoree_jusqu_au_palier", False)
-                ),
-                fermee_a_la_carriere_longue=bool(
-                    p.get("fermee_a_la_carriere_longue", False)
-                ),
-                carriere_longue_minoree_de=(
-                    None if p.get("carriere_longue_minoree_de") is None
-                    else float(p["carriere_longue_minoree_de"])
-                ),
-                carriere_longue_minoree_depuis_l_age=(
-                    None if p.get("carriere_longue_minoree_depuis_l_age") is None
-                    else float(p["carriere_longue_minoree_depuis_l_age"])
-                ),
-                age_ouverture_de_l_inapte=(
-                    None if p.get("age_ouverture_de_l_inapte") is None
-                    else float(p["age_ouverture_de_l_inapte"])
-                ),
-                points_de=p.get("points_de"),
-                valeur_point_euros=(
-                    None if p.get("valeur_point_euros") is None
-                    else float(p["valeur_point_euros"])
-                ),
-                valeur_point_annee=(
-                    None if p.get("valeur_point_annee") is None
-                    else int(p["valeur_point_annee"])
-                ),
-                bareme_trimestre=p.get("bareme_trimestre"),
-                trimestres_maximum=(
-                    None if p.get("trimestres_maximum") is None
-                    else int(p["trimestres_maximum"])
-                ),
-                trimestres_maximum_leve_avant_age=(
-                    None if p.get("trimestres_maximum_leve_avant_age") is None
-                    else float(p["trimestres_maximum_leve_avant_age"])
-                ),
-                assiette_repere_smic=(
-                    None if p.get("assiette_repere_smic") is None
-                    else float(p["assiette_repere_smic"])
-                ),
-                assiette_plancher=bool(p.get("assiette_plancher", False)),
-                assiette_forfaitaire=bool(p.get("assiette_forfaitaire", False)),
-                smic_du_mois=bool(p.get("smic_du_mois", False)),
-                assiette_minimale_pass=(
-                    None if p.get("assiette_minimale_pass") is None
-                    else float(p["assiette_minimale_pass"])
-                ),
-                plafond_primes_traitement=(
-                    None if p.get("plafond_primes_traitement") is None
-                    else float(p["plafond_primes_traitement"])
-                ),
-                cotisation_par_classes=bool(
-                    p.get("cotisation_par_classes", False)
-                ),
-                assiette_grille=p.get("assiette_grille"),
-                assiette_facteur_revenu=(
-                    None if p.get("assiette_facteur_revenu") is None
-                    else float(p["assiette_facteur_revenu"])
-                ),
-                cotisation_forfaitaire_euros=(
-                    None if p.get("cotisation_forfaitaire_euros") is None
-                    else float(p["cotisation_forfaitaire_euros"])
-                ),
-                cotisation_forfaitaire_annee=(
-                    None if p.get("cotisation_forfaitaire_annee") is None
-                    else int(p["cotisation_forfaitaire_annee"])
-                ),
-                avantages_non_contributifs=tuple(p.get("avantages_non_contributifs") or ()),
-                points_gratuits=_points_gratuits(p.get("points_gratuits")),
-                points_invalidite=_points_invalidite(p.get("points_invalidite")),
-                date_effet=_dates_d_effet(
-                    p.get("date_effet"), int(p["debut"]),
-                    None if p.get("fin") is None else int(p["fin"]),
-                    f"{chemin.name}, période {p.get('debut')}"),
-                effet_au_trimestre_civil=_effet_au_trimestre_civil(
-                    p.get("effet_au_trimestre_civil"),
-                    f"{chemin.name}, période {p.get('debut')}"),
-                notes=(p.get("notes") or "").strip(),
-            )
-            for p in (
-                resoudre_les_renvois(p, racine, f"{chemin.name}, période {p.get('debut')}",
-                                     renvois)
-                for p in fiche.get("periodes", [])
-            )
-        )
+        blocs = _blocs_de_la_fiche(fiche, chemin, racine, renvois)
         return Regime(
             code=fiche["code"],
             nom=fiche["nom"],
@@ -2819,7 +2747,7 @@ class CatalogueRegimes:
             integre_dans=fiche.get("integre_dans"),
             population=(fiche.get("population") or "").strip(),
             hors_repartition=bool(fiche.get("hors_repartition", False)),
-            periodes=periodes,
+            **blocs,
             duree_reprise_par=tuple(fiche.get("duree_reprise_par") or ()),
         )
 
@@ -3199,12 +3127,13 @@ def reformes_non_portees(catalogue: "CatalogueRegimes",
                          tolerance: int = 1) -> list[tuple[str, str, str]]:
     """Les couples (réforme, régime) que la fiche ne porte ni ne déclare.
 
-    Une réforme est PORTÉE par une fiche si une période commence l'année
-    d'effet à ``tolerance`` près, ou si une période active cette année-là
-    lève un des drapeaux qui l'absorbent, ou si le régime est déclaré dans
-    ``non_appliquee`` avec sa raison. Un régime sans période active à la date
-    — pas encore créé, déjà éteint — n'est pas concerné. Rend une liste de
-    (code réforme, code régime, diagnostic).
+    Une réforme est PORTÉE par une fiche si une ligne de cotisation commence
+    l'année d'effet à ``tolerance`` près, ou si une ligne de liquidation en
+    vigueur cette année-là lève un des drapeaux qui l'absorbent, ou si le
+    régime est déclaré dans ``non_appliquee`` avec sa raison. Un régime
+    qu'aucune ligne de cotisation ne couvre à la date — pas encore créé, déjà
+    éteint — n'est pas concerné. Rend une liste de (code réforme, code
+    régime, diagnostic).
     """
     manques: list[tuple[str, str, str]] = []
     for reforme in reformes:
@@ -3214,18 +3143,20 @@ def reformes_non_portees(catalogue: "CatalogueRegimes",
             if code in reforme.non_appliquee:
                 continue
             regime = catalogue[code]
-            actives = [p for p in regime.periodes
-                       if p.debut <= reforme.annee <= (p.fin if p.fin is not None else 9999)]
+            actives = tranches_de_l_annee(regime.cotisation, reforme.annee)
             if not actives:
                 continue
-            coupee = any(abs(p.debut - reforme.annee) <= tolerance for p in regime.periodes)
+            coupee = any(abs(l["du"] - reforme.annee) <= tolerance for l in regime.cotisation)
             if coupee:
                 continue
-            absorbee = any(getattr(p, drapeau, False)
-                           for p in actives for drapeau in reforme.absorbee_par)
+            debut, fin = f"{reforme.annee:04d}-01-01", f"{reforme.annee + 1:04d}-01-01"
+            absorbee = any(ligne.get(drapeau, False)
+                           for ligne in regime.liquidation
+                           if ligne["du"] < fin and (ligne["au"] is None or debut < ligne["au"])
+                           for drapeau in reforme.absorbee_par)
             if absorbee:
                 continue
-            debuts = sorted({p.debut for p in actives})
+            debuts = sorted({l["du"] for l in actives})
             manques.append((reforme.code, code,
                             f"période(s) active(s) depuis {debuts} sans coupure en "
                             f"{reforme.annee} ni drapeau {list(reforme.absorbee_par) or '—'}"))

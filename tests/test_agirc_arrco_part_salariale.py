@@ -27,6 +27,7 @@ from retraite_notionnelle.remuneration import (
 )
 
 from facade import Simulateur
+from outils_fiches import periodes_ecrites
 
 PARAMETRES = Parametres()
 ANNEE = 2026
@@ -73,7 +74,7 @@ def test_le_taux_salarial_de_chaque_tranche_est_celui_que_le_regime_publie(
         annee, regime, assiette, salarie):
     fiche = lire_fiche_de_regime(PARAMETRES.racine_donnees / "reference" / "regimes"
                                  / f"{regime}.yaml")
-    periodes = [p for p in fiche["periodes"]
+    periodes = [p for p in periodes_ecrites(fiche)
                 if p["assiette"] == assiette and p["debut"] == annee]
     assert len(periodes) == 1
     periode = periodes[0]

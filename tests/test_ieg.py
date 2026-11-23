@@ -26,8 +26,9 @@ from retraite_notionnelle.noyau import carte
 from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 from facade import Simulateur
+from outils_fiches import periodes_ecrites
 
-PERIODES = lire_fiche_de_regime(RACINE_DONNEES / "reference" / "regimes" / "ieg.yaml")["periodes"]
+PERIODES = periodes_ecrites(lire_fiche_de_regime(RACINE_DONNEES / "reference" / "regimes" / "ieg.yaml"))
 #: Le régime naît du statut national, en vigueur au 1er juin 1946.
 NAISSANCE = DateMois(1946, 6)
 #: La dernière année que les confrontations parcourent.

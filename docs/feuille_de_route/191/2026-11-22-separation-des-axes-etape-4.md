@@ -1,18 +1,5 @@
 # Le paquet porte les quatre blocs d'un régime, et non plus ses périodes
 
-**Reprise, au 23 novembre 2026.** L'étape 4 est finie : le paquet, le
-chargeur Python, le pont, les tests, les cliquets et la page Avantages lisent
-les quatre blocs de chaque régime, et aucun résultat n'a bougé. La page
-Avantages compte désormais les régimes qui annoncent la réversion, 78 sur 80,
-au lieu de 975 périodes (décision du propriétaire du 23 novembre). La vue en
-périodes n'a plus pour lecteurs que les tests qui la gardent pendant le gel,
-ceux que le témoin du droit fige, deux scripts et les contrôles Z3 des
-renvois, que la note nomme : tous partent ou changent à l'étape 5, la
-suivante, avant le point d'arrêt prévu. Le classement des renvois sans texte
-compte encore six doublons (294 au lieu de 288), à corriger dans sa note.
-Les données restent gelées. L'oracle de référence est sous
-`architecture/separation-des-axes/oracle/`, dans les fichiers du projet.
-
 **La demande.** L'étape 4 de la séparation des axes, décidée le 22 novembre
 2026 : le chargeur Python, le paquet, le pont, les tests, les cliquets et la
 page Avantages passent à la nouvelle forme, sans qu'aucun résultat bouge.

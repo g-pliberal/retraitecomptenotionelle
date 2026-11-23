@@ -45,6 +45,7 @@ sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
 
 from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
+from retraite_notionnelle.donnees.axes import en_vigueur_au_jour  # noqa: E402
 from retraite_notionnelle.donnees.regimes import (  # noqa: E402
     CatalogueRegimes,
     DRAPEAUX_PAR_GENERATION,
@@ -119,15 +120,17 @@ def chaine_trouee(calendrier: list[dict]) -> list[tuple[str, str]]:
 
 
 def coupures_non_refletees(regime, calendrier: list[dict], tolerance: int = 1) -> list[dict]:
-    """Les versions qui commencent une année où aucune période ne commence.
+    """Les versions qui commencent une année où aucune ligne de cotisation ne
+    commence.
 
     La première version d'un article est écartée : c'est sa codification ou
     sa création, pas une réforme. Une version en dehors de la couverture de la
     fiche l'est aussi.
     """
-    debuts = {p.debut for p in regime.periodes}
-    couverture_debut = min(p.debut for p in regime.periodes)
-    couverture_fin = max((p.fin if p.fin is not None else ANNEE_COURANTE) for p in regime.periodes)
+    debuts = {l["du"] for l in regime.cotisation}
+    couverture_debut = min(l["du"] for l in regime.cotisation)
+    couverture_fin = max((l["au"] if l["au"] is not None else ANNEE_COURANTE)
+                         for l in regime.cotisation)
     manques = []
     for version in calendrier[1:]:
         annees = {int(version["date"][:4]), version["effet"]}
@@ -151,8 +154,9 @@ def fenetres(texte: str, motif: str, autour: int = 120, maximum: int = 6) -> lis
 
 def jeux_de_regles(regime) -> tuple[int, int, int, int]:
     """(nombre de jeux, années du pire jeu, début, fin de couverture)."""
-    debuts = sorted({p.debut for p in regime.periodes})
-    fin_couverture = max((p.fin if p.fin is not None else ANNEE_COURANTE) for p in regime.periodes)
+    debuts = sorted({l["du"] for l in regime.cotisation})
+    fin_couverture = max((l["au"] if l["au"] is not None else ANNEE_COURANTE)
+                         for l in regime.cotisation)
     bornes = debuts + [fin_couverture + 1]
     pire = max(b - a for a, b in zip(bornes, bornes[1:]))
     return len(debuts), pire, debuts[0], fin_couverture
@@ -164,11 +168,14 @@ def rapport_regime(db, regime, pivots, hors_legi, reformes, motif=None, toleranc
     nb_jeux, pire, debut, fin = jeux_de_regles(regime)
     lignes.append(f"## {regime.code} — {regime.nom}")
     lignes.append(f"couverture {debut}-{fin}, {nb_jeux} jeu(x) de règles, {pire} ans pour le plus long")
-    lignes.append("périodes : " + ", ".join(
-        f"{p.debut}-{p.fin if p.fin is not None else ''}"
-        + ("[" + ",".join(d.split('_')[0] for d in DRAPEAUX_PAR_GENERATION if getattr(p, d, False)) + "]"
-           if any(getattr(p, d, False) for d in DRAPEAUX_PAR_GENERATION) else "")
-        for p in regime.periodes
+    # Chaque ligne de cotisation, et les drapeaux de la liquidation en
+    # vigueur au 1er janvier de sa première année.
+    lignes.append("lignes de cotisation : " + ", ".join(
+        f"{l['du']}-{l['au'] if l['au'] is not None else ''}"
+        + ("[" + ",".join(d.split('_')[0] for d in DRAPEAUX_PAR_GENERATION if p.get(d)) + "]"
+           if any(p.get(d) for d in DRAPEAUX_PAR_GENERATION) else "")
+        for l in regime.cotisation
+        for p in (en_vigueur_au_jour(regime.liquidation, f"{l['du']:04d}-01-01") or {},)
     ))
     manques_texte = 0
     if regime.code in hors_legi:
@@ -195,7 +202,7 @@ def rapport_regime(db, regime, pivots, hors_legi, reformes, motif=None, toleranc
             manques_texte += 1
             lignes.append(
                 f"    ⚠ coupure de texte non reflétée : {version['id']} commence le "
-                f"{version['date']} (effet {version['effet']}), aucune période ne commence à un an près"
+                f"{version['date']} (effet {version['effet']}), aucune ligne de cotisation ne commence à un an près"
             )
     manques_reformes = [m for m in reformes_non_portees(_Catalogue1(regime), reformes, tolerance)]
     for code_reforme, _, diagnostic in manques_reformes:

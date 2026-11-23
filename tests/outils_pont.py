@@ -48,6 +48,13 @@ TOLERANCE_DU_MOTEUR_PYTHON = (
     0.0 if sys.platform == "linux" and platform.machine() == "x86_64" else 1e-12)
 
 
+def periode_a_l_effet(code: str, carriere) -> "pont.Periode":
+    """Les paramètres de ``code`` au jour où la pension de ``carriere`` prend
+    effet, le 1er de son mois de liquidation, comme le moteur les lit."""
+    effet = carriere.date_liquidation
+    return pont.Periode(code, f"{effet.annee:04d}-{effet.mois:02d}-01")
+
+
 def ecarts_d_ecriture(relu, attendu, chemin: tuple = (), tolerance: float = 0.0) -> list[str]:
     """Les endroits où ``relu`` ne s'écrit pas comme ``attendu`` : une clé, une
     longueur, un nombre, un texte, un type — « 0 » pour « 0.0 » en est un. Avec

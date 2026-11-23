@@ -133,5 +133,5 @@ code:
     MINORATION_RACL_2014 ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
     moteur/js/droit/commun.js : periodeDeLiquidation
   parametres: >-
-    regimes/ircec_racl.yaml : age_taux_plein, date_effet
+    regimes/ircec_racl.yaml : age_taux_plein, du
   tests: [tests/test_simulateur.py, tests/test_coupures_au_mois.py]

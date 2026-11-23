@@ -148,8 +148,10 @@ def _ecarts_des_regimes(fiche: dict, regimes: list[str], nommes: set[str]) -> li
             sortie.append(f"{nom}, parametres : regimes/{regime}.yaml n'existe pas")
             continue
         donnee = lire_fiche_de_regime(chemin)
-        champs |= {cle for periode in donnee.get("periodes") or [] for cle in periode}
-    sortie += [f"{nom}, parametres : aucune période de {', '.join(regimes)} ne porte {cle}"
+        lignes = [*donnee.get("liquidation", []), *donnee.get("cotisation", []),
+                  *(donnee.get("servi") or [])]
+        champs |= {cle for ligne in [donnee.get("structure") or {}, *lignes] for cle in ligne}
+    sortie += [f"{nom}, parametres : aucune ligne de {', '.join(regimes)} ne porte {cle}"
                for cle in sorted(nommes - champs)]
     return sortie
 

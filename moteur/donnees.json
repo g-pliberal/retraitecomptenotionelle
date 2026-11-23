@@ -141978,7 +141978,6 @@ null
 }
 ],
 "creation":1930,
-"dates_d_effet":{},
 "duree_reprise_par":["regime_general","msa_salaries"],
 "etage":"base",
 "extinction":1945,
@@ -142078,7 +142077,6 @@ null
 }
 ],
 "creation":1941,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":1945,
@@ -143290,7 +143288,6 @@ null
 }
 ],
 "creation":1945,
-"dates_d_effet":{"16":["1979-01-01","1983-04-01"],"17":["1983-04-01","1984-01-01"]},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -144694,7 +144691,6 @@ null
 }
 ],
 "creation":1987,
-"dates_d_effet":{"17":["2015-01-01","2016-07-01"],"18":["2016-07-01","2017-01-01"],"19":["2017-01-01","2023-09-01"],"20":["2023-09-01","2024-01-01"],"21":["2024-01-01","2026-03-01"],"22":["2026-03-01",null]},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -146404,7 +146400,6 @@ null
 }
 ],
 "creation":1987,
-"dates_d_effet":{"23":["2022-01-01","2023-09-01"],"24":["2023-09-01","2024-01-01"],"27":["2026-01-01","2026-09-01"],"28":["2026-09-01",null]},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -147532,7 +147527,6 @@ null
 }
 ],
 "creation":1968,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -147940,7 +147934,6 @@ null
 }
 ],
 "creation":1995,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -148348,7 +148341,6 @@ null
 }
 ],
 "creation":1958,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -148988,7 +148980,6 @@ null
 }
 ],
 "creation":1975,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -150085,7 +150076,6 @@ null
 }
 ],
 "creation":1947,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":2018,
@@ -150823,7 +150813,6 @@ null
 }
 ],
 "creation":1961,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":2018,
@@ -151628,7 +151617,6 @@ null
 }
 ],
 "creation":1961,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":2018,
@@ -151911,7 +151899,6 @@ null
 }
 ],
 "creation":2019,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -152204,7 +152191,6 @@ null
 }
 ],
 "creation":2006,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -153205,7 +153191,6 @@ null
 }
 ],
 "creation":1981,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":2018,
@@ -153546,7 +153531,6 @@ null
 }
 ],
 "creation":1997,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":2018,
@@ -154709,7 +154693,6 @@ null
 }
 ],
 "creation":1971,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -154957,7 +154940,6 @@ null
 }
 ],
 "creation":1951,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":1971,
@@ -155057,7 +155039,6 @@ null
 }
 ],
 "creation":1960,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":1971,
@@ -155157,7 +155138,6 @@ null
 }
 ],
 "creation":1957,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":1962,
@@ -155402,7 +155382,6 @@ null
 }
 ],
 "creation":2005,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"additionnel",
 "extinction":null,
@@ -155502,7 +155481,6 @@ null
 }
 ],
 "creation":1947,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -155602,7 +155580,6 @@ null
 }
 ],
 "creation":1853,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":1948,
@@ -156253,7 +156230,6 @@ null
 }
 ],
 "creation":1948,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -157115,7 +157091,6 @@ null
 }
 ],
 "creation":1945,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -157987,7 +157962,6 @@ null
 }
 ],
 "creation":1928,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -158358,7 +158332,6 @@ null
 }
 ],
 "creation":2005,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"additionnel",
 "extinction":null,
@@ -158651,7 +158624,6 @@ null
 }
 ],
 "creation":1959,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -159349,7 +159321,6 @@ null
 }
 ],
 "creation":1949,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":2006,
@@ -159770,7 +159741,6 @@ null
 }
 ],
 "creation":1949,
-"dates_d_effet":{"3":["2004-01-01","2012-10-07"],"4":["2012-10-07",null]},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -160468,7 +160438,6 @@ null
 }
 ],
 "creation":1949,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":2006,
@@ -160889,7 +160858,6 @@ null
 }
 ],
 "creation":1949,
-"dates_d_effet":{"3":["2004-01-01","2012-10-07"],"4":["2012-10-07",null]},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -161355,7 +161323,6 @@ null
 }
 ],
 "creation":2006,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":2020,
@@ -162018,7 +161985,6 @@ null
 }
 ],
 "creation":1979,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":2013,
@@ -162232,7 +162198,6 @@ null
 }
 ],
 "creation":2004,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":2013,
@@ -162471,7 +162436,6 @@ null
 }
 ],
 "creation":2013,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -162991,7 +162955,6 @@ null
 }
 ],
 "creation":1949,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -163409,7 +163372,6 @@ null
 }
 ],
 "creation":1962,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -163644,7 +163606,6 @@ null
 }
 ],
 "creation":2016,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -165555,7 +165516,6 @@ null
 }
 ],
 "creation":1949,
-"dates_d_effet":{"57":["2017-01-01","2017-03-30"],"58":["2017-03-30","2022-01-01"]},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -166552,7 +166512,6 @@ null
 }
 ],
 "creation":1949,
-"dates_d_effet":{"19":["2023-01-01","2024-01-10"],"20":["2024-01-10","2025-01-01"],"4":["2004-01-01","2007-10-11"],"5":["2007-10-11","2009-01-01"],"7":["2010-01-01","2011-07-01"],"8":["2011-07-01","2012-01-01"]},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -167044,7 +167003,6 @@ null
 }
 ],
 "creation":1949,
-"dates_d_effet":{"6":["2020-01-01","2024-01-10"],"7":["2024-01-10","2026-01-01"]},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -168079,7 +168037,6 @@ null
 }
 ],
 "creation":1984,
-"dates_d_effet":{"0":["1984-01-01","1987-06-05"],"1":["1987-06-05","1996-01-01"],"16":["2015-01-01","2015-10-03"],"17":["2015-10-03","2017-01-01"]},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -168643,7 +168600,6 @@ null
 }
 ],
 "creation":1950,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -169081,7 +169037,6 @@ null
 }
 ],
 "creation":1968,
-"dates_d_effet":{"5":["2004-01-01","2011-07-01"],"6":["2011-07-01","2019-01-01"],"7":["2019-01-01","2023-09-01"],"8":["2023-09-01","2024-01-01"]},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -169450,7 +169405,6 @@ null
 }
 ],
 "creation":1953,
-"dates_d_effet":{"1":["2008-01-01","2018-09-05"],"2":["2018-09-05","2025-07-07"],"3":["2025-07-07","2027-01-01"]},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -169868,7 +169822,6 @@ null
 }
 ],
 "creation":1979,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -170329,7 +170282,6 @@ null
 }
 ],
 "creation":1979,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -170836,7 +170788,6 @@ null
 }
 ],
 "creation":1949,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -171382,7 +171333,6 @@ null
 }
 ],
 "creation":1948,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -173185,7 +173135,6 @@ null
 }
 ],
 "creation":1979,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -174406,7 +174355,6 @@ null
 }
 ],
 "creation":1930,
-"dates_d_effet":{"16":["1980-01-01","1983-04-01"],"17":["1983-04-01","1984-01-01"]},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -175527,7 +175475,6 @@ null
 }
 ],
 "creation":1952,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -176365,7 +176312,6 @@ null
 }
 ],
 "creation":2003,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -177323,7 +177269,6 @@ null
 }
 ],
 "creation":1972,
-"dates_d_effet":{"18":["2017-01-01","2017-03-30"],"19":["2017-03-30","2019-01-01"]},
 "duree_reprise_par":null,
 "etage":"additionnel",
 "extinction":null,
@@ -177788,7 +177733,6 @@ null
 }
 ],
 "creation":1975,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"additionnel",
 "extinction":null,
@@ -178115,7 +178059,6 @@ null
 }
 ],
 "creation":1978,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"additionnel",
 "extinction":null,
@@ -178336,7 +178279,6 @@ null
 }
 ],
 "creation":1984,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"additionnel",
 "extinction":null,
@@ -178630,7 +178572,6 @@ null
 }
 ],
 "creation":1981,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"additionnel",
 "extinction":null,
@@ -178836,7 +178777,6 @@ null
 }
 ],
 "creation":1964,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -179090,7 +179030,6 @@ null
 }
 ],
 "creation":1962,
-"dates_d_effet":{"1":["2014-01-01","2025-05-16"],"2":["2025-05-16",null]},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -179489,7 +179428,6 @@ null
 }
 ],
 "creation":1973,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":2004,
@@ -179705,7 +179643,6 @@ null
 }
 ],
 "creation":1909,
-"dates_d_effet":{"0":["1930-01-01","2008-07-01"],"1":["2008-07-01","2017-01-01"]},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -180089,7 +180026,6 @@ null
 }
 ],
 "creation":1900,
-"dates_d_effet":{"0":["1930-01-01","2008-07-01"],"1":["2008-07-01","2017-01-01"]},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -180569,7 +180505,6 @@ null
 }
 ],
 "creation":1946,
-"dates_d_effet":{"5":["1991-01-01","2008-07-01"],"6":["2008-07-01","2017-01-01"]},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -180818,7 +180753,6 @@ null
 }
 ],
 "creation":1673,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -181534,7 +181468,6 @@ null
 }
 ],
 "creation":1894,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -182375,7 +182308,6 @@ null
 }
 ],
 "creation":1979,
-"dates_d_effet":{"12":["2006-01-01","2006-11-02"],"13":["2006-11-02","2009-01-01"]},
 "duree_reprise_par":null,
 "etage":"base",
 "extinction":null,
@@ -182822,7 +182754,6 @@ null
 }
 ],
 "creation":1963,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -183163,7 +183094,6 @@ null
 }
 ],
 "creation":1963,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"complementaire",
 "extinction":null,
@@ -183823,7 +183753,6 @@ null
 }
 ],
 "creation":1937,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -185124,7 +185053,6 @@ null
 }
 ],
 "creation":1806,
-"dates_d_effet":{"0":["1930-01-01","2007-04-01"],"1":["2007-04-01","2008-01-01"]},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -185586,7 +185514,6 @@ null
 }
 ],
 "creation":1698,
-"dates_d_effet":{"1":["2002-01-01","2008-07-01"],"2":["2008-07-01","2014-01-01"]},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -185970,7 +185897,6 @@ null
 }
 ],
 "creation":1812,
-"dates_d_effet":{"1":["1993-01-01","2008-07-01"],"2":["2008-07-01","2012-01-01"]},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -186218,7 +186144,6 @@ null
 }
 ],
 "creation":1926,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -186521,7 +186446,6 @@ null
 }
 ],
 "creation":1935,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -186622,7 +186546,6 @@ null
 }
 ],
 "creation":1922,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -186751,7 +186674,6 @@ null
 }
 ],
 "creation":1963,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"additionnel",
 "extinction":null,
@@ -187054,7 +186976,6 @@ null
 }
 ],
 "creation":1904,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -187785,7 +187706,6 @@ null
 }
 ],
 "creation":1957,
-"dates_d_effet":{},
 "duree_reprise_par":null,
 "etage":"integre",
 "extinction":null,
@@ -197527,7 +197447,7 @@ null
 "services":{"2018":1.0004732394366196,"2019":1.0004732394366196,"2020":1.0004732394366196,"2021":1.0004732394366196,"2022":0.9999774647887324,"2023":0.9984901408450706,"2024":0.9984901408450706,"2025":0.9917851147174036,"2026":1.030934527140459},
 "vente":{"2018":1.0023661971830988,"2019":1.0023661971830988,"2020":1.0023661971830988,"2021":1.0023661971830988,"2022":1.0014783875667799,"2023":0.998814958717824,"2024":0.998814958717824,"2025":0.9921077513845199,"2026":1.0312698994654879}
 },
-"version":49,
+"version":50,
 "versions_des_fiches":{
 "carriere_longue_reputes_cotises_autres":{
 "dates_qui_decident":["liquidation.date_effet"],

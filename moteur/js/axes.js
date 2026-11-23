@@ -15,11 +15,8 @@
  * en vigueur à sa date d'effet (`aLaDate`) ; une année d'acquisition lit ses
  * lignes de cotisation (`deLAnnee`).
  *
- * Le paquet porte les quatre blocs (étape 4 de l'amendement). PENDANT LE GEL,
- * le pont et les tests lisent encore des périodes : `periodesDesAxes` en
- * refait la vue, et `axesDesPeriodes` les blocs des périodes que le taux moyen
- * de l'Agirc-Arrco redate et que `sansDeclaration` retouche. L'une et l'autre
- * partent avec la vue ancienne, à l'étape 5.
+ * Le paquet porte les quatre blocs (étape 4 de l'amendement) ; la vue des
+ * périodes, qui les portait ensemble, est partie à l'étape 5.
  */
 
 /** Ce qui décrit le régime. */
@@ -57,9 +54,6 @@ export const COTISATION = new Set([
   "taux_cotisation_non_salarie", "taux_cotisation_deplafonnee_non_salarie",
 ]);
 
-/** Ce qu'une période porte en plus de ses champs : ses bornes, sa note. */
-const BORNES = new Set(["debut", "fin", "date_effet", "notes", "regime"]);
-
 /** Le bloc d'un champ : ni structure, ni servi, ni cotisation, il est de la liquidation. */
 export function famille(champ) {
   if (STRUCTURE.has(champ)) return "structure";
@@ -76,109 +70,6 @@ export function premierJanvier(annee) {
 /** Le premier jour d'un mois (`DateMois`), en AAAA-MM-JJ. */
 export function premierDuMois(date) {
   return `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`;
-}
-
-const jan = premierJanvier;
-
-/** Les dates d'effet qu'une période liquide, `[début, fin)` : voir `PeriodeRegime.effet`. */
-function effetDe(periode) {
-  if (periode.date_effet !== null && periode.date_effet !== undefined) {
-    return periode.date_effet;
-  }
-  return [jan(periode.debut), periode.fin === null ? null : jan(periode.fin + 1)];
-}
-
-function liquide(periode, jour) {
-  const [debut, fin] = effetDe(periode);
-  return debut <= jour && (fin === null || jour < fin);
-}
-
-function champsDe(periode, bloc) {
-  const champs = {};
-  for (const [champ, valeur] of Object.entries(periode)) {
-    if (!BORNES.has(champ) && famille(champ) === bloc) champs[champ] = valeur;
-  }
-  return champs;
-}
-
-/** Une empreinte des champs d'une ligne, clés triées : deux lignes égales se fondent. */
-function empreinte(champs) {
-  return JSON.stringify(Object.keys(champs).sort().map((c) => [c, champs[c]]));
-}
-
-/**
- * Les lignes d'un bloc au jour, refaites des périodes : chaque intervalle entre
- * deux bornes d'effet prend la première période qui le liquide, comme
- * `Regime.periodeALEffet` ; deux intervalles contigus aux mêmes champs se
- * fondent. Un intervalle qu'aucune période ne liquide n'a pas de ligne.
- */
-function lignesAuJour(periodes, bloc) {
-  const bornes = new Set();
-  for (const periode of periodes) {
-    for (const borne of effetDe(periode)) if (borne !== null) bornes.add(borne);
-  }
-  const triees = [...bornes].sort();
-  const lignes = [];
-  let precedente = null;
-  triees.forEach((du, rang) => {
-    const au = rang + 1 < triees.length ? triees[rang + 1] : null;
-    const periode = periodes.find((p) => liquide(p, du));
-    if (periode === undefined) {
-      precedente = null;
-      return;
-    }
-    const champs = champsDe(periode, bloc);
-    const cle = empreinte(champs);
-    if (precedente !== null && precedente.cle === cle && precedente.ligne.au === du) {
-      precedente.ligne.au = au;
-      return;
-    }
-    const ligne = { du, au, ...champs };
-    lignes.push(ligne);
-    precedente = { cle, ligne };
-  });
-  return lignes.map((ligne) => Object.freeze(ligne));
-}
-
-/**
- * Les quatre blocs d'un régime, refaits des périodes de la vue ancienne que
- * le paquet porte encore. La cotisation garde une ligne par période, dans
- * l'ordre du paquet, bornée à ses années (`du`, `au` inclus) ; la
- * liquidation, le servi et la structure, des lignes au jour.
- */
-export function axesDesPeriodes(periodes) {
-  return {
-    structure: lignesAuJour(periodes, "structure"),
-    liquidation: lignesAuJour(periodes, "liquidation"),
-    servi: lignesAuJour(periodes, "servi"),
-    cotisation: periodes.map((p) => Object.freeze({
-      du: p.debut, au: p.fin, ...champsDe(p, "cotisation") })),
-  };
-}
-
-/**
- * La vue des périodes, refaite des blocs que porte le paquet : une période par
- * ligne de cotisation, dans leur ordre, ses années celles de la ligne, avec la
- * liquidation, la structure et le servi en vigueur au premier jour de sa date
- * d'effet. `datesDEffet` donne, au rang de sa ligne, la date d'effet qu'une
- * période déclarait. C'est la réciproque d'`axesDesPeriodes` ; elle part à
- * l'étape 5, avec la vue.
- */
-export function periodesDesAxes(axes, datesDEffet = {}) {
-  return axes.cotisation.map((cotisation, rang) => {
-    const periode = { debut: cotisation.du, fin: cotisation.au };
-    const dateEffet = datesDEffet[String(rang)];
-    if (dateEffet !== undefined) periode.date_effet = dateEffet;
-    const jour = dateEffet !== undefined ? dateEffet[0] : jan(cotisation.du);
-    for (const ligne of [enVigueurAuJour(axes.liquidation, jour),
-      enVigueurAuJour(axes.structure, jour), enVigueurAuJour(axes.servi, jour), cotisation]) {
-      if (ligne === null) continue;
-      for (const [champ, valeur] of Object.entries(ligne)) {
-        if (champ !== "du" && champ !== "au") periode[champ] = valeur;
-      }
-    }
-    return periode;
-  });
 }
 
 /** La ligne au jour en vigueur ce jour-là (AAAA-MM-JJ), ou `null`. */

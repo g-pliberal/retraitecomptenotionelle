@@ -937,7 +937,7 @@ code:
     regimes/carpimko_complementaire.yaml : age_table, decote_par_trimestre,
     surcote_par_trimestre, surcote_points, surcote_depuis_la_duree,
     surcote_age_legal_de_la_base_jusqu_a_la_generation,
-    surcote_trimestres_maximum, effet_au_trimestre_civil, date_effet,
+    surcote_trimestres_maximum, effet_au_trimestre_civil, du,
     decote_annulee_par_la_duree, age_taux_plein, age_sans_coefficient_de_l_inapte,
     categories_sans_coefficient, fermee_a_la_carriere_longue ;
     legislation/ages_regimes.csv : carpimko_2016, generation, age_ouverture,

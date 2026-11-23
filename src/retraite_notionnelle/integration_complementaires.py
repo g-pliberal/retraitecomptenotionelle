@@ -172,10 +172,10 @@ def _taux_agirc_arrco(racine: Path, annee: int) -> dict[str, float]:
     """Le taux prélevé de chaque tranche, majoration d'appel comprise."""
     fiche = fiche_de_regime(racine, "agirc_arrco")
     taux = {}
-    for periode in fiche["periodes"]:
-        fin = periode.get("fin")
-        if periode["debut"] <= annee and (fin is None or annee <= fin):
-            taux[periode["assiette"]] = float(periode["taux_cotisation_retraite"])
+    for ligne in fiche["cotisation"]:
+        au = ligne.get("au")
+        if ligne["du"].year <= annee and (au is None or annee < au.year):
+            taux[ligne["assiette"]] = float(ligne["taux_cotisation_retraite"])
     return taux
 
 

@@ -1110,6 +1110,6 @@ code:
     surcote_trimestres_maximum, surcote_trimestres_civils_d_exercice,
     taux_plein_anticipe_par_enfant_annees,
     taux_plein_anticipe_maximum_annees, age_sans_coefficient_de_l_inapte,
-    categories_sans_coefficient, avantages_non_contributifs, date_effet ;
+    categories_sans_coefficient, avantages_non_contributifs, du ;
     legislation/ages_regimes.csv : carcdsf_2011
   tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

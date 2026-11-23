@@ -29,12 +29,10 @@ import shutil
 from pathlib import Path
 
 import pytest
-import yaml
 
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
-from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 from facade import Carriere, Simulateur, commun
 
@@ -170,26 +168,19 @@ def test_le_racl_rejoint_l_ircec_le_16_mai_2025(simulateur):
     assert _coefficient(pensions["ircec_racl"].detail) == pytest.approx(0.9625)
 
 
-# -- les dates d'effet des périodes --------------------------------------------
+# -- les coupures au jour -------------------------------------------------------
 
 
-def test_les_dates_d_effet_partagent_les_annees_sans_trou_ni_doublon():
-    """Chaque jour d'effet, autant de périodes liquident qu'il y en a qui
-    couvrent son année : une borne au jour déplace la coupure d'une période à
-    sa voisine, n'en crée ni n'en perd une, et les morceaux que la datation
-    des taux découpe se la partagent (``morceau_d_annees``)."""
+def test_les_regimes_qu_un_texte_coupe_au_jour():
+    """Les régimes dont une ligne de liquidation, de servi ou de structure
+    s'ouvre ou se ferme un autre jour qu'un 1er janvier : ceux qu'un texte
+    coupe en cours d'année."""
     catalogue = CatalogueRegimes(RACINE_DONNEES)
-    coupees = set()
-    for regime in catalogue:
-        for periode in regime.periodes:
-            if periode.date_effet is not None:
-                coupees.add(regime.code)
-        for annee in range(1930, 2071):
-            couvrent = [p for p in regime.periodes if p.couvre(annee)]
-            for mois in range(1, 13):
-                jour = f"{annee:04d}-{mois:02d}-01"
-                liquident = [p for p in regime.periodes if p.liquide(jour)]
-                assert len(liquident) == len(couvrent), (regime.code, jour)
+    coupees = {regime.code for regime in catalogue
+               for bloc in ("liquidation", "servi", "structure")
+               for ligne in getattr(regime, bloc)
+               for jour in (ligne["du"], ligne["au"])
+               if jour is not None and not jour.endswith("-01-01")}
     assert coupees == {"regime_general", "msa_salaries", "cavec_complementaire",
                        "ircec_racl", "cps_saint_pierre_et_miquelon", "cssm_mayotte",
                        # statuts de 2011, en vigueur le 1er juillet 2011
@@ -212,32 +203,6 @@ def test_les_dates_d_effet_partagent_les_annees_sans_trou_ni_doublon():
                        # décrets de juin 2008, pour les pensions prenant effet
                        # à compter du 1er juillet 2008
                        "sncf", "ratp", "ieg", "opera_de_paris", "comedie_francaise"}
-
-
-@pytest.mark.parametrize("bornes,message", [
-    ("1983-04-01", "s'écrit"),
-    (["1983-04-01"], "s'écrit"),
-    (["avril 1983", None], "AAAA-MM-JJ"),
-    (["1983-04-01", "1983-01-01"], "avant son début"),
-    (["1981-04-01", "1994-01-01"], "plus d'un an"),
-    (["1983-04-01", None], "plus d'un an"),
-])
-def test_le_chargeur_refuse_une_date_d_effet_mal_ecrite(tmp_path, bornes, message):
-    """Une borne qui n'est pas un jour, qui finit avant de commencer, ou qui
-    déplace la période de plus d'un an au lieu de couper une année."""
-    source = RACINE_DONNEES / "reference"
-    dossier = tmp_path / "reference" / "regimes"
-    dossier.mkdir(parents=True)
-    shutil.copytree(source / "regles", tmp_path / "reference" / "regles")
-    shutil.copy(source / "regimes" / "_schema.yaml", dossier / "_schema.yaml")
-    regime = lire_fiche_de_regime(source / "regimes" / "regime_general.yaml")
-    for periode in regime["periodes"]:
-        if periode["debut"] == 1983:
-            periode["date_effet"] = bornes
-    (dossier / "regime_general.yaml").write_text(
-        yaml.safe_dump(regime, allow_unicode=True), encoding="utf-8")
-    with pytest.raises(ValueError, match=message):
-        CatalogueRegimes(tmp_path)
 
 
 # -- les deux moteurs ----------------------------------------------------------

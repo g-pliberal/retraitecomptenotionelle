@@ -29,10 +29,11 @@ from retraite_notionnelle.noyau import carte
 from retraite_notionnelle.donnees.regimes import lire_fiche_de_regime
 
 from facade import Simulateur
+from outils_fiches import periodes_ecrites
 
 REGIMES = ("sncf", "ratp")
-PERIODES = {regime: lire_fiche_de_regime(
-                RACINE_DONNEES / "reference" / "regimes" / f"{regime}.yaml")["periodes"]
+PERIODES = {regime: periodes_ecrites(lire_fiche_de_regime(
+                RACINE_DONNEES / "reference" / "regimes" / f"{regime}.yaml"))
             for regime in REGIMES}
 #: L'agent que le modèle sert : l'agent de conduite de la SNCF (1° du I de
 #: l'article 1er du décret n° 2008-639), le roulant du tableau B de la RATP

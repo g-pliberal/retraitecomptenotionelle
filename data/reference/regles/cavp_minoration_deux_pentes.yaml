@@ -700,6 +700,6 @@ code:
     surcote_trimestres_maximum ; regimes/cavp_complementaire.yaml :
     age_table, age_taux_plein, decote_par_trimestre, decote_palier_age,
     decote_par_trimestre_apres_palier, carriere_longue_minoree_jusqu_au_palier,
-    date_effet, effet_au_trimestre_civil, avantages_non_contributifs ;
+    du, effet_au_trimestre_civil, avantages_non_contributifs ;
     legislation/ages_regimes.csv : cavp
   tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

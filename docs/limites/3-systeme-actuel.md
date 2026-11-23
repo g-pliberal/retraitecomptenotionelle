@@ -9,10 +9,10 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   Ircantec depuis 1949), avec conversion des points aux fusions. S'y ajoutent
   depuis peu deux régimes dont le barème n'est pas un prix d'achat mais un
   NOMBRE DE POINTS par tranche d'assiette : le régime de base des professions
-  libérales (<!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:periodes.debut=2015;assiette=plafonnee.points_maximum)-->525<!--/--> points au plafond jusqu'en 2024, <!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:periodes.debut=2025.points_maximum)-->557<!--/--> depuis 2025, <!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:periodes.debut=2024;assiette=plafonnee_5_pass.points_maximum)-->25<!--/--> sur la
-  seconde tranche) et la complémentaire agricole (<!--chiffre:valeur(data/reference/regimes/msa_rco.yaml:periodes.debut=2003.points_maximum)-->100<!--/--> points pour <!--chiffre:valeur(data/reference/regimes/msa_rco.yaml:periodes.debut=2003.assiette_repere_smic)-->2 028<!--/--> SMIC).
+  libérales (<!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:cotisation.du=2015-01-01;assiette=plafonnee.points_maximum)-->525<!--/--> points au plafond jusqu'en 2024, <!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:cotisation.du=2025-01-01.points_maximum)-->557<!--/--> depuis 2025, <!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:cotisation.du=2024-01-01;assiette=plafonnee_5_pass.points_maximum)-->25<!--/--> sur la
+  seconde tranche) et la complémentaire agricole (<!--chiffre:valeur(data/reference/regimes/msa_rco.yaml:cotisation.du=2003-01-01.points_maximum)-->100<!--/--> points pour <!--chiffre:valeur(data/reference/regimes/msa_rco.yaml:cotisation.du=2003-01-01.assiette_repere_smic)-->2 028<!--/--> SMIC).
   Le même régime de base en connaît une troisième forme pour ce qui précède
-  2004 : <!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:periodes.debut=1949.points_par_trimestre_valide)-->100<!--/--> POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant cotisé. La complémentaire des
+  2004 : <!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:cotisation.du=1949-01-01.points_par_trimestre_valide)-->100<!--/--> POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant cotisé. La complémentaire des
   avocats les a rejoints, avec le prix d'achat publié par la CNBF et les cinq
   tranches en euros de la classe C1, depuis 2019 seulement — les tranches
   antérieures ne sont pas publiées. Restent au rendement instantané, faute
@@ -66,8 +66,8 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   sont ceux des arrêtés. Ce que la fiche ne porte pas est dit dans ses
   notes : la
   CAVP borne les générations 1951 à 1955 à un ou deux ans, la CNAVPL sert
-  <!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:periodes.debut=2024;assiette=plafonnee.surcote_par_trimestre*100)-->1,25<!--/--> % aux liquidations de 2024 et non aux trimestres accomplis depuis
-  septembre 2023, la MSA ramène à <!--chiffre:valeur(data/reference/regimes/msa_non_salaries.yaml:periodes.debut=2004.surcote_par_trimestre*100)-->0,75<!--/--> % l'escalier de <!--chiffre:illustration()-->3<!--/-->, <!--chiffre:illustration()-->4<!--/--> et <!--chiffre:illustration()-->5<!--/--> % d'avant
+  <!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:liquidation.du=2024-01-01.surcote_par_trimestre*100)-->1,25<!--/--> % aux liquidations de 2024 et non aux trimestres accomplis depuis
+  septembre 2023, la MSA ramène à <!--chiffre:valeur(data/reference/regimes/msa_non_salaries.yaml:liquidation.du=2004-01-01.surcote_par_trimestre*100)-->0,75<!--/--> % l'escalier de <!--chiffre:illustration()-->3<!--/-->, <!--chiffre:illustration()-->4<!--/--> et <!--chiffre:illustration()-->5<!--/--> % d'avant
   2009 ;
 - **revalorisation des salaires portés au compte** — le modèle ne les
   reconstitue plus, il les LIT dans la circulaire annuelle de la Cnav
@@ -946,7 +946,7 @@ plein. La sixième, les points enfants de l'Arrco et de l'Agirc et la
 minoration qui les frappe (`tests/test_oracle_points_enfants_arrco.py`), a
 trouvé une erreur chez nous : le plafond de la majoration pour enfants nés ou
 élevés était, de 2012 à 2018, celui du régime unifié, commun aux deux régimes
-et double de celui de chacun ; il est désormais de <!--chiffre:partout(data/reference/regimes/arrco.yaml:periodes.*.plafond_majoration_enfants)-->1 000<!--/--> € par régime au point
+et double de celui de chacun ; il est désormais de <!--chiffre:partout(data/reference/regimes/arrco.yaml:servi.*.plafond_majoration_enfants)-->1 000<!--/--> € par régime au point
 du 1er janvier 2012, dans les deux moteurs. Les taux par période
 d'acquisition, les enfants à charge et le coefficient d'anticipation
 concordent ; son écart est le sien : de 2012 à 2018, il minore du coefficient

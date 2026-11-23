@@ -472,12 +472,12 @@ def page() -> str:
         p.read_text(encoding="utf-8", errors="ignore")
         for motif in ("src/**/*.py", "moteur/js/**/*.js") for p in sorted(RACINE.glob(motif)))
     citees = somme_ordonnee(1 for r in veille if r["id"] in code_source)
-    # Les fiches que désignent les interrupteurs des périodes de régime (phase 6) :
-    # chacune déclare la valeur que le moteur lit.
+    # Les fiches que désignent les interrupteurs des lignes des fichiers de
+    # régime (phase 6, note 0009) : chacune déclare la valeur que le moteur lit.
     renvois = collections.Counter(
-        periode[champ] for _, fiche in fiches_de_regimes(RACINE / "data")
-        for periode in fiche["periodes"] for champ in INTERRUPTEURS
-        if periode.get(champ) is not None)
+        ligne[champ] for _, fiche in fiches_de_regimes(RACINE / "data")
+        for bloc in ("liquidation", "cotisation", "servi") for ligne in fiche.get(bloc) or ()
+        for champ in INTERRUPTEURS if ligne.get(champ) is not None)
     relations = [r for r in veille if carte.est_relation(r)]
     mures = [r for r in veille if r["id"] not in manques]
     decoupees = [r for r in veille if r.get("versions")]
@@ -611,7 +611,7 @@ def page() -> str:
          else "aucun en écart connu)."))
     w(f"- Citées dans le code par leur identifiant : **{citees} sur {len(veille)}**. "
       "Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.")
-    w(f"- Désignées par les interrupteurs des périodes de régime : **{len(renvois)} sur "
+    w(f"- Désignées par les interrupteurs des fichiers de régime : **{len(renvois)} sur "
       f"{len(veille)}**, par {milliers(somme_ordonnee(renvois.values()))} renvois ; chacune déclare la "
       "valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.")
     w(f"- Mûres, sans rien qui manque à leur contrat : **{len(mures)} sur {len(veille)}**. "
