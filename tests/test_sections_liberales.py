@@ -1870,9 +1870,11 @@ def test_la_cipav_sert_les_points_acquis_a_la_valeur_de_service(simulateur):
     assert pension.montant == pytest.approx((40 + 40 + 36) * 2.89, abs=0.01), pension.detail
 
 
-#: Né en décembre 1960, libéral depuis ses vingt ans : l'âge légal de sa
-#: génération, 62 ans, en décembre 2022, la durée requise atteinte la même
-#: année ; la surcote court du 1er janvier 2023. (âge de départ, coefficient
+#: Né le 15 décembre 1960, libéral depuis ses vingt ans : l'âge légal de sa
+#: génération, 62 ans, le 15 décembre 2022, la durée requise atteinte la même
+#: année ; la surcote court du 1er janvier 2023. Le jour se déclare : né un 1er,
+#: il partirait dès le 1er décembre 2022 (R. 351-37), et les âges de départ
+#: tomberaient un mois plus tôt, sur d'autres trimestres. (âge de départ, coefficient
 #: posé à la main depuis R. 643-8, « 0,75 % par trimestre accompli avant le
 #: 1er septembre 2023 et […] 1,25 % par trimestre accompli à compter de la même
 #: date », LEGIARTI000047985850.)
@@ -1901,7 +1903,7 @@ def test_la_surcote_des_liberaux_garde_0_75_aux_trimestres_d_avant_septembre_202
     trimestre civil supplémentaire travaillé à partir du 1er septembre
     2023 »), aucune circulaire ne le disant en toutes lettres."""
     carriere = Carriere.depuis_parcours(
-        annee_naissance=1960, mois_naissance=12, sexe="H",
+        annee_naissance=1960, mois_naissance=12, jour_naissance=15, sexe="H",
         metiers=[Metier(affiliation="profession_liberale", age_debut=20.0,
                         niveau_salaire=1.5)],
         age_liquidation=liquidation, macro=simulateur.macro)

@@ -1,16 +1,5 @@
 # Le passage au jour, premier lot : les artisans et les commerçants en 1983, les libéraux en 2023
 
-**Reprise, au 23 novembre 2026.** Les lignes de liquidation des fichiers de
-régime prennent une à une la date de leur texte, au jour. Quatre lots sont
-publiés. Le quatrième sert la surcote de la base des libéraux trimestre par
-trimestre : 0,75 % avant septembre 2023, 1,25 % ensuite. Reste à faire, dans
-cet ordre. Une quinzaine de frontières attendent que leur texte soit lu. Les
-taux de cotisation qui changent en cours d'année attendent une décision du
-propriétaire. Le détail et la liste sont dans la note du second lot,
-`2026-11-23-etape-6-les-dates-sans-effet.md`, à lire d'abord ; le troisième
-lot est dans `2026-11-23-etape-6-droits-d-avant-1973-en-1984.md`, le
-quatrième dans `2026-11-23-etape-6-surcote-des-liberaux.md`.
-
 **La demande.** L'étape 6 de la séparation des axes (note de décision 0009) :
 donner à chaque frontière la date de son texte, au jour. Sur Fable 5.2, au
 choix du propriétaire (« Tout sur fable », le 23 novembre), relue sur
@@ -102,3 +91,42 @@ La caisse des avocats (CNBF, base) a le même retard : sa majoration pour
 trois enfants ne part que de 2024, quand la loi la donne au 1er septembre
 2023. La base des libéraux sert la majoration de durée pour enfant dès le
 1er janvier 2010, alors que le texte vaut au 1er avril 2010.
+
+## La clôture, le 24 novembre 2026
+
+L'étape 6 se clôt sur ses quatre lots publiés : celui-ci, le second
+(`2026-11-23-etape-6-les-dates-sans-effet.md`), le troisième
+(`2026-11-23-etape-6-droits-d-avant-1973-en-1984.md`) et le quatrième
+(`2026-11-23-etape-6-surcote-des-liberaux.md`). Sur Opus 5.5 à l'effort
+maximal, au choix du propriétaire, à la place de Fable 5.2. Trois choses
+restaient.
+
+**Les taux de cotisation qui changent en cours d'année** partent après la
+note 0009, sous l'action 182 : décision du propriétaire, le 24 novembre, sur
+une évaluation qui les a mesurés hors du dépôt (fichiers du projet,
+`architecture/taux-de-cotisation-au-jour/evaluation-du-24-novembre.md`). La
+contrainte du chargeur, qui borne une ligne de cotisation au 1er janvier
+(`donnees/axes.py`), reste jusqu'au premier lot de l'action 182. Ce que
+l'évaluation a trouvé et les lots qu'elle propose sont écrits à l'action 182.
+
+**La quinzaine de frontières dont le texte n'a pas été lu** (note du second
+lot, « Laissé, faute de texte lu ») passe à l'étape 7 : l'Agirc, l'Arrco et
+leurs variantes au 1er avril 1983 et au 1er juillet 2011, la Banque de France
+en 2011, la Comédie-Française en 2012, l'Opéra en 2014, les ouvriers de
+l'État en 1964, la CRPCEN en 2008, et trois dates de publication du calendrier
+des réformes. Ce sont des dates du droit propre des régimes, que l'étape 7
+date au jour de leur texte : chacune se lit avec les renvois de son régime.
+
+**La garde des présomptions était rouge** sur le test de la surcote des
+libéraux, qui ne disait pas le jour de naissance. Né un 1er, l'assuré peut
+partir dès le mois de ses soixante-deux ans (R. 351-37) : ses départs tombent
+un mois plus tôt, sur d'autres trimestres, et les coefficients changent
+(1,0150 au lieu de 1,0225 pour le départ à soixante-deux ans et neuf mois).
+Le test déclare désormais le 15 décembre 1960, le jour que le vocabulaire
+présume ; le moteur ne change pas.
+
+Le bloc de reprise de la note de l'étape 2 (`2026-11-22-separation-des-axes-etape-2.md`)
+part avec celui-ci : il disait encore que le moteur lisait des périodes. Les
+étapes 3 à 6 sont faites ; l'étape 7, les lots de l'étape 4 de l'action 191,
+suit le bloc de la note du classement des renvois
+(`2026-11-22-etape-4-classement-des-renvois.md`).

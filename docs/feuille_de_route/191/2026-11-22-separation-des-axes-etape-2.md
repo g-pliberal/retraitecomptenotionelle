@@ -1,17 +1,5 @@
 # Les fichiers de régime en quatre blocs : la liquidation séparée de la cotisation
 
-**Reprise, au 22 novembre 2026.** Les 80 fichiers de régime calculés
-s'écrivent en quatre blocs : la structure, la liquidation au jour de la
-date d'effet, la cotisation à l'année, le montant servi. Le moteur lit encore
-des périodes, que le chargeur Python refait de ces blocs, à l'identique
-(`donnees/axes.py`, `vue_ancienne`). Les données sont gelées : aucun champ de
-période ne s'ajoute, aucune période ne se coupe, et aucun résultat ne bouge
-jusqu'au retrait de cette vue. Reste, dans l'ordre de l'amendement du
-22 novembre à la note 0009 : le moteur qui lit les blocs, puis le Python, le
-paquet et les tests, puis le retrait de la vue. Par quoi commencer : le
-moteur. L'oracle, hors du dépôt, est sous
-`architecture/separation-des-axes/oracle/` dans les fichiers du projet.
-
 **La demande.** Le 22 novembre 2026, le propriétaire choisit de séparer
 complètement les deux axes des fichiers de régime (« on prend complète
 alors »), puis valide la classification des 144 champs : 92 de la

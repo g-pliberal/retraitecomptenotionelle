@@ -1574,6 +1574,39 @@ n'agit qu'au 1er janvier suivant. Ce que la règle déplace, dans le dépôt mê
 **Ce que le propriétaire tranche** : si la règle du 1er janvier tombe partout,
 paramètres du scénario 1 compris, ou pour les seuls taux de cotisation.
 
+**Le 24 novembre 2026 : mesurée, puis renvoyée après la note 0009.** Une
+évaluation faite hors du dépôt (fichiers du projet,
+`architecture/taux-de-cotisation-au-jour/evaluation-du-24-novembre.md`) a
+mesuré les taux qui changent en cours d'année : 92 valeurs annuelles dans
+13 séries, sept changements interprofessionnels (1970, 1976, 1986, 1987, 1991,
+2004, 2012) et sept de la contribution employeur de la CNRACL ; huit régimes
+restent à lire. Le scénario 1 ne bouge pas, ni les scénarios 3 et 5. Dans les
+trois scénarios rétroactifs, 706 des 935 témoins bougent de quelques euros par
+an (médiane −2,5 € avec la seule part salariale, +4 € avec les deux), les
+treize cas types du site de moins de 0,4 %, et la dette de la proposition en
+2070 passe de −11,0 % à −10,6 % du PIB. Le moteur JavaScript n'a rien à
+changer si le chargeur fait la moyenne des mois de l'année. Le propriétaire a
+décidé, le même jour, de clore l'étape 6 de la séparation des axes (note
+0009) sans ce travail : la contrainte du chargeur qui borne une ligne de
+cotisation au 1er janvier (`donnees/axes.py`) reste jusqu'au lot 1, et les
+lots se mènent une fois la note 0009 close.
+
+1. **Les dates, avec leurs textes** (données et certification, une à deux
+   sessions) : la table annuelle prend une colonne de date, et les fichiers
+   de régime coupent leurs lignes au jour du texte. Le chargeur garde d'abord
+   la valeur du 1er janvier : aucun résultat ne bouge.
+2. **La moyenne** (chargeur, tests, prose, une session) : le taux de l'année
+   devient la moyenne de ses mois. Seul ce lot refait les fichiers communs
+   (témoins, sorties, pages), et il est seul à y toucher.
+3. **Les régimes à lire** (données, une session) : la SEITA, les mines, la MSA
+   des non-salariés, la SNCF, la RATP, la CRPCEN, la base des libéraux de
+   2012 et la complémentaire des artisans, chacun lu et daté là où il change.
+
+Ces lots font les étapes 1 et 2 pour les taux qui changent en cours d'année ;
+les étapes 3 à 6 restent à part. Les années de bord, où le moteur lirait les
+mois cotisés de l'année du départ, ne valent que quelques euros : elles
+s'écriront en limite.
+
 ### 183. La preuve : la carrière rebâtie confrontée à des carrières réelles, et son erreur publiée — `à faire`
 
 **D'où elle vient.** La même demande, le 3 novembre 2026 (action 179) : « Il
