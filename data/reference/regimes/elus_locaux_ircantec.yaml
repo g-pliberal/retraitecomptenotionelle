@@ -16,18 +16,22 @@ inventaire:
   textes:
     - {reference: "loi n° 72-1201 du 23 décembre 1972 portant affiliation des maires et adjoints au régime de retraite complémentaire des agents non titulaires, article 1", id: LEGIARTI000006338235}
     - {reference: "code général des collectivités territoriales, L. 2123-28 (affiliation des élus indemnisés à l'Ircantec)", id: LEGIARTI000006390053}
-    - {reference: "loi n° 92-108 du 3 février 1992 relative aux conditions d'exercice des mandats locaux", id: null}
+    - {reference: "loi n° 92-108 du 3 février 1992 relative aux conditions d'exercice des mandats locaux, titre IV, appliqué depuis le 30 mars 1992 (article 41)", id: JORFTEXT000000357195}
+    - {reference: "code de la sécurité sociale, L. 382-31 (affiliation des élus au régime général, au-dessus de la moitié du plafond ou sur demande)", id: LEGIARTI000048697317}
+    - {reference: "code de la sécurité sociale, D. 382-34 (la moitié du plafond)", id: LEGIARTI000027364746}
   manque: >-
     Le statut `elu_local` route l'Ircantec depuis 1973 et, depuis 2013, le
     régime général au-dessus de la moitié du plafond, le seuil de L.
-    382-31 étant lu année par année sur l'indemnité. Non portés : l'élu
-    qui a cessé toute activité professionnelle, assujetti même sous le
-    seuil ; les régimes de retraite par rente (FONPEL, CAREL),
-    facultatifs. Ni le mandat : l'Ircantec affilie chacun à sa date — les
-    maires et adjoints en 1973, les conseillers départementaux et
-    régionaux, les présidents et vice-présidents d'EPCI et les conseillers
-    municipaux des villes de plus de 100 000 habitants le 30 mars 1992,
-    les autres membres indemnisés des EPCI en 1999, les conseillers
-    municipaux des autres communes le 1er mars 2002 (Ircantec, « Les 6
-    catégories de mandats des élus », lue le 13 octobre 2026) —, quand le
-    statut les affilie tous depuis 1973.
+    382-31 étant lu année par année sur l'indemnité. La fiche
+    `elus_locaux_affiliation` dit le droit, version par version, et
+    chiffre ce que le statut n'en porte pas : le mandat, que la loi
+    n'affilie avant le 30 mars 1992 que pour les maires, adjoints, maires
+    délégués et présidents et vice-présidents de communauté urbaine ;
+    l'élu qui a cessé son activité professionnelle pour son mandat,
+    affilié au régime général de 1992 à 2012, et assujetti sous le seuil
+    depuis 2013 ; l'année d'Ircantec seule, que le modèle compte dans la
+    durée d'assurance quand le droit n'y compte que les trimestres d'un
+    régime de base ; l'assujettissement sur demande, depuis le 1er
+    septembre 2023, pour une pension qui prend effet depuis. Hors du
+    champ : les retraites par rente (FONPEL,
+    CAREL), facultatives (CGCT, L. 2123-27).

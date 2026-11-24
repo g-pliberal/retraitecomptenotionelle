@@ -1,0 +1,38 @@
+date: "2026-11-24"
+session: "régime des élus locaux : la fiche de leur affiliation, au format de la note 0009"
+consulte: >-
+  L'index LEGI du dépôt, arrêté au 23 novembre 2026 : loi n° 72-1201, articles 1er
+  et 3 (LEGIARTI000006338235, LEGIARTI000006338237) ; code des communes, L. 121-45,
+  L. 123-10 à L. 123-13, R. 123-4 et R. 123-5 ; loi du 10 août 1871, articles 8, 16
+  et 18 de 1992 ; code général des collectivités territoriales, L. 1424-27-1,
+  L. 2123-25 à L. 2123-30, L. 3123-20 à L. 3123-23, L. 4135-20 à L. 4135-23,
+  D. 2123-25 ; code de la sécurité sociale, L. 382-31 (ses trois rédactions),
+  D. 382-34 et D. 382-34-1. L'index JORF : décret n° 73-197 (sommaire) ; loi
+  n° 92-108, articles 29 à 37 ; circulaire du 15 avril 1992 ; loi n° 2002-276,
+  articles 91 et 98 ; ordonnance n° 2002-411, article 26 ; loi n° 2012-1404,
+  article 18 ; loi n° 2023-270, article 23 ; décret n° 2023-838 ; loi
+  n° 2023-1250, article 99. Les réponses ministérielles n° 334, 3906, 8683 et
+  39235, copies du site de l'Assemblée nationale. La base réglementaire de
+  l'Ircantec, pages des élus locaux.
+trouve: >-
+  La fiche `elus_locaux_affiliation` naît, en huit versions sur la date de la
+  période et, depuis 2023, sur la date d'effet de la pension : l'Ircantec des
+  seuls maires, adjoints, maires délégués et présidents et vice-présidents de
+  communauté urbaine à compter du 1er janvier 1973, de tout élu indemnisé à
+  compter du 30 mars 1992 (article 41 de la loi n° 92-108, par la réponse n° 334
+  et la circulaire du 15 avril 1992) ; le régime général de l'élu qui a cessé son
+  activité de 1992 à 2012, puis L. 382-31 depuis 2013 (article 18 de la loi
+  n° 2012-1404, III) ; l'assujettissement sur demande depuis le 1er septembre
+  2023, aux mandats que le décret n° 2023-838 nomme et aux seules pensions qui
+  prennent effet depuis (article 23 de la loi n° 2023-270, IV), puis au délégué
+  d'une intercommunalité le 28 décembre 2023. Le statut `elu_local` s'en écarte de
+  six façons, dont cinq chiffrées à la fiche ; la plus forte, neuve : l'année d'Ircantec
+  seule compte au modèle dans la durée d'assurance (adjointe de 2002 à 2012 sans
+  autre activité : 152 trimestres au lieu de 108, 10 579 € de pension au lieu de
+  9 628 €).
+reste: >-
+  L. 2123-9, L. 5211-14 et l'article 41 de la loi n° 92-108, que l'index ne porte pas
+  et que Légifrance refuse à la lecture automatique ; les textes des affiliations
+  particulières que l'Ircantec date (CNFPT, centres de gestion, métropoles, outre-mer) ;
+  la relecture de la fiche sur Fable, que sa limite d'usage a reportée ; l'intégration
+  au modèle, qui attend son tour.

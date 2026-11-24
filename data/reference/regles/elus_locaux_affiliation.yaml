@@ -1,0 +1,1081 @@
+schema_version: 1
+id: elus_locaux_affiliation
+intitule: >-
+  L'élu local qui perçoit une indemnité de fonction est affilié à l'Ircantec sur les
+  indemnités qu'il reçoit : de 1973 au 29 mars 1992, les seuls maires, adjoints, maires
+  délégués et présidents et vice-présidents de communauté urbaine, puis tout élu indemnisé.
+  Le régime général ne le couvre, du 30 mars 1992 à 2012, que s'il a cessé son activité
+  professionnelle pour son mandat sans acquérir d'autre droit à pension ; depuis 2013, dès
+  que ses indemnités dépassent la moitié du plafond de la sécurité sociale, ou en deçà s'il
+  a cessé toute activité, et, depuis septembre 2023, sur sa demande, pour une pension qui
+  prend effet à compter de ce mois.
+domaine: coordination
+regimes: [elus_locaux_ircantec, ircantec, regime_general]
+etape: coordonner_les_affiliations
+face: droit
+etat: approchee
+lit:
+- le statut `elu_local` de l'année et son revenu, qui est l'indemnité de fonction
+- le plafond annuel de la sécurité sociale de l'année
+- legislation/affiliations.yaml (périodes du statut `elu_local` et leur `seuil_pass`)
+- la date d'effet de la pension, que l'assujettissement sur demande ne sert qu'à compter de septembre 2023
+ecrit:
+- les régimes de l'année d'élu, l'Ircantec et, à compter de 2013 au-dessus du seuil, le régime général
+dates_qui_decident:
+- periode.debut
+- liquidation.date_effet
+versions:
+- id: avant_1973
+  statut: lue
+  nee_de: LEGIARTI000006338235
+  textes:
+  - id: LEGIARTI000006338235
+    article: >-
+      loi n° 72-1201 du 23 décembre 1972, article 1er, qui n'affilie les maires et adjoints
+      indemnisés qu'à compter de son entrée en vigueur
+    en_vigueur: 1973-01-01
+    publie_le: 1972-12-29
+    citation: >-
+      « Les maires et adjoints qui recoivent une indemnité de fonction par application des
+      dispositions du chapitre II du titre IV du livre 1er du Code de l'administration
+      communale bénéficient d'un régime de retraite par affiliation au régime complémentaire
+      de retraite institué au profit des agents non titulaires des collectivités publiques »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006338237
+    article: loi n° 72-1201 du 23 décembre 1972, article 3
+    en_vigueur: 1973-01-01
+    publie_le: 1972-12-29
+    citation: >-
+      « Un décret fixera les modalités d'application de la présente loi et notamment les
+      conditions dans lesquelles seront pris en compte les services rendus par les maires et
+      adjoints. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000025266780
+    article: code général des collectivités territoriales, D. 2123-25, rédaction du 1er février 2012
+    en_vigueur: 2012-02-01
+    citation: >-
+      « Les maires, adjoints aux maires, maires délégués dans les communes associées, maires
+      délégués dans les communes déléguées, présidents et vice-présidents des communautés
+      urbaines, affiliés obligatoirement au régime de l'institution de retraite
+      complémentaire des agents non titulaires de l'Etat et des collectivités publiques
+      (I.R.C.A.N.T.E.C.) à partir du 1er janvier 1973 ou qui l'ont été depuis cette date
+      peuvent, sur leur demande, faire prendre en compte les services accomplis avant le 1er
+      janvier 1973 et pour lesquels ils ont perçu une indemnité de fonction. Ils doivent, à
+      cet effet, effectuer un versement égal au montant des cotisations qui auraient été
+      acquittées [...] ; la commune doit alors verser la part des cotisations qui lui aurait
+      incombé. La demande de validation doit être formulée dans le délai de deux ans à compter
+      de l'affiliation de l'intéressé. La validation demandée après l'expiration du délai de
+      deux ans [...] est subordonnée au versement par l'intéressé de sa cotisation majorée dans
+      la même proportion que le salaire de référence depuis la date de forclusion. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006395797
+    article: même article, rédaction du 9 avril 2000, sans les maires délégués des communes déléguées
+    en_vigueur: 2000-04-09
+    citation: >-
+      « Les maires, adjoints aux maires, maires délégués dans les communes associées,
+      présidents et vice-présidents des communautés urbaines, affiliés obligatoirement [...] à
+      partir du 1er janvier 1973 ou qui l'ont été depuis cette date peuvent, sur leur demande,
+      faire prendre en compte les services accomplis avant le 1er janvier 1973 »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006347266
+    article: code des communes, R. 123-5, rédaction du 20 mars 1977
+    en_vigueur: 1977-03-20
+    citation: >-
+      « Les élus mentionnés à l'article précédent peuvent, sur leur demande, faire prendre en
+      compte les services accomplis avant le 1er janvier 1973 et pour lesquels ils ont perçu
+      une indemnité de fonctions telle qu'elle est définie par l'article L. 123-10. »
+    lu_le: 2026-11-24
+  - reference: >-
+      réponse du ministre de l'intérieur à la question écrite n° 8683 (10e législature),
+      Journal officiel, Assemblée nationale, 13 juin 1994, page 2989, lue dans la copie du
+      site de l'Assemblée nationale
+    citation: >-
+      « La loi du 23 decembre 1972 portant affiliation a l'Ircantec des maires et adjoints au
+      1er janvier 1973 n'a pas prevu l'extension de ces dispositions aux anciens magistrats
+      municipaux qui n'etaient plus en fonctions a cette date. »
+    lu_le: 2026-11-24
+    empreinte: sha256:fe20a0c8492069efd524fea25e27f4ae86c05b0884634352f92d0f56f7887df3
+  - reference: >-
+      Ircantec, base réglementaire, « Validation de services anciens accomplis par des élus -
+      Définition », page du 30 avril 2024
+    citation: >-
+      « Ne sont donc pas validables, les services antérieurs au 1er janvier 1973 accomplis par
+      des élus qui n'exerçaient plus de fonction à cette date et n'en ont pas exercé
+      ultérieurement. La loi n° 92-108 du 3 février 1992 n'a pas prévu de reprise
+      d'antériorité pour les conseillers régionaux, généraux et municipaux, présidents et
+      vice-présidents des établissements publics de coopération intercommunale, excepté pour
+      les présidents et vice-présidents des communautés urbaines »
+    lu_le: 2026-11-24
+    empreinte: sha256:627b227242c08660f88252a4d2468d2fd170b4c853ef31e7b21b0ba0df099a66
+  bornes:
+    periode.debut: [null, 1973-01-01]
+  contenu:
+    droit: >-
+      aucun : le mandat n'affilie à aucun régime de retraite, et l'indemnité n'ouvre aucun
+      droit d'elle-même
+    validation: >-
+      le maire, l'adjoint, le maire délégué ou le président ou vice-président de communauté
+      urbaine affilié à l'Ircantec au 1er janvier 1973 ou depuis peut faire valider, sur sa
+      demande, ses mandats antérieurs indemnisés ; il verse les cotisations qui auraient été
+      dues, et la commune sa part ; la demande se fait dans les deux ans de l'affiliation,
+      après quoi la cotisation de l'élu est majorée comme le salaire de référence ; les
+      mandats de qui n'était plus en fonction le 1er janvier 1973 et ne l'a plus été ne se
+      valident pas, ni ceux des conseillers municipaux, généraux et régionaux et des
+      présidents et vice-présidents des autres groupements
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    Le 24 novembre 2026 : les pages de la base réglementaire de l'Ircantec sur les élus
+    locaux (évolution de l'affiliation, six catégories de mandats, assiette, calcul des
+    droits, validation des services anciens, liquidation) et les réponses ministérielles
+    n° 334, 3906, 8683 (10e législature) et 39235 (11e) ; aucune ne chiffre une validation.
+- id: loi_1972
+  statut: lue
+  nee_de: LEGIARTI000006338235
+  textes:
+  - id: LEGIARTI000006338235
+    article: loi n° 72-1201 du 23 décembre 1972, article 1er
+    en_vigueur: 1973-01-01
+    publie_le: 1972-12-29
+    citation: >-
+      « Les maires et adjoints qui recoivent une indemnité de fonction par application des
+      dispositions du chapitre II du titre IV du livre 1er du Code de l'administration
+      communale bénéficient d'un régime de retraite par affiliation au régime complémentaire
+      de retraite institué au profit des agents non titulaires des collectivités publiques
+      [...]. Les cotisations des communes et celles des maires et adjoints sont calculées sur
+      le montant des indemnités effectivement reçues [...]. Les cotisations des communes
+      constituent pour celles-ci une dépense obligatoire ; celles des maires et adjoints ont
+      un caractère personnel et obligatoire. »
+    lu_le: 2026-11-24
+  - id: JORFTEXT000000494374
+    reference: >-
+      décret n° 73-197 du 27 février 1973 pris pour l'application de la loi n° 72-1201, dont
+      l'index JORF ne porte que le sommaire
+    publie_le: 1973-02-28
+    citation: >-
+      « ART. 1: REGIME DONT BENEFICIENT LES MAIRES ET AIRES ADJOINTS (IRCANTEC). ART. 2:
+      AFFILIATION,COTISATION,VERSEMENTS RETROACTIFS. ART. 3: COTISATION AU-DELA DE 65 ANS. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006345051
+    article: code des communes, L. 123-10, rédaction du 20 mars 1977
+    en_vigueur: 1977-03-20
+    citation: >-
+      « Les maires et adjoints qui reçoivent une indemnité de fonctions par application des
+      dispositions de la section III du présent chapitre bénéficient d'un régime de retraite
+      institué au profit des agents non titulaires des collectivités publiques »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006347265
+    article: code des communes, R. 123-4, rédaction du 20 mars 1977
+    en_vigueur: 1977-03-20
+    citation: >-
+      « Le régime de retraite auquel les maires et adjoints réglementaires et supplémentaires,
+      qui reçoivent une indemnité de fonctions par application des dispositions de la section
+      III du présent chapitre, sont affiliés à titre obligatoire, est le régime de
+      l'institution de retraite complémentaire des agents non titulaires de l'Etat et des
+      collectivités publiques . Compte tenu des dispositions des articles L. 153-4 et L.
+      165-2, les maires délégués dans les communes associées et les présidents et
+      vice-présidents des communautés urbaines sont affiliés à ce régime de retraite. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006345053
+    article: code des communes, L. 123-11, rédaction du 20 mars 1977
+    en_vigueur: 1977-03-20
+    citation: >-
+      « Les cotisations des communes et celles de maires et adjoints sont calculées sur le
+      montant des indemnités effectivement perçues »
+    lu_le: 2026-11-24
+  - reference: >-
+      réponse du ministre de l'intérieur à la question écrite n° 8683 (10e législature),
+      Journal officiel, Assemblée nationale, 13 juin 1994, page 2989, lue dans la copie du
+      site de l'Assemblée nationale
+    citation: >-
+      « seuls peuvent beneficier de cette affiliation les maires et adjoints percevant une
+      indemnite de fonction legalement prevue par les dispositions du livre Ier du code de
+      l'administration communale » ; « Ces adjoints ont ete affilies a l'Ircantec en
+      application de la loi du 23 decembre 1972 susvisee »
+    lu_le: 2026-11-24
+    empreinte: sha256:fe20a0c8492069efd524fea25e27f4ae86c05b0884634352f92d0f56f7887df3
+  - reference: >-
+      Ircantec, base réglementaire, « Évolution de l'affiliation des élus », page du 29 avril
+      2024
+    citation: >-
+      « Étaient exclus de l'Ircantec : les conseillers municipaux, les présidents et
+      vice-présidents des syndicats de communes, de district, ou de tout autre groupement
+      autre que les communautés urbaines, [...] les membres d'une délégation spéciale mise en
+      place à la suite d'une dissolution du conseil municipal ou d'une démission de tous ses
+      membres. »
+    lu_le: 2026-11-24
+    empreinte: sha256:ed1bc7d922702c76647024640e1178c28525d5bf0a66bff99dea5fabb291dbb3
+  bornes:
+    periode.debut: [1973-01-01, 1992-03-30]
+  contenu:
+    ircantec: >-
+      les maires et les adjoints, réglementaires et supplémentaires, qui reçoivent une
+      indemnité de fonction, les maires délégués des communes associées et les présidents et
+      vice-présidents des communautés urbaines
+    non_affilies: >-
+      les autres élus, même indemnisés : conseillers municipaux, conseillers généraux et
+      régionaux, présidents et vice-présidents des syndicats de communes, des districts et
+      des autres groupements, membres des délégations spéciales
+    assiette: >-
+      les indemnités effectivement perçues ; la cotisation de l'élu est personnelle et
+      obligatoire, celle de la commune une dépense obligatoire
+    regime_general: >-
+      aucun : aucun texte lu n'affilie l'élu au régime général avant la loi n° 92-108
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    Le 24 novembre 2026 : les pages de la base réglementaire de l'Ircantec sur les élus
+    locaux et les réponses ministérielles n° 334, 3906, 8683 et 39235 ; aucune ne chiffre
+    l'affiliation d'un mandat.
+- id: loi_1992
+  statut: lue
+  hypothese: >-
+    la borne du 30 mars 1992 est lue dans l'article 41 de la loi n° 92-108, qui applique ses
+    titres III et IV au renouvellement des conseils généraux et régionaux de 1992, par la
+    réponse ministérielle n° 334 ; la circulaire du 15 avril 1992, publiée au Journal
+    officiel, date du même jour le titre III, les indemnités, que suit l'affiliation à
+    l'Ircantec. L'index JORF ne porte pas l'article 41, et Légifrance refuse la lecture ;
+    LEGI date les rédactions de 1992 du 5 février, jour de la publication
+  textes:
+  - reference: >-
+      réponse du ministre de l'intérieur à la question écrite n° 334 (10e législature),
+      Journal officiel, Assemblée nationale, 2 août 1993, page 2346, lue dans la copie du site
+      de l'Assemblée nationale ; elle lit l'article 41 de la loi n° 92-108 du 3 février 1992
+      (JORFTEXT000000357195)
+    citation: >-
+      « L'article 41 de la loi no 92-108 du 3 fevrier 1992 relative aux conditions d'exercice
+      des mandats locaux prevoit l'application de plusieurs dispositions de la loi a compter
+      du renouvellement des conseils generaux et des conseils regionaux intervenu en 1992.
+      Tel est le cas, depuis le 30 mars 1992, des titres III (indemnites de fonction) et IV
+      (retraite des elus locaux). »
+    lu_le: 2026-11-24
+    empreinte: sha256:311ef58bdd98d377f0eb93ae7680a4ec6f73084f86701b0d6b691c56de11bc2c
+  - id: JORFARTI000001187809
+    article: >-
+      circulaire du 15 avril 1992 relative aux conditions d'exercice des mandats locaux,
+      « Régime indemnitaire des élus locaux applicable depuis le 30 mars 1992 », préambule
+    publie_le: 1992-05-31
+    citation: >-
+      « le dispositif applicable aux indemnités de fonction des titulaires des mandats locaux
+      (titre III de la loi du 3 février 1992) qui est en vigueur depuis le 30 mars 1992 pour
+      l'ensemble des élus locaux concernés »
+    lu_le: 2026-11-24
+  - reference: >-
+      réponse du ministre de l'intérieur à la question écrite n° 8683 (10e législature),
+      Journal officiel, Assemblée nationale, 13 juin 1994, page 2989
+    citation: >-
+      « depuis le 30 mars 1992, tous les elus locaux qui percoivent legalement une indemnite
+      de fonction beneficient du nouveau regime de retraite institue par le titre IV de la
+      loi no 92-108 du 3 fevrier 1992 » ; « la loi du 3 fevrier 1992 n'a prevu aucune
+      disposition de retroactivite en matiere de cotisation a tout regime de retraite »
+    lu_le: 2026-11-24
+    empreinte: sha256:fe20a0c8492069efd524fea25e27f4ae86c05b0884634352f92d0f56f7887df3
+  - id: LEGIARTI000006345056
+    article: code des communes, L. 123-12, rédaction de la loi n° 92-108
+    en_vigueur: 1992-02-05
+    citation: >-
+      « Les élus qui reçoivent une indemnité de fonction en application des dispositions du
+      présent code ou de toute autre disposition régissant l'indemnisation de leurs fonctions
+      sont affiliés au régime complémentaire de retraite institué au profit des agents non
+      titulaires des collectivités publiques. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006390053
+    article: code général des collectivités territoriales, L. 2123-28
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les élus qui perçoivent une indemnité de fonction en application des dispositions du
+      présent code ou de toute autre disposition régissant l'indemnisation de leurs fonctions
+      sont affiliés au régime complémentaire de retraite institué au profit des agents non
+      titulaires des collectivités publiques. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006351127
+    article: loi du 10 août 1871 relative aux conseils généraux, article 18, rédaction de 1992
+    en_vigueur: 1992-02-05
+    citation: >-
+      « Les membres du conseil général sont affiliés au régime complémentaire de retraite
+      institué au profit des agents non titulaires des collectivités publiques. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006391664
+    article: code général des collectivités territoriales, L. 3123-23
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les membres du conseil général sont affiliés au régime complémentaire de retraite
+      institué au profit des agents non titulaires des collectivités publiques. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006392247
+    article: code général des collectivités territoriales, L. 4135-23
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les membres du conseil régional sont affiliés au régime complémentaire de retraite
+      institué au profit des agents non titulaires des collectivités publiques. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006345052
+    article: code des communes, L. 123-10, rédaction de la loi n° 92-108
+    en_vigueur: 1992-02-05
+    citation: >-
+      « Les élus visés à l'article L. 121-45 qui, pour la durée de leur mandat, ont cessé
+      d'exercer leur activité professionnelle et n'acquièrent aucun droit à pension au titre
+      d'un régime obligatoire d'assurance vieillesse sont affiliés à l'assurance vieillesse
+      du régime général de la sécurité sociale. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006345014
+    article: code des communes, L. 121-45, rédaction de la loi n° 92-108
+    en_vigueur: 1992-02-05
+    citation: >-
+      « Les élus visés à l'article L. 121-44 qui, pour l'exercice de leur mandat, ont cessé
+      d'exercer leur activité professionnelle et qui ne relèvent plus, à titre obligatoire,
+      d'un régime de sécurité sociale, sont affiliés au régime général de la sécurité sociale
+      pour les prestations en nature des assurances maladie, maternité et invalidité. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006390045
+    article: code général des collectivités territoriales, L. 2123-25, rédaction de 1996
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les élus visés aux articles L. 2123-9 et L. 2123-11 qui, pour l'exercice de leur
+      mandat, ont cessé d'exercer leur activité professionnelle et qui ne relèvent plus, à
+      titre obligatoire, d'un régime de sécurité sociale, sont affiliés au régime général de
+      la sécurité sociale pour les prestations en nature des assurances maladie, maternité et
+      invalidité. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006390049
+    article: code général des collectivités territoriales, L. 2123-26, rédaction de 1996
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les élus visés à l'article L. 2123-25 qui, pour la durée de leur mandat, ont cessé
+      d'exercer leur activité professionnelle et n'acquièrent aucun droit à pension au titre
+      d'un régime obligatoire d'assurance vieillesse sont affiliés à l'assurance vieillesse
+      du régime général de la sécurité sociale. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006351108
+    article: loi du 10 août 1871, article 8, rédaction de 1992
+    en_vigueur: 1992-02-05
+    citation: >-
+      « Le président ou les vice-présidents ayant délégation de l'exécutif du conseil général
+      qui, pour l'exercice de leur mandat, ont cessé d'exercer toute activité professionnelle
+      et qui ne relèvent plus, à titre obligatoire, d'un régime de sécurité sociale, sont
+      affiliés au régime général de la sécurité sociale pour les prestations en nature des
+      assurances maladie, maternité et invalidité. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006351142
+    article: loi du 10 août 1871, article 16, rédaction de 1992
+    en_vigueur: 1992-02-05
+    citation: >-
+      « Les membres du conseil général visés à l'article 8 de la présente loi qui, pour la
+      durée de leur mandat, ont cessé d'exercer leur activité professionnelle et
+      n'acquièrent aucun droit à pension au titre d'un régime obligatoire d'assurance
+      vieillesse sont affiliés à l'assurance vieillesse du régime général de la sécurité
+      sociale. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006391657
+    article: code général des collectivités territoriales, L. 3123-20, rédaction de 1996
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Le président ou les vice-présidents ayant délégation de l'exécutif du conseil général
+      qui, pour l'exercice de leur mandat, ont cessé d'exercer toute activité professionnelle
+      et qui ne relèvent plus, à titre obligatoire, d'un régime de sécurité sociale, sont
+      affiliés au régime général »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006391661
+    article: code général des collectivités territoriales, L. 3123-21, rédaction de 1996
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les membres du conseil général visés à l'article L. 3123-20 qui, pour la durée de leur
+      mandat, ont cessé d'exercer leur activité professionnelle et n'acquièrent aucun droit à
+      pension au titre d'un régime obligatoire d'assurance vieillesse sont affiliés à
+      l'assurance vieillesse du régime général de la sécurité sociale. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006392240
+    article: code général des collectivités territoriales, L. 4135-20, rédaction de 1996
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Le président ou les vice-présidents ayant délégation de l'exécutif du conseil régional
+      qui, pour l'exercice de leur mandat, ont cessé d'exercer toute activité professionnelle
+      et qui ne relèvent plus, à titre obligatoire, d'un régime de sécurité sociale, sont
+      affiliés au régime général »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006392244
+    article: code général des collectivités territoriales, L. 4135-21, rédaction de 1996
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les membres du conseil régional visés à l'article L. 4135-20 qui, pour la durée de
+      leur mandat, ont cessé d'exercer leur activité professionnelle et n'acquièrent aucun
+      droit à pension au titre d'un régime obligatoire d'assurance vieillesse sont affiliés à
+      l'assurance vieillesse du régime général de la sécurité sociale. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006345058
+    article: code des communes, L. 123-13, rédaction de la loi n° 92-108
+    en_vigueur: 1992-02-05
+    citation: >-
+      « Les cotisations des communes et celles de leurs élus résultant de l'application des
+      articles L. 123-10 à L. 123-12 sont calculées sur le montant des indemnités
+      effectivement perçues par ces derniers »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006390054
+    article: code général des collectivités territoriales, L. 2123-29, rédaction de 1996
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les cotisations des communes et celles de leurs élus résultant de l'application des
+      articles L. 2123-26 à L. 2123-28 sont calculées sur le montant des indemnités
+      effectivement perçues par ces derniers [...]. Les cotisations des élus ont un caractère
+      personnel et obligatoire. »
+    lu_le: 2026-11-24
+  - reference: >-
+      réponse du ministre de l'intérieur à la question écrite n° 39235 (11e législature),
+      Journal officiel, Assemblée nationale, 31 juillet 2000, page 4559, lue dans la copie du
+      site de l'Assemblée nationale ; elle lit L. 5211-14 du code général des collectivités
+      territoriales, que l'index LEGI ne porte pas
+    citation: >-
+      « les présidents et les vice-présidents de ces établissements qui cessent leur activité
+      professionnelle pour se consacrer à leur mandat bénéficient, comme les maires et les
+      adjoints, de l'affiliation au régime général de la sécurité sociale [...] pour la
+      retraite lorsqu'ils ne bénéficient plus d'un régime obligatoire. Ces dispositions
+      s'appliquent au président de ces établissements, quelle que soit la population
+      regroupée et, lorsque l'établissement comporte 20 000 habitants au moins, aux
+      vice-présidents. » ; « les membres des organes délibérants de l'ensemble des EPCI sont,
+      lorsqu'ils perçoivent une indemnité de fonction, affiliés au régime de l'Ircantec »
+    lu_le: 2026-11-24
+    empreinte: sha256:6846f516a1425222acb88a8a47e9c172ea75e70063a136ea7ceb08b980ad6388
+  - id: LEGIARTI000006390055
+    article: code général des collectivités territoriales, L. 2123-30, rédaction de 1996
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les pensions de retraite déjà liquidées et les droits acquis avant le 30 mars 1992 des
+      élus communaux continuent d'être honorés par les institutions et organismes auprès
+      desquels ils ont été constitués ou auprès desquels ils ont été transférés. »
+    lu_le: 2026-11-24
+  - reference: >-
+      Ircantec, base réglementaire, « Évolution de l'affiliation des élus », page du 29 avril
+      2024
+    citation: >-
+      « Le champ d'application du régime est étendu aux présidents et vice-présidents des
+      centres de gestion départementaux ou interdépartementaux de la fonction publique
+      territoriale à compter du 1er juillet 1995. » ; « À compter de juillet 1999, le
+      bénéfice de l'Ircantec, déjà ouvert aux présidents et vice-présidents d'EPCI par la loi
+      du 3 février 1992, est étendu à l'ensemble des membres de l'organe délibérant des EPCI »
+    lu_le: 2026-11-24
+    empreinte: sha256:ed1bc7d922702c76647024640e1178c28525d5bf0a66bff99dea5fabb291dbb3
+  bornes:
+    periode.debut: [1992-03-30, 2002-02-28]
+  contenu:
+    ircantec: >-
+      tout élu qui perçoit une indemnité de fonction, « en application des dispositions du
+      présent code ou de toute autre disposition régissant l'indemnisation de leurs
+      fonctions » : élus municipaux, membres du conseil général et du conseil régional,
+      présidents et vice-présidents des établissements publics de coopération
+      intercommunale ; un mandat entre dans le régime quand une indemnité lui est ouverte, les
+      autres membres indemnisés des organes délibérants de ces établissements et les
+      présidents et vice-présidents des centres de gestion au cours de la version, selon
+      l'Ircantec
+    regime_general: >-
+      l'assurance vieillesse, à l'élu qui, pour la durée de son mandat, a cessé son activité
+      professionnelle et n'acquiert aucun droit à pension d'un régime obligatoire : dans la
+      commune, l'élu visé à L. 121-44 du code des communes, puis à L. 2123-9 et L. 2123-11 du
+      code général, articles que l'index ne porte pas ; au département et à la région, le
+      président et les vice-présidents ayant délégation de l'exécutif qui ont cessé toute
+      activité professionnelle ; dans l'établissement de coopération intercommunale, son
+      président, et ses vice-présidents s'il compte 20 000 habitants au moins
+    assiette: >-
+      les indemnités effectivement perçues, pour l'Ircantec comme pour le régime général ; la
+      cotisation de l'élu est personnelle et obligatoire
+    droits_anterieurs: >-
+      les pensions liquidées et les droits acquis avant la version auprès d'autres
+      institutions continuent d'être honorés par elles (régime `elus_locaux_avant_1992`,
+      hors champ)
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    Le 24 novembre 2026 : les pages de la base réglementaire de l'Ircantec sur les élus
+    locaux et les réponses ministérielles n° 334, 3906, 8683 et 39235 ; aucune ne chiffre
+    l'affiliation d'un élu au régime général ou à l'Ircantec.
+- id: loi_2002
+  statut: lue
+  nee_de: JORFARTI000001654149
+  hypothese: >-
+    la borne est la date de publication de la loi n° 2002-276 que LEGI donne aux rédactions
+    qu'elle insère, aucune disposition d'application n'en différant l'effet dans ce qui a été
+    lu ; l'Ircantec date du 1er mars 2002 l'affiliation des conseillers municipaux des
+    communes de moins de 100 000 habitants
+  textes:
+  - id: JORFARTI000001654149
+    article: loi n° 2002-276 du 27 février 2002 relative à la démocratie de proximité, article 91
+    publie_le: 2002-02-28
+    citation: >-
+      « Après l'article L. 2123-25 du code général des collectivités territoriales, il est
+      inséré un article L. 2123-25-2 ainsi rédigé : "Art. L. 2123-25-2. - Lorsque les maires
+      et, dans les communes de 20 000 habitants au moins, les adjoints ont cessé d'exercer
+      toute activité professionnelle pour l'exercice de leur mandat et ne relèvent plus, à
+      titre obligatoire, d'un régime de sécurité sociale, ils sont affiliés au régime général
+      de la sécurité sociale pour les prestations en nature et en espèces des assurances
+      maladie, maternité, invalidité et décès." »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006390048
+    article: code général des collectivités territoriales, L. 2123-25-2, rédaction de 2002
+    en_vigueur: 2002-02-28
+    citation: >-
+      « Lorsque les maires et, dans les communes de 20 000 habitants au moins, les adjoints
+      ont cessé d'exercer toute activité professionnelle pour l'exercice de leur mandat et ne
+      relèvent plus, à titre obligatoire, d'un régime de sécurité sociale, ils sont affiliés
+      au régime général de la sécurité sociale »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006390050
+    article: code général des collectivités territoriales, L. 2123-26, rédaction de 2002
+    en_vigueur: 2002-02-28
+    citation: >-
+      « Les élus visés à l'article L. 2123-25-2 qui, pour la durée de leur mandat, ont cessé
+      d'exercer leur activité professionnelle et n'acquièrent aucun droit à pension au titre
+      d'un régime obligatoire d'assurance vieillesse sont affiliés à l'assurance vieillesse
+      du régime général de la sécurité sociale. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006391662
+    article: code général des collectivités territoriales, L. 3123-21, rédaction de 2002
+    en_vigueur: 2002-02-28
+    citation: >-
+      « Les présidents ou les vice-présidents ayant délégation de l'exécutif du conseil
+      général qui, pour la durée de leur mandat, ont cessé d'exercer leur activité
+      professionnelle et n'acquièrent aucun droit à pension au titre d'un régime obligatoire
+      d'assurance vieillesse sont affiliés à l'assurance vieillesse du régime général de la
+      sécurité sociale. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006392245
+    article: code général des collectivités territoriales, L. 4135-21, rédaction de 2002
+    en_vigueur: 2002-02-28
+    citation: >-
+      « Les présidents ou les vice-présidents ayant délégation de l'exécutif du conseil
+      régional qui, pour la durée de leur mandat, ont cessé d'exercer leur activité
+      professionnelle et n'acquièrent aucun droit à pension au titre d'un régime obligatoire
+      d'assurance vieillesse sont affiliés à l'assurance vieillesse du régime général de la
+      sécurité sociale. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006390053
+    article: code général des collectivités territoriales, L. 2123-28
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les élus qui perçoivent une indemnité de fonction en application des dispositions du
+      présent code ou de toute autre disposition régissant l'indemnisation de leurs fonctions
+      sont affiliés au régime complémentaire de retraite institué au profit des agents non
+      titulaires des collectivités publiques. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006389385
+    article: code général des collectivités territoriales, L. 1424-27-1, rédaction de 2004
+    en_vigueur: 2004-08-17
+    citation: >-
+      « Les présidents et vice-présidents d'un conseil d'administration de service
+      départemental d'incendie et de secours, qui perçoivent, en application des dispositions
+      de l'article L. 1424-27, des indemnités pour l'exercice effectif de leurs fonctions,
+      sont affiliés au régime complémentaire de retraite institué au profit des agents non
+      titulaires des collectivités publiques. Cette affiliation ne peut donner lieu à une
+      validation de services. »
+    lu_le: 2026-11-24
+  - reference: >-
+      Ircantec, « Les 6 catégories de mandats des élus », page lue le 24 novembre 2026
+    citation: >-
+      « 1er mars 2002 » : « Les conseillers municipaux des communes de moins de 100 000
+      habitants » ; « Vous ne pouvez pas valider les mandats effectués avant la date
+      officielle d'affiliation à l'Ircantec (sauf pour les mandats concernés par la loi de
+      1973 : maires et adjoints, présidents et vice-présidents de communauté urbaine). »
+    lu_le: 2026-11-24
+    empreinte: sha256:d4123e22b98e918d0d8ff23bda1c795251a69067f032bc2811bda76c0cc1990e
+  bornes:
+    periode.debut: [2002-02-28, 2013-01-01]
+  contenu:
+    ircantec: >-
+      inchangée, tout élu indemnisé ; s'y ajoutent les mandats qu'une indemnité ouvre au
+      cours de la version, conseillers municipaux des communes de moins de 100 000 habitants,
+      présidents et vice-présidents des services départementaux d'incendie et de secours,
+      que L. 1424-27-1 affilie sans validation des services antérieurs
+    regime_general: >-
+      l'assurance vieillesse, à l'élu qui, pour la durée de son mandat, a cessé son activité
+      professionnelle et n'acquiert aucun droit à pension d'un régime obligatoire : le maire
+      et, dans les communes de 20 000 habitants au moins, l'adjoint qui ont cessé toute
+      activité professionnelle ; au département et à la région, le président et les
+      vice-présidents ayant délégation de l'exécutif ; dans l'établissement de coopération
+      intercommunale, comme dans la version précédente
+    assiette: les indemnités effectivement perçues
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    Le 24 novembre 2026 : les pages de la base réglementaire de l'Ircantec sur les élus
+    locaux et les réponses ministérielles n° 334, 3906, 8683 et 39235 ; aucune ne chiffre
+    l'affiliation d'un élu au régime général ou à l'Ircantec.
+- id: lfss_2013
+  statut: lue
+  nee_de: LEGIARTI000026790815
+  textes:
+  - id: LEGIARTI000026790815
+    article: code de la sécurité sociale, L. 382-31, rédaction du 1er janvier 2013
+    en_vigueur: 2013-01-01
+    citation: >-
+      « Les élus des collectivités territoriales mentionnées à l'article 72 de la
+      Constitution dans lesquelles s'applique le régime général de sécurité sociale, ainsi que
+      les délégués de ces collectivités territoriales membres d'un établissement public de
+      coopération intercommunale, sont affiliés au régime général de sécurité sociale pour
+      l'ensemble des risques. Leurs indemnités de fonction sont assujetties aux cotisations de
+      sécurité sociale lorsque leur montant total est supérieur à une fraction, fixée par
+      décret, de la valeur du plafond défini à l'article L. 241-3. Toutefois, pour les élus
+      mentionnés aux articles L. 2123-9, L. 3123-7, L. 4135-7, L. 4422-22, L. 5214-8, L.
+      5215-16 et L. 5216-4 du code général des collectivités territoriales qui ont cessé toute
+      activité professionnelle pour l'exercice de leur mandat et ne relèvent plus, à titre
+      obligatoire, d'un régime de sécurité sociale, les indemnités de fonction dont le montant
+      est inférieur à cette fraction sont assujetties aux cotisations de sécurité sociale. »
+    lu_le: 2026-11-24
+  - id: JORFARTI000026785490
+    article: >-
+      loi n° 2012-1404 du 17 décembre 2012 de financement de la sécurité sociale pour 2013,
+      article 18, qui crée L. 382-31 et abroge L. 2123-26, L. 3123-21 et L. 4135-21
+    publie_le: 2012-12-18
+    citation: >-
+      « 2° L'article L. 2123-26 est abrogé » ; « 7° L'article L. 3123-21 est abrogé » ; « 12°
+      L'article L. 4135-21 est abrogé » ; « III. ― Les I et II s'appliquent à compter du 1er
+      janvier 2013. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000027364746
+    article: code de la sécurité sociale, D. 382-34, et l'article 2 du décret n° 2013-362 du 26 avril 2013
+    en_vigueur: 2013-01-01
+    citation: >-
+      « Les présentes dispositions s'appliquent aux indemnités de fonctions afférentes : 1°
+      Aux mandats débutant à compter du 1er janvier 2013 ; 2° Aux mandats en cours au 1er
+      janvier 2013, au titre de la période du mandat postérieure à cette date. » ; « Les
+      indemnités de fonctions des élus des collectivités territoriales et des délégués de ces
+      collectivités membres d'un établissement public de coopération intercommunale sont
+      assujetties aux cotisations sociales, en application des dispositions de l'article L.
+      382-31, lorsque leur montant total dépasse la moitié du plafond mentionné à l'article L.
+      241-3. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000026798580
+    article: code général des collectivités territoriales, L. 2123-25-2, rédaction du 1er janvier 2013
+    en_vigueur: 2013-01-01
+    citation: >-
+      « Les élus municipaux sont affiliés au régime général de sécurité sociale dans les
+      conditions définies à l'article L. 382-31 du code de la sécurité sociale. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000026798577
+    article: code général des collectivités territoriales, L. 2123-29, rédaction du 1er janvier 2013
+    en_vigueur: 2013-01-01
+    citation: >-
+      « Les cotisations des communes et celles de leurs élus résultant de l'application des
+      articles L. 2123-27 et L. 2123-28 sont calculées sur le montant des indemnités
+      effectivement perçues par ces derniers »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006390053
+    article: code général des collectivités territoriales, L. 2123-28
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les élus qui perçoivent une indemnité de fonction [...] sont affiliés au régime
+      complémentaire de retraite institué au profit des agents non titulaires des
+      collectivités publiques. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000027574152
+    article: code général des collectivités territoriales, L. 3123-23, rédaction du 22 mars 2015
+    en_vigueur: 2015-03-22
+    citation: >-
+      « Les membres du conseil départemental sont affiliés au régime complémentaire de
+      retraite institué au profit des agents non titulaires des collectivités publiques. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000044374619
+    article: code général des collectivités territoriales, L. 1424-27-1, rédaction du 27 novembre 2021
+    en_vigueur: 2021-11-27
+    citation: >-
+      « Les présidents et vice-présidents d'un conseil d'administration de service d'incendie
+      et de secours, qui perçoivent [...] des indemnités pour l'exercice effectif de leurs
+      fonctions, sont affiliés au régime complémentaire de retraite institué au profit des
+      agents non titulaires des collectivités publiques. »
+    lu_le: 2026-11-24
+  bornes:
+    periode.debut: [2013-01-01, 2023-09-01]
+  contenu:
+    ircantec: inchangée, tout élu indemnisé
+    regime_general: >-
+      l'élu d'une collectivité où s'applique le régime général, et le délégué de ces
+      collectivités membre d'un établissement de coopération intercommunale, est affilié
+      pour l'ensemble des risques ; ses indemnités sont assujetties quand leur montant total
+      dépasse la moitié du plafond de L. 241-3 ; en deçà, elles le sont aussi pour l'élu des
+      articles L. 2123-9, L. 3123-7, L. 4135-7, L. 4422-22, L. 5214-8, L. 5215-16 et L.
+      5216-4, que l'index ne porte pas, qui a cessé toute activité professionnelle pour son
+      mandat et ne relève plus d'un régime obligatoire
+    seuil: >-
+      la moitié du plafond, au sens strict : le montant total « dépasse » la moitié
+    mandats_en_cours: >-
+      la version vaut pour les mandats qui commencent avec elle, et pour la part restante des
+      mandats en cours
+    assiette: les indemnités effectivement perçues
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    Le 24 novembre 2026 : les pages de la base réglementaire de l'Ircantec sur les élus
+    locaux (assiette, cumul de mandats) ; aucune ne chiffre l'assujettissement au régime
+    général sous ou au-dessus du seuil.
+- id: pension_d_avant_septembre_2023
+  statut: lue
+  nee_de: JORFARTI000047445110
+  textes:
+  - id: JORFARTI000047445110
+    article: >-
+      loi n° 2023-270 du 14 avril 2023 de financement rectificative de la sécurité sociale
+      pour 2023, article 23, IV
+    publie_le: 2023-04-15
+    citation: >-
+      « IV.-Les I à III sont applicables aux pensions prenant effet à compter du 1er
+      septembre 2023. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000047453392
+    article: code de la sécurité sociale, L. 382-31, rédaction du 1er septembre 2023
+    en_vigueur: 2023-09-01
+    citation: >-
+      « Conformément au IV de l'article 23 de la loi n° 2023-270 du 14 avril 2023, ces
+      dispositions sont applicables aux pensions prenant effet à compter du 1er septembre
+      2023. » ; « Leurs indemnités de fonction sont assujetties aux cotisations de sécurité
+      sociale lorsque leur montant total est supérieur à une fraction, fixée par décret, de la
+      valeur du plafond défini à l'article L. 241-3. Toutefois, pour les élus mentionnés aux
+      articles L. 2123-9, L. 3123-7, L. 4135-7, L. 4422-19, L. 5214-8, L. 5215-16 et L.
+      5216-4 du code général des collectivités territoriales qui ont cessé toute activité
+      professionnelle pour l'exercice de leur mandat et ne relèvent plus, à titre obligatoire,
+      d'un régime de sécurité sociale, les indemnités de fonction dont le montant est
+      inférieur à cette fraction sont assujetties aux cotisations de sécurité sociale. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000027364746
+    article: code de la sécurité sociale, D. 382-34
+    en_vigueur: 2013-01-01
+    citation: >-
+      « lorsque leur montant total dépasse la moitié du plafond mentionné à l'article L.
+      241-3 »
+    lu_le: 2026-11-24
+  bornes:
+    periode.debut: [2023-09-01, null]
+    liquidation.date_effet: [null, 2023-09-01]
+  contenu:
+    ircantec: inchangée, tout élu indemnisé
+    regime_general: >-
+      comme dans la version lfss_2013 ; l'article vise L. 4422-19 au lieu de L. 4422-22
+    option: >-
+      aucune : l'assujettissement sur demande n'est applicable qu'aux pensions qui prennent
+      effet à compter du 1er septembre 2023 ; l'élu dont la pension a pris effet avant, et qui
+      exerce un mandat depuis, reste sous la seule règle du seuil
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    Le 24 novembre 2026 : les pages de la base réglementaire de l'Ircantec sur les élus
+    locaux et le cumul de leur pension avec un mandat ; aucune ne traite de
+    l'assujettissement sur demande.
+- id: option_2023
+  statut: lue
+  nee_de: LEGIARTI000047453392
+  textes:
+  - id: LEGIARTI000047453392
+    article: code de la sécurité sociale, L. 382-31, rédaction du 1er septembre 2023
+    en_vigueur: 2023-09-01
+    citation: >-
+      « Les indemnités de fonction des élus des collectivités territoriales mentionnées à
+      l'article 72 de la Constitution dans lesquelles s'applique le régime général de sécurité
+      sociale et qui ne sont pas assujetties aux cotisations de sécurité sociale en
+      application des deux premiers alinéas du présent article peuvent, sur demande des élus
+      concernés, être assujetties aux mêmes cotisations. Un décret fixe les modalités selon
+      lesquelles cette faculté s'exerce. »
+    lu_le: 2026-11-24
+  - id: JORFARTI000047445110
+    article: >-
+      loi n° 2023-270 du 14 avril 2023 de financement rectificative de la sécurité sociale
+      pour 2023, article 23, IV
+    publie_le: 2023-04-15
+    citation: >-
+      « IV.-Les I à III sont applicables aux pensions prenant effet à compter du 1er
+      septembre 2023. »
+    lu_le: 2026-11-24
+  - id: JORFARTI000048010886
+    article: >-
+      décret n° 2023-838 du 30 août 2023 relatif à la mise en œuvre pour les élus locaux de
+      la faculté de cotisation, article 3, qui applique son article 1er, D. 382-34-1
+    publie_le: 2023-08-31
+    citation: >-
+      « I. - Les dispositions de l'article 1er du présent décret s'appliquent aux indemnités
+      de fonctions afférentes : 1° Aux mandats débutant à compter du 1er septembre 2023 ; 2°
+      Aux mandats en cours au 1er septembre 2023, au titre de la période postérieure à cette
+      date. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000048027757
+    article: code de la sécurité sociale, D. 382-34-1
+    en_vigueur: 2023-09-01
+    citation: >-
+      « la demande d'assujettissement des indemnités de fonction aux cotisations de sécurité
+      sociale est adressée par l'élu à sa collectivité territoriale par tout moyen conférant
+      date certaine à sa réception. Les cotisations sociales sont dues à compter du premier
+      jour du mois suivant la réception par la collectivité territoriale de la demande pour la
+      durée du mandat restant à courir. II. - L'élu bénéficiant de l'assujettissement des
+      indemnités dans les conditions prévues au I peut y renoncer à tout moment pendant la
+      durée de son mandat, dans les mêmes conditions. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000027364746
+    article: code de la sécurité sociale, D. 382-34
+    en_vigueur: 2013-01-01
+    citation: >-
+      « lorsque leur montant total dépasse la moitié du plafond mentionné à l'article L.
+      241-3 »
+    lu_le: 2026-11-24
+  bornes:
+    periode.debut: [2023-09-01, 2023-12-28]
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    ircantec: inchangée, tout élu indemnisé
+    regime_general: >-
+      comme dans la version lfss_2013 ; l'article vise L. 4422-19 au lieu de L. 4422-22
+    option: >-
+      l'élu d'une collectivité dont les indemnités ne sont pas assujetties peut demander à sa
+      collectivité qu'elles le soient ; les cotisations sont dues du premier jour du mois qui
+      suit la réception de la demande jusqu'à la fin du mandat, et l'élu peut y renoncer à
+      tout moment ; le délégué d'un établissement de coopération intercommunale ne le peut pas
+      encore
+    mandats_en_cours: >-
+      la demande vaut pour les mandats qui commencent avec la version, et pour la part
+      restante des mandats en cours
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    Le 24 novembre 2026 : les pages de la base réglementaire de l'Ircantec sur les élus
+    locaux ; aucune ne traite de l'assujettissement sur demande.
+- id: option_epci_2023
+  statut: lue
+  nee_de: LEGIARTI000048697317
+  hypothese: >-
+    l'article 99 de la loi n° 2023-1250 ne dit pas quand il s'applique : la borne est le
+    lendemain de la publication de la loi, que LEGI donne à la rédaction ; la date d'effet
+    de la pension reste celle du IV de l'article 23 de la loi n° 2023-270, qui vaut pour
+    l'alinéa que l'article 99 complète
+  textes:
+  - id: JORFARTI000048668796
+    article: >-
+      loi n° 2023-1250 du 26 décembre 2023 de financement de la sécurité sociale pour 2024,
+      article 99
+    publie_le: 2023-12-27
+    citation: >-
+      « A la première phrase du dernier alinéa de l'article L. 382-31 du code de la sécurité
+      sociale, après la première occurrence du mot : "sociale", sont insérés les mots :
+      "ainsi que celles des délégués de ces collectivités membres d'un établissement public
+      de coopération intercommunale". »
+    lu_le: 2026-11-24
+  - id: JORFARTI000047445110
+    article: >-
+      loi n° 2023-270 du 14 avril 2023 de financement rectificative de la sécurité sociale
+      pour 2023, article 23, IV
+    publie_le: 2023-04-15
+    citation: >-
+      « IV.-Les I à III sont applicables aux pensions prenant effet à compter du 1er
+      septembre 2023. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000048697317
+    article: code de la sécurité sociale, L. 382-31, rédaction du 28 décembre 2023
+    en_vigueur: 2023-12-28
+    citation: >-
+      « Les indemnités de fonction des élus des collectivités territoriales mentionnées à
+      l'article 72 de la Constitution dans lesquelles s'applique le régime général de sécurité
+      sociale ainsi que celles des délégués de ces collectivités membres d'un établissement
+      public de coopération intercommunale et qui ne sont pas assujetties aux cotisations de
+      sécurité sociale en application des deux premiers alinéas du présent article peuvent,
+      sur demande des élus concernés, être assujetties aux mêmes cotisations. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000048027757
+    article: code de la sécurité sociale, D. 382-34-1
+    en_vigueur: 2023-09-01
+    citation: >-
+      « Les cotisations sociales sont dues à compter du premier jour du mois suivant la
+      réception par la collectivité territoriale de la demande pour la durée du mandat
+      restant à courir. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000027364746
+    article: code de la sécurité sociale, D. 382-34
+    en_vigueur: 2013-01-01
+    citation: >-
+      « lorsque leur montant total dépasse la moitié du plafond mentionné à l'article L.
+      241-3 »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006390053
+    article: code général des collectivités territoriales, L. 2123-28
+    en_vigueur: 1996-02-24
+    citation: >-
+      « Les élus qui perçoivent une indemnité de fonction [...] sont affiliés au régime
+      complémentaire de retraite institué au profit des agents non titulaires des
+      collectivités publiques. »
+    lu_le: 2026-11-24
+  bornes:
+    periode.debut: [2023-12-28, null]
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    ircantec: inchangée, tout élu indemnisé
+    regime_general: comme dans la version précédente
+    option: >-
+      ouverte aussi au délégué d'une collectivité membre d'un établissement de coopération
+      intercommunale, pour les indemnités qu'il en reçoit
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    Le 24 novembre 2026 : les pages de la base réglementaire de l'Ircantec sur les élus
+    locaux ; aucune ne traite de l'assujettissement sur demande.
+approximations:
+- version: loi_1972
+  ecart: >-
+    Le statut route à l'Ircantec, dès 1973, tout élu indemnisé ; la loi n'y affilie que les
+    maires, adjoints, maires délégués et présidents et vice-présidents de communauté urbaine.
+    L'indemnité d'un conseiller général, d'un conseiller régional, d'un conseiller municipal
+    de grande ville ou d'un président de syndicat n'ouvrait aucun droit avant le 30 mars
+    1992.
+  effet: >-
+    Conseiller général de 1985 à 1997, salarié non cadre par ailleurs, né en 1945, parti à
+    soixante ans en 2005, indemnité d'un quart du salaire moyen (4 015 € en 1985) : 509 € par
+    an d'Ircantec au modèle, 226 € au droit, qui n'affilie qu'à compter du 30 mars 1992 ;
+    18 466 € de pension en tout au lieu de 18 183 €.
+- version: [loi_1992, loi_2002]
+  ecart: >-
+    Le statut ne route jamais l'élu au régime général avant 2013 ; la loi y affilie, pour la
+    vieillesse, celui qui a cessé son activité professionnelle pour son mandat et n'acquiert
+    aucun autre droit à pension, dans les limites de chaque version (maire, adjoint d'une
+    commune de 20 000 habitants au moins, président et vice-présidents délégués du
+    département et de la région, président d'établissement de coopération intercommunale).
+  effet: >-
+    Maire d'une ville de 20 000 habitants au moins qui cesse son activité de cadre de 2002 à
+    2008, né en 1950, parti à soixante-deux ans en 2012, indemnité de 1,2 salaire moyen
+    (33 293 € en 2002) : 11 992 € par an de régime général au modèle (136 trimestres sur 162
+    dans le régime), 15 074 € au droit (160 sur 162) ; 22 966 € de pension en tout au lieu de
+    26 047 €.
+- version: [lfss_2013, pension_d_avant_septembre_2023, option_2023, option_epci_2023]
+  ecart: >-
+    Sous la moitié du plafond, le statut ne route que l'Ircantec ; la loi assujettit aussi
+    au régime général l'élu des articles L. 2123-9, L. 3123-7, L. 4135-7, L. 4422-22,
+    L. 5214-8, L. 5215-16 et L. 5216-4 qui a cessé toute activité professionnelle pour son
+    mandat.
+  effet: >-
+    Maire qui a cessé toute activité, de 2014 à 2021, né en 1960, parti à soixante-deux ans
+    en 2022, indemnité de 0,45 salaire moyen (16 499 € en 2014, 18 632 € en 2021, sous la
+    moitié du plafond) : 11 546 € par an de régime général au modèle (128 trimestres sur 167
+    dans le régime), 14 432 € au droit (160 sur 167) ; 16 711 € de pension en tout au lieu de
+    19 597 €.
+- version: [avant_1973, loi_1972, loi_1992, loi_2002, lfss_2013, pension_d_avant_septembre_2023, option_2023,
+    option_epci_2023]
+  ecart: >-
+    Une année que le statut ne route qu'à l'Ircantec, régime complémentaire, compte au
+    modèle dans la durée d'assurance tous régimes, ses trimestres lus sur l'indemnité comme
+    sur un salaire ; le droit ne la compte pas, faute de régime de base : l'Ircantec exige de
+    l'élu, pour le taux plein avant soixante-cinq ans, « le relevé de trimestres du régime de
+    base de l'élu local (régime général, agricole ou spécial) ». Seul ce statut, parmi ceux
+    du modèle, route des années à un régime complémentaire seul.
+  effet: >-
+    Adjointe d'une commune de moins de 20 000 habitants, sans autre activité de 2002 à 2012,
+    salariée non cadre avant, née en 1955, partie à soixante-deux ans en 2017, indemnité de
+    0,3 salaire moyen (8 238 € en 2002) : 152 trimestres validés au modèle, 108 au droit, pour
+    166 requis ; le taux du régime général passe de 41,25 % à 37,5 %, les coefficients
+    d'anticipation de l'Arrco et de l'Ircantec de 0,855 à 0,78 ; 10 579 € de pension en tout
+    au modèle, 9 628 € au droit.
+- version: [lfss_2013, pension_d_avant_septembre_2023, option_2023, option_epci_2023]
+  ecart: >-
+    Le seuil se compare au modèle par « revenu ≥ moitié du plafond » ; le décret veut que le
+    montant total « dépasse » la moitié. Le texte ne dit pas non plus sur quelle période le
+    montant se compare au plafond : le modèle compare l'indemnité de l'année à la moitié du
+    plafond annuel.
+  effet: >-
+    Une indemnité de 20 568 € en 2020, la moitié exacte du plafond de 41 136 €, est routée au
+    régime général et à l'Ircantec, quand le droit ne la porte qu'à l'Ircantec ; à 20 567 €,
+    le modèle et le droit concordent. La période de comparaison : non mesuré.
+- version: [option_2023, option_epci_2023]
+  ecart: >-
+    L'assujettissement sur demande n'est pas porté : le modèle présume que l'élu sous le
+    seuil ne l'a pas demandé.
+  effet: non mesuré
+presomptions: {}
+sources:
+  lu_le: 2026-11-24
+  prochaine_relecture: 2027-11-24
+  a_relire:
+  - >-
+    Lire L. 2123-9 du code général des collectivités territoriales dans ses rédactions
+    depuis 1996, et L. 121-44 du code des communes de 1992, que l'index LEGI ne porte pas :
+    ils disent quels élus municipaux qui ont cessé leur activité relèvent du régime général
+    de 1992 à 2002, et, depuis 2013, sous le seuil (L. 382-31). La réponse ministérielle
+    n° 39235 décrit les présidents et vice-présidents d'établissement de coopération
+    intercommunale « comme les maires et les adjoints » : le président quelle que soit la
+    population, les vice-présidents à partir de 20 000 habitants. Lire de même L. 3123-7,
+    L. 4135-7, L. 4422-22, L. 5214-8, L. 5215-16 et L. 5216-4.
+  - >-
+    Lire L. 5211-14 du code général des collectivités territoriales dans ses rédactions, et
+    la loi n° 99-586 du 12 juillet 1999, pour l'affiliation des présidents, vice-présidents
+    et membres des établissements de coopération intercommunale à l'Ircantec et au régime
+    général ; l'index ne porte pas l'article.
+  - >-
+    Lire l'article 41 de la loi n° 92-108 lui-même : l'index JORF ne le porte pas, et
+    Légifrance refuse la lecture automatique ; la borne du 30 mars 1992 repose sur la
+    réponse ministérielle n° 334.
+  - >-
+    Lire les textes des affiliations particulières que l'Ircantec date, et que le statut ne
+    distingue pas : le Centre national de la fonction publique territoriale (20 février
+    1988), les centres de gestion (1er juillet 1995), les syndicats mixtes « ouverts
+    restreints » (1er mars 2002), les métropoles, pôles métropolitains, communes nouvelles
+    et communes déléguées (1er janvier 2011), les pôles d'équilibre territorial et rural (1er
+    février 2014), les établissements publics territoriaux (1er janvier 2016), les maires
+    et adjoints d'arrondissement de Paris en fonction le 24 mars 1977 (décret n° 77-229), et
+    outre-mer, Mayotte (ordonnance n° 2002-411, article 26), la Nouvelle-Calédonie et la
+    Polynésie française.
+  - >-
+    Dire sur quelle période l'Urssaf compare les indemnités à la moitié du plafond (le mois
+    ou l'année), et ce qu'il en est des indemnités des présidents et vice-présidents de
+    service d'incendie et de secours, établissement public que L. 382-31 ne nomme pas.
+  lectures:
+  - type: legifrance
+    reference: >-
+      index LEGI du dépôt : loi n° 72-1201, article 1er ; code des communes, L. 121-45,
+      L. 123-10 à L. 123-13, R. 123-4 et R. 123-5 ; loi du 10 août 1871, articles 8, 16 et
+      18 ; code général des collectivités territoriales, L. 1424-27-1, L. 2123-25 à
+      L. 2123-30, L. 3123-20 à L. 3123-23, L. 4135-20 à L. 4135-23, D. 2123-25 ; code de la
+      sécurité sociale, L. 382-31, D. 382-34 et D. 382-34-1, dans toutes leurs rédactions
+    date: 2026-11-24
+  - type: jorf
+    reference: >-
+      index JORF du dépôt : décret n° 73-197 du 27 février 1973 (sommaire) ; loi n° 92-108
+      du 3 février 1992, articles 29 à 37 ; loi n° 2002-276 du 27 février 2002, articles 91
+      et 98 ; ordonnance n° 2002-411 du 27 mars 2002, article 26
+    date: 2026-11-24
+  - type: autre
+    reference: >-
+      réponses ministérielles aux questions écrites n° 334 (JO AN du 2 août 1993), 3906 (JO
+      AN du 4 octobre 1993), 8683 (JO AN du 13 juin 1994) et 39235 (JO AN du 31 juillet
+      2000), copies du site de l'Assemblée nationale
+    date: 2026-11-24
+    url: https://questions.assemblee-nationale.fr/dyn/10/questions/QANR5L10QE334.pdf
+  - type: autre
+    reference: >-
+      Ircantec, base réglementaire, pages des élus locaux : « Évolution de l'affiliation des
+      élus » (29 avril 2024), « Validation de services anciens accomplis par des élus -
+      Définition » (30 avril 2024), « Anticipation de la liquidation des droits à retraite
+      sans minoration » (15 janvier 2024), « Assiette de cotisations », « Cumul de fonctions
+      d'élu et cumul emploi retraite - Élus » (4 avril 2024) ; et « Les 6 catégories de
+      mandats des élus » sur le site de l'Ircantec
+    date: 2026-11-24
+    url: https://baseircantec.retraites.fr/carriere/carrieres-specifiques/elus-locaux/evolution-de-laffiliation-des-elus
+textes_sans_effet:
+- id: LEGIARTI000053152220
+  article: code général des collectivités territoriales, L. 2123-30, rédaction du 24 décembre 2025
+  en_vigueur: 2025-12-24
+  motif: >-
+    elle confie à la Caisse des dépôts la gestion des droits acquis avant le 30 mars 1992
+    auprès d'autres organismes ; l'affiliation des élus à l'Ircantec et au régime général
+    n'en change pas
+  lu_le: 2026-11-24
+textes_a_relire:
+- reference: >-
+    loi n° 2022-1158 du 16 août 2022, article 11, et ses rédactions jusqu'à celle du 1er août
+    2026 (loi n° 2025-1249, article 5)
+  question: >-
+    Elles règlent les droits que l'élu retraité acquiert à l'Ircantec sur ses indemnités, et
+    depuis le 1er août 2026 la seconde pension qu'elles ouvrent : la fiche
+    `cumul_emploi_retraite_ircantec` les porte-t-elle ?
+# Affiliations.regimes retire le régime général sous le `seuil_pass` du statut ;
+# ligneAnnuelle lit les trimestres de l'année sur le revenu, et compter les porte à la
+# durée tous régimes, même quand l'année n'a pas de régime de base.
+code:
+  javascript: >-
+    moteur/js/regimes.js : Affiliations.regimes ; moteur/js/carriere.js : ligneAnnuelle ;
+    moteur/js/droit/compter.js : compter
+  parametres: >-
+    legislation/affiliations.yaml : affiliations.elu_local
+  tests:
+  - tests/test_elus_locaux.py
+  - tests/test_donnees.py
+  - tests/js/moteur.test.js
+  - tests/temoins/simulations.json
+historique:
+- >-
+  2026-11-24 — née de la ligne d'inventaire `elus_locaux_ircantec`, dont le manque nommait
+  l'élu qui a cessé toute activité et la date d'affiliation de chaque mandat ; les versions
+  le disent, et les approximations chiffrent ce que le statut n'en porte pas.
+effet: >-
+  Tout élu local indemnisé : le conseiller général, régional ou municipal d'avant 1992 que
+  le statut affilie à tort ; l'élu qui a cessé son activité, dont le statut ignore le
+  régime général de 1992 à 2012, et sous le seuil depuis 2013 ; l'élu sans autre activité,
+  dont les années d'Ircantec seule comptent au modèle dans la durée d'assurance.
