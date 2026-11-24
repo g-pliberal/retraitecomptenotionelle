@@ -1,121 +1,561 @@
 schema_version: 1
 id: cultes_alsace_moselle_pension
 intitule: >-
-  Le ministre d'un culte reconnu d'Alsace-Moselle rétribué par l'État reçoit de l'État,
-  sans avoir cotisé, une pension de retraite selon la loi locale du 15 novembre 1909 et
-  l'arrêté du 19 mars 1910, après dix années de services au moins, quand il devient
-  durablement incapable d'exercer son ministère ; sa veuve et ses orphelins ont droit à
-  une pension. Le décret n° 2007-1341 met sa pension à la charge « de l'État » et lui
-  applique les règles d'ancienneté de l'ordonnance du 16 mars 1910.
+  Le ministre d'un culte reconnu d'Alsace-Moselle, et l'employé des secrétariats de ses
+  autorités supérieures, mis à la retraite parce qu'il est devenu durablement incapable
+  d'exercer son ministère, reçoit de l'État, sans avoir cotisé, après dix années de
+  services au moins, une pension de 20/60 de ses émoluments, augmentée de 1/60 par année
+  accomplie de la onzième à la trentième et de 1/120 au-delà, 45/60 au plus ; aucun
+  certificat médical ne lui est demandé à partir de 70 ans en 1910, de 65 ans depuis 1978,
+  de 60 ans depuis 2001.
 domaine: duree
 regimes: [cultes_alsace_moselle]
 etape: liquider_chaque_regime
 face: droit
 etat: pas_encore_modelisee
 lit:
-- les années de services du ministre rétribuées par l'État, et son ancienneté de pension
-- son dernier traitement, selon le classement indiciaire des ministres des cultes
-- la constatation de son incapacité, et son âge à la demande
+- les années entières de services valables pour la retraite, que la fiche
+  cultes_alsace_moselle_services compte
+- les émoluments de service touchés en dernier lieu ; depuis 2007, le traitement de
+  l'indice brut de l'échelon (arrêté du 8 octobre 2007), converti en indice majoré
+  (grilles/bareme/indices.csv) et multiplié par la valeur du point
+  (legislation/point_indice_fonction_publique.csv)
+- les émoluments plus élevés touchés un an au moins dans un poste antérieur, et la raison
+  du changement de poste (statut de 1873, article 43)
+- l'âge du ministre à la demande de mise à la retraite, son consentement, la constatation
+  de son incapacité et sa cause, en service ou non
 ecrit:
-- la pension de l'État du ministre, et celle de sa veuve et de ses orphelins
+- la pension annuelle de l'État du ministre, et le jour où elle commence à être due
+- la fraction de ses émoluments qu'elle représente, et la pension sur laquelle se
+  calculent celles de sa veuve et de ses orphelins (fiche cultes_alsace_moselle_reversion)
 dates_qui_decident:
 - liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension. La règle est celle de
+# la loi locale du 15 novembre 1909, lue dans sa traduction officielle (décret
+# n° 2013-395) ; des décrets de 1923 à 1934, que ni l'index ni Légifrance ne donnent,
+# modifient ses articles 10, 11, 12 et 14 : les versions qui suivent le premier d'entre
+# eux le disent (textes_a_relire).
 versions:
 - id: loi_locale_1909
-  statut: supposee
-  hypothese: >-
-    le texte de la loi locale et de son règlement de 1910 n'est pas dans l'index, qui
-    n'en porte que la notice (« articles 10, 11, 12 al. 3 et 4, et article 14 »,
-    modifiés par des décrets de 1923 à 1934) ; sa règle est reprise de l'extrait de sa
-    version consolidée sur le site Legirel du CNRS, lu par un moteur de recherche le
-    4 octobre 2026, le site étant injoignable : les ministres « peuvent obtenir une
-    pension de retraite sur la caisse d'Alsace-Lorraine, conformément aux dispositions
-    applicables aux fonctionnaires d'Alsace-Lorraine, lorsque, après au moins dix ans de
-    service, ils deviennent définitivement incapables d'exercer leur ministère en raison
-    d'une infirmité physique ou d'un affaiblissement de leurs facultés physiques ou
-    intellectuelles, et sont mis à la retraite pour cette raison » (article 10)
-  fiabilite: moyenne, une lecture indirecte que les modifications de 2001 et 2007 confirment
-  bornes:
-    liquidation.date_effet: [null, 2001-06-23]
-  contenu:
-    condition: dix années de services au moins, et l'incapacité définitive d'exercer le ministère
-    droit: une pension « sur la caisse d'Alsace-Lorraine », aux règles des fonctionnaires d'Alsace-Lorraine
-    age: >-
-      aucun âge légal : la mise à la retraite suit l'incapacité ; l'arrêté du 19 mars
-      1910 (article 7, modifié en 1978) fixait à soixante-cinq ans un seuil que l'arrêté
-      de 2001 abaisse à soixante — selon la presse, l'âge en deçà duquel un certificat
-      médical est exigé
-    cotisation: aucune, selon la presse (Journal du Net) et le Conseil d'État, qui refuse aux ministres la qualité de fonctionnaire (avis du 27 août 1948)
-  exemples: aucun trouvé
-- id: arrete_2001
   statut: lue
   textes:
-  - {id: JORFARTI000001451965, article: "arrêté du 29 mai 2001, article 1er", publie_le: 2001-06-23}
-  nee_de: JORFARTI000001451965
+  - reference: >-
+      loi locale du 15 novembre 1909 relative aux traitements et pensions des ministres
+      des cultes rétribués par l'État et de leurs veuves et orphelins, traduction
+      officielle publiée au recueil des actes administratifs de la préfecture du
+      Bas-Rhin, numéro spécial du 15 mai 2013, pages 84 à 88 (décret n° 2013-395)
+    article: article 10, premier alinéa, et troisième alinéa, première phrase
+    en_vigueur: 1910-04-01
+    citation: >-
+      « Les ministres du culte désignés aux articles 1er à 6 reçoivent une pension sur la
+      Caisse d'Alsace-Lorraine conformément aux dispositions en vigueur pour les
+      fonctionnaires d'Alsace-Lorraine, lorsqu'après dix années au moins de service, ils
+      deviennent d'une façon durable par suite d'une infirmité corporelle ou de
+      l'affaiblissement de leurs facultés physiques ou intellectuelles incapables
+      d'exercer leur ministère et sont pour cette raison mis à la retraite. » ; « Pour le
+      calcul de la pension, on ajoutera aux émoluments de service une somme de 400 marks
+      à raison du droit au logement gratuit ou de l'indemnité en tenant lieu. »
+    lu_le: 2026-11-24
+    empreinte: >-
+      sha256:4409ed75fa679b5c2a3c3fab6e7599615e735384b558dde000b6b453183aa5b3, le PDF du
+      recueil (467 442 octets), téléchargé sur bas-rhin.gouv.fr le 24 novembre 2026
+  - reference: >-
+      loi du 31 mars 1873 relative au statut des fonctionnaires d'Empire, même recueil,
+      page 12
+    article: article 41
+    citation: >-
+      « La pension s'élève, si le fonctionnaire compte dix années entières de services ou
+      moins, aux 20/60 des émoluments de service déterminés aux articles 42 à 44 ; elle
+      s'augmente de 1/60 desdits émoluments pour chaque année accomplie en plus après la
+      dixième année jusqu'à la trentième révolue, et de 1/120 pour chaque année accomplie
+      en sus de trente années. Lorsqu'elle a atteint les 45/60 desdits émoluments, la
+      pension ne s'augmente plus. » ; « Le montant annuel de la pension doit être augmenté
+      de telle manière que son chiffre divisé par 3 donne comme quotient des marks
+      entiers. »
+    lu_le: 2026-11-24
+  - reference: loi du 31 mars 1873, même recueil, page 12
+    article: articles 36, 39 et 43
+    citation: >-
+      article 36 : le fonctionnaire dont l'incapacité a été contractée « dans l'exercice
+      ou à l'occasion de ses fonctions, sans qu'il y ait faute de sa part, […] a droit à
+      la pension, même s'il ne compte pas encore dix ans de services » ; article 39 : le
+      fonctionnaire mis à la retraite pour incapacité avant ses dix années, « se trouve
+      dans le besoin, il peut lui être accordé […] une pension, soit temporaire, soit
+      viagère » ; article 43 : « En aucun cas, le total de la pension ne pourra dépasser
+      les émoluments de service, comptant pour la pension, touchés en dernier lieu. »
+    lu_le: 2026-11-24
+  - reference: >-
+      règlement ministériel du 19 mars 1910 portant règlement d'administration publique
+      pour l'exécution de la loi du 15 novembre 1909, même recueil, page 97
+    article: articles 7 et 8
+    citation: >-
+      « La demande d'agrément devra être appuyée du consentement du ministre du culte, et,
+      s'il n'a pas encore accompli l'âge de 70 ans, d'une attestation d'un médecin
+      assermenté. » ; sans consentement, « la mise à la retraite s'effectuera à
+      l'expiration du trimestre qui suit le mois au cours duquel la décision prononçant
+      l'admission à la retraite a été notifiée au ministre du culte ; à ce moment cesse
+      le paiement du traitement ou du supplément de traitement, et la pension commence à
+      être due »
+    lu_le: 2026-11-24
+  - reference: >-
+      loi du 20 mai 1911 relative au budget d'Alsace-Lorraine pour l'exercice 1911, même
+      recueil, page 110
+    article: article 12, deuxième alinéa
+    citation: >-
+      « Les articles 7, 9, 10 et 11 de la loi du 15 novembre 1909 […] sont appliqués par
+      analogie aux secrétaires généraux, secrétaires et contrôleurs dont cet emploi tient
+      lieu d'occupation principale, et les articles 9, 10, 11, aux expéditionnaires et
+      garçons de bureau dont cet emploi tient lieu d'occupation principale. »
+    lu_le: 2026-11-24
+  - id: JORFARTI000027408505
+    article: décret n° 2013-395 du 14 mai 2013, article 1er
+    publie_le: 2013-05-15
+    citation: >-
+      « La version officielle en langue française des textes énumérés ci-dessous est
+      annexée au présent décret et sera publiée au recueil des actes administratifs des
+      préfectures du Bas-Rhin, du Haut-Rhin et de la Moselle », la liste nommant la loi
+      du 31 mars 1873, la loi du 15 novembre 1909 sur les ministres des cultes, la loi du
+      même jour sur les veuves et orphelins des fonctionnaires, l'ordonnance du 16 mars
+      1910, le règlement du 19 mars 1910, la loi du 20 mai 1911 et l'ordonnance du
+      1er septembre 1911
+    lu_le: 2026-11-24
   bornes:
-    liquidation.date_effet: [2001-06-23, 2007-09-13]
+    liquidation.date_effet: [null, 1923-04-13]
+  contenu:
+    beneficiaires: >-
+      les ministres des cultes rétribués par l'État que nomment les articles 1er à 6 —
+      vicaires généraux, chanoines, curés, desservants, chapelains et vicaires
+      catholiques, pasteurs et ministres auxiliaires protestants, grands rabbins et
+      rabbins — ; par analogie, les secrétaires généraux, secrétaires et contrôleurs
+      des secrétariats des autorités supérieures des cultes dont c'est l'occupation
+      principale (loi du 20 mai 1911, article 12). Avant le 1er avril 1910, la loi du
+      13 mai 1884 (catholiques) et celle du 6 juillet 1901 (pasteurs), que l'article 12
+      abroge, et qui ne sont pas lues.
+    condition: >-
+      dix années de services au moins, une incapacité durable d'exercer le ministère, par
+      infirmité corporelle ou affaiblissement des facultés physiques ou intellectuelles,
+      et la mise à la retraite pour cette raison (article 10) ; sans les dix années, la
+      pension est due si l'incapacité vient du service, sans faute (article 36 du statut
+      de 1873), et peut être accordée par le Ministère au ministre dans le besoin, 20/60
+      au plus (articles 39 et 41) ; aucun texte lu ne fixe de limite d'âge
+    certificat_medical: >-
+      la demande de mise à la retraite porte le consentement du ministre et, avant
+      70 ans, l'attestation d'un médecin assermenté (règlement, article 7) : passé
+      70 ans, l'incapacité se déclare sans médecin
+    mise_a_la_retraite: >-
+      prononcée par l'autorité compétente pour la destitution, avec l'approbation du
+      Statthalter ou du Ministère (article 10, deuxième alinéa)
+    parametres:
+      services_minimum_ans: 10
+      age_sans_certificat_medical: 70
+      taux_jusqu_a_dix_ans: 20/60
+      taux_par_annee_de_la_onzieme_a_la_trentieme: 1/60
+      taux_par_annee_au_dela_de_trente: 1/120
+      taux_maximum: 45/60
+      taux_maximum_pension_de_besoin: 20/60
+      annees: entières (« chaque année accomplie »)
+      logement_ajoute_marks: 400
+      arrondi: au multiple de 3 marks supérieur
+    base: >-
+      les émoluments de service touchés en dernier lieu — le traitement des articles 1er
+      à 6, en marks —, plus 400 marks pour le logement ; ni l'indemnité pour
+      l'administration d'un poste vacant ni les indemnités spéciales de certains postes ;
+      pour les chapelains et vicaires catholiques, le total de leur traitement, allocation
+      et supplément ; le pasteur devenu pasteur auxiliaire après un an au moins comme
+      pasteur, sur son dernier traitement de pasteur (article 10, troisième alinéa) ; des
+      émoluments plus élevés touchés un an au moins dans un poste antérieur, sauf
+      changement à sa demande ou disciplinaire, la pension ne dépassant jamais les
+      derniers émoluments (statut de 1873, article 43)
+    debut: >-
+      au jour que l'autorité fixe dans sa demande, quand le ministre consent ; sinon, à
+      l'expiration du trimestre qui suit le mois où la décision lui a été notifiée, où
+      cesse le traitement (règlement, article 8)
+    debiteur: la Caisse d'Alsace-Lorraine
+    cotisation: aucune ; la loi ne retient rien sur le traitement
+    deces: >-
+      la pension continue d'être payée pendant le trimestre qui suit le mois du décès, en
+      une fois et d'avance (article 10, renvoi à l'article 69 du statut de 1873)
+    cumul: >-
+      la pension est suspendue, pour ce qui dépasse les derniers émoluments, quand le
+      pensionné touche de nouveaux émoluments d'un service public (statut de 1873,
+      article 57)
+    disciplinaire: >-
+      le Ministère peut laisser au ministre relevé de ses fonctions une partie de sa
+      pension légale (article 10, quatrième alinéa)
+    cas_pose_a_la_main: >-
+      Posé à la main, non officiel : un pasteur mis à la retraite en 1911 après
+      25 années de services, au traitement de 4 400 marks (« Au-delà de 24 années de
+      service », article 5). Base : 4 400 + 400 = 4 800 marks ; taux : 20/60 + 15/60 =
+      35/60 ; pension : 4 800 × 35/60 = 2 800 marks, portée à 2 802 marks, multiple de 3.
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le recueil des actes administratifs du Bas-Rhin du 15 mai 2013, la version consolidée
+    de Legirel (copie de l'Internet Archive du 23 mai 2024), la réponse du ministre de
+    l'intérieur à la question écrite n° 06644 (JO Sénat du 27 juillet 2023) et la
+    réponse à la question n° 12996 de l'Assemblée nationale : aucun calcul de pension
+    publié, le 24 novembre 2026
+- id: decrets_de_1923_a_1934
+  statut: supposee
+  hypothese: >-
+    La notice de la loi locale au Journal officiel (JORFTEXT000000315082) la dit modifiée
+    en ses « articles 10, 11, 12 al. 3 et 4, et article 14 […] entre autres, par décrets
+    des 13 avril 1923, 17 juillet 1926, 19 juin 1928, 7 décembre 1928, 1er juillet 1930,
+    1er décembre 1931, 9 mars 1933, 5 mai 1934 et 28 octobre 1934 », dont ni l'index ni
+    Légifrance ne donnent le texte ; le décret du 1er juillet 1930 codifie « divers
+    textes rendus applicables en matière de pensions aux retraités du service local
+    d'Alsace-Lorraine » et étend à ces retraités « certaines dispositions nouvelles » de
+    la loi du 14 avril 1924 (son analyse au JORF). La version suppose que les conditions,
+    le barème et l'arrondi de 1909 demeurent, sur le traitement que fixe la loi de
+    finances (loi du 22 juillet 1923, article 1er, lue) ; la presse décrit aujourd'hui
+    le même barème (un tiers du dernier traitement après dix ans, trois quarts après
+    quarante ans). La somme ajoutée pour le logement, 400 marks dans le texte jusqu'en
+    2007, n'a pas de montant lu en francs.
+  fiabilite: moyenne, faute des décrets de 1923 à 1934
+  textes:
+  - id: JORFTEXT000000315082
+    article: notice de la loi locale du 15 novembre 1909
+    citation: >-
+      « Articles 10, 11, 12 al. 3 et 4, et article 14. Modification, entre autres, par
+      décrets des 13 avril 1923, 17 juillet 1926, 19 juin 1928, 7 décembre 1928, 1er
+      juillet 1930, 1er décembre 1931, 9 mars 1933, 5 mai 1934 et 28 octobre 1934. »
+    lu_le: 2026-11-24
+  - reference: >-
+      loi du 22 juillet 1923 relative au statut des fonctionnaires d'Alsace et de
+      Lorraine, extrait publié par Legirel (CNRS), copie de l'Internet Archive du
+      8 octobre 2024
+    article: article 1er, deuxième alinéa
+    citation: >-
+      « Le traitement du personnel des cultes sera déterminé conformément aux crédits
+      alloués par la loi de finances de l'exercice 1923. Les traitements ainsi établis
+      serviront de base pour le calcul de la retraite. »
+    lu_le: 2026-11-24
+  - reference: >-
+      décret du 19 février 1921 sur les pensions d'Alsace-Lorraine (convention de
+      Baden-Baden du 3 mars 1920), extrait publié par Legirel, copie de l'Internet Archive
+      du 18 mai 2024
+    article: convention, article 2
+    citation: >-
+      « Le Gouvernement français supportera la charge des pensions civiles acquises par
+      les anciens fonctionnaires, instituteurs et ministres des cultes du pays
+      d'Alsace-Lorraine ainsi que par leurs veuves et orphelins »
+    lu_le: 2026-11-24
+  bornes:
+    liquidation.date_effet: [1923-04-13, 1978-03-06]
   contenu:
     droit: >-
-      « A l'avant-dernière phrase du premier alinéa de l'article 7 de l'arrêté du 19 mars
-      1910 susvisé, le nombre : « 65 » est remplacé par le nombre : « 60 » », l'arrêté
-      étant pris au visa de la loi locale, « notamment son article 10 », et de l'arrêté
-      de 1910 « modifié par l'arrêté du 6 mars 1978 » ; le reste est celui de la version
-      précédente
+      celui de la version loi_locale_1909, supposé inchangé par les décrets de 1923 à
+      1934 : dix années de services et l'incapacité durable, 20/60 à 45/60 des
+      émoluments, un certificat médical avant 70 ans
+    base: >-
+      le traitement fixé par la loi de finances (loi du 22 juillet 1923), plus la somme
+      pour le logement, de montant non lu
+    debiteur: l'État français (convention de Baden-Baden, article 2)
+    parametres:
+      services_minimum_ans: 10
+      age_sans_certificat_medical: 70
+      taux_jusqu_a_dix_ans: 20/60
+      taux_par_annee_de_la_onzieme_a_la_trentieme: 1/60
+      taux_par_annee_au_dela_de_trente: 1/120
+      taux_maximum: 45/60
   exemples: aucun trouvé
+  exemples_cherches: >-
+    les mêmes sources que la version loi_locale_1909, et l'index JORF du dépôt, qui ne
+    porte des décrets de 1928, 1930 et 1933 que leur titre, le 24 novembre 2026
+- id: arrete_1978
+  statut: supposee
+  hypothese: >-
+    L'arrêté du 6 mars 1978, que ni l'index ni Légifrance ne donnent, a remplacé 70 par
+    65 à l'article 7 du règlement du 19 mars 1910 : l'arrêté du 29 mai 2001 vise
+    « l'arrêté du 19 mars 1910 […], notamment son article 7, modifié par l'arrêté du
+    6 mars 1978 » et remplace « le nombre : « 65 » ». La borne est le jour de sa
+    signature, sa publication n'étant pas trouvée. Le reste est la version précédente.
+  fiabilite: haute pour l'âge de 65 ans, que l'arrêté de 2001 atteste ; faible pour le jour où il s'applique
+  textes:
+  - id: JORFTEXT000000590423
+    article: arrêté du 29 mai 2001, visas
+    publie_le: 2001-06-23
+    citation: >-
+      « Vu l'arrêté du 19 mars 1910 portant règlement d'exécution de la loi locale du
+      15 novembre 1909 susvisée, notamment son article 7, modifié par l'arrêté du 6 mars
+      1978 »
+    lu_le: 2026-11-24
+  bornes:
+    liquidation.date_effet: [1978-03-06, 2001-06-25]
+  contenu:
+    certificat_medical: >-
+      l'attestation d'un médecin assermenté n'est plus demandée qu'avant 65 ans
+    droit: celui de la version decrets_de_1923_a_1934
+    parametres:
+      age_sans_certificat_medical: 65
+  exemples: aucun trouvé
+  exemples_cherches: les mêmes sources que la version loi_locale_1909, le 24 novembre 2026
+- id: arrete_2001
+  statut: lue
+  hypothese: >-
+    Borne supposée : l'arrêté, publié le 23 juin 2001, s'applique un jour franc après
+    (décret du 5 novembre 1870, article 2), le 25 juin à Paris, et dans le Bas-Rhin, le
+    Haut-Rhin et la Moselle un jour franc après l'arrivée du Journal officiel au
+    chef-lieu d'arrondissement, jour que rien ne date.
+  textes:
+  - id: JORFARTI000001451965
+    article: arrêté du 29 mai 2001, article 1er
+    publie_le: 2001-06-23
+    citation: >-
+      « A l'avant-dernière phrase du premier alinéa de l'article 7 de l'arrêté du 19 mars
+      1910 susvisé, le nombre : « 65 » est remplacé par le nombre : « 60 ». »
+    lu_le: 2026-11-24
+  nee_de: JORFARTI000001451965
+  bornes:
+    liquidation.date_effet: [2001-06-25, 2007-09-14]
+  contenu:
+    certificat_medical: >-
+      l'attestation d'un médecin assermenté n'est plus demandée qu'avant 60 ans : de
+      60 ans, le ministre qui consent est mis à la retraite sur la seule déclaration de
+      son autorité qu'elle le tient, « en son âme et conscience », pour incapable
+      (règlement, article 7)
+    droit: celui de la version arrete_1978, l'âge de 60 ans au lieu de 65
+    parametres:
+      age_sans_certificat_medical: 60
+  exemples: aucun trouvé
+  exemples_cherches: les mêmes sources que la version loi_locale_1909, le 24 novembre 2026
 - id: decret_2007
   statut: lue
   textes:
-  - {id: JORFARTI000002478887, article: "décret n° 2007-1341, article 2 (nouvel article 1er de la loi locale)", publie_le: 2007-09-13}
-  - {id: JORFARTI000001307187, article: "décret n° 2007-1341, article 3 (article 7 de la loi locale)", publie_le: 2007-09-13}
-  - {id: JORFARTI000002478888, article: "décret n° 2007-1341, article 4 (article 8 de la loi locale)", publie_le: 2007-09-13}
-  - {id: JORFARTI000002290398, article: "décret n° 2007-1341, article 6 (article 10 de la loi locale)", publie_le: 2007-09-13}
-  - {id: JORFARTI000002290399, article: "décret n° 2007-1341, article 7 (article 11 de la loi locale)", publie_le: 2007-09-13}
+  - id: JORFARTI000002478887
+    article: décret n° 2007-1341, article 2 (nouvel article 1er de la loi locale)
+    publie_le: 2007-09-13
+    citation: >-
+      « Art. 1er. - Les ministres des cultes régis par la loi du 18 germinal an X et
+      l'ordonnance royale du 25 mai 1844 susvisées perçoivent un traitement de l'Etat
+      selon un classement indiciaire fixé par décret et par référence aux indices prévus
+      pour le classement hiérarchique des grades et emplois des personnels civils et
+      militaires de l'Etat. »
+    lu_le: 2026-11-24
+  - id: JORFARTI000002290398
+    article: décret n° 2007-1341, article 6 (article 10 de la loi locale)
+    publie_le: 2007-09-13
+    citation: >-
+      « A l'article 10, les mots : « désignés aux articles 1er à 6 » sont supprimés et les
+      mots : « sur la caisse d'Alsace-Lorraine » sont remplacés par les mots : « de
+      l'Etat ». A la troisième phrase, le mot : « Statthalter » est remplacé par les
+      mots : « ministre de l'intérieur » et le membre de phrase situé après le mot :
+      « nécessaire » est supprimé. La quatrième, la cinquième et la sixième phrases sont
+      supprimées. »
+    lu_le: 2026-11-24
+  - id: JORFARTI000001307187
+    article: décret n° 2007-1341, article 3 (article 7 de la loi locale)
+    publie_le: 2007-09-13
+    citation: >-
+      « A l'article 7, les mots : « l'âge ou » sont supprimés. »
+    lu_le: 2026-11-24
+  - reference: >-
+      loi locale du 15 novembre 1909 modifiée, version consolidée publiée par Legirel
+      (CNRS), copie de l'Internet Archive du 23 mai 2024
+    article: article 10
+    citation: >-
+      « Les ministres du culte reçoivent une pension de l'Etat conformément aux
+      dispositions en vigueur pour les fonctionnaires d'Alsace-Lorraine, lorsqu'après dix
+      années au moins de service, ils deviennent d'une façon durable par suite d'une
+      infirmité corporelle ou de l'affaiblissement de leurs facultés physiques ou
+      intellectuelles incapables d'exercer leur ministère et sont pour cette raison mis à
+      la retraite. Les dispositions des articles 36 et 39 de la loi sur le statut des
+      fonctionnaires d'Empire seront appliquées par analogie avec cette différence que,
+      dans le cas de l'article 39, il appartient au ministère d'accorder la pension. La
+      mise à la retraite est prononcée par l'autorité qui est compétente pour prononcer
+      la destitution du ministre du culte ; l'approbation du ministre de l'intérieur est
+      nécessaire. »
+    lu_le: 2026-11-24
+  - id: JORFARTI000001085251
+    article: décret n° 2007-1445 du 8 octobre 2007, article 1er
+    publie_le: 2007-10-10
+    citation: >-
+      « Le classement indiciaire des personnels des cultes d'Alsace et de Moselle affiliés
+      au régime local des pensions de retraite est fixé par référence aux indices prévus
+      par le décret du 10 juillet 1948 modifié susvisé et les décrets du 29 septembre 2005
+      susvisés. »
+    lu_le: 2026-11-24
+  - id: JORFARTI000001859885
+    article: arrêté du 8 octobre 2007 fixant les échelonnements indiciaires des personnels des cultes d'Alsace et de Moselle, article 1er et son tableau
+    publie_le: 2007-10-10
+    citation: >-
+      « Les échelonnements indiciaires applicables aux personnels des cultes d'Alsace et
+      de Moselle désignés ci-dessous sont fixés en indices bruts ainsi qu'il suit » ; au
+      tableau, lu sur Légifrance, curé « plus de 30 ans de service » : 672 à compter du
+      1er octobre 2007 ; pasteur « de 24 à 30 ans de service » : 612, puis 646 à compter
+      du 1er juillet 2008 ; desservant « de 12 à 15 ans de service » : 399, puis 493
+    lu_le: 2026-11-24
+  - reference: >-
+      réponse du ministre de l'intérieur à la question écrite n° 06644, JO Sénat du
+      27 juillet 2023
+    citation: >-
+      la loi du 15 novembre 1909 « détermine le régime de retraite spécifique des agents
+      des cultes statutaires d'Alsace-Moselle », que la loi du 14 avril 2023 ne touche pas
+    lu_le: 2026-10-04
   nee_de: JORFARTI000002478887
   bornes:
-    liquidation.date_effet: [2007-09-13, null]
+    liquidation.date_effet: [2007-09-14, null]
   contenu:
-    traitement: >-
-      les ministres « perçoivent un traitement de l'État selon un classement indiciaire
-      fixé par décret et par référence aux indices » des personnels civils et militaires
-      de l'État (nouvel article 1er) — la pension suit ce traitement
-    incapacite: « l'âge ou » est supprimé de l'article 7 de la loi locale
-    anciennete: >-
-      s'appliquent les articles 2 à 4 (article 8) puis 5 à 7 (article 10) de
-      l'ordonnance du Statthalter du 16 mars 1910 « relative à la fixation de
-      l'ancienneté de traitement et de l'ancienneté de pension des ministres du culte »
-    debiteur: >-
-      les pensions des articles 10 et 11 sont dues « de l'État » et non plus « sur la
-      caisse d'Alsace-Lorraine », le « Statthalter » devenant le ministre de l'intérieur
-    en_2023: >-
-      inchangée par la loi du 14 avril 2023 : la loi de 1909 « détermine le régime de
-      retraite spécifique des agents des cultes statutaires d'Alsace-Moselle »
-      (réponse du ministre de l'intérieur, JO Sénat du 27 juillet 2023)
+    beneficiaires: >-
+      les ministres des cultes « régis par la loi du 18 germinal an X et l'ordonnance
+      royale du 25 mai 1844 » (nouvel article 1er : catholique, luthérien, réformé,
+      israélite), et les employés des secrétariats de leurs autorités par la loi du
+      20 mai 1911 ; le tableau de 2007 classe aussi des aumôniers
+    condition: >-
+      inchangée : dix années de services et l'incapacité durable, ou l'incapacité venue
+      du service sans condition de durée, ou la pension de besoin que le ministère
+      accorde (article 10, deux premières phrases, que le décret laisse)
+    certificat_medical: avant 60 ans seulement (version arrete_2001)
+    mise_a_la_retraite: >-
+      prononcée par l'autorité compétente pour la destitution ; « l'approbation du
+      ministre de l'intérieur est nécessaire »
+    base: >-
+      le traitement de l'État de l'échelon, selon le classement indiciaire (décret
+      n° 2007-1445 et arrêté du 8 octobre 2007, à compter du 1er octobre 2007) : l'indice
+      brut de l'échelon, son indice majoré, la valeur du point ; la somme de 400 marks
+      pour le logement, l'exclusion des indemnités et la règle des chapelains et vicaires
+      sont supprimées (« La quatrième, la cinquième et la sixième phrases sont
+      supprimées ») ; la phrase du pasteur auxiliaire et l'article 43 du statut de 1873
+      demeurent
+    debiteur: l'État (« de l'Etat »)
+    cotisation: >-
+      aucune retenue dans les textes lus ; les ministres sont « affiliés au régime local
+      des pensions de retraite » (décret n° 2007-1445, article 1er)
+    arrondi: >-
+      le multiple de 3 marks de l'article 41 n'a pas de règle lue en euros (sources,
+      a_relire)
+    parametres:
+      services_minimum_ans: 10
+      age_sans_certificat_medical: 60
+      taux_jusqu_a_dix_ans: 20/60
+      taux_par_annee_de_la_onzieme_a_la_trentieme: 1/60
+      taux_par_annee_au_dela_de_trente: 1/120
+      taux_maximum: 45/60
+      taux_maximum_pension_de_besoin: 20/60
+      annees: entières (« chaque année accomplie »)
+    cas_pose_a_la_main: >-
+      Posés à la main, non officiels, pour une pension qui prend effet en 2026, à la
+      valeur annuelle de l'indice 100 majoré de 5 907,34 euros (décret n° 2023-519,
+      article 1er), sans l'arrondi au multiple de 3. Un curé de 40 années de services :
+      indice brut 672, majoré 565 ; traitement 565 × 59,0734 = 33 376,47 euros ; taux
+      20/60 + 20/60 + 10/120 = 45/60 ; pension 25 032,35 euros par an (2 086,03 par
+      mois). Un pasteur de 25 années : indice brut 646, majoré 545 ; traitement
+      32 195,00 euros ; 35/60 ; pension 18 780,42 euros. Un desservant de 12 années :
+      indice brut 493, majoré 430 ; traitement 25 401,56 euros ; 22/60 ; pension
+      9 313,91 euros. Un ministre parti après huit années, sans incapacité venue du
+      service et sans besoin reconnu : aucune pension de l'État.
   exemples: aucun trouvé
+  exemples_cherches: >-
+    les mêmes sources que la version loi_locale_1909, la page « Ministre du culte » de
+    la base Ircantec et la presse (Rue89 Strasbourg, Journal du Net, Le JDD), qui ne
+    donnent que des ordres de grandeur, le 24 novembre 2026
+textes_sans_effet:
+- id: JORFARTI000002478888
+  article: décret n° 2007-1341, article 4 (article 8 de la loi locale)
+  en_vigueur: 2007-09-14
+  motif: >-
+    « S'appliquent aux ministres des cultes désignés à l'article 1er les dispositions des
+    articles 2 à 4 de l'ordonnance du Statthalter du 16 mars 1910 » : l'ancienneté de
+    traitement, qui place le ministre dans son échelon, et non la pension ; le temps de
+    service qui compte pour la pension est celui des articles 5 à 7 (fiche
+    cultes_alsace_moselle_services)
+textes_a_relire:
+- reference: >-
+    décrets des 13 avril 1923, 17 juillet 1926, 7 décembre 1928, 1er décembre 1931,
+    5 mai 1934 et 28 octobre 1934, modifiant la loi locale du 15 novembre 1909, absents
+    de l'index JORF du dépôt
+  question: >-
+    ce qu'ils changent aux articles 10 (la pension), 11 (les veuves et orphelins), 12 et
+    14 : le barème, la base, la somme pour le logement en francs, l'arrondi
+- id: JORFTEXT000000667165
+  reference: >-
+    décret du 1er juillet 1930, codification des textes de pensions applicables aux
+    retraités du service local d'Alsace-Lorraine, JO du 10 juillet 1930, analyse seule
+  question: >-
+    quelles dispositions de la loi du 14 avril 1924 il étend aux retraités du régime
+    local, et si elles atteignent les ministres des cultes et leurs veuves
+- id: JORFTEXT000000484626
+  reference: décret du 19 juin 1928, adaptation des articles 63 et 65 à 69 de la loi de finances du 27 décembre 1927 au régime local des pensions d'Alsace-Lorraine, analyse seule
+  question: ce qu'il change aux pensions du régime local, et à leur revalorisation
+- id: JORFTEXT000000484155
+  reference: décret du 9 mars 1933, application aux retraités d'Alsace-Lorraine des articles 96 à 102 de la loi de finances du 31 mars 1932, analyse seule
+  question: ce qu'il change aux pensions du régime local, et à leur revalorisation
+- reference: arrêté du 6 mars 1978 modifiant l'article 7 du règlement du 19 mars 1910, ni dans l'index ni sur Légifrance
+  question: le jour où il s'applique, et s'il change autre chose que l'âge du certificat médical
+- reference: >-
+    loi du 31 mars 1873, articles 42 et 44, que la traduction de 2013 ne donne pas
+  question: >-
+    les émoluments qui comptent pour la pension : depuis 2007, l'indemnité de résidence,
+    le supplément familial ou l'indemnité de logement versée par une commune en
+    font-ils partie ?
 sources:
-  lu_le: 2026-10-04
-  prochaine_relecture: 2027-10-04
+  lu_le: 2026-11-24
+  prochaine_relecture: 2027-11-24
   a_relire:
   - >-
-    Lire le texte français de la loi locale et de son règlement, publié en traduction
-    au recueil des actes administratifs des préfectures du Bas-Rhin, du Haut-Rhin et de
-    la Moselle (décret n° 2013-395) ou sur Legirel, injoignable le 4 octobre 2026 : le
-    barème de la pension (la presse parle d'un tiers du dernier traitement brut après
-    dix ans, trois quarts après quarante ans), la pension de veuve et d'orphelin, la
-    revalorisation, la coordination avec le régime général du ministre qui part sans
-    droit — rétabli au régime général, sans Ircantec selon la base Ircantec.
+    Lire les décrets de 1923 à 1934 et l'arrêté du 6 mars 1978 (textes_a_relire), au
+    fac-similé du Journal officiel sur Légifrance ou sur Gallica : les deux sites
+    demandent une vérification humaine.
+  - >-
+    Demander au bureau des cultes de la préfecture du Bas-Rhin, qui liquide ces
+    pensions, sa pratique : les émoluments qui comptent (traitement indiciaire seul ou
+    avec l'indemnité de résidence), l'arrondi au multiple de 3 transposé en euros ou
+    non, la revalorisation des pensions servies (sur le traitement des actifs ou sur les
+    prix), la pension de besoin de l'article 39 et son montant.
+  - >-
+    La coordination du ministre qui quitte le ministère avant dix années, ou sans
+    incapacité : la base Ircantec dit qu'il « ne peut pas bénéficier » de l'Ircantec ;
+    aucun texte lu ne le rétablit au régime général.
+  - >-
+    Les règles de temps de service du statut de 1873 (articles 45 à 52) valent-elles
+    pour les ministres, l'article 10 renvoyant le décompte à l'ordonnance du 16 mars
+    1910 ? Voir la fiche cultes_alsace_moselle_services.
   lectures:
+  - type: autre
+    reference: >-
+      recueil des actes administratifs de la préfecture du Bas-Rhin, numéro spécial
+      « droit local » du 15 mai 2013 : traduction officielle de la loi du 31 mars 1873,
+      des lois du 15 novembre 1909, de l'ordonnance du 16 mars 1910, du règlement du
+      19 mars 1910, de la loi du 20 mai 1911 et de l'ordonnance du 1er septembre 1911
+    date: 2013-05-15
+    url: https://www.bas-rhin.gouv.fr/contenu/telechargement/4650/33043/file/Recueil%20sp%C3%A9cial%20DROIT%20LOCAL%20du%2015%20mai%202013%20-%20publication%20traduction%20lois%20et%20r%C3%A8glements%20locaux%20maintenus%20en%20vigueur%20par%20les%20lois%20du%201er%20juin%201924.pdf
+  - type: autre
+    reference: >-
+      Legirel (CNRS), loi du 15 novembre 1909 modifiée relative aux traitements et
+      pensions des ministres des cultes, version consolidée, lue dans sa copie de
+      l'Internet Archive, le site étant injoignable
+    date: 2024-05-23
+    url: https://web.archive.org/web/20240523125247/https://www.legirel.cnrs.fr/spip.php?article430&lang=fr
+  - type: autre
+    reference: >-
+      Legirel (CNRS), loi du 22 juillet 1923 relative au statut des fonctionnaires
+      d'Alsace et de Lorraine, extrait, copie de l'Internet Archive
+    date: 2024-10-08
+    url: https://web.archive.org/web/20241008094135/https://www.legirel.cnrs.fr/spip.php?article426&lang=fr
+  - type: autre
+    reference: >-
+      Legirel (CNRS), décret du 19 février 1921 sur les pensions d'Alsace-Lorraine,
+      extrait, copie de l'Internet Archive
+    date: 2024-05-18
+    url: https://web.archive.org/web/20240518071235/https://www.legirel.cnrs.fr/spip.php?article428&lang=fr
   - type: jorf
     reference: >-
-      loi locale du 15 novembre 1909, notice JORF (JORFTEXT000000315082) ; arrêté du
-      29 mai 2001 (JORFTEXT000000590423) ; décret n° 2007-1341 du 11 septembre 2007,
-      articles 1er à 8 (JORFTEXT000000279682) ; décret n° 51-75 du 19 janvier 1951
-      (LEGITEXT000028855715)
-    date: 2026-10-04
+      décret n° 2007-1341 du 11 septembre 2007, articles 2 à 7 (JORFTEXT000000279682) ;
+      arrêté du 29 mai 2001 (JORFTEXT000000590423) ; notice de la loi locale
+      (JORFTEXT000000315082) ; décret n° 2007-1445, articles 1er à 4
+      (JORFTEXT000000794003) ; décret n° 2013-395, article 1er
+    date: 2007-09-13
+  - type: legifrance
+    reference: >-
+      arrêté du 8 octobre 2007 fixant les échelonnements indiciaires des personnels des
+      cultes d'Alsace et de Moselle, version consolidée et son tableau
+      (JORFTEXT000000794004), dernière mise à jour du 11 octobre 2007
+    date: 2007-10-10
+    url: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000794004/
   - type: autre
     reference: >-
       réponse du ministre de l'intérieur à la question écrite n° 06644, JO Sénat du
       27 juillet 2023
-    date: 2026-10-04
+    date: 2023-07-27
     url: https://www.senat.fr/questions/base/2023/qSEQ230506644.html
   - type: autre
     reference: >-
@@ -123,7 +563,7 @@ sources:
       Moselle, mai 2015 : 2 400 ministres en 1970, 1 397 personnes rémunérées fin 2014,
       ministres non fonctionnaires qui « ne bénéficient pas des dispositions propres à la
       fonction publique concernant les régimes des pensions et l'âge de départ »
-    date: 2026-10-04
+    date: 2015-05-01
   - type: autre
     reference: >-
       base Ircantec, « Ministre du culte » : ministres « assimilés à des
@@ -135,12 +575,26 @@ sources:
   - >-
     La base Ircantec écrit que les ministres « cotisent auprès d'un régime local de
     retraite » ; le Journal du Net (« les ministres des cultes ne cotisent pas du
-    tout ») et l'économie de la loi locale, une pension servie par l'État sur le
-    traitement, disent qu'aucune cotisation n'est retenue. À trancher sur le texte.
+    tout ») et les textes lus — la loi de 1909, le statut de 1873, les décrets de 2007,
+    qui ne retiennent rien sur le traitement — disent qu'aucune cotisation n'est
+    retenue. Reste à vérifier qu'aucun texte de 1923 à 1934 n'en ait institué une.
+  - >-
+    L'ancienne lecture de la fiche (4 octobre 2026) tenait la suppression de « l'âge
+    ou » à l'article 7 pour une règle d'incapacité : l'article 7, deuxième alinéa, règle
+    le passage à l'échelon de traitement supérieur (« au début du trimestre qui suit
+    celui où l'intéressé a atteint l'âge ou l'ancienneté de service qui lui donne droit
+    à ce passage ») ; depuis 2007, seule l'ancienneté y fait monter.
 historique:
 - >-
   2026-10-04 — née avec l'action 145 : le régime de retraite des ministres des cultes
   concordataires n'avait pas de ligne d'inventaire.
+- >-
+  2026-11-24 — relue dans la traduction officielle de 2013 et la version consolidée de
+  Legirel : la version de 1909 devient lue, avec le barème du statut de 1873 ; naissent
+  les versions des décrets de 1923 à 1934 et de l'arrêté de 1978, supposées ; la borne
+  du décret de 2007 passe au lendemain de sa publication, celle de l'arrêté de 2001 à un
+  jour franc après la sienne ; la règle de l'article 7 est corrigée ; le décompte des
+  services et les veuves et orphelins passent dans leurs fiches.
 effet: >-
   Les quelque 1 400 ministres et employés des cultes rémunérés par l'État en
   Alsace-Moselle : le modèle n'a ni leur statut ni leur pension d'État.

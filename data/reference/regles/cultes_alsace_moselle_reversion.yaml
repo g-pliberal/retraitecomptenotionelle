@@ -1,0 +1,392 @@
+schema_version: 1
+id: cultes_alsace_moselle_reversion
+intitule: >-
+  La veuve et les enfants d'un pasteur ou d'un rabbin d'Alsace-Moselle, ou d'un employé
+  des secrétariats des cultes, reçoivent de l'État les pensions des veuves et orphelins
+  des fonctionnaires d'Alsace-Lorraine : la veuve 40 % de la pension du mari, chaque
+  orphelin le cinquième de la pension de la veuve, le tiers sans elle, le tout borné à la
+  pension du mari ; des règles du code des pensions civiles s'y ajoutent en 1955 et en
+  1964.
+domaine: reversion
+regimes: [cultes_alsace_moselle]
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- la pension que le ministre touchait, ou qu'il aurait eue s'il avait quitté le service le
+  jour de son décès (fiche cultes_alsace_moselle_pension)
+- son culte, la loi ne donnant de pension qu'aux veuves et enfants des ministres
+  protestants et israélites
+- la date du mariage et sa durée, la situation du ministre à ce jour (en activité ou
+  retraité), un divorce ou une séparation, les âges des époux, les enfants issus du
+  mariage
+- les enfants, leur âge, leur mariage, et la survie de la mère et son droit à pension
+ecrit:
+- la pension de la veuve et celle de chaque orphelin, et le jour où chacune commence et
+  cesse
+dates_qui_decident:
+- conjoint.deces
+# Les versions forment un partage de la date du décès du ministre, qui ouvre le droit :
+# le décret n° 66-807 vise les ayants cause dont les droits « s'ouvrent postérieurement
+# au 30 novembre 1964 ».
+versions:
+- id: loi_locale_1909
+  statut: lue
+  textes:
+  - reference: >-
+      loi locale du 15 novembre 1909 relative aux traitements et pensions des ministres
+      des cultes rétribués par l'État et de leurs veuves et orphelins, traduction
+      officielle publiée au recueil des actes administratifs de la préfecture du
+      Bas-Rhin, numéro spécial du 15 mai 2013, page 87 (décret n° 2013-395)
+    article: article 11
+    en_vigueur: 1910-04-01
+    citation: >-
+      « Les veuves et les enfants légitimes ou légitimés des ministres du culte
+      protestant et du culte israélite désignés aux articles 5, 6, reçoivent des pensions
+      sur la Caisse d'Alsace-Lorraine, conformément aux dispositions applicables aux
+      veuves et orphelins des fonctionnaires d'Alsace-Lorraine. »
+    lu_le: 2026-11-24
+    empreinte: >-
+      sha256:4409ed75fa679b5c2a3c3fab6e7599615e735384b558dde000b6b453183aa5b3, le PDF du
+      recueil (467 442 octets), téléchargé sur bas-rhin.gouv.fr le 24 novembre 2026
+  - reference: >-
+      loi d'Alsace-Lorraine du 15 novembre 1909 relative aux veuves et orphelins des
+      fonctionnaires, même recueil, pages 89 à 92
+    article: articles 8 à 12
+    citation: >-
+      article 8 : « Le montant de la pension de la veuve est de 40 % de la pension à
+      laquelle avait droit le défunt ou à laquelle il aurait eu droit, s'il avait quitté
+      le service le jour de son décès. » ; article 9 : « 1° Au cinquième de la pension de
+      veuve pour chacun des enfants, lorsque la mère vit encore et qu'elle a droit à une
+      pension ; 2° Au tiers de la pension de veuve pour chacun des enfants, lorsque la
+      mère ne vit plus ou n'a pas droit à une pension. » ; article 10 : « Les pensions à
+      payer à la veuve et aux orphelins ne peuvent ni séparément ni réunies dépasser le
+      montant de la pension à laquelle avait droit le défunt » ; article 12 : le paiement
+      cesse pour la veuve « à l'expiration du mois au cours duquel elle meurt ou se
+      remarie », pour chaque enfant au mois où il « meurt ou accomplit sa dix-huitième
+      année »
+    lu_le: 2026-11-24
+  - reference: loi d'Alsace-Lorraine du 15 novembre 1909 sur les veuves et orphelins, même recueil, pages 89 à 91
+    article: articles 1er, 2, 4, 6 et 11
+    citation: >-
+      article 2 : « Si le fonctionnaire, à l'époque de son mariage, se trouvait déjà en
+      disponibilité ou à la retraite, sa veuve ainsi que les enfants issus de cette union
+      n'ont droit à une pension que si, après ledit mariage, le fonctionnaire a repris du
+      service actif. » ; article 4 : « La veuve n'a pas droit à une pension en cas de
+      dissolution du mariage par suite de divorce » ; article 11 : « Si la veuve était
+      plus jeune que le défunt d'au moins quinze années, la pension […] sera réduite d'un
+      vingtième pour toute année dont s'augmente la différence d'âge au-delà de quinze
+      jusqu'à vingt-cinq inclusivement »
+    lu_le: 2026-11-24
+  - reference: >-
+      loi du 20 mai 1911 relative au budget d'Alsace-Lorraine pour l'exercice 1911, même
+      recueil, page 110
+    article: article 12, deuxième alinéa
+    citation: >-
+      « Les articles 7, 9, 10 et 11 de la loi du 15 novembre 1909 […] sont appliqués par
+      analogie aux secrétaires généraux, secrétaires et contrôleurs dont cet emploi tient
+      lieu d'occupation principale, et les articles 9, 10, 11, aux expéditionnaires et
+      garçons de bureau »
+    lu_le: 2026-11-24
+  bornes:
+    conjoint.deces: [null, 1923-04-13]
+  contenu:
+    beneficiaires: >-
+      la veuve et les enfants légitimes ou légitimés des pasteurs, ministres auxiliaires
+      protestants, grands rabbins et rabbins (articles 5 et 6) ; ceux des employés des
+      secrétariats des cultes (loi du 20 mai 1911) ; rien pour les prêtres catholiques
+    condition: >-
+      le ministre touchait une pension ou y aurait eu droit s'il avait quitté le service
+      le jour de son décès (article 1er) ; pas de pension à la veuve d'un mariage
+      contracté à la retraite sans reprise du service, ni d'un mariage de moins de six
+      mois avant le décès contracté pour la pension (article 2), ni après un divorce ou
+      la fin de la vie commune (article 4)
+    parametres:
+      taux_veuve: 0.40
+      veuve_minimum_marks: 300
+      veuve_maximum_marks: 5000
+      orphelin_mere_ayant_droit: 1/5 de la pension de veuve
+      orphelin_sans_mere_ayant_droit: 1/3 de la pension de veuve
+      plafond: la pension du défunt, réduction proportionnelle (article 10)
+      ecart_d_age_seuil_ans: 15
+      reduction_par_annee_d_ecart: 1/20, de la seizième à la vingt-cinquième année d'écart
+      relevement_par_annee_de_mariage_au_dela_de_cinq: 1/10 de la pension entière
+      orphelin_jusqu_a_ans: 18
+      arrondi: au multiple de 3 marks supérieur (articles 8 et 9)
+    debut: >-
+      à l'expiration du trimestre de grâce, ou du jour où le défunt avait droit à ses
+      émoluments ou à sa pension (article 6) ; payée par mois et d'avance (article 7)
+    fin: >-
+      au mois du décès ou du remariage de la veuve ; au mois des dix-huit ans ou du
+      mariage d'une fille mineure pour l'orphelin (article 12)
+    cas_pose_a_la_main: >-
+      Posé à la main, non officiel : la veuve du pasteur de la fiche
+      cultes_alsace_moselle_pension (pension de 2 800 marks en 1911, avant l'arrondi),
+      mariée depuis vingt ans, de sept ans sa cadette, avec deux enfants mineurs. Veuve :
+      40 % × 2 800 = 1 120 marks, portés à 1 122 ; chaque orphelin : 1 120 / 5 = 224
+      marks, portés à 225. Total : 1 122 + 450 = 1 572 marks, sous les 2 802 de la
+      pension du mari ; l'écart d'âge, sous quinze ans, ne réduit rien.
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le recueil des actes administratifs du Bas-Rhin du 15 mai 2013, la version consolidée
+    de Legirel (copie de l'Internet Archive du 23 mai 2024) : aucun calcul publié, le
+    24 novembre 2026
+- id: decrets_de_1923_a_1934
+  statut: supposee
+  hypothese: >-
+    Les décrets de 1923 à 1934 que nomme la notice de la loi locale au Journal officiel
+    modifient son article 11, et le décret du 1er juillet 1930 étend aux retraités du
+    régime local « certaines dispositions nouvelles » de la loi du 14 avril 1924, qui
+    donnait 50 % de la pension du mari aux veuves des fonctionnaires de l'État : aucun
+    n'est lu. La version suppose les règles de 1909 inchangées, en francs.
+  fiabilite: faible, le taux de la veuve pouvant avoir été porté à 50 %
+  textes:
+  - id: JORFTEXT000000315082
+    article: notice de la loi locale du 15 novembre 1909
+    citation: >-
+      « Articles 10, 11, 12 al. 3 et 4, et article 14. Modification, entre autres, par
+      décrets des 13 avril 1923, 17 juillet 1926, 19 juin 1928, 7 décembre 1928, 1er
+      juillet 1930, 1er décembre 1931, 9 mars 1933, 5 mai 1934 et 28 octobre 1934. »
+    lu_le: 2026-11-24
+  - id: JORFTEXT000000667165
+    article: décret du 1er juillet 1930, analyse
+    citation: >-
+      « CODIFICATION DE DIVERS TEXTES RENDUS APPLICABLES EN MATIERE DE PENSIONS AUX
+      RETRAITES DU SERVICE LOCAL D'ALSACE-LORRAINE ET EXTENSION A CES MEMES RETRAITES DU
+      BENEFICE DE CERTAINES DISPOSITIONS NOUVELLES PREVUES PAR LA LOI DU 14-04-1924 »
+    lu_le: 2026-11-24
+  bornes:
+    conjoint.deces: [1923-04-13, 1955-12-02]
+  contenu:
+    droit: celui de la version loi_locale_1909, supposé inchangé
+    parametres:
+      taux_veuve: 0.40
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    l'index JORF du dépôt, qui ne porte du décret du 1er juillet 1930 que son analyse, le
+    24 novembre 2026
+- id: decret_1955
+  statut: supposee
+  hypothese: >-
+    Le décret n° 55-1544 du 29 novembre 1955, publié le 30, n'est connu que par son
+    analyse au JORF : il étend « A CERTAINS AYANTS CAUSE DE FONCTIONNAIRES
+    D'ALSACE-LORRAINE » les articles L. 55, L. 56 et L. 60 du code des pensions — dans
+    le code de 1951, les conditions d'antériorité du mariage, l'orphelin à 10 % de la
+    pension du père jusqu'à vingt et un ans, la femme séparée ou divorcée —, et abroge
+    « L'ART. 11 DE LA LOI LOCALE DU 15-11-1909 » : sans doute la réduction pour écart
+    d'âge de la loi sur les veuves et orphelins, et non l'article 11 de la loi sur les
+    ministres des cultes, que le décret de 2007 modifie encore. Ni ses bénéficiaires
+    exacts ni son jour d'effet ne sont lus ; la borne est un jour franc après la
+    publication. Le taux de 40 % de la veuve demeure : l'article L. 54 (50 %) n'est pas
+    étendu.
+  fiabilite: faible, le décret n'étant connu que par son analyse
+  textes:
+  - id: JORFTEXT000000676287
+    article: décret n° 55-1544 du 29 novembre 1955, analyse
+    publie_le: 1955-11-30
+    citation: >-
+      « EXTENSION A CERTAINS AYANTS CAUSE DE FONCTIONNAIRES D'ALSACE-LORRAINE DE
+      CERTAINES DISPOSITIONS DES ART. L55, L56 ET L60 DU CODE DES PENSIONS CIVILES ET
+      MILITAIRES DE RETRAITES. ABROGATION DE L'ART. 6 DE LA LOI D'EMPIRE DU 17-05-1907 ET
+      DE L'ART. 11 DE LA LOI LOCALE DU 15-11-1909. »
+    lu_le: 2026-11-24
+  - reference: >-
+      code des pensions civiles et militaires de retraite, codifié par le décret
+      n° 51-590 du 23 mai 1951, Journal officiel du 24 mai 1951, page 5366
+    article: articles 56 et 60
+    citation: >-
+      article 56 : « Chaque orphelin a droit jusqu'à l'âge de vingt et un ans […] à une
+      pension égale à 10 p. 100 de la pension d'ancienneté ou proportionnelle obtenue par
+      le père ou qu'il aurait obtenue le jour de son décès […] sans que le total des
+      émoluments attribués à la mère et aux orphelins puisse excéder le montant de la
+      pension » ; article 60 : « La femme séparée de corps ou divorcée, lorsque le
+      jugement n'a pas été prononcé exclusivement en sa faveur, ne peut prétendre à la
+      pension de veuve »
+    lu_le: 2026-11-24
+    empreinte: >-
+      sha256:5f29bc22b4326993c8ffc672f726261352926762dcf10ab96332c90dac8d8cef, le
+      fac-similé du Journal officiel du 24 mai 1951 téléchargé de Légifrance
+  bornes:
+    conjoint.deces: [1955-12-02, 1964-12-01]
+  contenu:
+    veuve: 40 % de la pension du mari (loi locale, article 8), sans réduction pour écart d'âge
+    orphelins: >-
+      10 % de la pension du père chacun, jusqu'à vingt et un ans, si l'article L. 56 leur
+      est étendu ; sinon les règles de 1909
+    plafond: la pension du mari
+    parametres:
+      taux_veuve: 0.40
+      taux_orphelin: 0.10
+      orphelin_jusqu_a_ans: 21
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    l'index JORF du dépôt, qui ne porte du décret que son analyse ; Légifrance, qui n'en
+    donne que le fac-similé, derrière une vérification humaine, le 24 novembre 2026
+- id: decret_1966
+  statut: supposee
+  hypothese: >-
+    Le décret n° 66-807 est lu : depuis les droits ouverts après le 30 novembre 1964, il
+    applique aux ayants cause des fonctionnaires du cadre local le dernier alinéa de
+    L. 39, les troisième et quatrième alinéas de L. 40, le premier alinéa de L. 41, et
+    L. 43 à L. 46 du code de 1964, et abroge les articles 9 (3°) et 12 (1° et 3°) de la
+    loi locale sur les veuves et orphelins, et l'article 1er du décret de 1955. La
+    version suppose qu'il atteint les veuves et orphelins des ministres, par le renvoi de
+    l'article 11 de la loi sur les cultes aux « dispositions applicables aux veuves et
+    orphelins des fonctionnaires d'Alsace-Lorraine ». Seul L. 39 se lit dans sa
+    rédaction de 1964 ; L. 40 à L. 46 de 1964 ne sont pas dans l'index LEGI. Le taux de
+    la veuve reste celui de l'article 8 de la loi locale, 40 %, que le décret n'abroge
+    pas, sauf si un décret de 1923 à 1934 l'a changé ; une source secondaire (blog
+    « L'assurance vieillesse des ministres du culte en Moselle », 13 septembre 2013)
+    écrit 50 %. Que les articles du code s'entendent dans leur rédaction de 1964 ou dans
+    celle du jour (le « conjoint survivant » depuis 2004, veufs compris) n'est pas dit.
+  fiabilite: faible pour le taux de la veuve ; moyenne pour les conditions
+  textes:
+  - id: LEGIARTI000006457148
+    article: décret n° 66-807 du 28 octobre 1966, article 1er
+    publie_le: 1966-11-03
+    citation: >-
+      « I. - Les dispositions du dernier alinéa de l'article L. 39, des troisième et
+      quatrième alinéas de l'article L. 40 et celles des articles L. 41 (1er alinéa),
+      L. 43, L. 44, L. 45 et L. 46 du code des pensions civiles et militaires de retraite
+      sont applicables aux ayants cause des fonctionnaires et anciens fonctionnaires du
+      cadre local du Haut-Rhin, du Bas-Rhin et de la Moselle, tributaires du régime de
+      retraites prévu par les lois des 17 mai 1907 et 15 novembre 1909 et par le décret du
+      1er juillet 1930, sous réserve que les droits à pension desdits ayants cause
+      s'ouvrent postérieurement au 30 novembre 1964. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006457149
+    article: décret n° 66-807 du 28 octobre 1966, article 2
+    publie_le: 1966-11-03
+    citation: >-
+      « Sont abrogées toutes dispositions des textes locaux antérieurs contraires au
+      présent décret, et notamment les articles 3 (3°) et 14 (1°) de la loi du 17 mai 1907
+      modifiée, 9 (3°) et 12 (1° et 3°) de la loi locale du 15 novembre 1909 modifiée et
+      1er du décret n° 55-1544 du 29 novembre 1955. »
+    lu_le: 2026-11-24
+  - id: LEGIARTI000006362767
+    article: code des pensions civiles et militaires de retraite, L. 39, rédaction du 1er décembre 1964
+    citation: >-
+      « Nonobstant les conditions d'antériorité prévues ci-dessus, le droit à pension de
+      veuve est reconnu : 1° Si un ou plusieurs enfants sont issus du mariage ; 2° Ou si
+      le mariage, antérieur ou postérieur à la cessation de l'activité, a duré au moins
+      quatre années. »
+    lu_le: 2026-11-24
+  bornes:
+    conjoint.deces: [1964-12-01, null]
+  contenu:
+    veuve: >-
+      40 % de la pension du mari (loi locale, article 8, non abrogé), 50 % selon une
+      source secondaire ; le droit lui est reconnu, même mariée à la retraite, s'il y a un
+      enfant du mariage ou quatre années de mariage (L. 39, dernier alinéa)
+    remariage: >-
+      l'article 12, 1°, de la loi locale (fin au remariage) est abrogé ; L. 46 du code de
+      1964 le remplace, rédaction non lue
+    orphelins: >-
+      les troisième et quatrième alinéas de L. 40 du code de 1964, non lus, et la fin à
+      dix-huit ans de l'article 12, 2°, que le décret n'abroge pas
+    plafond: le premier alinéa de L. 41 du code de 1964, non lu
+    veufs: >-
+      la loi ne nomme que les veuves ; rien de lu ne donne de pension au veuf d'une
+      ministre du culte
+    parametres:
+      taux_veuve: 0.40
+    cas_pose_a_la_main: >-
+      Posé à la main, non officiel : la veuve du pasteur de 25 années de la fiche
+      cultes_alsace_moselle_pension, décédé en 2026 (pension de 18 780,42 euros par an),
+      avec deux enfants mineurs. Veuve : 40 % = 7 512,17 euros par an ; 50 % si le taux
+      avait été relevé = 9 390,21 euros. Chaque orphelin : le cinquième de la pension de
+      veuve (1909, article 9) = 1 502,43 euros, ou 10 % de la pension du père (code de
+      1951, article 56) = 1 878,04 euros. Total à 40 % et au cinquième : 10 517,03 euros,
+      sous la pension du père.
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    l'index LEGI du dépôt, qui n'a pas les rédactions de 1964 de L. 40 à L. 46 ; le
+    recueil du Bas-Rhin de 2013 ; la base Ircantec ; la presse : aucun calcul publié, le
+    24 novembre 2026
+textes_sans_effet:
+- id: JORFARTI000002290399
+  article: décret n° 2007-1341, article 7 (article 11 de la loi locale)
+  en_vigueur: 2007-09-14
+  motif: >-
+    « A l'article 11, les mots : « désignés aux articles 5, 6, » sont supprimés et les
+    mots : « sur la caisse d'Alsace-Lorraine » sont remplacés par les mots : « de
+    l'Etat » » : les veuves et enfants des ministres protestants et israélites restent
+    seuls nommés, et l'État payait déjà ces pensions depuis la convention de
+    Baden-Baden ; ni les bénéficiaires ni les montants ne changent
+- id: LEGIARTI000006362768
+  article: code des pensions civiles et militaires de retraite, L. 39, rédaction du 1er janvier 2004
+  en_vigueur: 2004-01-01
+  motif: >-
+    « Nonobstant les conditions d'antériorité prévues ci-dessus, le droit à pension de
+    réversion est reconnu : 1° Si un ou plusieurs enfants sont issus du mariage ; 2° Ou
+    si le mariage, antérieur ou postérieur à la cessation de l'activité, a duré au moins
+    quatre années. » : du dernier alinéa, le seul que le décret n° 66-807 applique, la
+    rédaction de 2004 ne change que « veuve » en « réversion » ; l'enfant du mariage ou
+    les quatre années de mariage restent les deux conditions, et le droit lui-même vient
+    de l'article 11 de la loi sur les cultes, qui ne nomme que les veuves
+textes_a_relire:
+- id: JORFTEXT000000676287
+  reference: décret n° 55-1544 du 29 novembre 1955, JO du 30 novembre 1955, analyse seule
+  question: >-
+    à quels ayants cause il étend L. 55, L. 56 et L. 60, depuis quand, et quel article 11
+    il abroge
+- reference: >-
+    code des pensions civiles et militaires de retraite annexé à la loi n° 64-1339 du
+    26 décembre 1964, articles L. 40, L. 41, L. 43 à L. 46, rédaction d'origine, JO du
+    30 décembre 1964
+  question: >-
+    ce que le décret n° 66-807 applique aux veuves et orphelins du régime local : l'âge
+    et le taux de l'orphelin, le plafond, le remariage, les ayants cause de plusieurs
+    mariages
+- id: JORFTEXT000000667165
+  reference: décret du 1er juillet 1930, JO du 10 juillet 1930, analyse seule
+  question: s'il porte la pension de la veuve du régime local à 50 % de celle du mari
+sources:
+  lu_le: 2026-11-24
+  prochaine_relecture: 2027-11-24
+  a_relire:
+  - >-
+    Demander au bureau des cultes de la préfecture du Bas-Rhin le taux qu'il applique à la
+    veuve (40 % ou 50 %), à l'orphelin, et s'il sert une pension au veuf d'une ministre
+    du culte.
+  lectures:
+  - type: autre
+    reference: >-
+      recueil des actes administratifs de la préfecture du Bas-Rhin, numéro spécial
+      « droit local » du 15 mai 2013 : loi du 15 novembre 1909 sur les ministres des
+      cultes, article 11 ; loi d'Alsace-Lorraine du 15 novembre 1909 sur les veuves et
+      orphelins des fonctionnaires ; loi du 20 mai 1911, article 12
+    date: 2013-05-15
+    url: https://www.bas-rhin.gouv.fr/contenu/telechargement/4650/33043/file/Recueil%20sp%C3%A9cial%20DROIT%20LOCAL%20du%2015%20mai%202013%20-%20publication%20traduction%20lois%20et%20r%C3%A8glements%20locaux%20maintenus%20en%20vigueur%20par%20les%20lois%20du%201er%20juin%201924.pdf
+  - type: legifrance
+    reference: >-
+      décret n° 66-807 du 28 octobre 1966, articles 1er et 2 (LEGITEXT000006061378) ;
+      code des pensions civiles et militaires de retraite, L. 39 dans sa rédaction du
+      1er décembre 1964
+    date: 1966-11-03
+  - type: jorf
+    reference: >-
+      Journal officiel du 24 mai 1951, page 5366 : code des pensions civiles et militaires
+      de retraite, articles 54 à 60 ; analyses des décrets du 1er juillet 1930 et
+      n° 55-1544 dans l'index JORF du dépôt
+    date: 1951-05-24
+  - type: autre
+    reference: >-
+      blog « L'assurance vieillesse des ministres du culte en Moselle », 13 septembre
+      2013 : une pension de veuve de 50 %
+    date: 2013-09-13
+    url: http://blogerslorrainsengages.unblog.fr/2013/09/13/lassurance-vieillesse-des-ministres-du-culte-en-moselle/
+  lectures_divergentes:
+  - >-
+    La loi d'Alsace-Lorraine du 15 novembre 1909 fixe la pension de la veuve à 40 % de
+    celle du mari (article 8) et aucun texte lu ne la change ; un blog de 2013 écrit
+    50 %. Le décret du 1er juillet 1930, qui étend aux retraités du régime local des
+    dispositions de la loi du 14 avril 1924, pourrait l'avoir relevée : à lire.
+historique:
+- >-
+  2026-11-24 — née de la fiche cultes_alsace_moselle_pension, dont l'intitulé donnait une
+  pension à « sa veuve et ses orphelins » sans dire que seuls les ministres protestants et
+  israélites en laissent.
+effet: >-
+  Les veuves et orphelins des pasteurs et rabbins d'Alsace-Moselle : leur pension de 40 %
+  ou de 50 % de celle du mari, selon un texte à lire.

@@ -1,0 +1,183 @@
+schema_version: 1
+id: cultes_alsace_moselle_services
+intitule: >-
+  Le temps de service qui compte pour la pension d'un ministre des cultes d'Alsace-Moselle
+  court, pour un prêtre catholique, du jour où il a touché pour la première fois un
+  traitement de l'État, et pour un pasteur ou un rabbin, de son ancienneté de traitement,
+  service d'Église en Alsace-Moselle après le certificat d'aptitude ; s'y ajoutent le
+  service militaire et, jusqu'à deux ans, les années d'études qui dépassent quatre ans.
+domaine: duree
+regimes: [cultes_alsace_moselle]
+etape: compter_les_durees
+face: droit
+etat: pas_encore_modelisee
+lit:
+- le culte du ministre, et pour un employé de secrétariat, sa qualification pour une
+  charge de curé, de pasteur ou de rabbin
+- pour un prêtre catholique, le jour où il a touché pour la première fois un traitement
+  ou un supplément de traitement de l'État, et ses interruptions
+- pour un pasteur ou un rabbin, le jour de son certificat d'aptitude, son service d'Église
+  en Alsace-Moselle depuis, et les services antérieurs que le ministère prend en compte
+- son service militaire actif, la durée de ses études préparatoires au certificat
+  d'aptitude, et celles faites à l'étranger
+ecrit:
+- les années entières de services valables pour la retraite, que lit la fiche
+  cultes_alsace_moselle_pension
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: ordonnance_1910
+  statut: lue
+  textes:
+  - reference: >-
+      ordonnance du 16 mars 1910 relative à la fixation de l'ancienneté de traitement et
+      de l'ancienneté de pension des ministres des cultes, traduction officielle publiée
+      au recueil des actes administratifs de la préfecture du Bas-Rhin, numéro spécial du
+      15 mai 2013, pages 94 et 95 (décret n° 2013-395)
+    article: articles 5 à 8
+    en_vigueur: 1910-04-01
+    citation: >-
+      article 5 : « Le temps de service valable pour la retraite des ministres du culte
+      catholique est compté avec effet du jour auquel l'intéressé a touché pour la
+      première fois un traitement de l'Etat ou un supplément de traitement » ; article 6 :
+      « Est considéré comme temps de service valable pour la retraite des ministres des
+      cultes protestants et israélite, la période correspondant à l'ancienneté de
+      traitement. » ; article 7 : « Entrent en compte comme temps de service valable pour
+      la retraite des ministres de tous les cultes : 1° le temps de service militaire
+      actif pour autant qu'il n'a pas été compté pour la fixation de l'ancienneté de
+      traitement […] 2° jusqu'à la durée de deux ans, les années d'études exigées pour
+      l'obtention du certificat d'aptitude à une charge de curé, au pastorat ou au
+      rabbinat, en tant que la durée des études dépasse quatre ans »
+    lu_le: 2026-11-24
+    empreinte: >-
+      sha256:4409ed75fa679b5c2a3c3fab6e7599615e735384b558dde000b6b453183aa5b3, le PDF du
+      recueil (467 442 octets), téléchargé sur bas-rhin.gouv.fr le 24 novembre 2026
+  - reference: ordonnance du 16 mars 1910, même recueil, page 94
+    article: articles 3 et 4
+    citation: >-
+      article 3 : pour l'ancienneté de traitement d'un pasteur et d'un rabbin, « il y a
+      lieu de prendre en compte le temps pendant lequel l'intéressé a été employé en due
+      forme au service de son Eglise en Alsace-Lorraine après avoir reçu le certificat
+      d'aptitude au pastorat ou au rabbinat » ; article 4 : « Peut être pris en compte
+      pour l'ancienneté de traitement, le temps qu'un pasteur protestant ou un rabbin a
+      passé, avant l'entrée en fonctions, au service du pays, de l'Empire […] d'une
+      commune […] ou à l'étranger au service d'une communauté culturelle allemande […]
+      ou au service des missions. »
+    lu_le: 2026-11-24
+  - reference: >-
+      loi locale du 15 novembre 1909, même recueil, page 86
+    article: article 10, troisième alinéa, dernière phrase (rédaction d'origine)
+    citation: >-
+      « Les dispositions relatives au temps de service à mettre en compte pour le calcul
+      de la pension, notamment en ce qui concerne l'imputation du temps passé hors du
+      service d'un des cultes reconnus, sont arrêtées par le Statthalter. »
+    lu_le: 2026-11-24
+  - reference: >-
+      ordonnance du 1er septembre 1911 relative aux traitements et pensions des employés
+      de secrétariat des autorités supérieures des cultes reconnus, même recueil, pages
+      111 et 112
+    article: articles 5 et 6
+    citation: >-
+      article 5 : le temps des employés qualifiés pour une charge de curé, au pastorat ou
+      au rabbinat est fixé selon l'ordonnance du 16 mars 1910, « le service de
+      secrétariat est considéré comme service paroissial ou de rabbinat » ; article 6 :
+      sinon, il « est compté avec effet du jour à compter duquel l'intéressé a touché pour
+      la première fois le traitement budgétaire afférent à l'emploi au service du
+      secrétariat », et « Le service militaire actif ainsi que le temps pris en compte
+      pour la fixation de l'ancienneté de traitement s'ajoutent au temps de service
+      valable pour la retraite »
+    lu_le: 2026-11-24
+  - reference: loi du 31 mars 1873 relative au statut des fonctionnaires d'Empire, même recueil, page 12
+    article: article 41
+    citation: >-
+      « […] elle s'augmente de 1/60 desdits émoluments pour chaque année accomplie en plus
+      après la dixième année »
+    lu_le: 2026-11-24
+  bornes:
+    liquidation.date_effet: [null, null]
+  contenu:
+    catholiques: >-
+      du jour du premier traitement ou supplément de traitement de l'État ; le temps sans
+      traitement de l'État, entre deux postes, ne compte pas, sauf les services que
+      l'article 4 permet de prendre en compte ; le vicariat d'avant le 1er avril 1910,
+      sans supplément de l'État, compte (article 5)
+    protestants_et_israelites: >-
+      l'ancienneté de traitement : le service d'Église en Alsace-Moselle après le
+      certificat d'aptitude, un congé pris en compte pour raisons particulières, le
+      service militaire qui a retardé le certificat ou qui suit une admission antérieure
+      au service, et, au choix du ministère, les services publics, d'Église, d'enseignement,
+      de santé ou de mission d'avant l'entrée en fonctions (articles 3, 4 et 6) ; le grand
+      rabbin y ajoute son ancienneté de rabbin (article 6)
+    tous_les_cultes: >-
+      s'ajoutent le service militaire actif qui n'a pas déjà compté, et jusqu'à deux ans
+      les années d'études exigées pour le certificat d'aptitude au-delà de quatre ans ;
+      des études de plus d'un an à l'étranger ne comptent que sur décision (article 7) ;
+      les services rendus avant le 1er janvier 1872 en France comptent comme rendus en
+      Alsace-Lorraine (article 8)
+    employes_de_secretariat: >-
+      le temps de l'ordonnance de 1910, le secrétariat comptant comme service paroissial,
+      pour qui a la qualification d'un ministre ; sinon, du premier traitement budgétaire
+      de l'emploi, plus le service militaire (ordonnance du 1er septembre 1911, articles 5
+      et 6)
+    annees: >-
+      la pension croît par « année accomplie » (statut de 1873, article 41) : le temps se
+      compte en années entières, la fraction d'année ne compte pas
+    parametres:
+      etudes_comptees_au_plus_ans: 2
+      etudes_au_dela_de_ans: 4
+    cas_pose_a_la_main: >-
+      Posé à la main, non officiel : un pasteur reçoit son certificat d'aptitude après six
+      années d'études, entre au service de son Église en Alsace le 1er octobre 1991, après
+      un service militaire de dix mois qui n'a pas retardé son certificat, et part le
+      1er octobre 2026. Service d'Église : 35 ans ; service militaire, que l'ancienneté de
+      traitement n'a pas compté (article 3, deuxième alinéa) : 10 mois (article 7, 1°) ;
+      études : 6 − 4 = 2 ans (article 7, 2°). Total : 37 ans et 10 mois, soit 37 années
+      entières ; taux 20/60 + 20/60 + 7/120 = 43,5/60, soit 72,5 %.
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le recueil des actes administratifs du Bas-Rhin du 15 mai 2013, la version consolidée
+    de Legirel (copie de l'Internet Archive du 23 mai 2024) et la base Ircantec : aucun
+    décompte publié, le 24 novembre 2026
+textes_sans_effet:
+- id: JORFARTI000002290398
+  article: décret n° 2007-1341, article 6 (article 10 de la loi locale, huitième phrase)
+  en_vigueur: 2007-09-14
+  motif: >-
+    « La huitième phrase est ainsi rédigée : « S'appliquent aux ministres des cultes
+    désignés à l'article 1er les dispositions des articles 5 à 7 de l'ordonnance du
+    Statthalter du 16 mars 1910 » » : la loi renvoie elle-même aux articles que le
+    Statthalter avait arrêtés en vertu de la rédaction d'origine ; le décompte ne change
+    pas
+textes_a_relire:
+- reference: loi du 31 mars 1873, articles 45 à 52, même recueil, pages 13 et 14
+  question: >-
+    valent-ils pour les ministres, l'article 10 renvoyant le décompte à l'ordonnance du
+    16 mars 1910 : rien avant dix-huit ans (article 48), l'année de guerre en plus
+    (article 49), les services hors d'Europe comptés double (article 51) ?
+sources:
+  lu_le: 2026-11-24
+  prochaine_relecture: 2027-11-24
+  a_relire:
+  - >-
+    Demander au bureau des cultes de la préfecture du Bas-Rhin comment il compte, depuis
+    2007, le temps d'un prêtre catholique : l'article 5 part du premier traitement de
+    l'État, que tout prêtre en fonction touche désormais.
+  lectures:
+  - type: autre
+    reference: >-
+      recueil des actes administratifs de la préfecture du Bas-Rhin, numéro spécial
+      « droit local » du 15 mai 2013 : ordonnances du 16 mars 1910 et du 1er septembre
+      1911, loi du 15 novembre 1909, loi du 31 mars 1873
+    date: 2013-05-15
+    url: https://www.bas-rhin.gouv.fr/contenu/telechargement/4650/33043/file/Recueil%20sp%C3%A9cial%20DROIT%20LOCAL%20du%2015%20mai%202013%20-%20publication%20traduction%20lois%20et%20r%C3%A8glements%20locaux%20maintenus%20en%20vigueur%20par%20les%20lois%20du%201er%20juin%201924.pdf
+  - type: jorf
+    reference: décret n° 2007-1341 du 11 septembre 2007, article 6 (JORFTEXT000000279682)
+    date: 2007-09-13
+historique:
+- >-
+  2026-11-24 — née de la fiche cultes_alsace_moselle_pension, qui citait l'ordonnance du
+  16 mars 1910 sans en avoir lu le texte.
+effet: >-
+  Le taux de la pension de chaque ministre des cultes d'Alsace-Moselle : chaque année
+  entière de service en plus ajoute 1/60 de ses émoluments jusqu'à trente ans, 1/120
+  au-delà.
