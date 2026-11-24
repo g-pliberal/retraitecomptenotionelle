@@ -1,15 +1,5 @@
 # Étape 4 de la note 0009, première session : les dix renvois qui peuvent changer un résultat
 
-**Reprise, au 21 novembre 2026.** Les dix renvois d'un régime aux fiches
-d'âge que la note 0009 désignait sont rangés : huit citent le texte qui les
-fait, au jour où leur période commence à liquider ; celui de la Banque de
-France à l'âge légal, qu'aucun texte ne faisait avant 2025, est parti, et
-revient cité en 2025 ; celui de la Banque de France à l'âge du taux plein
-est parti, l'âge lu dans le règlement (note du même jour sur ce taux
-plein). Un contrôle Z3 vérifie chaque renvoi cité. Aucun témoin n'a
-bougé. Point d'arrêt : le propriétaire décide de la suite de l'étape 4
-sur le compte qui clôt cette note ; ne pas l'ouvrir avant.
-
 Le 21 novembre 2026, l'après-midi, sur Opus 5.5, au choix du propriétaire
 (relecture sur Fable avant l'envoi). Sur l'accord du propriétaire pour les
 dix bascules seules (« Faisons ça »).

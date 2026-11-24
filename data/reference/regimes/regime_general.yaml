@@ -346,6 +346,8 @@ liquidation:
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        avpf, reversion, periodes_assimilees, carriere_longue]
+    textes:
+      duree_majoree_tous_regimes: {id: JORFARTI000002055400, depuis: "2004-01-01"}
     notes: >-
       Loi Fillon du 21 août 2003 : création de la surcote, décote allégée,
       dispositif « carrières longues », durée indexée sur l'espérance de vie.

@@ -1,14 +1,17 @@
 # Étape 4 de la note 0009, deuxième session : les renvois sans texte, classés par leur poids
 
-**Reprise, au 22 novembre 2026.** Les 294 renvois d'un régime à une fiche
-qui ne citent aucun texte sont classés par leur poids dans les résultats.
-Le propriétaire a fixé le budget de l'étape le 22 novembre : d'abord le
-rangement des 100 renvois qui ne changent aucun cas mesuré, qu'il suffit
-de citer ; puis les trente plus lourds, par lots de six, chacun lu au
-texte, relu sur Opus par une autre session avant d'être publié, et trois à
-cinq règles contrôlées en Catala hors du dépôt. Après les trente, point
-d'arrêt : le compte au propriétaire, qui décide des 164 autres. Commencer
-par le premier lot, les rangs 1 à 6 du tableau de cette note.
+**Reprise, au 24 novembre 2026.** L'étape 7 de la note 0009 mène les lots
+de cette note. Il reste 277 renvois d'un régime à une fiche sans texte
+cité. Le budget du propriétaire du 22 novembre tient : d'abord les
+renvois qui ne changent aucun cas mesuré, qu'il suffit de citer ; puis les
+trente plus lourds, par lots de six, chacun lu au texte et relu par une
+autre session, et trois à cinq règles contrôlées en Catala hors du dépôt.
+Après les trente, point d'arrêt : le compte au propriétaire, qui décide des
+autres. Le premier lot du rangement en a cité neuf et en a relevé
+neuf, dont la ligne ne s'ouvre pas au jour du texte
+(`2026-11-24-etape-7-rangement-premier-lot.md`). Continuer par la réforme
+des régimes spéciaux de 2008. Les frontières dont l'étape 6 n'a pas lu le
+texte se datent ici, avec les renvois de leur régime.
 
 Le 22 novembre 2026, la nuit, sur Opus 5.5. Aucun fichier du dépôt n'est
 touché hors cette note : la mesure tourne hors du dépôt, sur le paquet du

@@ -30,7 +30,7 @@ LISTE = outils.RACINE / "tests" / "cliquets_du_droit_date" / "constantes.yaml"
 #: ligne (`docs/feuille_de_route/191/2026-11-23-separation-des-axes-etape-6.md`).
 VALEURS_DE_REPLI = 370
 #: Les renvois, en séries, qui ne citent pas le texte qui les fait.
-RENVOIS_SANS_TEXTE = 286
+RENVOIS_SANS_TEXTE = 277
 #: Les copies d'avant réforme encore dans le dépôt.
 COPIES_D_AVANT_REFORME = ()
 #: Les versions que le moteur lit, sans leurs deux preuves ni ce qui manque.

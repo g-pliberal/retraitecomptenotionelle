@@ -290,11 +290,61 @@ DIX_RENVOIS = {
 }
 
 
+#: Les renvois rangés à l'étape 7 (note du classement), famille par famille :
+#: ceux qui ne changent aucun cas mesuré, et ceux que le même texte fait le
+#: même jour sur la même ligne. Le texte lu et le jour depuis lequel il vaut.
+RENVOIS_RANGES = {
+    # Décret n° 2004-144, article 3 : R. 351-7, 2°, la majoration « au titre des
+    # périodes accomplies dans ce régime et, le cas échéant, dans un ou plusieurs
+    # autres régimes obligatoires postérieurement au 31 décembre 2003 », pour les
+    # pensions prenant effet après cette date (article 8). Le décret vise aussi
+    # les salariés agricoles, les artisans et les commerçants : R. 173-4-2, qu'il
+    # crée (article 1er), partage la majoration du 2° « applicable au titre de
+    # chacun de ces régimes ».
+    ("regime_general", "duree_majoree_tous_regimes", 2004):
+        ("JORFARTI000002055400", "2004-01-01"),
+    ("msa_salaries", "duree_majoree_tous_regimes", 2004):
+        ("JORFARTI000002055400", "2004-01-01"),
+    ("cancava", "duree_majoree_tous_regimes", 2004): ("JORFARTI000002055400", "2004-01-01"),
+    ("organic", "duree_majoree_tous_regimes", 2004): ("JORFARTI000002055400", "2004-01-01"),
+    # Décret n° 73-937, article 3, rédaction du 7 octobre 2012, lendemain de la
+    # publication du décret n° 2012-1129, qui y porte le II de l'article 8 du
+    # décret n° 2010-1734 : la minoration court jusqu'à « l'âge prévu au 1° de
+    # l'article L. 351-8 », et la durée est « la limite prévue par le deuxième
+    # alinéa de l'article L. 351-1 ».
+    ("cancava_avant_1973", "age_taux_plein_par_generation", 2012):
+        ("LEGIARTI000026474703", "2012-10-07"),
+    ("organic_avant_1973", "age_taux_plein_par_generation", 2012):
+        ("LEGIARTI000026474703", "2012-10-07"),
+    ("cancava_avant_1973", "duree_requise_par_generation", 2012):
+        ("LEGIARTI000026474703", "2012-10-07"),
+    ("organic_avant_1973", "duree_requise_par_generation", 2012):
+        ("LEGIARTI000026474703", "2012-10-07"),
+    # Arrêté du 30 décembre 1970, article 16, 6° c), rédaction de l'arrêté du
+    # 26 juillet 1983 (JORFTEXT000000837384), qui reprend l'exonération que
+    # l'arrêté du 27 janvier 1983 (JORFTEXT000000654120) donnait aux titulaires
+    # d'une pension au taux plein : pas de réduction « A compter du 1er avril
+    # 1983, aux agents ou anciens agents justifiant d'une durée d'assurance
+    # susceptible de les faire bénéficier au titre du régime général […] d'une
+    # pension au taux plein ».
+    ("ircantec", "duree_requise_par_generation", 1983): ("LEGIARTI000006381610", "1983-04-01"),
+}
+
+
 def _series():
     """Les renvois, par le régime, le champ et l'année de la ligne qui les
     ouvre, dans le bloc qui porte leur champ."""
     return {(s["regime"], s["champ"], int(s["du"][:4])): s
             for s in outils.renvois(outils.blocs_des_regimes())}
+
+
+def _cite_son_texte_au_jour(cle, attendu):
+    serie = _series().get(cle)
+    assert serie is not None, f"{cle} : aucun renvoi ne s'ouvre là"
+    cite = (serie["ligne"].get("textes") or {}).get(cle[1]) or {}
+    identifiant, depuis = attendu
+    assert (cite.get("id"), str(cite.get("depuis"))) == (identifiant, depuis)
+    assert serie["du"] == depuis
 
 
 @pytest.mark.parametrize("cle", sorted(DIX_RENVOIS), ids=lambda c: f"{c[0]}-{c[2]}")
@@ -303,12 +353,17 @@ def test_chacun_des_dix_renvois_cite_son_texte_au_jour_ou_sa_ligne_commence(cle)
     l'année, et cite ce texte » (note 0009) : le texte cité est celui que la
     relecture a lu, et la ligne de liquidation qui ouvre le renvoi commence le
     jour où il vaut."""
-    serie = _series().get(cle)
-    assert serie is not None, f"{cle} : aucun renvoi ne s'ouvre là"
-    cite = (serie["ligne"].get("textes") or {}).get(cle[1]) or {}
-    identifiant, depuis = DIX_RENVOIS[cle]
-    assert (cite.get("id"), str(cite.get("depuis"))) == (identifiant, depuis)
-    assert serie["du"] == depuis
+    _cite_son_texte_au_jour(cle, DIX_RENVOIS[cle])
+
+
+@pytest.mark.parametrize("cle", sorted(RENVOIS_RANGES),
+                         ids=lambda c: f"{c[0]}-{c[1]}-{c[2]}")
+def test_chaque_renvoi_range_cite_son_texte_au_jour_ou_sa_ligne_commence(cle):
+    """Les renvois qui ne changent aucun cas mesuré, « qu'il suffit de citer »
+    (budget du 22 novembre), et ceux que leur texte fait sur la même ligne :
+    chacun cite le texte lu, et sa ligne commence le jour où ce texte le fait
+    valoir."""
+    _cite_son_texte_au_jour(cle, RENVOIS_RANGES[cle])
 
 
 def test_la_banque_de_france_ne_renvoie_a_l_age_legal_qu_a_compter_de_2025():

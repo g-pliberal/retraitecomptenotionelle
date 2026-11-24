@@ -246,6 +246,8 @@ liquidation:
     duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue]
+    textes:
+      duree_majoree_tous_regimes: {id: JORFARTI000002055400, depuis: "2004-01-01"}
     notes: >-
       Mêmes règles que le régime général sur 2004-2008 : la MSA les applique à l'identique.
   - du: 2009-01-01

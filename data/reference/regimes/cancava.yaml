@@ -202,6 +202,8 @@ liquidation:
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees, carriere_longue]
+    textes:
+      duree_majoree_tous_regimes: {id: JORFARTI000002055400, depuis: "2004-01-01"}
     notes: >-
       Loi Fillon de 2003 : durée requise au-delà de 160 trimestres, création
       de la surcote et de la retraite anticipée pour carrière longue. Le

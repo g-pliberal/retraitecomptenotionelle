@@ -143,6 +143,8 @@ liquidation:
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
+    textes:
+      duree_requise_par_generation: {id: LEGIARTI000006381610, depuis: "1983-04-01"}
     notes: >-
       AU 1er AVRIL 1983, et non au 1er janvier : l'arrêté du 27 janvier
       1983 (JORFTEXT000000654120) liquide sans coefficient de réduction
