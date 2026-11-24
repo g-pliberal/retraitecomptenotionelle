@@ -53,20 +53,20 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 978 parties, 168 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 55 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
 
-**Un autre moteur, quantité par quantité.** TRAJECTOiRE (3.3.2) rejoue 85 carrières (`tests/temoins/trajectoire_3/ecarts.json`, `scripts/confronter_trajectoire.py`) : **541 quantités sur 818** concordent. Un écart n'est pas une erreur du dépôt, seul le texte tranche ; il dit où relire. Chaque cas est une carrière entière, que rien ne rattache encore à une règle : ce tableau ne change l'état d'aucune partie.
+**Un autre moteur, quantité par quantité.** TRAJECTOiRE (3.3.2) rejoue 85 carrières (`tests/temoins/trajectoire_3/ecarts.json`, `scripts/confronter_trajectoire.py`) : **529 quantités sur 818** concordent. Un écart n'est pas une erreur du dépôt, seul le texte tranche ; il dit où relire. Chaque cas est une carrière entière, que rien ne rattache encore à une règle : ce tableau ne change l'état d'aucune partie.
 
 | Quantité | Cas | Concordent | En écart |
 |---|---|---|---|
 | pension_totale | 62 | 5 | 57 |
 | fonction_publique | 29 | 4 | 25 |
 | points_rafp | 29 | 4 | 25 |
+| rafp | 29 | 4 | 25 |
 | salaire_annuel_moyen | 31 | 6 | 25 |
-| rafp | 29 | 5 | 24 |
 | traitement_de_reference | 29 | 6 | 23 |
 | regime_general | 31 | 10 | 21 |
+| trimestres | 85 | 65 | 20 |
 | taux | 75 | 63 | 12 |
 | trimestres_requis | 75 | 65 | 10 |
-| trimestres | 85 | 76 | 9 |
 | minimum | 62 | 56 | 6 |
 | rafp_en_capital | 29 | 24 | 5 |
 | carriere_longue | 85 | 81 | 4 |
