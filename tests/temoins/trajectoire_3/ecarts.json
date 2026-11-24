@@ -21,7 +21,7 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1381.1,
+     "depot": 1381.11,
      "ecart": 0.0029,
      "statut": "concorde",
      "trajectoire": 1377.07
@@ -32,13 +32,13 @@
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": -0.0797,
+     "ecart": -0.0789,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "dans sa borne",
-     "depot": 14.52,
-     "ecart": -0.0908,
+     "depot": 14.53,
+     "ecart": -0.09,
      "statut": "ecart",
      "trajectoire": 15.97
     },
@@ -104,7 +104,7 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1425.63,
+     "depot": 1425.66,
      "ecart": -0.0187,
      "statut": "ecart",
      "trajectoire": 1452.8
@@ -114,14 +114,14 @@
      "statut": "concorde"
     },
     "points_rafp": {
-     "declare_en_octobre": "hors de sa borne",
-     "ecart": -0.0659,
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0649,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 20.75,
-     "ecart": -0.1266,
+     "depot": 20.78,
+     "ecart": -0.1257,
      "statut": "ecart",
      "trajectoire": 23.76
     },
@@ -151,8 +151,9 @@
      "statut": "ecart"
     },
     "trimestres": {
-     "ecart": 0.0,
-     "statut": "concorde"
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -1.0,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "ecart": 0.0,
@@ -185,7 +186,7 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1626.63,
+     "depot": 1626.68,
      "ecart": -0.0144,
      "statut": "ecart",
      "trajectoire": 1650.47
@@ -196,13 +197,13 @@
     },
     "points_rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "ecart": -0.0299,
+     "ecart": -0.0286,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 33.59,
-     "ecart": -0.0102,
+     "depot": 33.63,
+     "ecart": -0.0088,
      "statut": "ecart",
      "trajectoire": 33.93
     },
@@ -265,8 +266,8 @@
      "statut": "ecart"
     },
     "pension_totale": {
-     "depot": 1540.76,
-     "ecart": -0.0932,
+     "depot": 1540.82,
+     "ecart": -0.0931,
      "statut": "ecart",
      "trajectoire": 1699.04
     },
@@ -275,13 +276,13 @@
      "statut": "concorde"
     },
     "points_rafp": {
-     "ecart": -0.0112,
+     "ecart": -0.0097,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 35.39,
-     "ecart": -0.0201,
+     "depot": 35.44,
+     "ecart": -0.0185,
      "statut": "ecart",
      "trajectoire": 36.11
     },
@@ -376,20 +377,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 2544.41,
+     "depot": 2544.44,
      "ecart": 0.0284,
      "statut": "ecart",
      "trajectoire": 2474.17
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": 0.0184,
+     "ecart": 0.0192,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "dans sa borne",
-     "depot": 29.42,
-     "ecart": 0.0218,
+     "depot": 29.44,
+     "ecart": 0.0226,
      "statut": "ecart",
      "trajectoire": 28.79
     },
@@ -441,20 +442,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 2637.38,
-     "ecart": -0.0101,
+     "depot": 2637.41,
+     "ecart": -0.01,
      "statut": "ecart",
      "trajectoire": 2664.18
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": 0.0425,
+     "ecart": 0.0433,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 42.1,
-     "ecart": 0.0425,
+     "depot": 42.14,
+     "ecart": 0.0433,
      "statut": "ecart",
      "trajectoire": 40.39
     },
@@ -505,20 +506,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 2809.53,
+     "depot": 2809.59,
      "ecart": -0.0207,
      "statut": "ecart",
      "trajectoire": 2868.83
     },
     "points_rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "ecart": 0.0159,
+     "ecart": 0.017,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 58.19,
-     "ecart": 0.0464,
+     "depot": 58.25,
+     "ecart": 0.0475,
      "statut": "ecart",
      "trajectoire": 55.61
     },
@@ -535,6 +536,7 @@
      "statut": "ecart"
     },
     "trimestres": {
+     "declare_en_octobre": "hors de sa borne",
      "ecart": -0.3333,
      "statut": "concorde"
     },
@@ -559,13 +561,13 @@
      "statut": "concorde"
     },
     "taux": {
-     "declare_en_octobre": "hors de sa borne",
      "ecart": 0.0,
      "statut": "concorde"
     },
     "trimestres": {
-     "ecart": 0.3333,
-     "statut": "concorde"
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.6667,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "declare_en_octobre": "hors de sa borne",
@@ -638,8 +640,8 @@
      "trajectoire": 809.06
     },
     "points_msa_non_salaries": {
-     "depot": 965.0,
-     "ecart": -0.2963,
+     "depot": 1340.0,
+     "ecart": -0.0228,
      "statut": "ecart",
      "trajectoire": 1371.29
     },
@@ -673,26 +675,26 @@
      "statut": "ecart"
     },
     "msa_non_salaries": {
-     "depot": 713.11,
-     "ecart": -0.2485,
+     "depot": 741.29,
+     "ecart": -0.2188,
      "statut": "ecart",
      "trajectoire": 948.98
     },
     "msa_rco": {
-     "depot": 354.8,
-     "ecart": 1.7361,
+     "depot": 326.64,
+     "ecart": 1.519,
      "statut": "ecart",
      "trajectoire": 129.67
     },
     "pension_totale": {
-     "depot": 1067.91,
-     "ecart": -0.01,
+     "depot": 1067.93,
+     "ecart": -0.0099,
      "statut": "ecart",
      "trajectoire": 1078.65
     },
     "points_msa_non_salaries": {
-     "depot": 1081.0,
-     "ecart": -0.2157,
+     "depot": 1411.0,
+     "ecart": 0.0237,
      "statut": "ecart",
      "trajectoire": 1378.3
     },
@@ -744,8 +746,8 @@
      "trajectoire": 1181.98
     },
     "points_msa_non_salaries": {
-     "depot": 1220.0,
-     "ecart": -0.1418,
+     "depot": 1505.0,
+     "ecart": 0.0586,
      "statut": "ecart",
      "trajectoire": 1421.65
     },
@@ -797,8 +799,8 @@
      "trajectoire": 1195.91
     },
     "points_msa_non_salaries": {
-     "depot": 960.0,
-     "ecart": -0.325,
+     "depot": 1088.0,
+     "ecart": -0.235,
      "statut": "ecart",
      "trajectoire": 1422.27
     },
@@ -845,8 +847,8 @@
      "trajectoire": 1361.91
     },
     "carmf_complementaire": {
-     "depot": 1608.24,
-     "ecart": -0.2019,
+     "depot": 1859.26,
+     "ecart": -0.0773,
      "statut": "ecart",
      "trajectoire": 2015.1
     },
@@ -865,8 +867,8 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 3878.04,
-     "ecart": -0.0911,
+     "depot": 4129.05,
+     "ecart": -0.0323,
      "statut": "ecart",
      "trajectoire": 4266.75
     },
@@ -877,8 +879,8 @@
      "trajectoire": 1203.88
     },
     "points_carmf_complementaire": {
-     "depot": 176.04,
-     "ecart": -0.3936,
+     "depot": 269.56,
+     "ecart": -0.0715,
      "statut": "ecart",
      "trajectoire": 290.32
     },
@@ -910,8 +912,8 @@
      "trajectoire": 1438.88
     },
     "carmf_complementaire": {
-     "depot": 1888.09,
-     "ecart": -0.1457,
+     "depot": 2058.47,
+     "ecart": -0.0686,
      "statut": "ecart",
      "trajectoire": 2210.02
     },
@@ -930,8 +932,8 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 4444.76,
-     "ecart": -0.0579,
+     "depot": 4615.14,
+     "ecart": -0.0218,
      "statut": "ecart",
      "trajectoire": 4718.02
     },
@@ -942,8 +944,8 @@
      "trajectoire": 1214.8
     },
     "points_carmf_complementaire": {
-     "depot": 206.65,
-     "ecart": -0.2772,
+     "depot": 267.96,
+     "ecart": -0.0627,
      "statut": "ecart",
      "trajectoire": 285.9
     },
@@ -2143,8 +2145,8 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1381.35,
-     "ecart": -0.0426,
+     "depot": 1384.45,
+     "ecart": -0.0404,
      "statut": "ecart",
      "trajectoire": 1442.74
     },
@@ -2154,14 +2156,14 @@
     },
     "regime_general": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 1024.74,
-     "ecart": -0.0046,
+     "depot": 1027.83,
+     "ecart": -0.0016,
      "statut": "concorde",
      "trajectoire": 1029.5
     },
     "salaire_annuel_moyen": {
      "declare_en_octobre": "hors de sa borne",
-     "ecart": -0.0046,
+     "ecart": -0.0016,
      "statut": "concorde"
     },
     "taux": {
@@ -2202,8 +2204,8 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1408.0,
-     "ecart": -0.04,
+     "depot": 1410.38,
+     "ecart": -0.0384,
      "statut": "ecart",
      "trajectoire": 1466.74
     },
@@ -2212,13 +2214,13 @@
      "statut": "concorde"
     },
     "regime_general": {
-     "depot": 1045.15,
-     "ecart": -0.0079,
+     "depot": 1047.53,
+     "ecart": -0.0057,
      "statut": "ecart",
      "trajectoire": 1053.52
     },
     "salaire_annuel_moyen": {
-     "ecart": -0.0079,
+     "ecart": -0.0057,
      "statut": "ecart"
     },
     "taux": {
@@ -2261,20 +2263,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1841.42,
+     "depot": 1841.45,
      "ecart": 0.0034,
      "statut": "concorde",
      "trajectoire": 1835.13
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": -0.0709,
+     "ecart": -0.0701,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "dans sa borne",
-     "depot": 21.76,
-     "ecart": -0.0805,
+     "depot": 21.78,
+     "ecart": -0.0796,
      "statut": "ecart",
      "trajectoire": 23.66
     },
@@ -2326,20 +2328,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 2019.08,
-     "ecart": -0.0105,
+     "depot": 2019.11,
+     "ecart": -0.0104,
      "statut": "ecart",
      "trajectoire": 2040.43
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": 0.0131,
+     "ecart": 0.014,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 36.33,
-     "ecart": 0.0131,
+     "depot": 36.36,
+     "ecart": 0.014,
      "statut": "ecart",
      "trajectoire": 35.86
     },
@@ -2357,6 +2359,7 @@
      "statut": "ecart"
     },
     "trimestres": {
+     "declare_en_octobre": "hors de sa borne",
      "ecart": -0.3333,
      "statut": "concorde"
     },
@@ -2391,20 +2394,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1874.52,
+     "depot": 1874.58,
      "ecart": -0.0222,
      "statut": "ecart",
      "trajectoire": 1917.16
     },
     "points_rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "ecart": -0.0263,
+     "ecart": -0.0251,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 50.17,
-     "ecart": 0.0176,
+     "depot": 50.23,
+     "ecart": 0.0188,
      "statut": "ecart",
      "trajectoire": 49.3
     },
@@ -2422,6 +2425,7 @@
      "statut": "ecart"
     },
     "trimestres": {
+     "declare_en_octobre": "hors de sa borne",
      "ecart": -0.3333,
      "statut": "concorde"
     },
@@ -2451,8 +2455,8 @@
      "statut": "concorde"
     },
     "trimestres": {
-     "ecart": 0.3333,
-     "statut": "concorde"
+     "ecart": -0.6667,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "declare_en_octobre": "hors de sa borne",
@@ -2510,20 +2514,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1841.42,
+     "depot": 1841.45,
      "ecart": 0.0034,
      "statut": "concorde",
      "trajectoire": 1835.13
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": -0.0709,
+     "ecart": -0.0701,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "dans sa borne",
-     "depot": 21.76,
-     "ecart": -0.0805,
+     "depot": 21.78,
+     "ecart": -0.0796,
      "statut": "ecart",
      "trajectoire": 23.66
     },
@@ -2575,20 +2579,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 2019.08,
-     "ecart": -0.0105,
+     "depot": 2019.11,
+     "ecart": -0.0104,
      "statut": "ecart",
      "trajectoire": 2040.43
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": 0.0131,
+     "ecart": 0.014,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 36.33,
-     "ecart": 0.0131,
+     "depot": 36.36,
+     "ecart": 0.014,
      "statut": "ecart",
      "trajectoire": 35.86
     },
@@ -2606,6 +2610,7 @@
      "statut": "ecart"
     },
     "trimestres": {
+     "declare_en_octobre": "hors de sa borne",
      "ecart": -0.3333,
      "statut": "concorde"
     },
@@ -2640,20 +2645,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1874.52,
+     "depot": 1874.58,
      "ecart": -0.0222,
      "statut": "ecart",
      "trajectoire": 1917.16
     },
     "points_rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "ecart": -0.0263,
+     "ecart": -0.0251,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 50.17,
-     "ecart": 0.0176,
+     "depot": 50.23,
+     "ecart": 0.0188,
      "statut": "ecart",
      "trajectoire": 49.3
     },
@@ -2671,6 +2676,7 @@
      "statut": "ecart"
     },
     "trimestres": {
+     "declare_en_octobre": "hors de sa borne",
      "ecart": -0.3333,
      "statut": "concorde"
     },
@@ -2700,8 +2706,8 @@
      "statut": "concorde"
     },
     "trimestres": {
-     "ecart": 0.3333,
-     "statut": "concorde"
+     "ecart": -0.6667,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "declare_en_octobre": "hors de sa borne",
@@ -2763,20 +2769,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 2952.45,
+     "depot": 2952.48,
      "ecart": 0.019,
      "statut": "ecart",
      "trajectoire": 2897.51
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": -0.0188,
+     "ecart": -0.0177,
      "statut": "ecart"
     },
     "rafp": {
-     "depot": 29.26,
-     "ecart": 0.0041,
-     "statut": "concorde",
+     "depot": 29.3,
+     "ecart": 0.0052,
+     "statut": "ecart",
      "trajectoire": 29.14
     },
     "rafp_en_capital": {
@@ -2827,20 +2833,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 3434.25,
+     "depot": 3434.29,
      "ecart": -0.0114,
      "statut": "ecart",
      "trajectoire": 3473.87
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": -0.1353,
+     "ecart": -0.1346,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 44.55,
-     "ecart": -0.1187,
+     "depot": 44.59,
+     "ecart": -0.1179,
      "statut": "ecart",
      "trajectoire": 50.55
     },
@@ -2858,8 +2864,8 @@
      "statut": "ecart"
     },
     "trimestres": {
-     "ecart": 0.3333,
-     "statut": "concorde"
+     "ecart": -0.6667,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "ecart": 0.0,
@@ -2885,6 +2891,7 @@
      "statut": "ecart"
     },
     "trimestres": {
+     "declare_en_octobre": "hors de sa borne",
      "ecart": -0.3333,
      "statut": "concorde"
     },
@@ -2914,8 +2921,8 @@
      "statut": "concorde"
     },
     "trimestres": {
-     "ecart": 0.3333,
-     "statut": "concorde"
+     "ecart": -0.6667,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "declare_en_octobre": "hors de sa borne",
@@ -2942,8 +2949,9 @@
      "statut": "concorde"
     },
     "trimestres": {
-     "ecart": 0.3333,
-     "statut": "concorde"
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.6667,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "ecart": 0.0,
@@ -2976,19 +2984,19 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 3108.28,
+     "depot": 3108.31,
      "ecart": 0.0057,
      "statut": "ecart",
      "trajectoire": 3090.79
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": -0.0068,
+     "ecart": -0.0061,
      "statut": "ecart"
     },
     "rafp": {
-     "depot": 43.16,
-     "ecart": -0.0036,
+     "depot": 43.19,
+     "ecart": -0.0029,
      "statut": "concorde",
      "trajectoire": 43.32
     },
@@ -3039,19 +3047,19 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 3614.95,
+     "depot": 3614.99,
      "ecart": -0.009,
      "statut": "ecart",
      "trajectoire": 3647.67
     },
     "points_rafp": {
-     "ecart": -0.0059,
+     "ecart": -0.0053,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 68.31,
-     "ecart": 0.0132,
+     "depot": 68.36,
+     "ecart": 0.0138,
      "statut": "ecart",
      "trajectoire": 67.42
     },
@@ -3068,8 +3076,9 @@
      "statut": "ecart"
     },
     "trimestres": {
-     "ecart": 0.3333,
-     "statut": "concorde"
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.6667,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "ecart": 0.0,
@@ -3095,8 +3104,9 @@
      "statut": "concorde"
     },
     "trimestres": {
-     "ecart": 0.3333,
-     "statut": "concorde"
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.6667,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "ecart": 0.0,
@@ -3218,8 +3228,9 @@
      "statut": "ecart"
     },
     "trimestres": {
-     "ecart": 0.3333,
-     "statut": "concorde"
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.6667,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "declare_en_octobre": "dans sa borne",
@@ -3253,20 +3264,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1999.85,
+     "depot": 1999.86,
      "ecart": 0.0691,
      "statut": "ecart",
      "trajectoire": 1870.53
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": -0.285,
+     "ecart": -0.2842,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 12.36,
-     "ecart": -0.3706,
+     "depot": 12.37,
+     "ecart": -0.3699,
      "statut": "ecart",
      "trajectoire": 19.63
     },
@@ -3286,8 +3297,8 @@
      "statut": "ecart"
     },
     "trimestres": {
-     "ecart": 0.3333,
-     "statut": "concorde"
+     "ecart": -0.6667,
+     "statut": "ecart"
     },
     "trimestres_requis": {
      "declare_en_octobre": "dans sa borne",
@@ -3322,20 +3333,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 2065.64,
+     "depot": 2065.68,
      "ecart": 0.111,
      "statut": "ecart",
      "trajectoire": 1859.27
     },
     "points_rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "ecart": -0.2179,
+     "ecart": -0.2169,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 23.63,
-     "ecart": -0.3259,
+     "depot": 23.66,
+     "ecart": -0.3249,
      "statut": "ecart",
      "trajectoire": 35.05
     },
@@ -3389,20 +3400,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 2182.49,
-     "ecart": 0.0946,
+     "depot": 2182.52,
+     "ecart": 0.0947,
      "statut": "ecart",
      "trajectoire": 1993.81
     },
     "points_rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "ecart": -0.2219,
+     "ecart": -0.221,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 27.75,
-     "ecart": -0.3179,
+     "depot": 27.78,
+     "ecart": -0.3171,
      "statut": "ecart",
      "trajectoire": 40.68
     },
@@ -3449,6 +3460,7 @@
      "statut": "concorde"
     },
     "trimestres": {
+     "declare_en_octobre": "hors de sa borne",
      "ecart": -0.3333,
      "statut": "concorde"
     },
@@ -3491,13 +3503,13 @@
     },
     "points_rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "ecart": -0.1348,
+     "ecart": -0.1335,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 5.83,
-     "ecart": -0.1904,
+     "depot": 5.84,
+     "ecart": -0.1892,
      "statut": "ecart",
      "trajectoire": 7.21
     },
@@ -3517,7 +3529,7 @@
     },
     "trimestres": {
      "declare_en_octobre": "hors de sa borne",
-     "ecart": -13.6667,
+     "ecart": -14.6667,
      "statut": "ecart"
     },
     "trimestres_requis": {
@@ -3551,20 +3563,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1355.56,
+     "depot": 1355.58,
      "ecart": 0.0442,
      "statut": "ecart",
      "trajectoire": 1298.23
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": -0.1381,
+     "ecart": -0.1369,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 15.31,
-     "ecart": -0.2211,
+     "depot": 15.33,
+     "ecart": -0.2201,
      "statut": "ecart",
      "trajectoire": 19.65
     },
@@ -3584,7 +3596,7 @@
     },
     "trimestres": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": -14.6667,
+     "ecart": -15.6667,
      "statut": "ecart"
     },
     "trimestres_requis": {
@@ -3619,20 +3631,20 @@
      "statut": "ecart"
     },
     "pension_totale": {
-     "depot": 1351.47,
+     "depot": 1351.5,
      "ecart": 0.0907,
      "statut": "ecart",
      "trajectoire": 1239.06
     },
     "points_rafp": {
      "declare_en_octobre": "dans sa borne",
-     "ecart": -0.1122,
+     "ecart": -0.1109,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 20.87,
-     "ecart": -0.2082,
+     "depot": 20.9,
+     "ecart": -0.207,
      "statut": "ecart",
      "trajectoire": 26.36
     },
@@ -3685,20 +3697,20 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1335.54,
-     "ecart": 0.0155,
+     "depot": 1335.57,
+     "ecart": 0.0156,
      "statut": "ecart",
      "trajectoire": 1315.09
     },
     "points_rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "ecart": -0.0972,
+     "ecart": -0.096,
      "statut": "ecart"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 24.35,
-     "ecart": -0.1918,
+     "depot": 24.39,
+     "ecart": -0.1907,
      "statut": "ecart",
      "trajectoire": 30.13
     },
@@ -3782,18 +3794,18 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1919.04,
-     "ecart": -0.002,
+     "depot": 1919.06,
+     "ecart": -0.0019,
      "statut": "concorde",
      "trajectoire": 1922.8
     },
     "points_rafp": {
-     "ecart": 0.0002,
+     "ecart": 0.0013,
      "statut": "concorde"
     },
     "rafp": {
-     "depot": 24.84,
-     "ecart": 0.0002,
+     "depot": 24.87,
+     "ecart": 0.0013,
      "statut": "concorde",
      "trajectoire": 24.83
     },
@@ -3844,18 +3856,18 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 1941.86,
+     "depot": 1941.89,
      "ecart": 0.0099,
      "statut": "ecart",
      "trajectoire": 1922.8
     },
     "points_rafp": {
-     "ecart": 0.0002,
+     "ecart": 0.0013,
      "statut": "concorde"
     },
     "rafp": {
-     "depot": 24.84,
-     "ecart": 0.0002,
+     "depot": 24.87,
+     "ecart": 0.0013,
      "statut": "concorde",
      "trajectoire": 24.83
     },
@@ -3909,18 +3921,18 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 2108.46,
-     "ecart": -0.002,
+     "depot": 2108.48,
+     "ecart": -0.0019,
      "statut": "concorde",
      "trajectoire": 2112.59
     },
     "points_rafp": {
-     "ecart": 0.0002,
+     "ecart": 0.0013,
      "statut": "concorde"
     },
     "rafp": {
-     "depot": 24.84,
-     "ecart": 0.0002,
+     "depot": 24.87,
+     "ecart": 0.0013,
      "statut": "concorde",
      "trajectoire": 24.83
     },
@@ -3971,19 +3983,19 @@
      "statut": "concorde"
     },
     "pension_totale": {
-     "depot": 2294.69,
+     "depot": 2294.74,
      "ecart": -0.0244,
      "statut": "ecart",
      "trajectoire": 2352.13
     },
     "points_rafp": {
-     "ecart": 0.0002,
+     "ecart": 0.0013,
      "statut": "concorde"
     },
     "rafp": {
      "declare_en_octobre": "hors de sa borne",
-     "depot": 45.38,
-     "ecart": 0.0202,
+     "depot": 45.43,
+     "ecart": 0.0213,
      "statut": "ecart",
      "trajectoire": 44.48
     },
