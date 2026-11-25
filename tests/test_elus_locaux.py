@@ -8,9 +8,20 @@ que LEGI donne à leurs rédactions (note de décision 0009) :
 - l'article 41 de la loi n° 92-108 applique son titre IV, la retraite des
   élus locaux, « depuis le 30 mars 1992 », au renouvellement des conseils
   généraux et régionaux (réponse ministérielle n° 334, JO AN du 2 août
-  1993) ; LEGI date ses rédactions du 5 février 1992, jour de sa publication ;
+  1993) ; L. 2123-30 codifie en « avant le 30 mars 1992 » la « date d'effet »
+  que dit l'article 32 ; LEGI date les rédactions du 5 février 1992, jour de
+  la publication ;
+- la loi n° 99-586, publiée au Journal officiel du 13 juillet 1999, étend aux
+  membres des établissements de coopération intercommunale (L. 5211-14) le
+  régime général des élus qui ont cessé leur activité ; LEGI date ses
+  rédactions du jour de la publication, et l'Ircantec du 12 juillet, jour de
+  la loi, qui ne peut s'appliquer avant d'être publiée ;
+- l'article 12 de la loi n° 2000-295, publiée au Journal officiel du 6 avril
+  2000, récrit L. 2123-9 : le maire de toute commune, l'adjoint d'une commune
+  de 20 000 habitants au moins (notice du décret n° 2002-684) ;
 - la loi n° 2002-276, publiée au Journal officiel du 28 février 2002,
-  récrit le régime général des élus qui ont cessé leur activité ;
+  récrit le régime général des élus qui ont cessé leur activité ; l'Ircantec
+  applique ses affiliations « à compter du 1er mars 2002 » ;
 - le décret n° 2013-362 applique L. 382-31 du code de la sécurité sociale
   aux mandats « débutant à compter du 1er janvier 2013 », et à ceux en cours
   « au titre de la période du mandat postérieure à cette date » ;
@@ -48,8 +59,10 @@ def test_les_versions_des_elus_locaux_se_coupent_aux_dates_de_leurs_textes():
     assert [version["bornes"] for version in _fiche()["versions"]] == [
         {periode: [None, date(1973, 1, 1)]},
         {periode: [date(1973, 1, 1), date(1992, 3, 30)]},
-        {periode: [date(1992, 3, 30), date(2002, 2, 28)]},
-        {periode: [date(2002, 2, 28), date(2013, 1, 1)]},
+        {periode: [date(1992, 3, 30), date(1999, 7, 13)]},
+        {periode: [date(1999, 7, 13), date(2000, 4, 6)]},
+        {periode: [date(2000, 4, 6), date(2002, 3, 1)]},
+        {periode: [date(2002, 3, 1), date(2013, 1, 1)]},
         {periode: [date(2013, 1, 1), septembre_2023]},
         # la pension prise avant septembre 2023 ne connaît pas la demande
         {periode: [septembre_2023, None], pension: [None, septembre_2023]},
